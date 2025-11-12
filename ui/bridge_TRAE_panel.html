@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV L6.9.1 - TRAE Bridge 实时会话可视化面板</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+            --info-color: #1abc9c;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --border-color: #ddd;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f7fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+            border-bottom: 2px solid var(--light-color);
+            padding-bottom: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--light-color);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+
+        .stat-value.success {
+            color: var(--success-color);
+        }
+
+        .stat-value.warning {
+            color: var(--warning-color);
+        }
+
+        .stat-value.error {
+            color: var(--error-color);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-badge.synced {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+        }
+
+        .status-badge.pending {
+            background-color: #fff3e0;
+            color: var(--warning-color);
+        }
+
+        .status-badge.error {
+            background-color: #ffebee;
+            color: var(--error-color);
+        }
+
+        .session-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 22px;
+            color: var(--dark-color);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-secondary {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #d5dbdb;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .session-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .session-table th,
+        .session-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .session-table th {
+            background-color: var(--light-color);
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .session-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .log-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .log-container {
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-entry.info {
+            color: var(--primary-color);
+        }
+
+        .log-entry.success {
+            color: var(--success-color);
+        }
+
+        .log-entry.warning {
+            color: var(--warning-color);
+        }
+
+        .log-entry.error {
+            color: var(--error-color);
+        }
+
+        .latency-chart {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            margin-top: 20px;
+            padding: 10px 0;
+            border-top: 2px solid var(--light-color);
+        }
+
+        .latency-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary-color), #5dade2);
+            border-radius: 3px 3px 0 0;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .latency-bar:hover {
+            background: linear-gradient(to top, #2980b9, #3498db);
+        }
+
+        .latency-bar.high {
+            background: linear-gradient(to top, var(--warning-color), #f1c40f);
+        }
+
+        .latency-bar.critical {
+            background: linear-gradient(to top, var(--error-color), #c0392b);
+        }
+
+        .session-detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .modal-header h2 {
+            font-size: 22px;
+            color: var(--dark-color);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--dark-color);
+        }
+
+        .context-list {
+            margin-top: 15px;
+        }
+
+        .context-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: var(--light-color);
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .context-item.query {
+            background-color: #e8f4f8;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .context-item.response {
+            background-color: #e8f8f5;
+            border-left: 4px solid var(--success-color);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .controls {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .session-table {
+                font-size: 14px;
+            }
+
+            .session-table th,
+            .session-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JEV L6.9.1 - TRAE Bridge 实时会话可视化面板</h1>
+            <div class="subtitle">TRAEE ↔ Durable Objects 实时同步监控系统</div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- 会话统计卡片 -->
+            <div class="card">
+                <h2>会话统计</h2>
+                <div class="stat-item">
+                    <span class="stat-label">当前活跃会话</span>
+                    <span class="stat-value" id="active-sessions">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">上下文读取次数</span>
+                    <span class="stat-value" id="context-reads">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">上下文写回次数</span>
+                    <span class="stat-value" id="context-writes">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">离线重发次数</span>
+                    <span class="stat-value" id="offline-replays">--</span>
+                </div>
+            </div>
+
+            <!-- 延迟统计卡片 -->
+            <div class="card">
+                <h2>性能指标</h2>
+                <div class="stat-item">
+                    <span class="stat-label">平均延迟</span>
+                    <span class="stat-value" id="avg-latency">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">成功率</span>
+                    <span class="stat-value success" id="success-rate">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">最后同步时间</span>
+                    <span class="stat-value" id="last-sync">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">同步状态</span>
+                    <span class="status-badge synced" id="sync-status">已同步</span>
+                </div>
+            </div>
+
+            <!-- 延迟趋势图表 -->
+            <div class="card">
+                <h2>延迟趋势</h2>
+                <div class="latency-chart" id="latency-chart">
+                    <!-- 动态生成的延迟柱状图 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 会话列表 -->
+        <div class="session-section">
+            <div class="section-header">
+                <h2>活跃会话列表</h2>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="refreshAllData()">刷新数据</button>
+                    <button class="btn btn-secondary" onclick="clearLog()">清空日志</button>
+                    <button class="btn btn-success" onclick="exportReport()">导出报告</button>
+                </div>
+            </div>
+            <table class="session-table">
+                <thead>
+                    <tr>
+                        <th>会话ID</th>
+                        <th>上下文条数</th>
+                        <th>最近访问</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="session-list">
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #999;">暂无活跃会话</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 同步日志 -->
+        <div class="log-section">
+            <div class="section-header">
+                <h2>同步日志</h2>
+            </div>
+            <div class="log-container" id="sync-log">
+                <div class="log-entry info">[系统] 面板已启动，等待同步数据...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 会话详情模态框 -->
+    <div class="session-detail-modal" id="session-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>会话详情</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="session-detail-content">
+                <!-- 动态填充会话详情 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据，实际应从 Bridge 获取
+        let mockSessions = {
+            'user-3SsfTbU1lmAPpkG9iB6C': {
+                lastAccess: new Date().toISOString(),
+                context: {
+                    lastMessage: 'How much is this sensor?',
+                    lang: 'en',
+                    history: ['Hello', 'How much is this sensor?', 'It costs $25.'],
+                    lastResponse: 'It costs $25.'
+                }
+            },
+            'user-4DrtUcV2mnBQrlH8jC7D': {
+                lastAccess: new Date(Date.now() - 300000).toISOString(),
+                context: {
+                    lastMessage: '我需要帮助',
+                    lang: 'zh-CN',
+                    history: ['你好', '我需要帮助', '请问有什么可以帮您？'],
+                    lastResponse: '请问有什么可以帮您？'
+                }
+            }
+        };
+
+        let mockStats = {
+            active_sessions: 8,
+            avg_latency_ms: 237,
+            context_reads: 92,
+            context_writes: 91,
+            offline_replays: 3,
+            last_sync: new Date().toISOString()
+        };
+
+        let latencyHistory = [210, 245, 230, 260, 220, 240, 250, 235, 225, 240];
+        let logEntries = [];
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 模拟从 Bridge 获取初始数据
+            updateDashboard();
+            updateSessionList();
+            updateLatencyChart();
+            
+            // 定期更新数据
+            setInterval(updateDashboard, 5000);
+            setInterval(updateSessionList, 10000);
+            
+            // 监听 Bridge 更新事件
+            window.addEventListener('jev-durable-update', handleBridgeUpdate);
+        });
+
+        // 更新仪表盘数据
+        function updateDashboard() {
+            document.getElementById('active-sessions').textContent = mockStats.active_sessions;
+            document.getElementById('context-reads').textContent = mockStats.context_reads;
+            document.getElementById('context-writes').textContent = mockStats.context_writes;
+            document.getElementById('offline-replays').textContent = mockStats.offline_replays;
+            document.getElementById('avg-latency').textContent = mockStats.avg_latency_ms + 'ms';
+            document.getElementById('success-rate').textContent = '99.2%';
+            document.getElementById('last-sync').textContent = formatDateTime(mockStats.last_sync);
+            
+            // 更新状态徽章
+            const statusBadge = document.getElementById('sync-status');
+            statusBadge.className = 'status-badge synced';
+            statusBadge.textContent = '✅ 已同步';
+        }
+
+        // 更新会话列表
+        function updateSessionList() {
+            const sessionList = document.getElementById('session-list');
+            sessionList.innerHTML = '';
+            
+            if (Object.keys(mockSessions).length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = '<td colspan="5" style="text-align: center; color: #999;">暂无活跃会话</td>';
+                sessionList.appendChild(emptyRow);
+                return;
+            }
+            
+            Object.entries(mockSessions).forEach(([sessionId, session]) => {
+                const row = document.createElement('tr');
+                const contextCount = Array.isArray(session.context.history) ? 
+                    session.context.history.length : 0;
+                
+                row.innerHTML = `
+                    <td>${sessionId}</td>
+                    <td>${contextCount}</td>
+                    <td>${formatRelativeTime(session.lastAccess)}</td>
+                    <td><span class="status-badge synced">已同步</span></td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="viewSessionDetail('${sessionId}')">查看</button>
+                    </td>
+                `;
+                
+                sessionList.appendChild(row);
+            });
+        }
+
+        // 更新延迟图表
+        function updateLatencyChart() {
+            const chartContainer = document.getElementById('latency-chart');
+            chartContainer.innerHTML = '';
+            
+            // 添加新的延迟数据点
+            const newLatency = Math.floor(Math.random() * 50) + 200; // 模拟延迟
+            latencyHistory.push(newLatency);
+            if (latencyHistory.length > 20) {
+                latencyHistory.shift();
+            }
+            
+            // 更新平均延迟
+            const avgLatency = Math.round(latencyHistory.reduce((sum, val) => sum + val, 0) / latencyHistory.length);
+            mockStats.avg_latency_ms = avgLatency;
+            document.getElementById('avg-latency').textContent = avgLatency + 'ms';
+            
+            // 创建柱状图
+            const maxLatency = Math.max(...latencyHistory) * 1.2;
+            
+            latencyHistory.forEach(latency => {
+                const bar = document.createElement('div');
+                bar.className = 'latency-bar';
+                
+                // 根据延迟值设置样式
+                if (latency > 300) {
+                    bar.classList.add('critical');
+                } else if (latency > 250) {
+                    bar.classList.add('high');
+                }
+                
+                // 设置高度百分比
+                const heightPercent = (latency / maxLatency) * 100;
+                bar.style.height = heightPercent + '%';
+                bar.title = latency + 'ms';
+                
+                chartContainer.appendChild(bar);
+            });
+        }
+
+        // 查看会话详情
+        function viewSessionDetail(sessionId) {
+            const session = mockSessions[sessionId];
+            if (!session) return;
+            
+            const modal = document.getElementById('session-modal');
+            const content = document.getElementById('session-detail-content');
+            
+            // 生成上下文列表
+            let contextHtml = '<h3>上下文历史</h3><div class="context-list">';
+            if (Array.isArray(session.context.history)) {
+                session.context.history.forEach((msg, index) => {
+                    const isQuery = index % 2 === 0;
+                    contextHtml += `
+                        <div class="context-item ${isQuery ? 'query' : 'response'}">
+                            ${msg}
+                        </div>
+                    `;
+                });
+            }
+            contextHtml += '</div>';
+            
+            content.innerHTML = `
+                <div class="stat-item">
+                    <span class="stat-label">会话ID</span>
+                    <span class="stat-value">${sessionId}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">语言</span>
+                    <span class="stat-value">${session.context.lang || 'zh-CN'}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">最后消息</span>
+                    <span class="stat-value">${session.context.lastMessage || '-'}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">最后响应</span>
+                    <span class="stat-value">${session.context.lastResponse || '-'}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">最后访问时间</span>
+                    <span class="stat-value">${formatDateTime(session.lastAccess)}</span>
+                </div>
+                ${contextHtml}
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('session-modal').style.display = 'none';
+        }
+
+        // 刷新所有数据
+        function refreshAllData() {
+            addLogEntry('info', '[系统] 手动刷新数据...');
+            updateDashboard();
+            updateSessionList();
+            updateLatencyChart();
+            addLogEntry('success', '[系统] 数据刷新完成');
+        }
+
+        // 清空日志
+        function clearLog() {
+            document.getElementById('sync-log').innerHTML = '';
+            logEntries = [];
+            addLogEntry('info', '[系统] 日志已清空');
+        }
+
+        // 导出报告
+        function exportReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                stats: mockStats,
+                sessions: Object.keys(mockSessions).length,
+                report_version: '1.1'
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `jev_bridge_report_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addLogEntry('success', '[系统] 报告已导出');
+        }
+
+        // 添加日志条目
+        function addLogEntry(type, message) {
+            const logContainer = document.getElementById('sync-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            
+            logContainer.appendChild(logEntry);
+            logEntries.push({ type, message, timestamp });
+            
+            // 保持最新的日志在底部
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // 限制日志数量
+            if (logEntries.length > 50) {
+                const oldestEntry = logContainer.firstChild;
+                if (oldestEntry) {
+                    logContainer.removeChild(oldestEntry);
+                }
+                logEntries.shift();
+            }
+        }
+
+        // 处理 Bridge 更新事件
+        function handleBridgeUpdate(event) {
+            const { sessionId, newData } = event.detail;
+            addLogEntry('info', `[更新] 会话 ${sessionId} 已更新`);
+            
+            // 更新本地会话数据
+            if (mockSessions[sessionId]) {
+                mockSessions[sessionId].context = newData;
+                mockSessions[sessionId].lastAccess = new Date().toISOString();
+                updateSessionList();
+            }
+        }
+
+        // 格式化日期时间
+        function formatDateTime(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // 格式化相对时间
+        function formatRelativeTime(dateString) {
+            if (!dateString) return '-';
+            const now = new Date();
+            const date = new Date(dateString);
+            const diff = now - date;
+            
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return '刚刚';
+            if (minutes < 60) return `${minutes}分钟前`;
+            if (hours < 24) return `${hours}小时前`;
+            return `${days}天前`;
+        }
+
+        // 模拟添加新会话（用于演示）
+        function addMockSession() {
+            const sessionId = 'user-' + Math.random().toString(36).substr(2, 16);
+            mockSessions[sessionId] = {
+                lastAccess: new Date().toISOString(),
+                context: {
+                    lastMessage: '这是一条测试消息',
+                    lang: 'zh-CN',
+                    history: ['测试消息1', '测试回复1', '这是一条测试消息'],
+                    lastResponse: '测试回复1'
+                }
+            };
+            mockStats.active_sessions++;
+            updateSessionList();
+            addLogEntry('info', `[会话] 新增会话 ${sessionId}`);
+        }
+
+        // 模拟接收 Bridge 事件
+        setInterval(() => {
+            if (Math.random() > 0.7) { // 30%概率模拟更新
+                const sessionIds = Object.keys(mockSessions);
+                if (sessionIds.length > 0) {
+                    const randomId = sessionIds[Math.floor(Math.random() * sessionIds.length)];
+                    window.dispatchEvent(new CustomEvent('jev-durable-update', {
+                        detail: {
+                            sessionId: randomId,
+                            newData: {
+                                ...mockSessions[randomId].context,
+                                lastMessage: `更新的消息 ${Date.now()}`,
+                                lastResponse: `更新的回复 ${Date.now()}`,
+                                timestamp: new Date().toISOString()
+                            }
+                        }
+                    }));
+                }
+            }
+        }, 15000);
+    </script>
+</body>
+</html>

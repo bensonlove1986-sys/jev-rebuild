@@ -1,0 +1,8 @@
+{
+  "success": true,
+  "count": 0,
+  "items": [],
+  "raw_preview": [],
+  "feature": "TEXT_DETECTION",
+  "imageUrl": "https://via.placeholder.com/800x400.png?text=Cloudflare+OCR+Test+1234"
+}

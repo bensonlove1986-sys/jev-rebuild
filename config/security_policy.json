@@ -1,0 +1,23 @@
+{
+  "allowedWorkers": [
+    "jevshop.bensonlove1986.workers.dev"
+  ],
+  "trustedModules": [
+    "sentinelMonitor",
+    "autoOrchestrator",
+    "autoRecoveryCluster",
+    "globalSentinel"
+  ],
+  "blockedCalls": [
+    "fetch('file://')",
+    "exec()",
+    "PowerShell"
+  ],
+  "require_identity_binding": true,
+  "allowed_owner": "benson-jev-001",
+  "strict_token_mode": true,
+  "max_autonomy": 0.7,
+  "camera_required": true,
+  "biometric_provider": "WindowsHello",
+  "auto_lock_minutes": 15
+}

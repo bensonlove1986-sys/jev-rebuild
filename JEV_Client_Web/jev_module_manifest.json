@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-01-01T00:00:00Z",
+  "modules": [
+    {
+      "id": "core",
+      "name": "Core System",
+      "version": "1.0.0",
+      "description": "Core functionality of JEV system",
+      "dependencies": []
+    },
+    {
+      "id": "auth",
+      "name": "Authentication Module",
+      "version": "1.0.0",
+      "description": "User authentication and authorization",
+      "dependencies": ["core"]
+    },
+    {
+      "id": "ui",
+      "name": "User Interface",
+      "version": "1.0.0",
+      "description": "User interface components",
+      "dependencies": ["core", "auth"]
+    },
+    {
+      "id": "data",
+      "name": "Data Management",
+      "version": "1.0.0",
+      "description": "Data storage and retrieval",
+      "dependencies": ["core"]
+    },
+    {
+      "id": "api",
+      "name": "API Module",
+      "version": "1.0.0",
+      "description": "API endpoints and middleware",
+      "dependencies": ["core", "data"]
+    },
+    {
+      "id": "security",
+      "name": "Security Module",
+      "version": "1.0.0",
+      "description": "Security features and protections",
+      "dependencies": ["core", "auth"]
+    },
+    {
+      "id": "invite",
+      "name": "Invitation Module",
+      "version": "1.0.0",
+      "description": "User invitation and verification",
+      "dependencies": ["core", "auth"]
+    },
+    {
+      "id": "monitor",
+      "name": "Monitoring Module",
+      "version": "1.0.0",
+      "description": "System monitoring and logging",
+      "dependencies": ["core"]
+    },
+    {
+      "id": "client_gateway_bridge",
+      "name": "Client Gateway Bridge",
+      "version": "1.0.0",
+      "description": "Bridge between client and gateway services",
+      "dependencies": ["core", "api", "auth"]
+    },
+    {
+      "id": "jev_client_web",
+      "name": "JEV Client Web",
+      "version": "1.0.0",
+      "description": "Web client interface for JEV system",
+      "dependencies": ["core", "auth", "ui", "client_gateway_bridge"]
+    },
+    {
+      "id": "daojieCollector",
+      "name": "DAOJIE Chat Collector",
+      "version": "1.1.0",
+      "description": "Enhanced collector for DAOJIE chat messages with self-monitoring and media recognition",
+      "dependencies": ["core", "data"]
+    }
+  ],
+  "entry_points": {
+    "web": "ui/client_portal.html",
+    "dashboard": "ui/client_dashboard.html",
+    "api": "modules/client_gateway_bridge.js",
+    "client_core": "scripts/client_core.js",
+    "daojie_collector": "modules/daojieCollector_v1.1.js"
+  }
+}

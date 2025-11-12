@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV ControlCenter v12.0 - 全球监控中心</title>
+    <link rel="stylesheet" href="control_global_dashboard.css">
+</head>
+<body>
+    <div class="control-center">
+        <header class="header">
+            <div class="logo">
+                <h1>JEV ControlCenter v12.0</h1>
+                <div class="version-tag">🔒 v12.0 | LOCK=ACTIVE</div>
+            </div>
+            <div class="status-indicators">
+                <div class="status-item">
+                    <span class="status-label">系统状态:</span>
+                    <span id="system-status" class="status-dot green">🟢</span>
+                    <span id="system-text">Stable</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Relays在线:</span>
+                    <span id="relays-online">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Workers在线:</span>
+                    <span id="workers-online">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">最后同步:</span>
+                    <span id="last-sync">--:--:--</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="relay-monitor">
+                <h2>🌍 Relay 全球节点监控</h2>
+                <div class="relay-grid" id="relay-grid">
+                    <!-- Relay节点将通过JS动态添加 -->
+                </div>
+            </section>
+
+            <section class="worker-status">
+                <h2>🧠 Worker 状态检测</h2>
+                <div class="worker-grid" id="worker-grid">
+                    <!-- Worker状态将通过JS动态添加 -->
+                </div>
+            </section>
+
+            <section class="optimizer-analytics">
+                <h2>🧩 Optimizer 分析层</h2>
+                <div class="analytics-cards">
+                    <div class="card">
+                        <h3>AI回复策略</h3>
+                        <div id="ai-strategy">动态调整中...</div>
+                    </div>
+                    <div class="card">
+                        <h3>客服行为数据</h3>
+                        <div id="customer-data">收集统计中...</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="plugin-monitor">
+                <h2>💬 Plugin 客服层监控</h2>
+                <div class="plugin-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">在线客服:</span>
+                        <span id="online-agents">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">AI模式比例:</span>
+                        <span id="ai-mode-ratio">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">人工模式比例:</span>
+                        <span id="manual-mode-ratio">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">当前语言:</span>
+                        <span id="current-languages">--</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="system-visualization">
+                <h2>📊 系统可视化指标</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h3>平均延迟</h3>
+                        <div id="avg-latency">0 ms</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>成功率</h3>
+                        <div id="success-rate">0%</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>任务堆积量</h3>
+                        <div id="task-queue">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>AI翻译量</h3>
+                        <div id="ai-translations">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>人工介入频率</h3>
+                        <div id="human-interventions">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>利润触发次数</h3>
+                        <div id="profit-triggers">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>每小时任务完成数</h3>
+                        <div id="tasks-per-hour">0</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="logs-section">
+                <h2>📑 日志追踪</h2>
+                <div class="logs-container">
+                    <div class="logs-header">
+                        <button id="export-logs" class="btn">导出日志</button>
+                    </div>
+                    <div class="logs-content" id="logs-content">
+                        <!-- 日志将通过JS动态添加 -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="control-actions">
+                <h2>⚙️ 控制操作</h2>
+                <div class="actions-grid">
+                    <button id="force-sync" class="btn action-btn">强制同步配置</button>
+                    <button id="generate-report" class="btn action-btn">生成验证报告</button>
+                    <button id="view-audit" class="btn action-btn">查看审计日志</button>
+                    <button id="restart-relay" class="btn action-btn restart-btn">远程重启（受限）</button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-info">
+                <p>JEV ControlCenter v12.0 | 安全级别：STRICT | PATH_LOCK=TRUE</p>
+                <p>© 2025 JEV Cloud Relay System</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="control_global_dashboard.js"></script>
+</body>
+</html>

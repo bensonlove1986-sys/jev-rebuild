@@ -1,0 +1,12 @@
+{
+  "owner_id": "benson-jev-001",
+  "device_signature": "HWID-AX439FJH-2025",
+  "trusted_endpoints": [
+    "https://jevshop.bensonlove1986.workers.dev",
+    "http://localhost:1822"
+  ],
+  "fingerprint_methods": ["face_recognition"],
+  "biometric_key_enabled": true,
+  "biometric_provider": "LocalCamera/WindowsHello",
+  "face_match_threshold": 0.93
+}

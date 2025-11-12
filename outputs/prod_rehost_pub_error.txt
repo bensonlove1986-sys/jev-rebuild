@@ -1,0 +1,78 @@
+Invoke-RestMethod : {
+  "success": false,
+  "error": "��������ʧ��",
+  "status": 401,
+  "attempted": [
+    {
+      "auth": "none",
+      "cookie": "none",
+      "status": 401
+    }
+  ],
+  "url": "https://pub-156ce03fffc59592e2b3b04dbc22aa
+6c.r2.dev/jev-images/uploads/2025/10/30/cloud_cat.jp
+g",
+  "details": "\n\n  \n    \n    \n    \n    Unauthor
+ized\n    \n      body {\n        font-family: syste
+m-ui;\n        font-weight: 300;\n        font-size:
+ 1.25rem;\n        color: #36393a;\n        display:
+ flex;\n        align-items: center;\n        justif
+y-content: center;\n      }\n      main {\n        m
+ax-width: 1200px;\n        margin-top: 120px;\n     
+   display: flex;\n        flex-wrap: wrap;\n       
+ align-items: center;\n        justify-content: cent
+er;\n      }\n      #text {\n        max-width: 60%;
+\n        margin-left: 1rem;\n        margin-right: 
+1rem;\n      }\n      main > section > div {\n      
+  margin-bottom: 3.25rem;\n      }\n      svg {\n   
+     margin-left: 2rem;\n      }\n      h1 {\n      
+  font-size: 3.75rem;\n        font-weight: 400;\n  
+      margin-bottom: 0.5rem;\n      }\n      h3 {\n 
+       font-size: 2rem;\n        font-weight: 400;\n
+        color: #92979b;\n        margin: 0;\n      }
+\n      a {\n        color: #0055dc;\n      }\n     
+ p {\n        margin: 0;\n      }\n      #error-titl
+e {\n        font-size: 2rem;\n        margin-bottom
+: 1rem;\n      }\n      #footer-title {\n        fon
+t-weight: 700;\n        margin-bottom: 0.75rem;\n   
+   }\n    \n  \n\n  \n    \n      \n        \n      
+    Error 401\n          This bucket cannot be viewe
+d\n        \n\n        \n          You are not autho
+rized to view this bucket\n          \n            T
+his bucket does not exist or is not publicly accessi
+ble at this\n            URL. Check the URL of the b
+ucket that you��re looking for or contact\n          
+  the owner to enable Public access.\n          \n  
+      \n\n        \n          Is this your bucket?\n
+          \n            Learn how to enable\n       
+     Public Access\n          \n        \n      \n\n
+      \n        \n          \n          \n          
+\n          \n          \n          \n          \n  
+        \n          \n          \n          \n      
+    \n          \n          \n          \n          
+\n          \n          \n          \n          \n  
+        \n          \n          \n          \n      
+    \n          \n          \n          \n          
+\n          \n          \n          \n          \n  
+        \n          \n          \n          \n      
+    \n          \n          \n          \n          
+\n            \n              \n              \n    
+        \n            \n              \n            
+  \n            \n            \n              \n    
+          \n            \n            \n            
+  \n              \n            \n            \n    
+          \n              \n            \n          
+\n        \n      \n    \n  \n\n"
+}
+����λ�� ��:2 �ַ�: 11
++   $resp = Invoke-RestMethod -Method POST -Uri "htt
+ps://tupianlujing-l ...
++           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (Sy 
+   stem.Net.HttpWebRequest:HttpWebRequest) [Invoke  
+  -RestMethod]��WebException
+    + FullyQualifiedErrorId : WebCmdletWebResponseE 
+   xception,Microsoft.PowerShell.Commands.InvokeRe  
+  stMethodCommand
+

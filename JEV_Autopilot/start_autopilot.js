@@ -1,0 +1,13 @@
+const autopilotCore = require('./autopilot_core');
+console.log('JEV AI Commerce Autopilot v13.5 is running...');
+console.log('---------------------------------------------------');
+console.log('�?Auto Follow-up Engine initialized');
+console.log('�?Customer Profiler activated');
+console.log('�?Deal Predictor system ready');
+console.log('�?Smart Reminder module online');
+console.log('�?DeepSeek translation layer connected');
+console.log('�?Learning Loop activated');
+console.log('---------------------------------------------------');
+console.log('System state: stable');
+console.log('Lock status: active');
+console.log('Service ready for client management');

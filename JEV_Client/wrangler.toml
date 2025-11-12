@@ -1,0 +1,6 @@
+name = "jev-client"
+main = "index.html"
+pages_build_output_dir = "."
+
+[env.production]
+account_id = "156ce03fffc59592e2b3b04dbc22aa6c"

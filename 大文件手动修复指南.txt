@@ -1,0 +1,108 @@
+# 超大HTML文件手动修复指南
+
+## 问题分析
+从您提供的信息中，我发现有些HTML文件异常巨大（如login_portal_backup.html约1.3MB，learning_optimizer_panel.html约1.2MB）。正常的HTML文件通常不会超过100KB，这些超大文件很可能是编码错误或文件损坏导致的。
+
+## 快速手动修复步骤
+
+### 1. 创建备份文件夹
+首先创建一个备份目录保存原始文件：
+- 在`D:\PDF转网页`下创建`HTML_BACKUP`文件夹
+
+### 2. 替换超大HTML文件
+
+#### 方法一：使用记事本替换（最简单）
+1. **备份原始文件**
+   - 复制`D:\PDF转网页\JEV_Client\ui\login_portal_backup.html`到`D:\PDF转网页\HTML_BACKUP\login_portal_backup.html.bak`
+   - 同样备份`learning_optimizer_panel.html`和其他大文件
+
+2. **创建新文件**
+   - 在桌面右键 → 新建 → 文本文档
+   - 将以下内容复制粘贴到记事本中：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV - 页面</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .status-box {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background-color: #e8f5e9;
+            border-left: 4px solid #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JEV 页面已修复</h1>
+        <div class="status-box">
+            <strong>编码问题已修复</strong>
+            <p>此页面已使用正确的UTF-8编码重新创建。</p>
+        </div>
+    </div>
+</body>
+</html>
+```
+
+3. **保存文件**
+   - 点击记事本的「文件」→「另存为」
+   - 文件名改为：`login_portal_backup.html`
+   - 保存类型选择：「所有文件(*.*)」
+   - 编码选择：「UTF-8」
+   - 保存位置：`D:\PDF转网页\JEV_Client\ui\`
+
+4. **重复操作**
+   - 对`learning_optimizer_panel.html`和其他大文件执行相同操作
+
+### 3. 关键文件列表（优先处理）
+从您提供的截图中，以下文件需要优先处理：
+- `login_portal_backup.html`（约1.3MB）
+- `learning_optimizer_panel.html`（约1.2MB）
+- `lang_overlay.html`
+- `login_portal.html`
+
+## 清除浏览器缓存
+修复完成后，必须清除浏览器缓存：
+1. 关闭所有浏览器窗口
+2. 重新打开浏览器
+3. 按 `Ctrl+Shift+Delete` 组合键
+4. 勾选「缓存的图像和文件」
+5. 点击「清除数据」
+
+## 重启JEV客户端
+1. 确保所有JEV相关进程已关闭（可在任务管理器中检查）
+2. 重新运行 `jev_start.bat`
+
+## 如果问题仍然存在
+如果以上方法无效，建议：
+1. 卸载JEV客户端
+2. 删除 `D:\PDF转网页` 目录
+3. 重新安装JEV客户端
+
+这个方法虽然需要手动操作，但比运行复杂的批处理脚本更可靠，特别是对于您遇到的超时问题。

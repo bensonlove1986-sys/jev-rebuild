@@ -1,0 +1,30 @@
+{
+    "success":  true,
+    "count":  0,
+    "items":  [
+
+              ],
+    "raw":  {
+                "responses":  [
+                                  {
+                                      "error":  {
+                                                    "code":  3,
+                                                    "message":  "Bad image data."
+                                                }
+                                  }
+                              ]
+            },
+    "raw_preview":  [
+
+                    ],
+    "feature":  "DOCUMENT_TEXT_DETECTION",
+    "imageUrl":  "https://placehold.co/600x400?text=Hello+World",
+    "mode":  "content_fallback",
+    "fetch_attempts":  [
+                           {
+                               "source":  "direct",
+                               "status":  200,
+                               "ok":  true
+                           }
+                       ]
+}

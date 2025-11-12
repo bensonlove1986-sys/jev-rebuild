@@ -1,0 +1,867 @@
+# Desktop Agent Script - Reliable Version
+
+# Configuration
+$PORT = 1818
+$AGENT_LOG_PATH = Join-Path -Path $PSScriptRoot -ChildPath "agent.log"
+$ERROR_LOG_PATH = Join-Path -Path $PSScriptRoot -ChildPath "error.log"
+$CONTROL_PANEL_PATH = Join-Path -Path $PSScriptRoot -ChildPath "control_panel.html"
+$PAUSE_FLAG_PATH = Join-Path -Path $PSScriptRoot -ChildPath ".paused"
+
+# Central Control System Configuration
+$CENTRAL_CONTROL_ENABLED = $true
+$CENTRAL_CONTROL_URL = "http://localhost:8080/central-control"
+$CENTRAL_CONTROL_HEARTBEAT_INTERVAL = 30000  # 30 seconds
+
+# Global State Management
+$agentStatus = @{
+    isRunning = $true
+    lastHeartbeat = Get-Date
+    centralControlConnected = $false
+    connections = @{
+        controlPanel = $false
+        centralControl = $false
+    }
+}
+
+# Communication History
+$communicationHistory = @()
+
+# Ensure directories exist
+$LOG_DIR = Split-Path -Path $AGENT_LOG_PATH -Parent
+if (-not (Test-Path -Path $LOG_DIR)) {
+    New-Item -Path $LOG_DIR -ItemType Directory -Force | Out-Null
+}
+$JEV_DIR = Split-Path -Path $PAUSE_FLAG_PATH -Parent
+if (-not (Test-Path -Path $JEV_DIR)) {
+    New-Item -Path $JEV_DIR -ItemType Directory -Force | Out-Null
+}
+
+# Logging functions
+function Write-AgentLog($message) {
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "[$timestamp] INFO: $message"
+    try {
+        Add-Content -Path $AGENT_LOG_PATH -Value $logEntry -Force -ErrorAction SilentlyContinue
+    } catch {}
+    Write-Host "[INFO] $logEntry"
+}
+
+function Write-DebugLog($message) {
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "[$timestamp] DEBUG: $message"
+    try {
+        Add-Content -Path $AGENT_LOG_PATH -Value $logEntry -Force -ErrorAction SilentlyContinue
+    } catch {}
+    Write-Host "[DEBUG] $logEntry" -ForegroundColor Cyan
+}
+
+function Write-WarningLog($message) {
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "[$timestamp] WARNING: $message"
+    try {
+        Add-Content -Path $AGENT_LOG_PATH -Value $logEntry -Force -ErrorAction SilentlyContinue
+    } catch {}
+    Write-Host "[WARNING] $logEntry" -ForegroundColor Yellow
+}
+
+function Write-ErrorLog($errorMessage) {
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "[$timestamp] ERROR: $errorMessage"
+    try {
+        Add-Content -Path $AGENT_LOG_PATH -Value $logEntry -Force -ErrorAction SilentlyContinue
+    } catch {}
+    Write-Host "[ERROR] $logEntry" -ForegroundColor Red
+}
+
+# Enhanced and robust response function
+function Send-Response($response, $statusCode, $content, $contentType = "application/json") {
+    $outputStream = $null
+    
+    try {
+        Write-DebugLog "Preparing response with status code: $statusCode, content type: $contentType"
+        # Set headers first to ensure they are always sent
+        $response.StatusCode = $statusCode
+        $response.ContentType = "$contentType; charset=utf-8"
+        
+        # Add CORS headers - in PowerShell, Headers is a collection, not a dictionary
+        $corsHeaderExists = $false
+        Write-DebugLog "Checking for existing CORS headers"
+        foreach ($header in $response.Headers.Keys) {
+            Write-DebugLog "Existing header: $header"
+            if ($header -eq "Access-Control-Allow-Origin") {
+                $corsHeaderExists = $true
+                break
+            }
+        }
+        if (-not $corsHeaderExists) {
+            $response.Headers.Add("Access-Control-Allow-Origin", "*")
+        }
+        
+        # Process content based on type
+        $bytes = $null
+        if ($contentType -eq "application/json") {
+            # Safely convert to JSON with error handling
+            $json = $null
+            try {
+                Write-DebugLog "Converting response object to JSON"
+                $json = $content | ConvertTo-Json -Depth 10 -Compress -ErrorAction Stop
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
+            } catch {
+                Write-ErrorLog "Failed to convert to JSON: $_"
+                # Fallback to simple error message
+                $errorMessage = @{ error = "Failed to process response data" }
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes(($errorMessage | ConvertTo-Json -Compress))
+                $response.StatusCode = 500
+            }
+        } else {
+            # Handle non-JSON content
+            if ($content -is [byte[]]) {
+                $bytes = $content
+            } else {
+                $bytes = [System.Text.Encoding]::UTF8.GetBytes($content.ToString())
+            }
+        }
+        
+        # Write content length
+        $response.ContentLength64 = $bytes.Length
+        
+        # Get and write to output stream with additional safety measures
+        $outputStream = $response.OutputStream
+        if ($outputStream -and $outputStream.CanWrite) {
+            # Write in chunks to handle large responses better
+            $chunkSize = 8192
+            for ($i = 0; $i -lt $bytes.Length; $i += $chunkSize) {
+                $remaining = $bytes.Length - $i
+                $currentChunkSize = [Math]::Min($chunkSize, $remaining)
+                $outputStream.Write($bytes, $i, $currentChunkSize)
+            }
+            
+            # Flush the stream to ensure all data is sent
+            $outputStream.Flush()
+            
+            # In PowerShell, we should also close the output stream explicitly
+            try {
+                $outputStream.Close()
+            } catch {
+                # Just log, we'll still try to close the response
+                Write-ErrorLog "Failed to close output stream: $_"
+            }
+        }
+    } catch {
+        Write-ErrorLog "Critical error in Send-Response: $_"
+        Write-DebugLog "Send-Response error details - StatusCode: $statusCode, ContentType: $contentType"
+        # Try to send a minimal error response if possible
+        try {
+            $errorBytes = [System.Text.Encoding]::UTF8.GetBytes('{"error":"Internal server error"}')
+            $response.StatusCode = 500
+            $response.ContentLength64 = $errorBytes.Length
+            if ($response.OutputStream.CanWrite) {
+                $response.OutputStream.Write($errorBytes, 0, $errorBytes.Length)
+                $response.OutputStream.Flush()
+            }
+        } catch {
+            # If we can't even send an error response, just log it
+            Write-ErrorLog "Failed to send error response: $_"
+        }
+    } finally {
+        # Always close the response, even if we closed the output stream already
+        # This is absolutely critical to prevent connection leaks
+        try {
+            if ($response -and -not $response.OutputStream.CanWrite) {
+                # Response is likely already closed, but we'll try anyway
+                $response.Close()
+            }
+        } catch {
+            # Final fallback - just log the error
+            Write-ErrorLog "Final attempt to close response failed: $_"
+        }
+        
+        # Set variables to $null to help with garbage collection
+        $outputStream = $null
+    }
+}
+
+# Central Control Heartbeat Function
+function Send-HeartbeatToCentralControl {
+    param()
+    
+    if (-not $CENTRAL_CONTROL_ENABLED) {
+        return
+    }
+    
+    try {
+        # 更新最后心跳时�?        $currentTime = Get-Date
+        $agentStatus.lastHeartbeat = $currentTime
+        $timestamp = $currentTime.ToString("yyyy-MM-dd HH:mm:ss")
+        
+        # 更新连接状态中的最后心跳时�?        $agentStatus.connections.lastHeartbeat = $timestamp
+        
+        # 如果连接已建立，模拟心跳成功
+        if ($agentStatus.connections.centralControl) {
+            Write-DebugLog "Heartbeat sent to central control system at $timestamp"
+            
+            # 添加到通信历史
+            $communicationHistory += "[$timestamp] 发送心跳到中控系统"
+        }
+        
+    } catch {
+        Write-WarningLog "Failed to send heartbeat: $_"
+        # 记录失败的心�?        $failureTimestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        $communicationHistory += "[$failureTimestamp] 心跳发送失�? $_"
+        # Reconnection logic could be added here
+    }
+}
+
+# Initialize logging
+Write-AgentLog "Starting desktop agent on port $PORT"
+
+# Create HTTP listener
+$listener = $null
+try {
+    $listener = New-Object System.Net.HttpListener
+    $listener.Prefixes.Add("http://localhost:$PORT/")
+    $listener.Start()
+    Write-Host "[INFO] Listening on http://localhost:1820/"
+    Write-AgentLog "Server started successfully"
+    
+    # Start heartbeat timer
+    $heartbeatTimer = New-Object System.Timers.Timer
+    $heartbeatTimer.Interval = $CENTRAL_CONTROL_HEARTBEAT_INTERVAL
+    $heartbeatTimer.AutoReset = $true
+    Register-ObjectEvent -InputObject $heartbeatTimer -EventName Elapsed -Action { 
+        Send-HeartbeatToCentralControl 
+    }
+    $heartbeatTimer.Start()
+    Write-AgentLog "Heartbeat timer started with interval $CENTRAL_CONTROL_HEARTBEAT_INTERVAL ms"
+    
+    # Initialize connection statuses
+    $agentStatus.connections = @{
+        centralControl = $false
+        lastHeartbeat = "Never"
+        controlPanel = $false
+    }
+    
+    # Create default control panel HTML if it doesn't exist
+    if (-not (Test-Path $CONTROL_PANEL_PATH)) {
+        try {
+            # Default HTML content will be created when /control_panel.html is accessed
+            Write-AgentLog "Control panel HTML will be created on first access"
+        } catch {
+            Write-ErrorLog "Failed to prepare default control panel HTML: $_"
+        }
+    }
+} catch {
+    Write-ErrorLog "Failed to start HTTP listener: $_"
+    exit 1
+}
+
+# Main processing loop
+while ($true) {
+    try {
+            # Get context with timeout
+            $context = $listener.GetContext()
+            $request = $context.Request
+            $response = $context.Response
+            $path = $request.Url.AbsolutePath
+            $method = $request.HttpMethod
+            
+            # Log the request with debug details
+            $remoteAddress = $context.Request.RemoteEndPoint.Address
+            Write-AgentLog "Received request: $method $path"
+            Write-DebugLog "Request details - IP: $remoteAddress, User-Agent: $($request.UserAgent)"
+        
+        # Handle CORS preflight with error handling
+        if ($method -eq "OPTIONS") {
+            try {
+                $response.StatusCode = 200
+                $response.Headers.Add("Access-Control-Allow-Origin", "*")
+                $response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                $response.Headers.Add("Access-Control-Allow-Headers", "Content-Type")
+                $response.Close()
+                Write-AgentLog "Handled OPTIONS request successfully"
+                continue
+            } catch {
+                Write-ErrorLog "Error handling OPTIONS request: $_"
+                try {
+                    $response.StatusCode = 500
+                    Send-Response $response 500 @{ status = "error"; message = "Internal server error" }
+                } catch {
+                    Write-ErrorLog "Failed to send error response for OPTIONS: $_"
+                }
+                continue
+            }
+        }
+        
+        # Route handling with comprehensive error handling
+        try {
+            switch ($path) {
+                "/status" {
+                    if ($method -eq "GET") {
+                        try {
+                            # Ensure connections object exists
+                            if (-not $agentStatus.ContainsKey("connections")) {
+                                $agentStatus.connections = @{
+                                    centralControl = $false
+                                    lastHeartbeat = "Never"
+                                    controlPanel = $false
+                                }
+                            }
+                            
+                            $data = @{
+                                running = $true
+                                time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                                connections = $agentStatus.connections
+                                lastHeartbeat = $agentStatus.lastHeartbeat.ToString("yyyy-MM-dd HH:mm:ss")
+                                centralControlConnected = $agentStatus.centralControlConnected
+                            }
+                            Send-Response $response 200 $data
+                            Write-AgentLog "Processed status request successfully"
+                        } catch {
+                            Write-ErrorLog "Failed to process status request: $_"
+                            Send-Response $response 500 @{ status = "error"; message = "Failed to process status" }
+                        }
+                    } else {
+                        Send-Response $response 405 @{ error = "Method not allowed" }
+                    }
+                    break
+                }
+                
+                # Communication history API
+                "/communication/history" {
+                    if ($method -eq "GET") {
+                        try {
+                            Write-DebugLog "Processing GET /communication/history request"
+                            
+                            # Create response with history and count
+                            $historyResponse = @{
+                                history = $communicationHistory | Select-Object -Last 100
+                                count = $communicationHistory.Count
+                            }
+                            Send-Response $response 200 $historyResponse
+                        } catch {
+                            Write-ErrorLog "Error processing communication history request: $_"
+                            Send-Response $response 500 @{ error = "Failed to retrieve communication history" }
+                        }
+                    } else {
+                        Send-Response $response 405 @{ error = "Method not allowed" }
+                    }
+                    break
+                }
+                
+                # Central Control Connection APIs
+                "/api/central-control/connect" {
+                    if ($method -eq "POST") {
+                        try {
+                            Write-DebugLog "Processing POST /api/central-control/connect request"
+                            
+                            # Ensure connections object exists
+                            if (-not $agentStatus.ContainsKey("connections")) {
+                                $agentStatus.connections = @{}
+                            }
+                            
+                            # Simulate connecting to central control
+                            $agentStatus.connections.centralControl = $true
+                            $agentStatus.centralControlConnected = $true
+                            $agentStatus.lastHeartbeat = Get-Date
+                            
+                            # Add to communication history
+                            $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                            $communicationHistory += "[$timestamp] 连接到中控系�? $CENTRAL_CONTROL_URL"
+                            
+                            Write-AgentLog "Connected to central control system"
+                            Send-Response $response 200 @{ message = "成功连接到中控系�? }
+                        } catch {
+                            Write-ErrorLog "Error connecting to central control: $_"
+                            Send-Response $response 500 @{ message = "连接中控系统失败: $_" }
+                        }
+                    } else {
+                        Send-Response $response 405 @{ error = "Method not allowed" }
+                    }
+                    break
+                }
+                
+                "/api/central-control/disconnect" {
+                    if ($method -eq "POST") {
+                        try {
+                            Write-DebugLog "Processing POST /api/central-control/disconnect request"
+                            
+                            # Ensure connections object exists
+                            if (-not $agentStatus.ContainsKey("connections")) {
+                                $agentStatus.connections = @{}
+                            }
+                            
+                            # Disconnect
+                            $agentStatus.connections.centralControl = $false
+                            $agentStatus.centralControlConnected = $false
+                            
+                            # Add to communication history
+                            $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                            $communicationHistory += "[$timestamp] 断开与中控系统的连接"
+                            
+                            Write-AgentLog "Disconnected from central control system"
+                            Send-Response $response 200 @{ message = "成功断开与中控系统的连接" }
+                        } catch {
+                            Write-ErrorLog "Error disconnecting from central control: $_"
+                            Send-Response $response 500 @{ message = "断开中控系统连接失败: $_" }
+                        }
+                    } else {
+                        Send-Response $response 405 @{ error = "Method not allowed" }
+                    }
+                    break
+                }
+                
+                "/api/central-control/send" {
+                    if ($method -eq "POST") {
+                        try {
+                            Write-DebugLog "Processing POST /api/central-control/send request"
+                            
+                            # Ensure connections object exists
+                            if (-not $agentStatus.ContainsKey("connections")) {
+                                $agentStatus.connections = @{}
+                            }
+                            
+                            # Read request body
+                            $body = $request.InputStream
+                            $encoding = [System.Text.Encoding]::UTF8
+                            $reader = New-Object System.IO.StreamReader($body, $encoding)
+                            $jsonBody = $reader.ReadToEnd()
+                            $reader.Close()
+                            
+                            # Parse JSON
+                            $data = ConvertFrom-Json -InputObject $jsonBody -ErrorAction Stop
+                            $message = $data.message
+                            
+                            # Check if connected
+                            if ($agentStatus.connections.centralControl) {
+                                $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                                $communicationHistory += "[$timestamp] 发送消息到中控系统: $message"
+                                
+                                # Log the message
+                                Write-DebugLog "Message sent to central control: $message"
+                                
+                                Send-Response $response 200 @{ message = "消息已发送到中控系统" }
+                            } else {
+                                Send-Response $response 400 @{ message = "未连接到中控系统" }
+                            }
+                        } catch {
+                            Write-ErrorLog "Failed to send message to central control system: $_"
+                            Send-Response $response 500 @{ message = "发送消息到中控系统失败" }
+                        }
+                    } else {
+                        Send-Response $response 405 @{ error = "Method not allowed" }
+                    }
+                    break
+                }
+                
+                "/pause" {
+                    if ($method -eq "POST") {
+                        try {
+                            New-Item -Path $PAUSE_FLAG_PATH -ItemType File -Force | Out-Null
+                            Send-Response $response 200 @{ status = "success"; message = "Paused" }
+                            Write-AgentLog "System paused"
+                        } catch {
+                            Write-ErrorLog "Failed to pause: $_"
+                            Send-Response $response 500 @{ status = "error"; message = "Failed to pause" }
+                        }
+                    } else {
+                        Send-Response $response 405 @{ error = "Method not allowed" }
+                    }
+                    break
+                }
+                
+                "/resume" {
+                    if ($method -eq "POST") {
+                        try {
+                            if (Test-Path -Path $PAUSE_FLAG_PATH) {
+                                Remove-Item -Path $PAUSE_FLAG_PATH -Force
+                            }
+                            Send-Response $response 200 @{ status = "success"; message = "Resumed" }
+                            Write-AgentLog "System resumed"
+                        } catch {
+                            Write-ErrorLog "Failed to resume: $_"
+                            Send-Response $response 500 @{ status = "error"; message = "Failed to resume" }
+                        }
+                    } else {
+                        Send-Response $response 405 @{ error = "Method not allowed" }
+                    }
+                    break
+                }
+                
+                "/logs" {
+                    if ($method -eq "GET") {
+                        try {
+                            # Create a timeout for reading logs
+                            $logsReadSuccess = $false
+                            $logs = @()
+                            
+                            try {
+                                # Use a script block with timeout to prevent hanging
+                                $scriptBlock = {
+                                    param($logPath)
+                                    $logEntries = @()
+                                    if (Test-Path -Path $logPath) {
+                                        # Limit to 50 lines maximum to ensure quick response
+                                        $logEntries = Get-Content -Path $logPath -Tail 50 -ErrorAction SilentlyContinue
+                                    }
+                                    return $logEntries
+                                }
+                                
+                                # Run with 5 second timeout
+                                $job = Start-Job -ScriptBlock $scriptBlock -ArgumentList $AGENT_LOG_PATH
+                                if (Wait-Job -Job $job -Timeout 5) {
+                                    $logs = Receive-Job -Job $job -ErrorAction SilentlyContinue
+                                    $logsReadSuccess = $true
+                                } else {
+                                    Write-ErrorLog "Timeout reading logs"
+                                    Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
+                                }
+                                
+                                # Clean up job
+                                Remove-Job -Job $job -ErrorAction SilentlyContinue
+                            } catch {
+                                Write-ErrorLog "Failed to read logs: $_"
+                            }
+                            
+                            # Always send a response, even if log reading failed
+                            $responseData = @{
+                                logs = $logs
+                                success = $logsReadSuccess
+                                timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                            }
+                            
+                            # Ensure response is sent immediately
+                            Send-Response $response 200 $responseData
+                            Write-AgentLog "Processed logs request successfully"
+                        } catch {
+                            Write-ErrorLog "Error processing logs request: $_"
+                            Send-Response $response 500 @{ success = false; error = "Failed to process logs"; timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss") }
+                        }
+                    } else {
+                        Send-Response $response 405 @{ error = "Method not allowed" }
+                    }
+                    break
+                }
+                
+                "/control_panel.html" {
+                    if ($method -eq "GET") {
+                        try {
+                            # Check if control panel file exists
+                            if (Test-Path -Path $CONTROL_PANEL_PATH) {
+                                try {
+                                    function Get-DefaultHtml {
+                                        @'
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop Agent Control Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .button-stop {
+            background-color: #f44336;
+        }
+        .button-stop:hover {
+            background-color: #da190b;
+        }
+        .button-secondary {
+            background-color: #2196F3;
+        }
+        .button-secondary:hover {
+            background-color: #0b7dda;
+        }
+        .status, .logs, .file-manager, .central-control {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        #status-content, #logs-content, #central-control-status {
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 50px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .save-status {
+            margin-top: 10px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+    <script>
+        function resumeAgent() {
+            fetch('/resume', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status-content').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('status-content').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        function pauseAgent() {
+            fetch('/pause', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status-content').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('status-content').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        function getStatus() {
+            fetch('/status')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status-content').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('status-content').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        function getLogs() {
+            fetch('/logs')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('logs-content').textContent = data;
+            })
+            .catch(error => {
+                document.getElementById('logs-content').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        function loadPanelContent() {
+            fetch('/load-panel')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('save-status').textContent = 'Content loaded successfully';
+            })
+            .catch(error => {
+                document.getElementById('save-status').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        function savePanelContent() {
+            fetch('/save-panel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: 'Panel content saved' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('save-status').textContent = 'Content saved successfully';
+            })
+            .catch(error => {
+                document.getElementById('save-status').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        function connectToCentralControl() {
+            fetch('/connect-central', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('central-control-status').textContent = 'Connected: ' + JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('central-control-status').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        function disconnectFromCentralControl() {
+            fetch('/disconnect-central', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('central-control-status').textContent = 'Disconnected: ' + JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('central-control-status').textContent = 'Error: ' + error.message;
+            });
+        }
+
+        // 定期更新状�?        setInterval(getStatus, 10000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Desktop Agent Control Panel</h1>
+        <button class="button" onclick="resumeAgent()">Resume</button>
+        <button class="button button-stop" onclick="pauseAgent()">Pause</button>
+        <button class="button" onclick="getStatus()">Get Status</button>
+        <button class="button" onclick="getLogs()">Get Logs</button>
+        
+        <div class="status" id="status">
+            <h3>Status</h3>
+            <div id="status-content">Click "Get Status" to check agent status</div>
+        </div>
+        
+        <div class="logs" id="logs">
+            <h3>Logs</h3>
+            <div id="logs-content">Click "Get Logs" to view recent logs</div>
+        </div>
+        
+        <div class="file-manager">
+            <h3>File Manager</h3>
+            <button class="button button-secondary" onclick="loadPanelContent()">Load</button>
+            <button class="button button-secondary" onclick="savePanelContent()">Save</button>
+            <div class="save-status" id="save-status"></div>
+        </div>
+        
+        <div class="central-control">
+            <h3>Central Control System</h3>
+            <button class="button" onclick="connectToCentralControl()">Connect</button>
+            <button class="button button-stop" onclick="disconnectFromCentralControl()">Disconnect</button>
+            <div id="central-control-status">Not connected</div>
+            
+            <h4>Send Test Message</h4>
+        </div>
+    </div>
+</body>
+</html>
+'@
+}
+
+# API endpoint for control panel management
+                "/api/control_panel" {
+                    if ($method -eq "POST") {
+                        try {
+                            # Read request body
+                            $body = $request.InputStream
+                            $encoding = [System.Text.Encoding]::UTF8
+                            $reader = New-Object System.IO.StreamReader($body, $encoding)
+                            $jsonBody = $reader.ReadToEnd()
+                            $reader.Close()
+                            
+                            # Parse JSON
+                            $data = ConvertFrom-Json -InputObject $jsonBody -ErrorAction Stop
+                            
+                            if ($data -and $data.content) {
+                                # Validate content is HTML
+                                if ($data.content -match '<!DOCTYPE\s+html' -or $data.content -match '<html') {
+                                    # Save content to file
+                                    $data.content | Out-File -FilePath $CONTROL_PANEL_PATH -Encoding utf8 -Force
+                                    Write-AgentLog "Updated control panel HTML file via API"
+                                    
+                                    Send-Response $response 200 @{ success = $true; message = "Control panel updated successfully" }
+                                } else {
+                                    Send-Response $response 400 @{ success = $false; message = "Invalid HTML content" }
+                                }
+                            } else {
+                                Send-Response $response 400 @{ success = $false; message = "Content not provided" }
+                            }
+                        } catch {
+                            Write-ErrorLog "Error updating control panel: $_"
+                            Send-Response $response 400 @{ success = $false; message = "Invalid JSON format" }
+                        }
+                    } elseif ($method -eq "GET") {
+                        # Get current control panel file info
+                        try {
+                            $fileInfo = @{
+                                exists = (Test-Path -Path $CONTROL_PANEL_PATH)
+                                path = $CONTROL_PANEL_PATH
+                            }
+                            
+                            if ($fileInfo.exists) {
+                                $fileStats = Get-Item -Path $CONTROL_PANEL_PATH
+                                $fileInfo.lastModified = $fileStats.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
+                                $fileInfo.size = $fileStats.Length
+                            }
+                            
+                            Send-Response $response 200 @{ success = $true; fileInfo = $fileInfo }
+                        } catch {
+                            Write-ErrorLog "Error getting control panel info: $_"
+                            Send-Response $response 500 @{ success = $false; message = "Failed to get file info" }
+                        }
+                    } else {
+                        Send-Response $response 405 @{ error = "Method not allowed" }
+                    }
+                    break
+                }
+                
+                default {
+                    Send-Response $response 404 @{ error = "Not found" }
+                }
+            }
+        } catch {
+            Write-ErrorLog "ERROR in route handling: $_"
+            try {
+                # Ensure response is not already sent
+                if ($response -ne $null) {
+                    Send-Response $response 500 @{ status = "error"; message = "Internal server error" }
+                }
+            } catch {
+                Write-ErrorLog "Failed to send error response for route handling: $_"
+            }
+        }
+    } catch {
+        Write-ErrorLog "CRITICAL ERROR in main loop: $_"
+        # Ensure response is closed in case of exception
+        try { if ($response) { $response.Close() } } catch {}
+        # Wait briefly to prevent CPU spike in case of continuous errors
+        Start-Sleep -Milliseconds 100
+    }
+}

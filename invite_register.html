@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEV L8.9.6 - 注册账号</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --success-color: #27ae60;
+      --danger-color: #e74c3c;
+      --warning-color: #f39c12;
+      --light-bg: #f8f9fa;
+      --dark-text: #2c3e50;
+      --border-radius: 8px;
+      --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--light-bg) 0%, #e9ecef 100%);
+      color: var(--dark-text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .register-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    .card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, var(--primary-color), #2980b9);
+      color: white;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    
+    .card-header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .card-header p {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin: 0;
+    }
+    
+    .card-body {
+      padding: 2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .form-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--dark-text);
+      font-size: 0.9rem;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: #fff;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+      outline: none;
+      background-color: #f8f9fa;
+    }
+    
+    .form-control.error {
+      border-color: var(--danger-color);
+    }
+    
+    .form-control.success {
+      border-color: var(--success-color);
+    }
+    
+    .input-icon {
+      position: absolute;
+      right: 15px;
+      top: 2.25rem;
+      color: #aaa;
+      pointer-events: none;
+    }
+    
+    .input-icon.success {
+      color: var(--success-color);
+    }
+    
+    .input-icon.error {
+      color: var(--danger-color);
+    }
+    
+    .form-text {
+      font-size: 0.875rem;
+      color: #6c757d;
+      margin-top: 0.25rem;
+      display: block;
+    }
+    
+    .form-text.error {
+      color: var(--danger-color);
+    }
+    
+    .form-text.success {
+      color: var(--success-color);
+    }
+    
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.875rem;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), #2980b9);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.7;
+      transform: none;
+      cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: white;
+      margin-top: 1rem;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #1a252f;
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .alert {
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      position: relative;
+    }
+    
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border-left: 4px solid var(--success-color);
+    }
+    
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid var(--danger-color);
+    }
+    
+    .alert-warning {
+      background-color: #fff3cd;
+      color: #856404;
+      border-left: 4px solid var(--warning-color);
+    }
+    
+    .alert-info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .alert-icon {
+      margin-right: 0.5rem;
+    }
+    
+    .invite-code-field {
+      position: relative;
+    }
+    
+    #validate-invite-btn {
+      position: absolute;
+      right: 10px;
+      top: 2.25rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      border-radius: 4px;
+      height: 40px;
+    }
+    
+    .form-step {
+      display: none;
+    }
+    
+    .form-step.active {
+      display: block;
+    }
+    
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding: 0 1rem;
+    }
+    
+    .step {
+      position: relative;
+      flex: 1;
+      text-align: center;
+    }
+    
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #e0e0e0;
+      color: #666;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .step.active .step-number {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .step.completed .step-number {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .step.completed .step-number::after {
+      content: '✓';
+    }
+    
+    .step-name {
+      font-size: 0.875rem;
+      color: #666;
+    }
+    
+    .step.active .step-name,
+    .step.completed .step-name {
+      color: var(--dark-text);
+      font-weight: 500;
+    }
+    
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      right: -50%;
+      width: 100%;
+      height: 2px;
+      background-color: #e0e0e0;
+      z-index: -1;
+    }
+    
+    .step.completed::after {
+      background-color: var(--success-color);
+    }
+    
+    .step.active:not(:last-child)::after {
+      background: linear-gradient(to right, var(--success-color) 50%, #e0e0e0 50%);
+    }
+    
+    .invite-code-hint {
+      background-color: #f8f9fa;
+      border-left: 4px solid var(--primary-color);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    }
+    
+    .invite-code-hint h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark-text);
+    }
+    
+    .invite-code-hint p {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin: 0;
+    }
+    
+    .terms-agreement {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+    
+    .terms-agreement input[type="checkbox"] {
+      margin-top: 0.25rem;
+      margin-right: 0.75rem;
+      width: 18px;
+      height: 18px;
+    }
+    
+    .terms-agreement label {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    
+    .terms-agreement a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+    
+    .terms-agreement a:hover {
+      text-decoration: underline;
+    }
+    
+    .register-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .register-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .register-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      margin-left: 0.5rem;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .form-control:-webkit-autofill,
+    .form-control:-webkit-autofill:hover,
+    .form-control:-webkit-autofill:focus {
+      border-color: var(--primary-color);
+      -webkit-text-fill-color: var(--dark-text);
+      transition: background-color 5000s ease-in-out 0s;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 576px) {
+      .card-header {
+        padding: 1.5rem 1rem;
+      }
+      
+      .card-header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .card-body {
+        padding: 1.5rem 1rem;
+      }
+      
+      .step-name {
+        font-size: 0.75rem;
+      }
+      
+      #validate-invite-btn {
+        position: static;
+        width: 100%;
+        margin-top: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="card">
+      <!-- 头部 -->
+      <div class="card-header">
+        <h1><i class="fa fa-user-plus"></i> 创建账号</h1>
+        <p>请完成邀请码验证和账号注册</p>
+      </div>
+      
+      <!-- 步骤指示器 -->
+      <div class="step-indicator">
+        <div class="step active" id="step-1">
+          <div class="step-number">1</div>
+          <div class="step-name">邀请码验证</div>
+        </div>
+        <div class="step" id="step-2">
+          <div class="step-number">2</div>
+          <div class="step-name">填写信息</div>
+        </div>
+        <div class="step" id="step-3">
+          <div class="step-number">3</div>
+          <div class="step-name">完成注册</div>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <!-- 消息提示区域 -->
+        <div id="message-area" style="display: none;"></div>
+        
+        <!-- 第一步：邀请码验证 -->
+        <div class="form-step active" id="step-1-content">
+          <div class="invite-code-hint">
+            <h4><i class="fa fa-info-circle text-primary"></i> 需要邀请码</h4>
+            <p>JEV平台采用邀请制注册，请输入有效的邀请码完成验证。邀请码格式：AGT-XXXX-XXXX</p>
+          </div>
+          
+          <div class="form-group invite-code-field">
+            <label for="invite-code" class="form-label">邀请码 <span class="text-danger">*</span></label>
+            <input 
+              type="text" 
+              id="invite-code" 
+              class="form-control" 
+              placeholder="请输入邀请码（例如：AGT-A1B2-C3D4）"
+              maxlength="13"
+            >
+            <button 
+              id="validate-invite-btn" 
+              class="btn btn-primary btn-sm"
+              type="button"
+            >
+              验证
+            </button>
+            <div class="form-text" id="invite-code-hint">请输入格式为AGT-XXXX-XXXX的邀请码</div>
+          </div>
+          
+          <button 
+            id="continue-to-step-2" 
+            class="btn btn-primary" 
+            disabled
+          >
+            继续注册
+          </button>
+        </div>
+        
+        <!-- 第二步：填写信息 -->
+        <div class="form-step" id="step-2-content">
+          <div class="form-group">
+            <label for="email" class="form-label">电子邮箱 <span class="text-danger">*</span></label>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-control" 
+              placeholder="请输入您的电子邮箱"
+            >
+            <div class="form-text" id="email-hint">请使用真实有效的邮箱地址</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="username" class="form-label">用户名 <span class="text-danger">*</span></label>
+            <input 
+              type="text" 
+              id="username" 
+              class="form-control" 
+              placeholder="请设置您的用户名"
+              minlength="4"
+              maxlength="20"
+            >
+            <div class="form-text" id="username-hint">4-20个字符，支持字母、数字和下划线</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="password" class="form-label">密码 <span class="text-danger">*</span></label>
+            <input 
+              type="password" 
+              id="password" 
+              class="form-control" 
+              placeholder="请设置您的密码"
+              minlength="8"
+            >
+            <div class="form-text" id="password-hint">至少8个字符，包含字母和数字</div>
+          </div>
+          
+          <div class="form-group">
+            <label for="confirm-password" class="form-label">确认密码 <span class="text-danger">*</span></label>
+            <input 
+              type="password" 
+              id="confirm-password" 
+              class="form-control" 
+              placeholder="请再次输入密码"
+            >
+            <div class="form-text" id="confirm-password-hint">请与上面输入的密码保持一致</div>
+          </div>
+          
+          <div class="terms-agreement">
+            <input type="checkbox" id="terms" name="terms">
+            <label for="terms">
+              我已阅读并同意 <a href="#" data-toggle="modal" data-target="#termsModal">服务条款</a> 和 <a href="#" data-toggle="modal" data-target="#privacyModal">隐私政策</a>
+            </label>
+          </div>
+          
+          <div class="row gap-2">
+            <button id="back-to-step-1" class="btn btn-secondary col-5">
+              返回
+            </button>
+            <button id="submit-registration" class="btn btn-primary col-7" disabled>
+              提交注册
+            </button>
+          </div>
+        </div>
+        
+        <!-- 第三步：完成注册 -->
+        <div class="form-step" id="step-3-content">
+          <div class="text-center py-4">
+            <div class="success-icon" style="font-size: 4rem; color: var(--success-color); margin-bottom: 1rem;">
+              <i class="fa fa-check-circle"></i>
+            </div>
+            <h2 class="mb-2">注册成功！</h2>
+            <p class="text-muted mb-4">您的账号已成功创建，请登录并开始使用。</p>
+            
+            <div class="account-info" style="background-color: #f8f9fa; padding: 1.5rem; border-radius: var(--border-radius); margin-bottom: 2rem;">
+              <div class="mb-2"><strong>用户名：</strong> <span id="registered-username"></span></div>
+              <div class="mb-2"><strong>电子邮箱：</strong> <span id="registered-email"></span></div>
+              <div class="mb-2"><strong>用户角色：</strong> <span id="registered-role"></span></div>
+              <div><strong>邀请码：</strong> <span id="registered-invite"></span></div>
+            </div>
+            
+            <a href="#" class="btn btn-primary" id="go-to-login">
+              前往登录
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="register-footer mt-4">
+      已有账号？<a href="#">立即登录</a>
+    </div>
+  </div>
+
+  <!-- 服务条款和隐私政策模态框 (简化版) -->
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="termsModalLabel">服务条款</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>服务条款内容...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="privacyModalLabel">隐私政策</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>隐私政策内容...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // 全局配置
+    const config = {
+      apiUrl: 'http://localhost:8787', // API地址
+      verifiedInvite: null, // 已验证的邀请码信息
+      isSubmitting: false // 提交状态
+    };
+    
+    // 表单状态
+    const formState = {
+      inviteCode: {
+        value: '',
+        valid: false
+      },
+      email: {
+        value: '',
+        valid: false
+      },
+      username: {
+        value: '',
+        valid: false
+      },
+      password: {
+        value: '',
+        valid: false
+      },
+      confirmPassword: {
+        value: '',
+        valid: false
+      },
+      terms: false
+    };
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      bindEvents();
+      setupFormValidation();
+    });
+
+    // 绑定事件
+    function bindEvents() {
+      // 邀请码验证
+      document.getElementById('validate-invite-btn').addEventListener('click', validateInviteCode);
+      document.getElementById('invite-code').addEventListener('input', handleInviteCodeInput);
+      document.getElementById('invite-code').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') validateInviteCode();
+      });
+      
+      // 步骤导航
+      document.getElementById('continue-to-step-2').addEventListener('click', goToStep2);
+      document.getElementById('back-to-step-1').addEventListener('click', goToStep1);
+      
+      // 表单提交
+      document.getElementById('submit-registration').addEventListener('click', submitRegistration);
+      
+      // 条款同意
+      document.getElementById('terms').addEventListener('change', updateTerms);
+      
+      // 前往登录
+      document.getElementById('go-to-login').addEventListener('click', (e) => {
+        e.preventDefault();
+        showMessage('success', '即将跳转到登录页面...');
+        setTimeout(() => {
+          alert('这里将跳转到登录页面');
+        }, 1000);
+      });
+    }
+
+    // 设置表单验证
+    function setupFormValidation() {
+      // 邮箱验证
+      const emailInput = document.getElementById('email');
+      emailInput.addEventListener('input', () => validateField('email', emailInput.value));
+      emailInput.addEventListener('blur', () => validateField('email', emailInput.value, true));
+      
+      // 用户名验证
+      const usernameInput = document.getElementById('username');
+      usernameInput.addEventListener('input', () => validateField('username', usernameInput.value));
+      usernameInput.addEventListener('blur', () => validateField('username', usernameInput.value, true));
+      
+      // 密码验证
+      const passwordInput = document.getElementById('password');
+      passwordInput.addEventListener('input', () => validateField('password', passwordInput.value));
+      passwordInput.addEventListener('blur', () => validateField('password', passwordInput.value, true));
+      
+      // 确认密码验证
+      const confirmPasswordInput = document.getElementById('confirm-password');
+      confirmPasswordInput.addEventListener('input', () => {
+        validateField('confirmPassword', confirmPasswordInput.value, true);
+      });
+    }
+
+    // 显示消息
+    function showMessage(type, message) {
+      const messageArea = document.getElementById('message-area');
+      messageArea.className = `alert alert-${type}`;
+      messageArea.innerHTML = `<i class="fa fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} alert-icon"></i>${message}`;
+      messageArea.style.display = 'block';
+      
+      // 5秒后自动隐藏信息
+      if (type !== 'error') {
+        setTimeout(() => {
+          messageArea.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    // 隐藏消息
+    function hideMessage() {
+      document.getElementById('message-area').style.display = 'none';
+    }
+
+    // 处理邀请码输入
+    function handleInviteCodeInput() {
+      const input = this;
+      let value = input.value.replace(/[^A-Z0-9-]/gi, '').toUpperCase();
+      
+      // 格式化输入，自动添加分隔符
+      if (value.length > 0) {
+        if (value.length <= 3) {
+          value = 'AGT'.substring(0, value.length);
+        } else if (value.length <= 8) {
+          value = `AGT-${value.substring(3)}`;
+        } else {
+          value = `AGT-${value.substring(3, 7)}-${value.substring(7, 11)}`;
+        }
+      }
+      
+      input.value = value;
+      formState.inviteCode.value = value;
+      
+      // 重置验证状态
+      if (formState.inviteCode.valid) {
+        formState.inviteCode.valid = false;
+        document.getElementById('continue-to-step-2').disabled = true;
+        document.getElementById('invite-code').classList.remove('success');
+        document.getElementById('invite-code-hint').className = 'form-text';
+        document.getElementById('invite-code-hint').textContent = '请输入格式为AGT-XXXX-XXXX的邀请码';
+        config.verifiedInvite = null;
+      }
+    }
+
+    // 验证邀请码
+    async function validateInviteCode() {
+      const inviteCode = formState.inviteCode.value;
+      
+      // 格式验证
+      if (!/^AGT-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(inviteCode)) {
+        showMessage('error', '请输入正确格式的邀请码（AGT-XXXX-XXXX）');
+        document.getElementById('invite-code').classList.add('error');
+        document.getElementById('invite-code-hint').className = 'form-text error';
+        document.getElementById('invite-code-hint').textContent = '邀请码格式不正确';
+        return;
+      }
+      
+      // 显示加载状态
+      const validateBtn = document.getElementById('validate-invite-btn');
+      const originalText = validateBtn.innerHTML;
+      validateBtn.disabled = true;
+      validateBtn.innerHTML = '验证中 <div class="loader"></div>';
+      
+      try {
+        hideMessage();
+        
+        // 调用API验证邀请码
+        const response = await fetch(`${config.apiUrl}/invites/validate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ code: inviteCode })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          if (data.success) {
+            // 验证成功
+            formState.inviteCode.valid = true;
+            config.verifiedInvite = data.data;
+            
+            document.getElementById('invite-code').classList.remove('error');
+            document.getElementById('invite-code').classList.add('success');
+            document.getElementById('invite-code-hint').className = 'form-text success';
+            
+            // 显示邀请码信息
+            let hintText = '邀请码验证成功！';
+            if (config.verifiedInvite.remaining_uses !== Infinity) {
+              hintText += ` 剩余使用次数: ${config.verifiedInvite.remaining_uses}`;
+            }
+            if (config.verifiedInvite.expires_at) {
+              const expiryDate = new Date(config.verifiedInvite.expires_at).toLocaleString();
+              hintText += ` 过期时间: ${expiryDate}`;
+            }
+            
+            document.getElementById('invite-code-hint').textContent = hintText;
+            document.getElementById('continue-to-step-2').disabled = false;
+            showMessage('success', '邀请码验证成功，可以继续注册流程');
+          } else {
+            // 验证失败
+            formState.inviteCode.valid = false;
+            document.getElementById('invite-code').classList.remove('success');
+            document.getElementById('invite-code').classList.add('error');
+            document.getElementById('invite-code-hint').className = 'form-text error';
+            document.getElementById('invite-code-hint').textContent = data.error;
+            document.getElementById('continue-to-step-2').disabled = true;
+            showMessage('error', `邀请码验证失败: ${data.error}`);
+          }
+        } else {
+          throw new Error(`API错误: HTTP ${response.status}`);
+        }
+      } catch (error) {
+        formState.inviteCode.valid = false;
+        document.getElementById('invite-code').classList.remove('success');
+        document.getElementById('invite-code').classList.add('error');
+        document.getElementById('invite-code-hint').className = 'form-text error';
+        document.getElementById('invite-code-hint').textContent = '验证失败，请稍后重试';
+        document.getElementById('continue-to-step-2').disabled = true;
+        showMessage('error', `验证过程出错: ${error.message}`);
+      } finally {
+        // 恢复按钮状态
+        validateBtn.disabled = false;
+        validateBtn.innerHTML = originalText;
+      }
+    }
+
+    // 验证表单字段
+    function validateField(fieldName, value, showHint = false) {
+      let isValid = false;
+      let hintText = '';
+      let hintClass = 'form-text';
+      
+      switch (fieldName) {
+        case 'email':
+          isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+          hintText = isValid ? '邮箱格式正确' : '请输入有效的邮箱地址';
+          hintClass = isValid ? 'form-text success' : showHint ? 'form-text error' : 'form-text';
+          break;
+          
+        case 'username':
+          isValid = /^[a-zA-Z0-9_]{4,20}$/.test(value);
+          hintText = isValid ? '用户名可用' : '用户名需为4-20个字符，只允许字母、数字和下划线';
+          hintClass = isValid ? 'form-text success' : showHint ? 'form-text error' : 'form-text';
+          break;
+          
+        case 'password':
+          isValid = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/.test(value);
+          hintText = isValid ? '密码强度良好' : '密码至少8个字符，必须包含字母和数字';
+          hintClass = isValid ? 'form-text success' : showHint ? 'form-text error' : 'form-text';
+          break;
+          
+        case 'confirmPassword':
+          isValid = value === formState.password.value && value.length > 0;
+          hintText = isValid ? '密码一致' : '两次输入的密码不一致';
+          hintClass = isValid ? 'form-text success' : 'form-text error';
+          break;
+      }
+      
+      // 更新状态
+      formState[fieldName].value = value;
+      formState[fieldName].valid = isValid;
+      
+      // 更新UI
+      const input = document.getElementById(fieldName);
+      const hint = document.getElementById(`${fieldName}-hint`);
+      
+      if (input) {
+        input.classList.remove('success', 'error');
+        if (value.length > 0) {
+          input.classList.add(isValid ? 'success' : showHint ? 'error' : '');
+        }
+      }
+      
+      if (hint) {
+        hint.className = hintClass;
+        if (showHint || (value.length > 0 && hintClass.includes('success'))) {
+          hint.textContent = hintText;
+        }
+      }
+      
+      // 更新提交按钮状态
+      updateSubmitButton();
+    }
+
+    // 更新条款同意状态
+    function updateTerms() {
+      formState.terms = this.checked;
+      updateSubmitButton();
+    }
+
+    // 更新提交按钮状态
+    function updateSubmitButton() {
+      const submitBtn = document.getElementById('submit-registration');
+      const isAllValid = formState.email.valid && 
+                         formState.username.valid && 
+                         formState.password.valid && 
+                         formState.confirmPassword.valid && 
+                         formState.terms;
+      
+      submitBtn.disabled = !isAllValid || config.isSubmitting;
+    }
+
+    // 跳转到步骤2
+    function goToStep2() {
+      if (!formState.inviteCode.valid) {
+        showMessage('error', '请先验证邀请码');
+        return;
+      }
+      
+      // 更新步骤指示器
+      document.getElementById('step-1').classList.remove('active');
+      document.getElementById('step-1').classList.add('completed');
+      document.getElementById('step-2').classList.add('active');
+      
+      // 切换内容
+      document.getElementById('step-1-content').classList.remove('active');
+      document.getElementById('step-2-content').classList.add('active');
+      
+      // 滚动到顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 返回到步骤1
+    function goToStep1() {
+      // 更新步骤指示器
+      document.getElementById('step-2').classList.remove('active');
+      document.getElementById('step-1').classList.remove('completed');
+      document.getElementById('step-1').classList.add('active');
+      
+      // 切换内容
+      document.getElementById('step-2-content').classList.remove('active');
+      document.getElementById('step-1-content').classList.add('active');
+      
+      // 滚动到顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 提交注册
+    async function submitRegistration() {
+      if (config.isSubmitting) return;
+      
+      // 验证所有字段
+      const allFieldsValid = formState.email.valid && 
+                           formState.username.valid && 
+                           formState.password.valid && 
+                           formState.confirmPassword.valid && 
+                           formState.terms && 
+                           formState.inviteCode.valid;
+      
+      if (!allFieldsValid) {
+        showMessage('error', '请填写并验证所有必填字段');
+        return;
+      }
+      
+      // 设置提交状态
+      config.isSubmitting = true;
+      const submitBtn = document.getElementById('submit-registration');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '注册中 <div class="loader"></div>';
+      
+      try {
+        hideMessage();
+        
+        // 准备注册数据
+        const registrationData = {
+          email: formState.email.value,
+          username: formState.username.value,
+          password: formState.password.value,
+          invite_code: formState.inviteCode.value
+        };
+        
+        // 调用注册API
+        const response = await fetch(`${config.apiUrl}/agents/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(registrationData)
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          
+          if (data.success) {
+            // 注册成功
+            showRegistrationSuccess(data);
+          } else {
+            // 注册失败
+            showMessage('error', `注册失败: ${data.error}`);
+          }
+        } else {
+          throw new Error(`API错误: HTTP ${response.status}`);
+        }
+      } catch (error) {
+        showMessage('error', `注册过程出错: ${error.message}`);
+      } finally {
+        // 恢复按钮状态
+        config.isSubmitting = false;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    }
+
+    // 显示注册成功
+    function showRegistrationSuccess(data) {
+      // 更新步骤指示器
+      document.getElementById('step-2').classList.remove('active');
+      document.getElementById('step-2').classList.add('completed');
+      document.getElementById('step-3').classList.add('active');
+      
+      // 填充注册信息
+      document.getElementById('registered-username').textContent = formState.username.value;
+      document.getElementById('registered-email').textContent = formState.email.value;
+      document.getElementById('registered-role').textContent = getRoleName(config.verifiedInvite.role);
+      document.getElementById('registered-invite').textContent = formState.inviteCode.value;
+      
+      // 切换到成功页面
+      document.getElementById('step-2-content').classList.remove('active');
+      document.getElementById('step-3-content').classList.add('active');
+      
+      // 滚动到顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 获取角色名称
+    function getRoleName(role) {
+      const roleMap = {
+        'user': '普通用户',
+        'agent': '代理',
+        'admin': '管理员'
+      };
+      return roleMap[role] || role;
+    }
+  </script>
+</body>
+</html>

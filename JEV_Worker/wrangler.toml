@@ -1,0 +1,39 @@
+name = "jev-worker"
+type = "javascript"
+
+account_id = "$CLOUDFLARE_ACCOUNT_ID"
+workers_dev = true
+tail_compatibility_mode = true
+
+[env.production]
+name = "jev-worker-production"
+
+[build]
+command = ""
+[build.upload]
+format = "service-worker"
+
+[[kv_namespaces]]
+binding = "JEV_DATA"
+preview_id = "preview_kv_id"
+
+[[durable_objects.bindings]]
+binding = "JEV_SESSIONS"
+class_name = "SessionManager"
+
+[vars]
+WORKER_VERSION = "v9.6"
+SYSTEM_STATE = "stable"
+LOCK_STATUS = "active"
+
+[build.upload]
+format = "service-worker"
+compatibility_date = "2023-12-01"
+
+[observability]
+logs = {
+  enabled = true,
+  head_sampling_rate = 1,
+  invocation_logs = true,
+  persist = true
+}

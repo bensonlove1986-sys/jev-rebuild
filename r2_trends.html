@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV Worker 检测历史分析</title>
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- 配置 TailwindCSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#0F172A',
+                        'dark-card': '#1E293B',
+                        'dark-border': '#334155',
+                        'dark-text-primary': '#F8FAFC',
+                        'dark-text-secondary': '#94A3B8',
+                        'success': '#10B981',
+                        'warning': '#F59E0B',
+                        'error': '#EF4444',
+                        'info': '#3B82F6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card {
+                @apply bg-dark-card rounded-xl shadow-lg overflow-hidden transition-all duration-300;
+            }
+            .fade-in {
+                animation: fadeIn 0.5s ease-in-out;
+            }
+            .slide-in {
+                animation: slideIn 0.3s ease-out;
+            }
+            .hover-scale {
+                @apply hover:scale-[1.02] transition-transform duration-300;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-dark-text-primary min-h-screen">
+    <!-- 顶部标题栏 -->
+    <header class="bg-dark-card shadow-md py-4 px-6 sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                JEV Worker 检测历史分析
+            </h1>
+            <div class="flex items-center gap-3">
+                <button id="refresh-btn" class="bg-info hover:bg-info/90 text-white px-4 py-2 rounded-lg flex items-center transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    刷新数据
+                </button>
+                <div id="status" class="text-sm text-dark-text-secondary"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 统计信息卡片 -->
+    <div class="container mx-auto px-4 py-6">
+        <div id="stats-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6 fade-in">
+            <div class="card p-4 hover-scale">
+                <div class="text-dark-text-secondary text-sm mb-1">最近检测</div>
+                <div id="last-check" class="text-xl font-bold"></div>
+            </div>
+            <div class="card p-4 hover-scale">
+                <div class="text-dark-text-secondary text-sm mb-1">平均成功率</div>
+                <div id="avg-success-rate" class="text-xl font-bold"></div>
+            </div>
+            <div class="card p-4 hover-scale">
+                <div class="text-dark-text-secondary text-sm mb-1">连续成功</div>
+                <div id="success-streak" class="text-xl font-bold"></div>
+            </div>
+            <div class="card p-4 hover-scale">
+                <div class="text-dark-text-secondary text-sm mb-1">最差检测</div>
+                <div id="worst-check" class="text-xl font-bold"></div>
+            </div>
+            <div class="card p-4 hover-scale">
+                <div class="text-dark-text-secondary text-sm mb-1">报告总数</div>
+                <div id="total-reports" class="text-xl font-bold"></div>
+            </div>
+        </div>
+
+        <!-- 图表容器 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- 折线图卡片 -->
+            <div class="card p-5 hover-scale">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        检测成功率趋势
+                    </h2>
+                    <span class="text-xs text-dark-text-secondary" id="trend-period"></span>
+                </div>
+                <div class="relative h-[300px]">
+                    <canvas id="trend-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- 柱状图卡片 -->
+            <div class="card p-5 hover-scale">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        接口可靠度对比
+                    </h2>
+                    <span class="text-xs text-dark-text-secondary">按端点</span>
+                </div>
+                <div class="relative h-[300px]">
+                    <canvas id="endpoint-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- 饼图卡片 -->
+            <div class="card p-5 hover-scale">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-bold flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        总体成功/失败比例
+                    </h2>
+                    <span class="text-xs text-dark-text-secondary">汇总数据</span>
+                </div>
+                <div class="relative h-[300px]">
+                    <canvas id="success-fail-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 表格容器 -->
+        <div class="card p-5 fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="font-bold flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-dark-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    历史报告详情
+                </h2>
+                <div class="text-sm text-dark-text-secondary" id="table-count"></div>
+            </div>
+            
+            <!-- 加载中状态 -->
+            <div id="loading" class="text-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-info mx-auto mb-4"></div>
+                <p class="text-dark-text-secondary">正在加载 R2 历史数据...</p>
+            </div>
+            
+            <!-- 错误提示 -->
+            <div id="error" class="hidden text-center py-10 bg-error/10 rounded-lg border-l-4 border-error">
+                <p class="text-error font-medium">⚠️ 无法加载历史报告</p>
+                <p class="text-dark-text-secondary mt-2" id="error-message">请检查网络连接或稍后再试</p>
+            </div>
+            
+            <!-- 数据表格 -->
+            <div id="table-container" class="hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-dark-border/50">
+                            <tr>
+                                <th class="px-4 py-3 text-sm font-medium text-dark-text-secondary">检测时间</th>
+                                <th class="px-4 py-3 text-sm font-medium text-dark-text-secondary">成功率</th>
+                                <th class="px-4 py-3 text-sm font-medium text-dark-text-secondary">状态</th>
+                                <th class="px-4 py-3 text-sm font-medium text-dark-text-secondary">详情</th>
+                            </tr>
+                        </thead>
+                        <tbody id="report-table" class="divide-y divide-dark-border/30">
+                            <!-- 表格内容将通过 JavaScript 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部信息 -->
+    <footer class="bg-dark-card mt-10 py-6 px-4">
+        <div class="container mx-auto text-center text-dark-text-secondary text-sm">
+            <p>JEV Worker 检测历史分析系统 v1.0</p>
+            <p class="mt-1">数据来源于 Cloudflare R2</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript 文件引用 -->
+    <script src="./r2_history.js"></script>
+</body>
+</html>

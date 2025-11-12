@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "count": 0,
+  "messages": [],
+  "attempts": [
+    {
+      "source": "post_list",
+      "status": 404,
+      "ok": false,
+      "reason": "error",
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "source": "get_list",
+      "status": 404,
+      "ok": false,
+      "reason": "error",
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "source": "post_list",
+      "status": 404,
+      "ok": false,
+      "reason": "error",
+      "body": {
+        "msg": "Not found"
+      }
+    }
+  ],
+  "lastError": {
+    "status": 404,
+    "body": {
+      "msg": "Not found"
+    },
+    "url": "https://rest.gohighlevel.com/v1/conversations/messages/"
+  }
+}

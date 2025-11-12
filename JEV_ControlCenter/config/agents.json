@@ -1,0 +1,34 @@
+[
+  {
+    "id": "agent_in_01",
+    "name": "Rahul (India)",
+    "region": "IN",
+    "language": "en",
+    "role": "support",
+    "status": "active"
+  },
+  {
+    "id": "agent_vn_02",
+    "name": "Thao (Vietnam)",
+    "region": "VN",
+    "language": "vi",
+    "role": "support",
+    "status": "active"
+  },
+  {
+    "id": "agent_bd_03",
+    "name": "Rafi (Bangladesh)",
+    "region": "BD",
+    "language": "bn",
+    "role": "support",
+    "status": "active"
+  },
+  {
+    "id": "agent_pk_04",
+    "name": "Ali (Pakistan)",
+    "region": "PK",
+    "language": "ur",
+    "role": "support",
+    "status": "active"
+  }
+]

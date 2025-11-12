@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "formidable": "^3.5.4",
+    "iconv-lite": "^0.7.0",
+    "ws": "^8.18.3"
+  }
+}

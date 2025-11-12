@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-11-09T15:07:18.399Z",
+  "status": "OK",
+  "worker_latency_avg": 545,
+  "plugin_error_rate": 4.0402635731315115,
+  "active_clients": 24,
+  "alerts_last_24h": 3,
+  "cloud_online_rate": 87.33834217946017,
+  "version": "v2.0"
+}

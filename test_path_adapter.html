@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEVShop Worker路径适配测试工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .shadow-card {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <!-- 页面标题 -->
+        <div class="bg-gradient-blue rounded-xl p-6 shadow-lg mb-8">
+            <h1 class="text-3xl font-bold text-center text-white mb-2">JEVShop Worker路径适配测试工具</h1>
+            <p class="text-center text-blue-100">测试所有兼容路径，验证Worker的路径适配功能</p>
+        </div>
+
+        <!-- 基础设置 -->
+        <div class="bg-white rounded-xl shadow-card p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="worker-url" class="block text-sm font-medium text-gray-700 mb-2">
+                        Worker基础URL
+                    </label>
+                    <input 
+                        type="text" 
+                        id="worker-url" 
+                        value="https://jevshop.bensonlove1986.workers.dev" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                    >
+                </div>
+                <div>
+                    <label for="auth-token" class="block text-sm font-medium text-gray-700 mb-2">
+                        认证密钥 (X-Webhook-Secret)
+                    </label>
+                    <input 
+                        type="text" 
+                        id="auth-token" 
+                        value="jevindustry2025" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- 上传路径测试 -->
+            <div class="bg-white rounded-xl shadow-card p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fa fa-upload text-primary mr-2"></i> 上传路径测试
+                </h2>
+                <div class="space-y-2" id="upload-paths-container">
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/api/upload</span>
+                        <button onclick="testPath('/api/upload')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/upload</span>
+                        <button onclick="testPath('/upload')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/upload-to-r2</span>
+                        <button onclick="testPath('/upload-to-r2')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/attachments/ingest</span>
+                        <button onclick="testPath('/attachments/ingest')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/receive-image (原始)</span>
+                        <button onclick="testPath('/receive-image')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/v1/upload</span>
+                        <button onclick="testPath('/v1/upload')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/v2/upload</span>
+                        <button onclick="testPath('/v2/upload')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/api/v1/upload</span>
+                        <button onclick="testPath('/api/v1/upload')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/api/v2/upload</span>
+                        <button onclick="testPath('/api/v2/upload')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button onclick="testAllUploadPaths()" class="flex-1 px-4 py-2 bg-secondary hover:bg-secondary/90 text-white rounded-lg transition-colors">
+                        <i class="fa fa-check-square-o mr-2"></i>测试所有上传路径
+                    </button>
+                    <button onclick="clearResults()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors">
+                        <i class="fa fa-trash mr-2"></i>清空结果
+                    </button>
+                </div>
+            </div>
+
+            <!-- 分析路径测试 -->
+            <div class="bg-white rounded-xl shadow-card p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fa fa-search text-primary mr-2"></i> 分析路径测试
+                </h2>
+                <div class="space-y-2" id="analyze-paths-container">
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/analyze</span>
+                        <button onclick="testPath('/analyze')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/vision</span>
+                        <button onclick="testPath('/vision')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/analyze-image (原始)</span>
+                        <button onclick="testPath('/analyze-image')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/api/analyze</span>
+                        <button onclick="testPath('/api/analyze')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/api/vision</span>
+                        <button onclick="testPath('/api/vision')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/v1/analyze</span>
+                        <button onclick="testPath('/v1/analyze')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/v2/vision</span>
+                        <button onclick="testPath('/v2/vision')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition-custom">
+                        <span class="text-gray-700">/test-vision</span>
+                        <button onclick="testPath('/test-vision')" class="px-4 py-1 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors">
+                            测试
+                        </button>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button onclick="testAllAnalyzePaths()" class="flex-1 px-4 py-2 bg-secondary hover:bg-secondary/90 text-white rounded-lg transition-colors">
+                        <i class="fa fa-check-square-o mr-2"></i>测试所有分析路径
+                    </button>
+                    <button onclick="clearResults()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors">
+                        <i class="fa fa-trash mr-2"></i>清空结果
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果展示 -->
+        <div class="bg-white rounded-xl shadow-card p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                <i class="fa fa-list-alt text-primary mr-2"></i> 测试结果
+            </h2>
+            <div id="results-container" class="space-y-4 max-h-80 overflow-y-auto p-2">
+                <div class="p-4 text-center text-gray-500 border border-dashed rounded-lg">
+                    <i class="fa fa-info-circle text-gray-400 text-xl mb-2"></i>
+                    <p>点击上方按钮开始测试路径适配功能</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 路径映射说明 -->
+        <div class="bg-white rounded-xl shadow-card p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                <i class="fa fa-map-signs text-primary mr-2"></i> 路径映射关系
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">兼容路径</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">映射到</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">功能</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/api/upload</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/receive-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图片上传</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/upload</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/receive-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图片上传</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/upload-to-r2</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/receive-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图片上传</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/attachments/ingest</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/receive-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图片上传</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/v1/upload</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/receive-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图片上传</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/v2/upload</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/receive-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图片上传</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/api/v1/upload</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/receive-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图片上传</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/api/v2/upload</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/receive-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图片上传</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/analyze</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/analyze-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图像分析</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/vision</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/analyze-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图像分析</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/api/analyze</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/analyze-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图像分析</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/api/vision</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/analyze-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图像分析</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/v1/analyze</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/analyze-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图像分析</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/v2/vision</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/analyze-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图像分析</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">/test-vision</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-primary font-medium">/analyze-image</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">图像分析</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 清空结果容器
+        function clearResults() {
+            document.getElementById('results-container').innerHTML = `
+                <div class="p-4 text-center text-gray-500 border border-dashed rounded-lg">
+                    <i class="fa fa-info-circle text-gray-400 text-xl mb-2"></i>
+                    <p>点击上方按钮开始测试路径适配功能</p>
+                </div>
+            `;
+            
+            // 移除统计信息
+            const statsEl = document.getElementById('test-stats');
+            if (statsEl) {
+                statsEl.remove();
+            }
+        }
+
+        // 添加结果到容器
+        function addResult(path, success, status, responseTime, error = '') {
+            // 获取映射目标路径
+            let targetPath = '';
+            if (path.includes('/upload') || path.includes('/ingest') || path === '/receive-image') {
+                targetPath = '/receive-image';
+            } else if (path.includes('/analyze') || path.includes('/vision') || path === '/test-vision') {
+                targetPath = '/analyze-image';
+            }
+            
+            const resultsContainer = document.getElementById('results-container');
+            const resultClass = success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200';
+            const statusClass = success ? 'text-success' : 'text-danger';
+            const iconClass = success ? 'fa-check-circle text-success' : 'fa-times-circle text-danger';
+            const statusText = success ? '成功' : '失败';
+            
+            // 移除初始提示
+            if (resultsContainer.querySelector('.border-dashed')) {
+                resultsContainer.innerHTML = '';
+            }
+            
+            const resultHTML = `
+                <div class="p-3 border rounded-lg ${resultClass} transition-all hover:shadow-md">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex items-center">
+                            <i class="fa ${iconClass} mr-2"></i>
+                            <span class="font-medium text-gray-800">${path}</span>
+                        </div>
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <div class="text-gray-600">状态码: <span class="font-mono">${status}</span></div>
+                        <div class="text-gray-600">响应时间: <span class="font-mono">${responseTime}ms</span></div>
+                        ${targetPath ? `<div class="text-gray-600 col-span-2">映射目标: <span class="font-mono text-primary">${targetPath}</span></div>` : ''}
+                    </div>
+                    ${error ? `<div class="mt-2 text-xs text-danger font-mono break-all">错误: ${error}</div>` : ''}
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = resultHTML + resultsContainer.innerHTML;
+            
+            // 更新测试统计
+            updateTestStats();
+        }
+        
+        // 更新测试统计信息
+        function updateTestStats() {
+            const results = document.getElementById('results-container').children;
+            let total = 0;
+            let success = 0;
+            
+            for (let i = 0; i < results.length; i++) {
+                if (results[i].classList.contains('border-dashed')) continue;
+                total++;
+                if (results[i].classList.contains('bg-green-50')) {
+                    success++;
+                }
+            }
+            
+            // 如果已有统计信息，则更新
+            let statsEl = document.getElementById('test-stats');
+            if (!statsEl && total > 0) {
+                // 创建统计信息元素
+                statsEl = document.createElement('div');
+                statsEl.id = 'test-stats';
+                statsEl.className = 'mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg';
+                document.getElementById('results-container').parentElement.insertBefore(statsEl, document.getElementById('results-container'));
+            }
+            
+            if (statsEl && total > 0) {
+                statsEl.innerHTML = `
+                    <div class="flex flex-wrap justify-between items-center text-sm">
+                        <div class="font-medium text-gray-700 mb-2 sm:mb-0">测试统计:</div>
+                        <div class="flex gap-4">
+                            <div>总计: <span class="font-mono text-primary">${total}</span></div>
+                            <div>成功: <span class="font-mono text-success">${success}</span></div>
+                            <div>失败: <span class="font-mono text-danger">${total - success}</span></div>
+                            <div>成功率: <span class="font-mono text-gray-700">${Math.round((success/total)*100)}%</span></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // 测试单个路径
+        async function testPath(path) {
+            const workerUrl = document.getElementById('worker-url').value;
+            const authToken = document.getElementById('auth-token').value;
+            const url = `${workerUrl}${path}`;
+            const startTime = performance.now();
+            
+            try {
+                // 构建请求头
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-Webhook-Secret': authToken
+                };
+                
+                // 构建请求体 - 使用最小化的测试数据
+                const testData = {
+                    image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", // 1x1 透明像素
+                    filename: "test.png"
+                };
+                
+                // 发送请求
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(testData)
+                });
+                
+                const endTime = performance.now();
+                const responseTime = Math.round(endTime - startTime);
+                
+                // 判断是否成功（2xx 状态码）
+                const success = response.ok;
+                const status = response.status;
+                
+                if (success) {
+                    addResult(path, true, status, responseTime);
+                } else {
+                    const errorText = await response.text();
+                    addResult(path, false, status, responseTime, errorText.substring(0, 100) + (errorText.length > 100 ? '...' : ''));
+                }
+            } catch (error) {
+                const endTime = performance.now();
+                const responseTime = Math.round(endTime - startTime);
+                addResult(path, false, '000', responseTime, error.message);
+            }
+        }
+
+        // 测试所有上传路径
+        async function testAllUploadPaths() {
+            clearResults();
+            const paths = [
+                '/api/upload', 
+                '/upload', 
+                '/upload-to-r2', 
+                '/attachments/ingest', 
+                '/receive-image',
+                '/v1/upload',
+                '/v2/upload',
+                '/api/v1/upload',
+                '/api/v2/upload'
+            ];
+            
+            for (const path of paths) {
+                await testPath(path);
+                // 等待 300ms 避免请求过于密集
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+        }
+
+        // 测试所有分析路径
+        async function testAllAnalyzePaths() {
+            clearResults();
+            const paths = [
+                '/analyze', 
+                '/vision', 
+                '/analyze-image',
+                '/api/analyze',
+                '/api/vision',
+                '/v1/analyze',
+                '/v2/vision',
+                '/test-vision'
+            ];
+            
+            for (const path of paths) {
+                await testPath(path);
+                // 等待 300ms 避免请求过于密集
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+        }
+        
+        // 添加页脚
+        document.addEventListener('DOMContentLoaded', function() {
+            const footer = document.createElement('footer');
+            footer.className = 'text-center text-gray-500 text-sm py-6';
+            footer.innerHTML = '<p>JEVShop Worker 路径适配测试工具 &copy; 2024</p>';
+            document.body.appendChild(footer);
+        });
+    </script>
+</body>
+</html>

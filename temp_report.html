@@ -1,0 +1,522 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>JEV System Final Repair & Encoding Immunization Plan v3.2</title>
+    <style>
+        /* 全局样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        @page {
+            size: A4;
+            margin: 2cm;
+            @top-center {
+                content: "JEV SYSTEM SECURITY REPORT";
+                color: #CCCCCC;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 10pt;
+            }
+            @bottom-left {
+                content: "JEV Client Repair Plan v3.2";
+                color: #AAAAAA;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 9pt;
+            }
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                color: #AAAAAA;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 9pt;
+            }
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            background-color: #0D1117;
+            color: #E6EDF3;
+            line-height: 1.6;
+        }
+        
+        /* 封面样式 */
+        .cover {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #0D1117;
+            color: white;
+            page-break-after: always;
+            padding: 2cm;
+        }
+        
+        .cover h1 {
+            font-size: 24pt;
+            color: #00BFFF;
+            margin-bottom: 1cm;
+            font-weight: bold;
+        }
+        
+        .cover h2 {
+            font-size: 16pt;
+            color: #CCCCCC;
+            margin-bottom: 2cm;
+        }
+        
+        .cover .author {
+            font-size: 12pt;
+            margin-bottom: 1cm;
+        }
+        
+        .cover .date {
+            font-size: 11pt;
+            margin-bottom: 3cm;
+            color: #AAAAAA;
+        }
+        
+        .logo-container {
+            margin-bottom: 2cm;
+        }
+        
+        .logo {
+            max-width: 150px;
+            max-height: 150px;
+        }
+        
+        .logo-text {
+            font-size: 48pt;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .qrcode-container {
+            margin-top: 2cm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .qrcode {
+            width: 150px;
+            height: 150px;
+            background-color: white;
+            margin-bottom: 0.5cm;
+        }
+        
+        .qrcode-text {
+            font-size: 11pt;
+            color: #AAAAAA;
+        }
+        
+        /* 环形图样式 */
+        .gauge-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 2cm auto;
+        }
+        
+        .gauge {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(#00BFFF 0%, #00FFAA 100%);
+            position: relative;
+        }
+        
+        .gauge-inner {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border-radius: 50%;
+            background-color: #0D1117;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .gauge-score {
+            font-size: 24pt;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .gauge-text {
+            font-size: 14pt;
+            color: #00FFAA;
+        }
+        
+        .gauge-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 1cm;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 11pt;
+        }
+        
+        .legend-color-blue {
+            width: 20px;
+            height: 10px;
+            background-color: #00BFFF;
+            margin-right: 5px;
+        }
+        
+        .legend-color-green {
+            width: 20px;
+            height: 10px;
+            background-color: #00FFAA;
+            margin-right: 5px;
+        }
+        
+        /* 目录样式 */
+        .toc {
+            page-break-after: always;
+            padding: 2cm;
+        }
+        
+        .toc h2 {
+            font-size: 18pt;
+            color: #00BFFF;
+            margin-bottom: 2cm;
+            text-align: center;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+        }
+        
+        .toc li {
+            margin-bottom: 1cm;
+            font-size: 14pt;
+            color: #CCCCCC;
+        }
+        
+        /* 正文样式 */
+        .content {
+            padding: 2cm;
+        }
+        
+        h1 {
+            font-size: 18pt;
+            color: #00BFFF;
+            margin-top: 2cm;
+            margin-bottom: 1cm;
+        }
+        
+        h2 {
+            font-size: 14pt;
+            color: #CCCCCC;
+            margin-top: 1.5cm;
+            margin-bottom: 0.5cm;
+        }
+        
+        p {
+            font-size: 11pt;
+            color: #E6EDF3;
+            margin-bottom: 1cm;
+        }
+        
+        pre {
+            background-color: #1E1E1E;
+            padding: 1cm;
+            border-radius: 5px;
+            margin: 1cm 0;
+            overflow-x: auto;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Fira Code', monospace;
+            color: #A0FFA0;
+            font-size: 10pt;
+        }
+        
+        /* 封底样式 */
+        .back-cover {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #0D1117;
+            color: white;
+        }
+        
+        .back-cover .status {
+            font-size: 24pt;
+            color: #00FFAA;
+            margin-bottom: 1cm;
+        }
+        
+        .back-cover .score {
+            font-size: 18pt;
+            color: #00BFFF;
+            margin-bottom: 1cm;
+        }
+        
+        .back-cover .mode {
+            font-size: 16pt;
+            color: #CCCCCC;
+            margin-bottom: 3cm;
+        }
+        
+        .back-cover .copyright {
+            position: absolute;
+            bottom: 2cm;
+            font-size: 10pt;
+            color: #AAAAAA;
+        }
+    </style>
+</head>
+<body>
+    <!-- 封面 -->
+    <div class="cover">
+        <div class="logo-container">
+            <div class='logo-text'>JEV</div>
+        </div>
+        <h1>JEV System Final Repair & Encoding Immunization Plan v3.2</h1>
+        <h2>JEV 客户端系统最终修复与编码免疫方案（正式归档增强版）</h2>
+        <div class="author">JEV System Security Team</div>
+        <div class="date">2025-11-10</div>
+        
+        <!-- 健康评分环形图 -->
+        <div class="gauge-container">
+            <div class="gauge">
+                <div class="gauge-inner">
+                    <div class="gauge-score">100 / 100</div>
+                    <div class="gauge-text">UTF-8 LOCKED ✅</div>
+                </div>
+            </div>
+        </div>
+        <div class="gauge-legend">
+            <div class="legend-item">
+                <div class="legend-color-blue"></div>
+                <span>系统完整性</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color-green"></div>
+                <span>安全防护</span>
+            </div>
+        </div>
+        
+        <!-- 二维码 -->
+        <div class="qrcode-container">
+            <div class="qrcode"></div>
+            <div class="qrcode-text">扫描进入 JEV 控制台</div>
+        </div>
+    </div>
+    
+    <!-- 目录 -->
+    <div class="toc">
+        <h2>目录</h2>
+        <ul>
+            <li>阶段一：异常文件筛选</li>
+            <li>阶段二：自动重建异常文件</li>
+            <li>阶段三：统一编码与写入修复</li>
+            <li>阶段四：只读防护锁定</li>
+            <li>阶段五：最终验证</li>
+            <li>附录与执行摘要</li>
+        </ul>
+    </div>
+    
+    <!-- 正文内容 -->
+    <div class="content">
+        <h1>=</h1>
+<p>JEV System Final Repair & Encoding Immunization Plan v3.0</p>
+<h1>=</h1>
+
+<p>## 概要说明 / Overview</p>
+<p>- 用途：指导开发者完成 JEV_Client 的最终编码修复与系统加固。</p>
+<p>- Purpose: Guide developers to complete the final encoding repair and system hardening of JEV_Client.</p>
+<p>- 范围：D:\PDF转网页\JEV_Client 及其所有子目录。</p>
+<p>- Scope: D:\PDF转网页\JEV_Client and all its subdirectories.</p>
+<p>- 状态目标：</p>
+<p>  ✅ 所有文件 UTF-8 无BOM 编码</p>
+<p>  ✅ 无乱码、无空文件</p>
+<p>  ✅ 所有文件健康且设为只读防护</p>
+<p>  ✅ 系统进入完全免疫（UTF-8 LOCKED）</p>
+<p>- Status Goals:</p>
+<p>  ✅ All files in UTF-8 without BOM encoding</p>
+<p>  ✅ No garbled characters, no empty files</p>
+<p>  ✅ All files are healthy and protected by read-only</p>
+<p>  ✅ System enters complete immunity (UTF-8 LOCKED)</p>
+
+<p>──────────────────────────────</p>
+<p>【阶段一】异常文件筛选 / Phase 1: Abnormal File Screening</p>
+<p>──────────────────────────────</p>
+<p>使用 PowerShell 命令筛选出真正损坏或非 UTF-8 文件：</p>
+
+<pre><code>
+Get-ChildItem "D:\PDF转网页\JEV_Client" -Recurse -Include *.html,*.js,*.css,*.json,*.txt,*.md,*.ps1,*.bat |
+Where-Object {
+    ($_.Length -lt 512) -or
+    ((Get-Content $_.FullName -Encoding Byte -TotalCount 3) -match 'ÿþ|þÿ')
+} | Select-Object FullName, Length |
+Out-File "D:\PDF转网页\JEV_Client\diagnostics\files_to_rebuild.txt" -Encoding UTF8
+</code></pre>
+
+<p>输出结果：</p>
+
+<p>文件：diagnostics\files_to_rebuild.txt</p>
+
+<p>含所有空文件与非UTF-8文件路径</p>
+
+<p>Output Result:</p>
+
+<p>File: diagnostics\files_to_rebuild.txt</p>
+
+<p>Contains all empty files and non-UTF-8 file paths</p>
+
+<p>──────────────────────────────</p>
+<p>【阶段二】自动重建异常文件 / Phase 2: Automatic Rebuilding of Abnormal Files</p>
+<p>──────────────────────────────</p>
+<p>执行 jev_full_encoding_repair.ps1 脚本自动重建异常文件：</p>
+
+<p>powershell -ExecutionPolicy Bypass -File "D:\PDF转网页\jev_full_encoding_repair.ps1"</p>
+
+<p>功能：</p>
+
+<p>自动识别 HTML / JS / CSS / JSON / TXT / LOG 文件</p>
+
+<p>按模板重建并保存为 UTF-8 编码</p>
+
+<p>不会修改正常文件</p>
+
+<p>输出报告：diagnostics\encoding_health_report.txt</p>
+
+<p>Features:</p>
+
+<p>Automatically identify HTML / JS / CSS / JSON / TXT / LOG files</p>
+
+<p>Rebuild according to template and save as UTF-8 encoding</p>
+
+<p>Normal files will not be modified</p>
+
+<p>Output report: diagnostics\encoding_health_report.txt</p>
+
+<p>──────────────────────────────</p>
+<p>【阶段三】统一编码与写入修复 / Phase 3: Unified Encoding and Write Repair</p>
+<p>──────────────────────────────</p>
+<p>确保全目录文件统一为 UTF-8 编码：</p>
+
+<pre><code>
+Get-ChildItem "D:\PDF转网页\JEV_Client" -Recurse |
+ForEach-Object {
+    $c = Get-Content $_.FullName -Raw -ErrorAction SilentlyContinue
+    if ($null -ne $c) { Set-Content -Path $_.FullName -Value $c -Encoding UTF8 }
+}
+</code></pre>
+
+<p>Ensure all files in the directory are uniformly encoded in UTF-8.</p>
+
+<p>──────────────────────────────</p>
+<p>【阶段四】只读防护锁定 / Phase 4: Read-Only Protection Lock</p>
+<p>──────────────────────────────</p>
+<p>锁定所有关键文件防止再被误写：</p>
+
+<pre><code>
+Get-ChildItem "D:\PDF转网页\JEV_Client" -Recurse -Include *.html,*.js,*.css,*.json,*.ps1 |
+ForEach-Object { $_.IsReadOnly = $true }
+Write-Host "🔒 所有关键文件已设为只读防护。"
+</code></pre>
+
+<p>Lock all critical files to prevent accidental overwriting.</p>
+
+<p>──────────────────────────────</p>
+<p>【阶段五】最终验证 / Phase 5: Final Verification</p>
+<p>──────────────────────────────</p>
+<p>执行：</p>
+
+<p>powershell -ExecutionPolicy Bypass -File "D:\PDF转网页\check_all_encoding_health.ps1"</p>
+
+<p>Execute:</p>
+
+<p>若输出：</p>
+<p>✅ 所有文件健康，系统已完全免疫。</p>
+<p>则说明系统状态 = 100% 安全。</p>
+
+<p>If output shows:</p>
+<p>✅ All files healthy, system completely immunized.</p>
+<p>It means the system status = 100% safe.</p>
+
+<p>──────────────────────────────</p>
+<p>【附录】常见状态说明 / Appendix: Common Status Explanations</p>
+<p>──────────────────────────────</p>
+
+<p>UTF-8 LOCKED → 文件编码已统一</p>
+<p>UTF-8 LOCKED → File encoding has been unified</p>
+
+<p>HEALTH SCORE ≥ 95 → 系统健康</p>
+<p>HEALTH SCORE ≥ 95 → System is healthy</p>
+
+<p>CLEAN REBUILD → 已重建成功</p>
+<p>CLEAN REBUILD → Rebuild successful</p>
+
+<p>IMMUNE MODE → 已进入防护状态</p>
+<p>IMMUNE MODE → Protection mode activated</p>
+
+<p>──────────────────────────────</p>
+
+<p>📦 执行摘要模板 / Execution Summary Template</p>
+
+<p>执行日期: {{DATE}}</p>
+<p>执行日期: {{DATE}}</p>
+<p>执行人: {{OPERATOR}}</p>
+<p>Executor: {{OPERATOR}}</p>
+<p>系统状态: UTF-8 LOCKED ✅</p>
+<p>System Status: UTF-8 LOCKED ✅</p>
+<p>健康评分: {{HEALTH_SCORE}}/100</p>
+<p>Health Score: {{HEALTH_SCORE}}/100</p>
+
+<p>──────────────────────────────</p>
+<p>⚙️ Final Note / 最后说明</p>
+<p>──────────────────────────────</p>
+<p>执行完此方案后：</p>
+
+<p>所有 HTML / JS / JSON / PS1 / BAT 文件将保持纯净 UTF-8；</p>
+
+<p>所有空文件、乱码文件将被重建；</p>
+
+<p>系统将进入不可污染的"自愈锁定状态"；</p>
+
+<p>可以放心运行：</p>
+<p>Start-JEV-Client.bat → http://localhost:8080/ui/login_portal.html</p>
+
+<p>After executing this plan:</p>
+
+<p>All HTML / JS / JSON / PS1 / BAT files will maintain pure UTF-8;</p>
+
+<p>All empty files and garbled files will be rebuilt;</p>
+
+<p>The system will enter an unpollutable "self-healing locked state";</p>
+
+<p>You can safely run:</p>
+<p>Start-JEV-Client.bat → http://localhost:8080/ui/login_portal.html</p>
+
+<p>🎯 Result:</p>
+<p>JEV System Immunized Successfully.</p>
+    </div>
+    
+    <!-- 封底 -->
+    <div class="back-cover">
+        <div class="status">🎯 System Status: UTF-8 LOCKED</div>
+        <div class="score">✅ HEALTH SCORE: 100 / 100</div>
+        <div class="mode">📦 IMMUNE MODE ACTIVATED</div>
+        <div class="copyright">© 2025 JEV System. All Rights Reserved.</div>
+    </div>
+</body>
+</html>

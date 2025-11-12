@@ -1,0 +1,37 @@
+{
+  "E2E-X3D1-N": {
+    "type": "接近传感器",
+    "distance": "2mm",
+    "voltage": "12-24V DC",
+    "output": "NPN",
+    "brand": "OMRON"
+  },
+  "GX-F12A": {
+    "type": "电感式传感器",
+    "distance": "4mm",
+    "voltage": "10-30V DC",
+    "output": "PNP",
+    "brand": "Panasonic"
+  },
+  "E3Z-T61": {
+    "type": "光电传感器",
+    "distance": "1m",
+    "voltage": "12-24V DC",
+    "output": "NPN",
+    "brand": "OMRON"
+  },
+  "CDD-11N": {
+    "type": "光电传感器",
+    "distance": "10cm",
+    "voltage": "12-24V DC",
+    "output": "NPN",
+    "brand": "Sunx"
+  },
+  "TL-Q5MC1": {
+    "type": "接近传感器",
+    "distance": "5mm",
+    "voltage": "12-24V DC",
+    "output": "NPN",
+    "brand": "OMRON"
+  }
+}

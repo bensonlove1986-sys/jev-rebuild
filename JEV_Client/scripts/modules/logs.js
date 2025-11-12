@@ -1,0 +1,1 @@
+export default { name: "logs", init(){ console.log("logs loaded") } };

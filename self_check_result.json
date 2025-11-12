@@ -1,0 +1,11 @@
+{
+  "env_status": "❌ 缺失变量",
+  "wrangler_status": "✅ 有效",
+  "local_ports": {
+    "1822": "OK",
+    "8787": "OK",
+    "8788": "OK"
+  },
+  "cloudflare_api": "connected",
+  "last_checked": "2025-11-06 20:52:13"
+}

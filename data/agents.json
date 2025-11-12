@@ -1,0 +1,9 @@
+{
+  "agents": {
+    "test_agent_1": {
+      "mode": "MANUAL",
+      "last_active": "2025-11-05 17:47:13",
+      "registered_at": "2025-11-05 17:45:48"
+    }
+  }
+}

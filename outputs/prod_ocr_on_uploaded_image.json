@@ -1,0 +1,45 @@
+{
+    "success":  true,
+    "count":  0,
+    "items":  [
+
+              ],
+    "raw":  {
+                "responses":  [
+                                  {
+                                      "error":  {
+                                                    "code":  3,
+                                                    "message":  "The URL does not appear to be accessible by us. Please double check or download the content and pass it in."
+                                                }
+                                  }
+                              ]
+            },
+    "raw_preview":  [
+
+                    ],
+    "feature":  "DOCUMENT_TEXT_DETECTION",
+    "imageUrl":  "https://pub-2bd0dcc03e004089b2594f3586eec868.r2.dev/jev-images/whatsapp/unknown/2025/11/02/hello_world_a5e1bd3a762f4e587c638da8dc9eca3d7b299023987fb85f87e76545e7b2c58f.png",
+    "mode":  "uri",
+    "fetch_attempts":  [
+                           {
+                               "source":  "direct",
+                               "status":  401,
+                               "ok":  false,
+                               "ct":  "text/html"
+                           },
+                           {
+                               "source":  "images.weserv.nl",
+                               "status":  404,
+                               "ok":  false,
+                               "ct":  "application/json"
+                           },
+                           {
+                               "source":  "wsrv.nl",
+                               "status":  404,
+                               "ok":  false,
+                               "ct":  "application/json"
+                           }
+                       ],
+    "used_fallback":  false,
+    "used_source":  "uri"
+}

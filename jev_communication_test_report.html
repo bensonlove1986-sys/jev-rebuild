@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEV系统通信测试报告</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #2c3e50; }
+    .summary { background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+    .summary-item { margin: 10px 0; }
+    .test-item { padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+    .test-passed { background-color: #d4edda; color: #155724; }
+    .test-failed { background-color: #f8d7da; color: #721c24; }
+    .details { margin-top: 10px; font-size: 0.9em; }
+    pre { background-color: #eee; padding: 10px; border-radius: 3px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>JEV系统通信测试报告</h1>
+  
+  <div class="summary">
+    <h2>测试摘要</h2>
+    <div class="summary-item"><strong>开始时间:</strong> undefined</div>
+    <div class="summary-item"><strong>结束时间:</strong> 2025-11-10T16:21:47.265Z</div>
+    <div class="summary-item"><strong>测试耗时:</strong> 6883ms</div>
+    <div class="summary-item"><strong>总测试数:</strong> 7</div>
+    <div class="summary-item"><strong>通过测试:</strong> 6</div>
+    <div class="summary-item"><strong>失败测试:</strong> 1</div>
+  </div>
+  
+  <h2>测试结果详情</h2>
+  
+  <div class="test-item test-passed">
+    <h3>✅ 初始化测试环境</h3>
+    <div class="details">
+      <p><strong>开始时间:</strong> undefined</p>
+      <p><strong>结束时间:</strong> undefined</p>
+      <p><strong>响应时间:</strong> undefinedms</p>
+      <p><strong>详情:</strong></p><pre>{
+  "message": "所有Docker容器已启动",
+  "responseTime": "1000ms"
+}</pre>
+      
+    </div>
+  </div>
+  
+  <div class="test-item test-passed">
+    <h3>✅ 中控层与Worker通信测试</h3>
+    <div class="details">
+      <p><strong>开始时间:</strong> undefined</p>
+      <p><strong>结束时间:</strong> undefined</p>
+      <p><strong>响应时间:</strong> undefinedms</p>
+      <p><strong>详情:</strong></p><pre>{
+  "endpoint": "/control_api/tasks/12345",
+  "statusCode": 200,
+  "responseTime": "110ms",
+  "response": {
+    "success": true,
+    "task_id": 12345,
+    "status": "processing"
+  },
+  "taskId": 12345,
+  "taskType": "process_task"
+}</pre>
+      
+    </div>
+  </div>
+  
+  <div class="test-item test-passed">
+    <h3>✅ 客服端与中控层通信测试</h3>
+    <div class="details">
+      <p><strong>开始时间:</strong> undefined</p>
+      <p><strong>结束时间:</strong> undefined</p>
+      <p><strong>响应时间:</strong> undefinedms</p>
+      <p><strong>详情:</strong></p><pre>{
+  "endpoint": "/client_api/connect",
+  "statusCode": 200,
+  "responseTime": "106ms",
+  "response": {
+    "success": true,
+    "session_id": "test_session_123"
+  },
+  "clientId": "test-client-001"
+}</pre>
+      
+    </div>
+  </div>
+  
+  <div class="test-item test-passed">
+    <h3>✅ 中转层路由与负载均衡测试</h3>
+    <div class="details">
+      <p><strong>开始时间:</strong> undefined</p>
+      <p><strong>结束时间:</strong> undefined</p>
+      <p><strong>响应时间:</strong> undefinedms</p>
+      <p><strong>详情:</strong></p><pre>{
+  "endpoint": "/cloud_relay/route_request",
+  "statusCode": 200,
+  "responseTime": "109ms",
+  "response": {
+    "success": true,
+    "routed_to": "worker_1",
+    "latency": 15
+  }
+}</pre>
+      
+    </div>
+  </div>
+  
+  <div class="test-item test-passed">
+    <h3>✅ 权限与认证测试</h3>
+    <div class="details">
+      <p><strong>开始时间:</strong> undefined</p>
+      <p><strong>结束时间:</strong> undefined</p>
+      <p><strong>响应时间:</strong> undefinedms</p>
+      <p><strong>详情:</strong></p><pre>{
+  "endpoint": "/control_api/auth/verify",
+  "invalidTokenStatus": 401,
+  "validTokenStatus": 200,
+  "responseTime": "216ms"
+}</pre>
+      
+    </div>
+  </div>
+  
+  <div class="test-item test-passed">
+    <h3>✅ Jest风格测试 - 中控层与Worker通信</h3>
+    <div class="details">
+      <p><strong>开始时间:</strong> undefined</p>
+      <p><strong>结束时间:</strong> undefined</p>
+      <p><strong>响应时间:</strong> undefinedms</p>
+      <p><strong>详情:</strong></p><pre>{
+  "testType": "Jest风格集成测试",
+  "statusCode": 200,
+  "assertion": "expect(response.statusCode).toBe(200)",
+  "assertionResult": true,
+  "responseTime": "模拟响应时间"
+}</pre>
+      
+    </div>
+  </div>
+  
+  <div class="test-item test-failed">
+    <h3>❌ Jest风格测试 - 客服端与中控层通信</h3>
+    <div class="details">
+      <p><strong>开始时间:</strong> undefined</p>
+      <p><strong>结束时间:</strong> undefined</p>
+      <p><strong>响应时间:</strong> undefinedms</p>
+      <p><strong>详情:</strong></p><pre>{
+  "testType": "Jest风格集成测试",
+  "statusCode": 401,
+  "assertion": "expect(response.statusCode).toBe(200)",
+  "assertionResult": false,
+  "responseTime": "模拟响应时间"
+}</pre>
+      
+    </div>
+  </div>
+  
+</body>
+</html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- UTF-8 FIXED BY JEV @ 2025-11-09T15:11:17.111Z -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV L6.2 AutoHeal 忙聶潞猫聝陆猫聡陋盲驴庐氓陇聧氓录聲忙聯聨 - 忙录聰莽陇潞茅隆碌茅聺垄</title>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --danger: #F44336;
+            --warning: #FFC107;
+            --success: #4CAF50;
+            --info: #2196F3;
+            --dark: #333;
+            --light: #f5f5f5;
+            --border: #ddd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-running {
+            background-color: #E8F5E9;
+            color: var(--success);
+        }
+
+        .status-stopped {
+            background-color: #FFEBEE;
+            color: var(--danger);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #D32F2F;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e9ecef;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .module-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .module-item {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .module-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .status-indicator.success {
+            background-color: var(--success);
+        }
+
+        .status-indicator.warning {
+            background-color: var(--warning);
+        }
+
+        .status-indicator.error {
+            background-color: var(--danger);
+        }
+
+        .log-container {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .log-time {
+            color: #666;
+            margin-right: 0.5rem;
+        }
+
+        .log-success {
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .log-error {
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        .log-warning {
+            color: var(--warning);
+            font-weight: 500;
+        }
+
+        .log-info {
+            color: var(--info);
+        }
+
+        .demo-controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .demo-controls h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+
+        .report-container {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .module-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+<style>
+  html, body {
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+</style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <header class="header">
+        <h1>JEV L6.2 AutoHeal</h1>
+        <p>忙聶潞猫聝陆猫聡陋盲驴庐氓陇聧氓录聲忙聯聨忙录聰莽陇潞氓鹿鲁氓聫掳</p>
+    </header>
+
+    <div class="container">
+        <!-- 忙聨搂氓聢露茅聺垄忙聺驴 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">莽鲁禄莽禄聼忙聨搂氓聢露</h2>
+                <span class="status-badge status-running" id="system-status">猫驴聬猫隆聦盲赂颅</span>
+            </div>
+            <div>
+                <button class="btn btn-primary" id="start-engine">氓聬炉氓聤篓猫聡陋盲驴庐氓陇聧氓录聲忙聯聨</button>
+                <button class="btn btn-danger" id="stop-engine">氓聛聹忙颅垄猫聡陋盲驴庐氓陇聧氓录聲忙聯聨</button>
+                <button class="btn btn-secondary" id="trigger-heal">忙篓隆忙聥聼忙篓隆氓聺聴忙聲聟茅職聹</button>
+                <button class="btn btn-secondary" id="refresh-status">氓聢路忙聳掳莽聤露忙聙聛</button>
+            </div>
+        </div>
+
+        <!-- 莽聤露忙聙聛缁熻 -->
+        <div class="grid">
+            <div class="stat-card">
+                <div class="stat-value" id="active-modules">0</div>
+                <div class="stat-label">忙麓禄猫路聝忙篓隆氓聺聴忙聲掳</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="heal-count">0</div>
+                <div class="stat-label">莽麓炉猫庐隆盲驴庐氓陇聧忙卢隆忙聲掳</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="health-rate">0%</div>
+                <div class="stat-label">莽鲁禄莽禄聼氓聛楼氓潞路莽聨聡</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="uptime">00:00:00</div>
+                <div class="stat-label">猫驴聬猫隆聦忙聴露茅聴麓</div>
+            </div>
+        </div>
+
+        <!-- 忙篓隆氓聺聴莽聤露忙聙聛 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">忙篓隆氓聺聴莽聤露忙聙聛</h2>
+            </div>
+            <div class="module-list" id="module-list">
+                <!-- 忙篓隆氓聺聴莽聤露忙聙聛茅隆鹿氓掳聠氓聤篓忙聙聛莽聰聼忙聢聬 -->
+            </div>
+        </div>
+
+        <!-- 忙录聰莽陇潞忙聨搂氓聢露氓聦潞 -->
+        <div class="card">
+            <div class="demo-controls">
+                <h3>忙聲聟茅職聹忙篓隆忙聥聼</h3>
+                <div>
+                    <label for="module-select">茅聙聣忙聥漏猫娄聛忙篓隆忙聥聼忙聲聟茅職聹莽職聞忙篓隆氓聺聴茂录職</label>
+                    <select id="module-select" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border); margin-right: 0.5rem;">
+                        <option value="daoJieCollector_v1.1">daoJieCollector_v1.1</option>
+                        <option value="realtimeTranslate_v2.1">realtimeTranslate_v2.1</option>
+                        <option value="aiAutoReply_v2.1">aiAutoReply_v2.1</option>
+                        <option value="aiBridge">aiBridge</option>
+                        <option value="uiDashboard">uiDashboard</option>
+                    </select>
+                    <button class="btn btn-danger" id="simulate-failure">忙篓隆忙聥聼忙聲聟茅職聹</button>
+                    <button class="btn btn-primary" id="simulate-recovery">忙聣聥氓聤篓忙聛垄氓陇聧</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 猫聡陋盲驴庐氓陇聧忙聴楼氓驴聴 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">猫聡陋盲驴庐氓陇聧忙聴楼氓驴聴</h2>
+            </div>
+            <div class="log-container" id="autoheal-logs">
+                <div class="log-entry"><span class="log-time">[莽鲁禄莽禄聼氓聢聺氓搂聥氓聦聳]</span> <span class="log-info">莽颅聣氓戮聟猫聡陋盲驴庐氓陇聧氓录聲忙聯聨氓聬炉氓聤篓...</span></div>
+            </div>
+        </div>
+
+        <!-- 盲驴庐氓陇聧忙聤楼氓聭聤 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">忙聹聙忙聳掳盲驴庐氓陇聧忙聤楼氓聭聤</h2>
+                <button class="btn btn-secondary" id="generate-report">莽聰聼忙聢聬忙聤楼氓聭聤</button>
+            </div>
+            <div class="report-container" id="heal-report">
+                {"status": "莽颅聣氓戮聟盲赂颅", "message": "忙職聜忙聴聽盲驴庐氓陇聧猫庐掳氓陆聲"}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM氓聟聝莽麓聽氓录聲莽聰篓
+        const elements = {
+            systemStatus: document.getElementById('system-status'),
+            startEngine: document.getElementById('start-engine'),
+            stopEngine: document.getElementById('stop-engine'),
+            triggerHeal: document.getElementById('trigger-heal'),
+            refreshStatus: document.getElementById('refresh-status'),
+            activeModules: document.getElementById('active-modules'),
+            healCount: document.getElementById('heal-count'),
+            healthRate: document.getElementById('health-rate'),
+            uptime: document.getElementById('uptime'),
+            moduleList: document.getElementById('module-list'),
+            moduleSelect: document.getElementById('module-select'),
+            simulateFailure: document.getElementById('simulate-failure'),
+            simulateRecovery: document.getElementById('simulate-recovery'),
+            autohealLogs: document.getElementById('autoheal-logs'),
+            healReport: document.getElementById('heal-report'),
+            generateReport: document.getElementById('generate-report')
+        };
+
+        // 忙篓隆忙聥聼鏁版嵁
+        const mockModules = [
+            { id: 'daoJieCollector_v1.1', status: 'active', type: 'collector', description: '茅聡聡茅聸聠DAOJIE忙露聢忙聛炉茫聙聛氓聸戮莽聣聡茫聙聛忙聳聡盲禄露' },
+            { id: 'realtimeTranslate_v2.1', status: 'active', type: 'assistant', description: '猫聡陋氓聤篓忙拢聙忙碌聥猫炉颅猫篓聙氓鹿露莽驴禄猫炉聭' },
+            { id: 'aiAutoReply_v2.1', status: 'active', type: 'assistant', description: '莽聰聼忙聢聬AI氓聸聻氓陇聧氓鹿露氓聫聭茅聙聛' },
+            { id: 'aiBridge', status: 'active', type: 'bridge', description: '猫驴聻忙聨楼TRAE/DeepSeek/ELara' },
+            { id: 'uiDashboard', status: 'active', type: 'ui', description: '氓庐聻忙聴露忙聵戮莽陇潞氓炉鹿猫炉聺盲赂聨忙篓隆氓聺聴莽聤露忙聙聛' },
+            { id: 'autoHeal', status: 'active', type: 'maintenance', description: '忙聶潞猫聝陆猫聡陋盲驴庐氓陇聧氓录聲忙聯聨' },
+            { id: 'HealLibrary', status: 'active', type: 'library', description: '盲驴庐氓陇聧莽颅聳莽聲楼氓潞聯' }
+        ];
+
+        let startTime = null;
+        let healCount = 0;
+        let uptimeInterval = null;
+
+        // 忙聽录氓录聫氓聦聳忙聴露茅聴麓
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        // 鏇存柊猫驴聬猫隆聦忙聴露茅聴麓
+        function updateUptime() {
+            if (startTime) {
+                const now = new Date();
+                const seconds = Math.floor((now - startTime) / 1000);
+                elements.uptime.textContent = formatTime(seconds);
+            }
+        }
+
+        // 鏇存柊忙篓隆氓聺聴氓聢聴猫隆篓忙聵戮莽陇潞
+        function updateModuleList() {
+            elements.moduleList.innerHTML = '';
+            
+            mockModules.forEach(module => {
+                const item = document.createElement('div');
+                item.className = 'module-item';
+                
+                let statusClass, statusText;
+                switch(module.status) {
+                    case 'active':
+                        statusClass = 'success';
+                        statusText = '猫驴聬猫隆聦忙颅拢氓赂赂';
+                        break;
+                    case 'error':
+                        statusClass = 'error';
+                        statusText = '氓录聜氓赂赂';
+                        break;
+                    case 'recovering':
+                        statusClass = 'warning';
+                        statusText = '忙聛垄氓陇聧盲赂颅';
+                        break;
+                    case 'recovered':
+                        statusClass = 'success';
+                        statusText = '氓路虏忙聛垄氓陇聧';
+                        break;
+                }
+                
+                item.innerHTML = `
+                    <div class="module-header">
+                        <div class="module-name">${module.id}</div>
+                        <span>
+                            <span class="status-indicator ${statusClass}"></span>
+                            ${statusText}
+                        </span>
+                    </div>
+                    <div style="color: #666; font-size: 0.9rem;">${module.description}</div>
+                    <div style="color: #999; font-size: 0.8rem; margin-top: 0.5rem;">莽卤禄氓聻聥: ${module.type}</div>
+                `;
+                
+                elements.moduleList.appendChild(item);
+            });
+            
+            // 鏇存柊缁熻鏁版嵁
+            const activeCount = mockModules.filter(m => m.status === 'active' || m.status === 'recovered').length;
+            elements.activeModules.textContent = activeCount;
+            elements.healthRate.textContent = `${Math.round((activeCount / mockModules.length) * 100)}%`;
+        }
+
+        // 忙路禄氓聤聽忙聴楼氓驴聴忙聺隆莽聸庐
+        function addLogEntry(message, type = 'info') {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const timestamp = `[${hours}:${minutes}:${seconds}]`;
+            
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            
+            let logClass;
+            switch(type) {
+                case 'success':
+                    logClass = 'log-success';
+                    break;
+                case 'error':
+                    logClass = 'log-error';
+                    break;
+                case 'warning':
+                    logClass = 'log-warning';
+                    break;
+                default:
+                    logClass = 'log-info';
+            }
+            
+            entry.innerHTML = `<span class="log-time">${timestamp}</span> <span class="${logClass}">${message}</span>`;
+            elements.autohealLogs.appendChild(entry);
+            elements.autohealLogs.scrollTop = elements.autohealLogs.scrollHeight;
+        }
+
+        // 氓聬炉氓聤篓猫聡陋盲驴庐氓陇聧氓录聲忙聯聨
+        function startEngine() {
+            // 忙篓隆忙聥聼氓聤聽猫陆陆盲驴庐氓陇聧氓潞聯
+            setTimeout(() => {
+                window.JEV = window.JEV || {};
+                window.JEV.HealLibrary = window.JEV.HealLibrary || {
+                    getStrategy: function() {
+                        return { run: async () => ({ success: true, message: '盲驴庐氓陇聧忙聢聬氓聤聼' }) };
+                    }
+                };
+                
+                addLogEntry('[HealLibrary] 盲驴庐氓陇聧莽颅聳莽聲楼氓潞聯氓路虏氓聤聽猫陆陆', 'info');
+                
+                // 忙篓隆忙聥聼氓聤聽猫陆陆猫聡陋盲驴庐氓陇聧氓录聲忙聯聨
+                setTimeout(() => {
+                    window.JEV.autoHeal = window.JEV.autoHeal || {
+                        init: () => console.log('AutoHeal initialized'),
+                        repairModule: async (module) => {
+                            addLogEntry(`[AutoHeal] 忙颅拢氓聹篓盲驴庐氓陇聧忙篓隆氓聺聴: ${module}`, 'info');
+                            
+                            // 忙篓隆忙聥聼盲驴庐氓陇聧猫驴聡莽篓聥
+                            setTimeout(() => {
+                                const targetModule = mockModules.find(m => m.id === module);
+                                if (targetModule) {
+                                    targetModule.status = 'recovered';
+                                    updateModuleList();
+                                    healCount++;
+                                    elements.healCount.textContent = healCount;
+                                    addLogEntry(`芒聹聟 [AutoHeal] 忙篓隆氓聺聴 ${module} 氓路虏盲驴庐氓陇聧氓鹿露茅聡聧猫陆陆忙聢聬氓聤聼`, 'success');
+                                }
+                            }, 2000);
+                        }
+                    };
+                    
+                    addLogEntry('[L6.2][autoHeal] 忙聶潞猫聝陆猫聡陋盲驴庐氓陇聧氓录聲忙聯聨氓聬炉氓聤篓', 'info');
+                    elements.systemStatus.textContent = '猫驴聬猫隆聦盲赂颅';
+                    elements.systemStatus.className = 'status-badge status-running';
+                    
+                    // 氓聬炉氓聤篓猫驴聬猫隆聦忙聴露茅聴麓猫庐隆忙聲掳
+                    startTime = new Date();
+                    updateUptime();
+                    if (!uptimeInterval) {
+                        uptimeInterval = setInterval(updateUptime, 1000);
+                    }
+                    
+                    // 忙鲁篓氓聠聦盲潞聥盲禄露莽聸聭氓聬卢氓聶篓
+                    window.addEventListener('jev-autoheal-report', (e) => {
+                        addLogEntry(`[AutoHeal] 盲驴庐氓陇聧忙聤楼氓聭聤: ${e.detail.module} - ${e.detail.success ? '忙聢聬氓聤聼' : '氓陇卤猫麓楼'}`, 
+                            e.detail.success ? 'success' : 'error');
+                    });
+                }, 1000);
+            }, 500);
+        }
+
+        // 氓聛聹忙颅垄猫聡陋盲驴庐氓陇聧氓录聲忙聯聨
+        function stopEngine() {
+            elements.systemStatus.textContent = '氓路虏氓聛聹忙颅垄';
+            elements.systemStatus.className = 'status-badge status-stopped';
+            addLogEntry('[AutoHeal] 忙聶潞猫聝陆猫聡陋盲驴庐氓陇聧氓录聲忙聯聨氓路虏氓聛聹忙颅垄', 'warning');
+            
+            // 忙赂聟茅聶陇猫驴聬猫隆聦忙聴露茅聴麓猫庐隆忙聲掳
+            if (uptimeInterval) {
+                clearInterval(uptimeInterval);
+                uptimeInterval = null;
+            }
+        }
+
+        // 忙篓隆忙聥聼忙篓隆氓聺聴忙聲聟茅職聹
+        function simulateModuleFailure(moduleId) {
+            const module = mockModules.find(m => m.id === moduleId);
+            if (module) {
+                module.status = 'error';
+                updateModuleList();
+                addLogEntry(`[忙篓隆忙聥聼] 忙篓隆氓聺聴 ${moduleId} 氓聫聭莽聰聼忙聲聟茅職聹`, 'error');
+                
+                // 猫搂娄氓聫聭猫聡陋盲驴庐氓陇聧
+                if (window.JEV && window.JEV.autoHeal) {
+                    window.JEV.autoHeal.repairModule(moduleId);
+                }
+            }
+        }
+
+        // 忙聣聥氓聤篓忙聛垄氓陇聧忙篓隆氓聺聴
+        function manuallyRecoverModule(moduleId) {
+            const module = mockModules.find(m => m.id === moduleId);
+            if (module) {
+                module.status = 'active';
+                updateModuleList();
+                addLogEntry(`[忙篓隆忙聥聼] 忙篓隆氓聺聴 ${moduleId} 氓路虏忙聣聥氓聤篓忙聛垄氓陇聧`, 'success');
+            }
+        }
+
+        // 莽聰聼忙聢聬盲驴庐氓陇聧忙聤楼氓聭聤
+        function generateHealReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                detectedIssues: mockModules.filter(m => m.status !== 'active').map(m => m.id),
+                actionsTaken: [],
+                systemStatus: mockModules.every(m => m.status === 'active' || m.status === 'recovered') ? '忙颅拢氓赂赂' : '忙聛垄氓陇聧盲赂颅',
+                totalRestarts: healCount,
+                moduleHealth: mockModules.reduce((acc, m) => {
+                    acc[m.id] = m.status;
+                    return acc;
+                }, {})
+            };
+            
+            elements.healReport.textContent = JSON.stringify(report, null, 2);
+            addLogEntry('芒聹聟 氓路虏莽聰聼忙聢聬忙聹聙忙聳掳盲驴庐氓陇聧忙聤楼氓聭聤', 'success');
+        }
+
+        // 盲潞聥盲禄露莽聸聭氓聬卢氓聶篓
+        elements.startEngine.addEventListener('click', startEngine);
+        elements.stopEngine.addEventListener('click', stopEngine);
+        elements.refreshStatus.addEventListener('click', updateModuleList);
+        elements.simulateFailure.addEventListener('click', () => {
+            const moduleId = elements.moduleSelect.value;
+            simulateModuleFailure(moduleId);
+        });
+        elements.simulateRecovery.addEventListener('click', () => {
+            const moduleId = elements.moduleSelect.value;
+            manuallyRecoverModule(moduleId);
+        });
+        elements.generateReport.addEventListener('click', generateHealReport);
+
+        // 氓聢聺氓搂聥氓聦聳
+        updateModuleList();
+        elements.healCount.textContent = healCount;
+    </script>
+</body>
+</html>

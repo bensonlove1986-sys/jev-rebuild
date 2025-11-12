@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 外部记忆模块 - 完整集成测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background-color: #fafafa;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:active {
+            background-color: #1f6da1;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .log-container {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px solid #34495e;
+            padding-bottom: 5px;
+        }
+        .log-success {
+            color: #2ecc71;
+        }
+        .log-error {
+            color: #e74c3c;
+        }
+        .log-warning {
+            color: #f39c12;
+        }
+        .log-info {
+            color: #3498db;
+        }
+        .result-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4fd;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 12px;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .metric-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .metric-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .test-summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 6px;
+            border: 1px solid #b8e2ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JEV 外部记忆模块 - 完整闭环集成测试</h1>
+        
+        <div class="controls">
+            <button id="run-all-tests">运行完整测试套件</button>
+            <button id="run-basic-tests">基本操作测试</button>
+            <button id="run-batch-tests">批量操作测试</button>
+            <button id="run-resilience-tests">弹性恢复测试</button>
+            <button id="run-performance-tests">性能压力测试</button>
+            <button id="clear-logs">清空日志</button>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%;">0%</div>
+        </div>
+        
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value" id="success-count">0</div>
+                <div class="metric-label">成功测试</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="fail-count">0</div>
+                <div class="metric-label">失败测试</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="total-time">0s</div>
+                <div class="metric-label">总耗时</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="operations-per-sec">0</div>
+                <div class="metric-label">每秒操作</div>
+            </div>
+        </div>
+        
+        <h2>测试日志</h2>
+        <div class="log-container" id="log-container">
+            <div class="log-entry log-info">测试环境已准备就绪</div>
+        </div>
+        
+        <div class="test-summary" id="test-summary">
+            <h3>测试结果摘要</h3>
+            <p>点击上方按钮开始测试...</p>
+        </div>
+    </div>
+    
+    <script>
+        // 日志系统
+        const logContainer = document.getElementById('log-container');
+        const progressFill = document.querySelector('.progress-fill');
+        const successCountEl = document.getElementById('success-count');
+        const failCountEl = document.getElementById('fail-count');
+        const totalTimeEl = document.getElementById('total-time');
+        const opsPerSecEl = document.getElementById('operations-per-sec');
+        const testSummaryEl = document.getElementById('test-summary');
+        
+        let successCount = 0;
+        let failCount = 0;
+        let totalOperations = 0;
+        let startTime = 0;
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toISOString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        function clearLogs() {
+            logContainer.innerHTML = '';
+            log('测试日志已清空', 'info');
+        }
+        
+        function updateProgress(percentage) {
+            progressFill.style.width = `${percentage}%`;
+            progressFill.textContent = `${percentage}%`;
+        }
+        
+        function updateMetrics() {
+            successCountEl.textContent = successCount;
+            failCountEl.textContent = failCount;
+            
+            if (totalOperations > 0) {
+                const elapsed = (Date.now() - startTime) / 1000;
+                const opsPerSec = (totalOperations / elapsed).toFixed(2);
+                opsPerSecEl.textContent = opsPerSec;
+                totalTimeEl.textContent = `${elapsed.toFixed(2)}s`;
+            }
+        }
+        
+        function updateSummary() {
+            const total = successCount + failCount;
+            const successRate = total > 0 ? ((successCount / total) * 100).toFixed(2) : 0;
+            
+            testSummaryEl.innerHTML = `
+                <h3>测试结果摘要</h3>
+                <p><strong>总测试数:</strong> ${total}</p>
+                <p><strong>成功测试:</strong> ${successCount} (${successRate}%)</p>
+                <p><strong>失败测试:</strong> ${failCount} (${(100 - successRate).toFixed(2)}%)</p>
+                <p><strong>总体状态:</strong> ${failCount === 0 ? '<span style="color: green;">✓ 全部通过</span>' : '<span style="color: red;">✗ 存在失败</span>'}</p>
+            `;
+        }
+        
+        // 测试助手函数
+        async function runTest(testName, testFn) {
+            log(`开始测试: ${testName}`, 'info');
+            totalOperations++;
+            
+            try {
+                await testFn();
+                successCount++;
+                log(`测试通过: ${testName}`, 'success');
+                return true;
+            } catch (error) {
+                failCount++;
+                log(`测试失败: ${testName} - ${error.message}`, 'error');
+                console.error(`测试失败 [${testName}]:`, error);
+                return false;
+            } finally {
+                updateMetrics();
+                updateSummary();
+            }
+        }
+        
+        // 模拟Worker和Cloudflare KV环境（用于测试）
+        if (typeof window !== 'undefined' && !window.WorkerManager) {
+            window.WorkerManager = {
+                callWorker: async (action, data) => {
+                    log(`模拟Worker调用: ${action}`, 'info');
+                    // 模拟延迟
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                    
+                    // 模拟不同操作的响应
+                    if (action === 'externalMemory') {
+                        const { operation, key, value, options } = data;
+                        
+                        // 简单的内存存储模拟
+                        if (!window._testMemoryStore) {
+                            window._testMemoryStore = {};
+                        }
+                        
+                        switch (operation) {
+                            case 'set':
+                                window._testMemoryStore[key] = value;
+                                return { success: true };
+                            case 'get':
+                                return { success: true, value: window._testMemoryStore[key] || null };
+                            case 'list':
+                                return { success: true, keys: Object.keys(window._testMemoryStore) };
+                            case 'delete':
+                                delete window._testMemoryStore[key];
+                                return { success: true };
+                            case 'batchSet':
+                                if (Array.isArray(value)) {
+                                    value.forEach(item => {
+                                        window._testMemoryStore[item.key] = item.value;
+                                    });
+                                }
+                                return { success: true };
+                            case 'batchGet':
+                                const batchResults = (Array.isArray(key) ? key : []).map(k => ({
+                                    key: k,
+                                    value: window._testMemoryStore[k] || null
+                                }));
+                                return { success: true, results: batchResults };
+                            case 'batchDelete':
+                                (Array.isArray(key) ? key : []).forEach(k => {
+                                    delete window._testMemoryStore[k];
+                                });
+                                return { success: true };
+                            case 'healthCheck':
+                                return { success: true, status: 'healthy', latency: 50 };
+                            default:
+                                throw new Error(`未知操作: ${operation}`);
+                        }
+                    }
+                    
+                    throw new Error(`未实现的Worker操作: ${action}`);
+                }
+            };
+        }
+        
+        // 模拟ExternalMemory模块（如果不存在）
+        if (typeof window !== 'undefined' && (!window.JEV || !window.JEV.externalMemory)) {
+            window.JEV = window.JEV || {};
+            window.JEV.externalMemory = {
+                set: async (key, value, options) => {
+                    const result = await WorkerManager.callWorker('externalMemory', {
+                        operation: 'set',
+                        key,
+                        value,
+                        options
+                    });
+                    if (!result.success) throw new Error('设置失败');
+                    return result;
+                },
+                get: async (key, options) => {
+                    const result = await WorkerManager.callWorker('externalMemory', {
+                        operation: 'get',
+                        key,
+                        options
+                    });
+                    if (!result.success) throw new Error('获取失败');
+                    return result.value;
+                },
+                list: async (prefix, options) => {
+                    const result = await WorkerManager.callWorker('externalMemory', {
+                        operation: 'list',
+                        prefix,
+                        options
+                    });
+                    if (!result.success) throw new Error('列表查询失败');
+                    return result.keys;
+                },
+                del: async (key, options) => {
+                    const result = await WorkerManager.callWorker('externalMemory', {
+                        operation: 'delete',
+                        key,
+                        options
+                    });
+                    if (!result.success) throw new Error('删除失败');
+                    return result;
+                },
+                delete: async (key, options) => {
+                    return await window.JEV.externalMemory.del(key, options);
+                },
+                batchSet: async (items, options) => {
+                    const result = await WorkerManager.callWorker('externalMemory', {
+                        operation: 'batchSet',
+                        value: items,
+                        options
+                    });
+                    if (!result.success) throw new Error('批量设置失败');
+                    return result;
+                },
+                batchGet: async (keys, options) => {
+                    const result = await WorkerManager.callWorker('externalMemory', {
+                        operation: 'batchGet',
+                        key: keys,
+                        options
+                    });
+                    if (!result.success) throw new Error('批量获取失败');
+                    return result.results;
+                },
+                batchDel: async (keys, options) => {
+                    const result = await WorkerManager.callWorker('externalMemory', {
+                        operation: 'batchDelete',
+                        key: keys,
+                        options
+                    });
+                    if (!result.success) throw new Error('批量删除失败');
+                    return result;
+                },
+                healthCheck: async (options) => {
+                    const result = await WorkerManager.callWorker('externalMemory', {
+                        operation: 'healthCheck',
+                        options
+                    });
+                    if (!result.success) throw new Error('健康检查失败');
+                    return result;
+                }
+            };
+        }
+        
+        // 基本操作测试
+        async function testBasicOperations() {
+            log('开始基本操作测试...', 'info');
+            
+            const testKey = 'test:basic:key';
+            const testValue = { message: 'Hello World', timestamp: Date.now() };
+            
+            // 测试set操作
+            await runTest('set操作', async () => {
+                await JEV.externalMemory.set(testKey, testValue);
+                log('set操作成功', 'success');
+            });
+            
+            // 测试get操作
+            await runTest('get操作', async () => {
+                const result = await JEV.externalMemory.get(testKey);
+                if (!result || result.message !== testValue.message) {
+                    throw new Error('获取的值与设置的值不匹配');
+                }
+                log('get操作成功，数据一致性验证通过', 'success');
+            });
+            
+            // 测试list操作
+            await runTest('list操作', async () => {
+                const keys = await JEV.externalMemory.list('test:basic');
+                if (!keys || !Array.isArray(keys) || !keys.includes(testKey)) {
+                    throw new Error('list操作未能返回预期的键');
+                }
+                log('list操作成功', 'success');
+            });
+            
+            // 测试delete操作
+            await runTest('delete操作', async () => {
+                await JEV.externalMemory.del(testKey);
+                const result = await JEV.externalMemory.get(testKey);
+                if (result !== null) {
+                    throw new Error('删除后仍能获取到数据');
+                }
+                log('delete操作成功', 'success');
+            });
+        }
+        
+        // 批量操作测试
+        async function testBatchOperations() {
+            log('开始批量操作测试...', 'info');
+            
+            const batchItems = [
+                { key: 'test:batch:key1', value: { data: 'value1' } },
+                { key: 'test:batch:key2', value: { data: 'value2' } },
+                { key: 'test:batch:key3', value: { data: 'value3' } }
+            ];
+            
+            // 测试批量set
+            await runTest('批量set操作', async () => {
+                await JEV.externalMemory.batchSet(batchItems);
+                log('批量set操作成功', 'success');
+            });
+            
+            // 测试批量get
+            await runTest('批量get操作', async () => {
+                const keys = batchItems.map(item => item.key);
+                const results = await JEV.externalMemory.batchGet(keys);
+                
+                if (!results || results.length !== keys.length) {
+                    throw new Error('批量获取的结果数量不匹配');
+                }
+                
+                // 验证每个返回的值
+                results.forEach(result => {
+                    const expectedItem = batchItems.find(item => item.key === result.key);
+                    if (!expectedItem || JSON.stringify(result.value) !== JSON.stringify(expectedItem.value)) {
+                        throw new Error(`键 ${result.key} 的值不匹配`);
+                    }
+                });
+                
+                log('批量get操作成功，数据一致性验证通过', 'success');
+            });
+            
+            // 测试批量delete
+            await runTest('批量delete操作', async () => {
+                const keys = batchItems.map(item => item.key);
+                await JEV.externalMemory.batchDel(keys);
+                
+                // 验证所有键都已删除
+                const results = await JEV.externalMemory.batchGet(keys);
+                const hasRemainingData = results.some(result => result.value !== null);
+                
+                if (hasRemainingData) {
+                    throw new Error('批量删除后仍有数据残留');
+                }
+                
+                log('批量delete操作成功', 'success');
+            });
+        }
+        
+        // 弹性恢复测试
+        async function testResilience() {
+            log('开始弹性恢复测试...', 'info');
+            
+            // 模拟网络错误场景
+            const originalCallWorker = WorkerManager.callWorker;
+            
+            // 测试错误重试机制
+            await runTest('错误重试机制', async () => {
+                let callCount = 0;
+                
+                // 模拟前两次失败，第三次成功
+                WorkerManager.callWorker = async (action, data) => {
+                    callCount++;
+                    if (callCount <= 2) {
+                        throw new Error('模拟网络错误');
+                    }
+                    return await originalCallWorker(action, data);
+                };
+                
+                const testKey = 'test:resilience:key';
+                await JEV.externalMemory.set(testKey, { test: 'resilience' });
+                
+                if (callCount <= 2) {
+                    throw new Error('重试机制未生效');
+                }
+                
+                log('错误重试机制测试成功', 'success');
+                
+                // 恢复原始方法
+                WorkerManager.callWorker = originalCallWorker;
+                
+                // 清理测试数据
+                await JEV.externalMemory.del(testKey);
+            });
+            
+            // 测试健康检查
+            await runTest('健康检查', async () => {
+                const healthStatus = await JEV.externalMemory.healthCheck();
+                
+                if (!healthStatus || !healthStatus.success) {
+                    throw new Error('健康检查失败');
+                }
+                
+                log('健康检查测试成功', 'success');
+            });
+        }
+        
+        // 性能压力测试
+        async function testPerformance() {
+            log('开始性能压力测试...', 'info');
+            
+            const testCount = 50; // 测试操作次数
+            const testPrefix = 'test:perf:';
+            
+            // 批量写入测试
+            await runTest('批量写入性能测试', async () => {
+                const perfStart = Date.now();
+                const batchItems = [];
+                
+                for (let i = 0; i < testCount; i++) {
+                    batchItems.push({
+                        key: `${testPrefix}key${i}`,
+                        value: { index: i, data: `Performance test data ${i}`, timestamp: Date.now() }
+                    });
+                }
+                
+                await JEV.externalMemory.batchSet(batchItems);
+                const perfTime = Date.now() - perfStart;
+                const opsPerSecond = (testCount / (perfTime / 1000)).toFixed(2);
+                
+                log(`批量写入 ${testCount} 条数据耗时 ${perfTime}ms (${opsPerSecond} ops/sec)`, 'info');
+            });
+            
+            // 批量读取测试
+            await runTest('批量读取性能测试', async () => {
+                const perfStart = Date.now();
+                const keys = [];
+                
+                for (let i = 0; i < testCount; i++) {
+                    keys.push(`${testPrefix}key${i}`);
+                }
+                
+                const results = await JEV.externalMemory.batchGet(keys);
+                const perfTime = Date.now() - perfStart;
+                const opsPerSecond = (testCount / (perfTime / 1000)).toFixed(2);
+                
+                if (results.length !== testCount) {
+                    throw new Error(`批量读取结果数量不匹配: 预期 ${testCount}, 实际 ${results.length}`);
+                }
+                
+                log(`批量读取 ${testCount} 条数据耗时 ${perfTime}ms (${opsPerSecond} ops/sec)`, 'info');
+            });
+            
+            // 批量删除测试
+            await runTest('批量删除性能测试', async () => {
+                const perfStart = Date.now();
+                const keys = [];
+                
+                for (let i = 0; i < testCount; i++) {
+                    keys.push(`${testPrefix}key${i}`);
+                }
+                
+                await JEV.externalMemory.batchDel(keys);
+                const perfTime = Date.now() - perfStart;
+                const opsPerSecond = (testCount / (perfTime / 1000)).toFixed(2);
+                
+                log(`批量删除 ${testCount} 条数据耗时 ${perfTime}ms (${opsPerSecond} ops/sec)`, 'info');
+            });
+        }
+        
+        // 完整集成测试套件
+        async function runAllTests() {
+            // 重置统计数据
+            successCount = 0;
+            failCount = 0;
+            totalOperations = 0;
+            startTime = Date.now();
+            updateMetrics();
+            updateProgress(0);
+            
+            log('====================================', 'info');
+            log('开始完整集成测试套件', 'info');
+            log('====================================', 'info');
+            
+            try {
+                // 基本操作测试
+                await testBasicOperations();
+                updateProgress(25);
+                
+                // 批量操作测试
+                await testBatchOperations();
+                updateProgress(50);
+                
+                // 弹性恢复测试
+                await testResilience();
+                updateProgress(75);
+                
+                // 性能压力测试
+                await testPerformance();
+                updateProgress(100);
+                
+                log('====================================', 'info');
+                log('完整集成测试套件执行完毕', 'info');
+                log('====================================', 'info');
+                
+            } catch (error) {
+                log(`测试套件执行失败: ${error.message}`, 'error');
+                updateProgress(100);
+            } finally {
+                updateMetrics();
+                updateSummary();
+            }
+        }
+        
+        // 事件监听器
+        document.getElementById('run-all-tests').addEventListener('click', async () => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            try {
+                await runAllTests();
+            } finally {
+                setTimeout(() => {
+                    buttons.forEach(btn => btn.disabled = false);
+                }, 500);
+            }
+        });
+        
+        document.getElementById('run-basic-tests').addEventListener('click', testBasicOperations);
+        document.getElementById('run-batch-tests').addEventListener('click', testBatchOperations);
+        document.getElementById('run-resilience-tests').addEventListener('click', testResilience);
+        document.getElementById('run-performance-tests').addEventListener('click', testPerformance);
+        document.getElementById('clear-logs').addEventListener('click', clearLogs);
+        
+        // 初始化
+        log('JEV外部记忆模块完整集成测试环境已初始化', 'info');
+    </script>
+</body>
+</html>

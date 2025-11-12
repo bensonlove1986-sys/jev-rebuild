@@ -1,0 +1,41 @@
+# JEV Worker 部署配置文件 - 状态层集成
+
+[[env]]
+name = "JEV_WORKER"
+type = "production"
+vars = { 
+  STATE_LAYER = "https://jevshop.bensonlove1986.workers.dev",
+  STATE_API_KEY = "YOUR_API_KEY_HERE",
+  RATE_LIMIT_ENABLED = "true",
+  IP_WHITELIST_ENABLED = "true",
+  CACHE_TTL = "300000", # 5分钟
+  CACHE_MAX_ITEMS = "1000"
+}
+
+[workers]
+worker_id = "jevshop-production-worker"
+
+# 监控配置
+[analytics]
+enabled = true
+
+# 错误日志配置
+[logs]
+enabled = true
+level = "info"
+
+# 高并发测试命令
+# 1. 使用 Artillery 测试:
+# artillery quick --duration 60 --target 'https://jevshop.bensonlove1986.workers.dev/set' --rate 10
+
+# 2. 使用 Apache Bench 测试:
+# ab -n 1000 -c 10 https://jevshop.bensonlove1986.workers.dev/set
+
+# 3. 测试状态层健康检查:
+# curl -H "Authorization: Bearer YOUR_API_KEY_HERE" https://jevshop.bensonlove1986.workers.dev/health
+
+# 安全注意事项
+# 1. 请在部署前替换 STATE_API_KEY 为实际的 API 密钥
+# 2. 确保 IP 白名单配置正确
+# 3. 启用速率限制防止滥用
+# 4. 定期检查日志和监控指标

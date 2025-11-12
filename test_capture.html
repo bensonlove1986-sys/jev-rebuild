@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片捕获测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h2 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            min-height: 50px;
+        }
+        .log-container {
+            background-color: #222;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .blob-container {
+            margin-top: 10px;
+        }
+        #blobImage {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>图片捕获测试工具</h1>
+        
+        <!-- 普通图片测试 -->
+        <div class="test-section">
+            <h2>1. 普通图片测试</h2>
+            <img id="normalImage" src="https://via.placeholder.com/300x200" alt="普通测试图片">
+            <button id="testNormalImage">测试普通图片捕获</button>
+            <div class="result" id="normalResult">点击按钮测试普通图片捕获</div>
+        </div>
+        
+        <!-- Blob URL 图片测试 -->
+        <div class="test-section">
+            <h2>2. Blob URL 图片测试</h2>
+            <div class="blob-container">
+                <button id="createBlobImage">创建 Blob 图片</button>
+                <img id="blobImage" alt="Blob 测试图片" style="display: none;">
+            </div>
+            <button id="testBlobImage" disabled>测试 Blob 图片捕获</button>
+            <div class="result" id="blobResult">点击上方按钮创建 Blob 图片后再测试</div>
+        </div>
+        
+        <!-- 跨域图片测试 -->
+        <div class="test-section">
+            <h2>3. 跨域图片测试</h2>
+            <img id="crossDomainImage" src="https://picsum.photos/300/200" alt="跨域测试图片">
+            <button id="testCrossDomainImage">测试跨域图片捕获</button>
+            <div class="result" id="crossDomainResult">点击按钮测试跨域图片捕获</div>
+        </div>
+        
+        <!-- 日志输出 -->
+        <div class="test-section">
+            <h2>执行日志</h2>
+            <div class="log-container" id="logOutput">// 等待执行...</div>
+        </div>
+    </div>
+
+    <script>
+        // 全局禁用 PowerShell 弹窗
+        window.JEV_FORCE_BROWSER_MODE = true;
+        window.JEV_DISABLE_POWERSHELL = true;
+        window.showPowerShellDialog = () => {
+            console.warn("[JEV] PowerShell弹窗已彻底关闭");
+            log("PowerShell弹窗已彻底关闭");
+        };
+
+        // 日志记录
+        function log(message) {
+            const logElement = document.getElementById('logOutput');
+            logElement.textContent += `\n${new Date().toLocaleTimeString()}: ${message}`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // 超稳拿图函数 - 三层兜底
+        let lastCaptureTs = 0;
+        async function JEV_captureImage(imgElement, forceCompress = false) {
+            // 截图限频机制
+            const now = Date.now();
+            if (!forceCompress && now - lastCaptureTs < 3000) { // 3秒内限制截图
+                log('⏳ 截图限频触发，跳过');
+                return null;
+            }
+            lastCaptureTs = now;
+            
+            if (!imgElement) {
+                log("[JEV] 错误：图片元素为空");
+                return null;
+            }
+            log("[JEV] 尝试捕获图片...");
+
+            let dataUrl = "";
+
+            // 🧩 方案一：canvas 直接截图（最快）
+            try {
+                log("[JEV] 尝试第一层：canvas 直接截图");
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                const w = imgElement.naturalWidth || imgElement.width * 2;
+                const h = imgElement.naturalHeight || imgElement.height * 2;
+                canvas.width = w;
+                canvas.height = h;
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = "high";
+                ctx.filter = "contrast(1.3) brightness(1.05)";
+                ctx.drawImage(imgElement, 0, 0, w, h);
+                dataUrl = canvas.toDataURL("image/png", 1.0);
+                if (dataUrl && dataUrl.length > 5000) {
+                    log("[JEV] ✅ 第一层拿图成功");
+                    return dataUrl;
+                }
+            } catch (e) {
+                log(`[JEV] 第一层失败，进入第二层: ${e.message}`);
+            }
+
+            // 🧩 方案二：fetch Blob 转 base64（兼容 blob:URL）
+            try {
+                log("[JEV] 尝试第二层：fetch Blob 转 base64");
+                const src = imgElement.src;
+                const resp = await fetch(src);
+                const blob = await resp.blob();
+                dataUrl = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(blob);
+                });
+                if (dataUrl && dataUrl.length > 5000) {
+                    log("[JEV] ✅ 第二层拿图成功");
+                    return dataUrl;
+                }
+            } catch (e) {
+                log(`[JEV] 第二层失败，尝试第三层: ${e.message}`);
+            }
+
+            // 🧩 方案三：直接上传图片URL给 Worker（最保险）
+            try {
+                log("[JEV] 尝试第三层：Worker 代理获取");
+                const workerUrl = "https://jevshop.bensonlove1986.workers.dev/get-image-by-url";
+                const res = await fetch(workerUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image_url: imgElement.src }),
+                });
+                const json = await res.json();
+                if (json && json.base64_url && json.base64_url.length > 5000) {
+                    log("[JEV] ✅ 第三层成功：Worker返回图片base64");
+                    return json.base64_url;
+                }
+            } catch (e) {
+                log(`[JEV] ❌ 所有方案均失败：${e.message}`);
+            }
+
+            log("[JEV] ❌ 拿图失败：dataUrl为空");
+            return null;
+        }
+
+        // 创建 Blob 图片
+        document.getElementById('createBlobImage').addEventListener('click', async () => {
+            log("创建 Blob 图片中...");
+            
+            // 创建一个简单的 Canvas 图像并转换为 Blob
+            const canvas = document.createElement('canvas');
+            canvas.width = 300;
+            canvas.height = 200;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.fillText('Blob 测试图片', 60, 100);
+            
+            canvas.toBlob((blob) => {
+                const blobUrl = URL.createObjectURL(blob);
+                const img = document.getElementById('blobImage');
+                img.src = blobUrl;
+                img.style.display = 'block';
+                document.getElementById('testBlobImage').disabled = false;
+                log("Blob 图片创建成功，URL: " + blobUrl.substring(0, 30) + "...");
+            });
+        });
+
+        // 测试普通图片
+        document.getElementById('testNormalImage').addEventListener('click', async () => {
+            const img = document.getElementById('normalImage');
+            const resultDiv = document.getElementById('normalResult');
+            
+            resultDiv.textContent = '正在尝试捕获图片...';
+            log('开始测试普通图片捕获');
+            
+            const dataUrl = await JEV_captureImage(img);
+            
+            if (dataUrl) {
+                resultDiv.innerHTML = `<p>✅ 捕获成功！</p><p>数据长度: ${dataUrl.length} 字符</p><p>数据类型: ${dataUrl.substring(0, 50)}...</p>`;
+                log(`普通图片捕获成功，数据长度: ${dataUrl.length}`);
+            } else {
+                resultDiv.textContent = '❌ 捕获失败';
+                log('普通图片捕获失败');
+            }
+        });
+
+        // 测试 Blob 图片
+        document.getElementById('testBlobImage').addEventListener('click', async () => {
+            const img = document.getElementById('blobImage');
+            const resultDiv = document.getElementById('blobResult');
+            
+            if (!img.src) {
+                resultDiv.textContent = '请先创建 Blob 图片';
+                return;
+            }
+            
+            resultDiv.textContent = '正在尝试捕获 Blob 图片...';
+            log('开始测试 Blob 图片捕获');
+            
+            const dataUrl = await JEV_captureImage(img);
+            
+            if (dataUrl) {
+                resultDiv.innerHTML = `<p>✅ 捕获成功！</p><p>数据长度: ${dataUrl.length} 字符</p>`;
+                log(`Blob 图片捕获成功，数据长度: ${dataUrl.length}`);
+            } else {
+                resultDiv.textContent = '❌ 捕获失败';
+                log('Blob 图片捕获失败');
+            }
+        });
+
+        // 测试跨域图片
+        document.getElementById('testCrossDomainImage').addEventListener('click', async () => {
+            const img = document.getElementById('crossDomainImage');
+            const resultDiv = document.getElementById('crossDomainResult');
+            
+            resultDiv.textContent = '正在尝试捕获跨域图片...';
+            log('开始测试跨域图片捕获');
+            
+            const dataUrl = await JEV_captureImage(img);
+            
+            if (dataUrl) {
+                resultDiv.innerHTML = `<p>✅ 捕获成功！</p><p>数据长度: ${dataUrl.length} 字符</p>`;
+                log(`跨域图片捕获成功，数据长度: ${dataUrl.length}`);
+            } else {
+                resultDiv.textContent = '❌ 捕获失败';
+                log('跨域图片捕获失败');
+            }
+        });
+
+        // 页面加载完成时的初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            log('页面加载完成，测试工具已准备就绪');
+            log('请选择一个测试场景开始测试');
+        });
+    </script>
+</body>
+</html>

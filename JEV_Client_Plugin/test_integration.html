@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV Plugin 模块集成测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e1e5e9;
+            border-radius: 6px;
+            background-color: #fafbfc;
+        }
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            border-bottom-color: #3498db;
+            color: #3498db;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-badge.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background: #2980b9;
+        }
+        .button.secondary {
+            background: #6c757d;
+        }
+        .button.secondary:hover {
+            background: #545b62;
+        }
+        .button.success {
+            background: #28a745;
+        }
+        .button.success:hover {
+            background: #218838;
+        }
+        .button.danger {
+            background: #dc3545;
+        }
+        .button.danger:hover {
+            background: #c82333;
+        }
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #495057;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .card {
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: white;
+        }
+        .card-header {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .card-body {
+            font-size: 14px;
+        }
+        .toggle-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s;
+        }
+        .toggle-item:hover {
+            background-color: #f8f9fa;
+        }
+        .toggle-item:last-child {
+            border-bottom: none;
+        }
+        .toggle-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toggle-icon {
+            font-size: 20px;
+        }
+        .toggle-name {
+            font-weight: 500;
+            color: #495057;
+        }
+        .toggle-description {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        .toggle-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #28a745;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        .toggle-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        .toggle-status.enabled {
+            background: #d4edda;
+            color: #155724;
+        }
+        .toggle-status.disabled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .toggle-status.locked {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .permission-item {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+        }
+        .permission-item h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #495057;
+        }
+        .permission-item p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .permission-item .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .console {
+            background: #2d3436;
+            color: #dfe6e9;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .console-log {
+            margin: 2px 0;
+            padding: 2px 0;
+            border-bottom: 1px solid #343a40;
+        }
+        .console-log:last-child {
+            border-bottom: none;
+        }
+        .console-log.info {
+            color: #00cec9;
+        }
+        .console-log.success {
+            color: #00b894;
+        }
+        .console-log.warning {
+            color: #fdcb6e;
+        }
+        .console-log.error {
+            color: #d63031;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e9ecef;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3498db;
+            border: 3px solid #e9ecef;
+        }
+        .timeline-item.success::before {
+            background: #28a745;
+        }
+        .timeline-item.error::before {
+            background: #dc3545;
+        }
+        .timeline-item.warning::before {
+            background: #ffc107;
+        }
+        .timeline-time {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        .timeline-content {
+            font-size: 14px;
+            color: #495057;
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .highlight-box h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JEV Plugin 模块集成测试平台</h1>
+        </div>
+        
+        <div class="content">
+            <!-- 状态栏 -->
+            <div class="status-bar">
+                <div class="status-item">
+                    <span>核心状态:</span>
+                    <span id="jev-core-status" class="status-badge warning">未初始化</span>
+                </div>
+                <div class="status-item">
+                    <span>注册状态:</span>
+                    <span id="register-status" class="status-badge error">未激活</span>
+                </div>
+                <div class="status-item">
+                    <span>开关状态:</span>
+                    <span id="toggle-status" class="status-badge warning">未初始化</span>
+                </div>
+            </div>
+            
+            <!-- 测试流程控制 -->
+            <div class="section">
+                <h2>测试流程控制</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <button id="init-jev-btn" class="button">初始化 JEV 环境</button>
+                    </div>
+                    <div class="form-group">
+                        <button id="load-modules-btn" class="button secondary" disabled>加载本地模块</button>
+                    </div>
+                    <div class="form-group">
+                        <button id="reset-all-btn" class="button danger">重置所有状态</button>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4>测试说明</h4>
+                    <p>1. 首先点击「初始化 JEV 环境」创建模拟环境</p>
+                    <p>2. 然后点击「加载本地模块」导入register.js和toggle_manager.js</p>
+                    <p>3. 按照测试用例逐步测试各功能模块</p>
+                </div>
+            </div>
+            
+            <!-- 选项卡 -->
+            <div class="tabs">
+                <div class="tab active" data-tab="tab-register">注册模块测试</div>
+                <div class="tab" data-tab="tab-toggle">开关管理器测试</div>
+                <div class="tab" data-tab="tab-integration">集成交互测试</div>
+                <div class="tab" data-tab="tab-events">事件监控</div>
+                <div class="tab" data-tab="tab-debug">调试信息</div>
+            </div>
+            
+            <!-- 注册模块测试 -->
+            <div id="tab-register" class="tab-content active">
+                <div class="section">
+                    <h2>注册模块功能测试</h2>
+                    
+                    <div class="form-group">
+                        <label for="invitation-code">邀请码（测试用: test123）</label>
+                        <input type="text" id="invitation-code" value="test123" placeholder="请输入邀请码">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <button id="activate-btn" class="button success" disabled>激活插件</button>
+                        </div>
+                        <div class="form-group">
+                            <button id="check-activation-btn" class="button" disabled>检查激活状态</button>
+                        </div>
+                        <div class="form-group">
+                            <button id="logout-btn" class="button danger" disabled>注销登录</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mock-permissions">模拟权限配置（JSON格式）</label>
+                        <textarea id="mock-permissions">{
+  "features": [
+    {"name": "translation_engine", "enabled": true},
+    {"name": "ai_responder", "enabled": true},
+    {"name": "ocr_engine", "enabled": true},
+    {"name": "profit_calc", "enabled": true},
+    {"name": "pi_generator", "enabled": true}
+  ],
+  "permissions": ["ai_reply", "translate", "ocr", "quote", "pi"],
+  "role": "customer_service"
+}</textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <button id="get-permissions-btn" class="button" disabled>获取权限信息</button>
+                        </div>
+                        <div class="form-group">
+                            <button id="test-api-btn" class="button secondary" disabled>测试API连接</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 开关管理器测试 -->
+            <div id="tab-toggle" class="tab-content">
+                <div class="section">
+                    <h2>功能开关管理测试</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <button id="init-toggle-btn" class="button" disabled>初始化开关管理器</button>
+                        </div>
+                        <div class="form-group">
+                            <button id="load-toggles-btn" class="button secondary" disabled>加载开关状态</button>
+                        </div>
+                        <div class="form-group">
+                            <button id="save-toggles-btn" class="button" disabled>保存开关状态</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <button id="enable-all-btn" class="button success" disabled>启用所有功能</button>
+                        </div>
+                        <div class="form-group">
+                            <button id="disable-all-btn" class="button danger" disabled>禁用所有功能</button>
+                        </div>
+                        <div class="form-group">
+                            <button id="reset-toggles-btn" class="button secondary" disabled>重置为默认</button>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 30px;">功能开关列表</h3>
+                    <ul id="toggle-list" class="toggle-list">
+                        <li class="toggle-item">
+                            <div class="toggle-info">
+                                <span class="toggle-icon">⏳</span>
+                                <div>
+                                    <div class="toggle-name">正在加载...</div>
+                                </div>
+                            </div>
+                            <div class="toggle-controls">
+                                <span class="toggle-status locked">未初始化</span>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <h3 style="margin-top: 30px;">权限映射配置</h3>
+                    <div id="permission-map" class="permissions-grid">
+                        <div class="permission-item">
+                            <h4>正在加载...</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 集成交互测试 -->
+            <div id="tab-integration" class="tab-content">
+                <div class="section">
+                    <h2>模块集成交互测试</h2>
+                    
+                    <div class="action-grid">
+                        <div class="card">
+                            <div class="card-header">权限同步测试</div>
+                            <div class="card-body">
+                                <button id="sync-permissions-btn" class="button" disabled>测试权限同步</button>
+                                <p>测试register.js向toggle_manager.js同步权限数据</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">功能可用性测试</div>
+                            <div class="card-body">
+                                <select id="feature-test-select" style="margin-bottom: 10px; width: 100%;">
+                                    <option value="aiAutoReply">AI自动回复</option>
+                                    <option value="autoTranslate">自动翻译</option>
+                                    <option value="imageRecognition">图片识别</option>
+                                </select>
+                                <button id="check-availability-btn" class="button" disabled>检查可用性</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">权限限制测试</div>
+                            <div class="card-body">
+                                <button id="test-permission-restrictions-btn" class="button" disabled>测试权限限制</button>
+                                <p>测试在无权限情况下的功能开关限制</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">事件传递测试</div>
+                            <div class="card-body">
+                                <button id="test-event-propagation-btn" class="button" disabled>测试事件传递</button>
+                                <p>测试模块间事件传递机制</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 30px;">集成测试用例</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-time">准备阶段</div>
+                            <div class="timeline-content">初始化JEV环境并加载所有模块</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">测试1</div>
+                            <div class="timeline-content">验证未激活状态下功能权限限制</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">测试2</div>
+                            <div class="timeline-content">激活插件并验证权限同步</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">测试3</div>
+                            <div class="timeline-content">测试功能开关的正常启用/禁用</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-time">测试4</div>
+                            <div class="timeline-content">注销登录后验证权限清除</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 事件监控 -->
+            <div id="tab-events" class="tab-content">
+                <div class="section">
+                    <h2>事件监控面板</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="monitor-events" checked> 开启事件监听
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <button id="clear-events-btn" class="button secondary">清除事件日志</button>
+                        </div>
+                    </div>
+                    <div id="events-log" class="console">
+                        <div class="console-log info">事件监控已启动...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 调试信息 -->
+            <div id="tab-debug" class="tab-content">
+                <div class="section">
+                    <h2>调试信息面板</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="debug-log" checked> 开启调试日志
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <select id="log-level">
+                                <option value="all">所有日志</option>
+                                <option value="info">信息</option>
+                                <option value="warning">警告</option>
+                                <option value="error">错误</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button id="clear-debug-btn" class="button secondary">清除调试日志</button>
+                        </div>
+                    </div>
+                    <div id="debug-console" class="console">
+                        <div class="console-log info">调试控制台已启动...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 全局变量
+        let mockDeviceId = 'test_device_' + Math.random().toString(36).substr(2, 9);
+        let eventCounter = 0;
+        let debugCounter = 0;
+        let mockResponseDelay = 300; // 模拟API响应延迟
+        
+        // DOM加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            setupTabNavigation();
+        });
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 核心初始化
+            document.getElementById('init-jev-btn').addEventListener('click', initJevEnvironment);
+            document.getElementById('load-modules-btn').addEventListener('click', loadLocalModules);
+            document.getElementById('reset-all-btn').addEventListener('click', resetAllState);
+            
+            // 注册模块测试
+            document.getElementById('activate-btn').addEventListener('click', testActivation);
+            document.getElementById('check-activation-btn').addEventListener('click', checkActivation);
+            document.getElementById('logout-btn').addEventListener('click', testLogout);
+            document.getElementById('get-permissions-btn').addEventListener('click', testGetPermissions);
+            document.getElementById('test-api-btn').addEventListener('click', testApiConnection);
+            
+            // 开关管理器测试
+            document.getElementById('init-toggle-btn').addEventListener('click', initToggleManager);
+            document.getElementById('load-toggles-btn').addEventListener('click', loadToggles);
+            document.getElementById('save-toggles-btn').addEventListener('click', saveToggles);
+            document.getElementById('enable-all-btn').addEventListener('click', enableAllFeatures);
+            document.getElementById('disable-all-btn').addEventListener('click', disableAllFeatures);
+            document.getElementById('reset-toggles-btn').addEventListener('click', resetToggles);
+            
+            // 集成测试
+            document.getElementById('sync-permissions-btn').addEventListener('click', testPermissionSync);
+            document.getElementById('check-availability-btn').addEventListener('click', checkFeatureAvailability);
+            document.getElementById('test-permission-restrictions-btn').addEventListener('click', testPermissionRestrictions);
+            document.getElementById('test-event-propagation-btn').addEventListener('click', testEventPropagation);
+            
+            // 事件监控
+            document.getElementById('clear-events-btn').addEventListener('click', clearEvents);
+            document.getElementById('monitor-events').addEventListener('change', toggleEventMonitoring);
+            
+            // 调试控制台
+            document.getElementById('clear-debug-btn').addEventListener('click', clearDebugConsole);
+            document.getElementById('debug-log').addEventListener('change', toggleDebugLogging);
+            
+            // 监听所有JEV相关事件
+            document.addEventListener('jev_authenticated', logEvent);
+            document.addEventListener('jev_feature_toggled', logEvent);
+            document.addEventListener('jev_connection_status_changed', logEvent);
+            document.addEventListener('jev_features_permissions_updated', logEvent);
+            document.addEventListener('jev_features_permissions_cleared', logEvent);
+        }
+        
+        // 设置选项卡导航
+        function setupTabNavigation() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 隐藏所有内容
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // 移除所有选项卡的激活状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // 激活当前选项卡
+                    this.classList.add('active');
+                    
+                    // 显示对应的内容
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+        
+        // 初始化JEV环境
+        function initJevEnvironment() {
+            try {
+                // 清空之前的JEV对象
+                if (window.JEV) {
+                    delete window.JEV;
+                }
+                
+                // 创建新的JEV对象
+                window.JEV = {
+                    config: {
+                        version: '2.0.0',
+                        deviceId: mockDeviceId,
+                        hotUpdateInterval: 60000,
+                        apiEndpoint: 'https://api.jev-plugin.com',
+                        localModules: ['register', 'toggle_manager', 'storage_manager', 'relay_connector', 'ui_panel'],
+                        cloudModules: ['ai_responder', 'translation_engine', 'ocr_processor']
+                    },
+                    utils: {
+                        log: function(level, message) {
+                            logToConsole(level, message);
+                        },
+                        error: function(message, error) {
+                            logToConsole('error', message + (error ? ' - ' + error.message : ''));
+                        },
+                        ajax: function(options) {
+                            return mockAjax(options);
+                        },
+                        generateDeviceId: function() {
+                            return 'test_device_' + Math.random().toString(36).substr(2, 9);
+                        },
+                        debounce: function(func, wait) {
+                            let timeout;
+                            return function() {
+                                const context = this, args = arguments;
+                                clearTimeout(timeout);
+                                timeout = setTimeout(() => func.apply(context, args), wait);
+                            };
+                        }
+                    },
+                    modules: {},
+                    state: {
+                        isInitialized: false,
+                        isActivated: false,
+                        connectionStatus: 'disconnected'
+                    },
+                    api: {
+                        initModule: function(moduleName) {
+                            logToConsole('info', `初始化模块: ${moduleName}`);
+                            if (JEV.modules[moduleName] && JEV.modules[moduleName].init) {
+                                JEV.modules[moduleName].init();
+                            }
+                        },
+                        getModule: function(moduleName) {
+                            return JEV.modules[moduleName];
+                        },
+                        setConnectionStatus: function(status) {
+                            JEV.state.connectionStatus = status;
+                            // 触发连接状态变化事件
+                            const event = new CustomEvent('jev_connection_status_changed', {
+                                detail: { status: status },
+                                bubbles: true,
+                                cancelable: true
+                            });
+                            document.dispatchEvent(event);
+                        }
+                    }
+                };
+                
+                JEV.state.isInitialized = true;
+                updateStatusBadge('jev-core-status', 'success', '已初始化');
+                logToConsole('success', 'JEV 环境初始化完成');
+                
+                // 启用加载模块按钮
+                document.getElementById('load-modules-btn').disabled = false;
+                
+                // 更新设备ID显示
+                logToConsole('info', `设备ID: ${JEV.config.deviceId}`);
+                
+            } catch (error) {
+                logToConsole('error', `JEV 环境初始化失败: ${error.message}`);
+                updateStatusBadge('jev-core-status', 'error', '初始化失败');
+            }
+        }
+        
+        // 加载本地模块
+        function loadLocalModules() {
+            if (!window.JEV) {
+                logToConsole('error', '请先初始化JEV环境');
+                return;
+            }
+            
+            try {
+                logToConsole('info', '开始加载本地模块...');
+                
+                // 加载register.js
+                const registerScript = document.createElement('script');
+                registerScript.src = 'modules_local/register.js';
+                registerScript.onload = function() {
+                    logToConsole('success', 'register.js 加载完成');
+                    updateStatusBadge('register-status', 'warning', '未激活');
+                    
+                    // 启用注册相关按钮
+                    document.getElementById('activate-btn').disabled = false;
+                    document.getElementById('check-activation-btn').disabled = false;
+                    document.getElementById('test-api-btn').disabled = false;
+                    
+                    // 加载toggle_manager.js
+                    const toggleScript = document.createElement('script');
+                    toggleScript.src = 'modules_local/toggle_manager.js';
+                    toggleScript.onload = function() {
+                        logToConsole('success', 'toggle_manager.js 加载完成');
+                        updateStatusBadge('toggle-status', 'warning', '未初始化');
+                        
+                        // 启用开关管理器相关按钮
+                        document.getElementById('init-toggle-btn').disabled = false;
+                        
+                        logToConsole('success', '所有必要模块加载完成');
+                        
+                        // 显示功能开关列表
+                        renderFeatureToggles();
+                        renderPermissionMap();
+                    };
+                    toggleScript.onerror = function() {
+                        logToConsole('error', 'toggle_manager.js 加载失败');
+                    };
+                    document.body.appendChild(toggleScript);
+                };
+                registerScript.onerror = function() {
+                    logToConsole('error', 'register.js 加载失败');
+                };
+                document.body.appendChild(registerScript);
+                
+            } catch (error) {
+                logToConsole('error', `加载模块失败: ${error.message}`);
+            }
+        }
+        
+        // 重置所有状态
+        function resetAllState() {
+            if (confirm('确定要重置所有状态吗？这将清除所有测试数据。')) {
+                try {
+                    // 移除动态加载的脚本
+                    const scripts = document.querySelectorAll('script[src*="modules_local/"]');
+                    scripts.forEach(script => script.remove());
+                    
+                    // 清空JEV对象
+                    if (window.JEV) {
+                        delete window.JEV;
+                    }
+                    
+                    // 重置状态
+                    updateStatusBadge('jev-core-status', 'warning', '未初始化');
+                    updateStatusBadge('register-status', 'error', '未激活');
+                    updateStatusBadge('toggle-status', 'warning', '未初始化');
+                    
+                    // 禁用所有按钮
+                    document.getElementById('load-modules-btn').disabled = true;
+                    document.getElementById('activate-btn').disabled = true;
+                    document.getElementById('check-activation-btn').disabled = true;
+                    document.getElementById('logout-btn').disabled = true;
+                    document.getElementById('get-permissions-btn').disabled = true;
+                    document.getElementById('test-api-btn').disabled = true;
+                    document.getElementById('init-toggle-btn').disabled = true;
+                    document.getElementById('load-toggles-btn').disabled = true;
+                    document.getElementById('save-toggles-btn').disabled = true;
+                    document.getElementById('enable-all-btn').disabled = true;
+                    document.getElementById('disable-all-btn').disabled = true;
+                    document.getElementById('reset-toggles-btn').disabled = true;
+                    document.getElementById('sync-permissions-btn').disabled = true;
+                    document.getElementById('check-availability-btn').disabled = true;
+                    document.getElementById('test-permission-restrictions-btn').disabled = true;
+                    document.getElementById('test-event-propagation-btn').disabled = true;
+                    
+                    // 清空列表
+                    document.getElementById('toggle-list').innerHTML = `
+                        <li class="toggle-item">
+                            <div class="toggle-info">
+                                <span class="toggle-icon">⏳</span>
+                                <div>
+                                    <div class="toggle-name">正在加载...</div>
+                                </div>
+                            </div>
+                            <div class="toggle-controls">
+                                <span class="toggle-status locked">未初始化</span>
+                            </div>
+                        </li>
+                    `;
+                    
+                    document.getElementById('permission-map').innerHTML = `
+                        <div class="permission-item">
+                            <h4>正在加载...</h4>
+                        </div>
+                    `;
+                    
+                    // 清空日志
+                    clearEvents();
+                    clearDebugConsole();
+                    
+                    logToConsole('info', '所有状态已重置');
+                    
+                } catch (error) {
+                    logToConsole('error', `重置失败: ${error.message}`);
+                }
+            }
+        }
+        
+        // 测试激活
+        function testActivation() {
+            const invitationCode = document.getElementById('invitation-code').value;
+            
+            if (!invitationCode) {
+                alert('请输入邀请码');
+                return;
+            }
+            
+            if (!JEV.modules.register) {
+                logToConsole('error', 'register模块未加载');
+                return;
+            }
+            
+            try {
+                logToConsole('info', `开始测试激活流程，邀请码: ${invitationCode}`);
+                
+                // 模拟注册模块的激活方法
+                JEV.modules.register._mockActivate = function() {
+                    try {
+                        // 模拟API调用
+                        setTimeout(() => {
+                            // 模拟成功响应
+                            const mockResponse = {
+                                success: true,
+                                activation_code: invitationCode,
+                                permissions: JSON.parse(document.getElementById('mock-permissions').value),
+                                expires_at: Date.now() + 30 * 24 * 60 * 60 * 1000 // 30天后过期
+                            };
+                            
+                            // 保存激活信息
+                            JEV.modules.register.activationData = mockResponse;
+                            JEV.state.isActivated = true;
+                            
+                            // 触发认证成功事件
+                            const event = new CustomEvent('jev_authenticated', {
+                                detail: {
+                                    isActivated: true,
+                                    permissions: mockResponse.permissions,
+                                    activationCode: mockResponse.activation_code
+                                },
+                                bubbles: true,
+                                cancelable: true
+                            });
+                            document.dispatchEvent(event);
+                            
+                            updateStatusBadge('register-status', 'success', '已激活');
+                            logToConsole('success', '激活成功');
+                            
+                            // 启用注销按钮和获取权限按钮
+                            document.getElementById('logout-btn').disabled = false;
+                            document.getElementById('get-permissions-btn').disabled = false;
+                            
+                            // 启用集成测试按钮
+                            document.getElementById('sync-permissions-btn').disabled = false;
+                            document.getElementById('check-availability-btn').disabled = false;
+                            document.getElementById('test-permission-restrictions-btn').disabled = false;
+                            document.getElementById('test-event-propagation-btn').disabled = false;
+                            
+                            // 如果toggleManager已初始化，自动更新权限
+                            if (JEV.modules.toggleManager && JEV.modules.toggleManager.setFeatures) {
+                                JEV.modules.toggleManager.setFeatures(mockResponse.permissions.features);
+                                JEV.modules.toggleManager.permissions = mockResponse.permissions;
+                                logToConsole('info', '权限已同步到toggleManager');
+                            }
+                            
+                        }, mockResponseDelay);
+                        
+                        return true;
+                    } catch (error) {
+                        logToConsole('error', `激活失败: ${error.message}`);
+                        return false;
+                    }
+                };
+                
+                // 调用激活方法
+                JEV.modules.register._mockActivate();
+                
+            } catch (error) {
+                logToConsole('error', `激活测试失败: ${error.message}`);
+            }
+        }
+        
+        // 检查激活状态
+        function checkActivation() {
+            if (!JEV.modules.register) {
+                logToConsole('error', 'register模块未加载');
+                return;
+            }
+            
+            try {
+                const isActivated = JEV.modules.register.isActivated?.() || JEV.state.isActivated;
+                logToConsole('info', `当前激活状态: ${isActivated ? '已激活' : '未激活'}`);
+                
+                if (isActivated) {
+                    updateStatusBadge('register-status', 'success', '已激活');
+                } else {
+                    updateStatusBadge('register-status', 'error', '未激活');
+                }
+                
+            } catch (error) {
+                logToConsole('error', `检查激活状态失败: ${error.message}`);
+            }
+        }
+        
+        // 测试注销
+        function testLogout() {
+            if (!JEV.modules.register) {
+                logToConsole('error', 'register模块未加载');
+                return;
+            }
+            
+            try {
+                // 模拟注销
+                if (JEV.modules.register.logout) {
+                    JEV.modules.register.logout();
+                } else {
+                    // 手动模拟注销
+                    delete JEV.modules.register.activationData;
+                    JEV.state.isActivated = false;
+                    
+                    // 触发权限清除事件
+                    const event = new CustomEvent('jev_features_permissions_cleared', {
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    document.dispatchEvent(event);
+                    
+                    // 如果toggleManager已初始化，清除权限
+                    if (JEV.modules.toggleManager && JEV.modules.toggleManager.clearFeatures) {
+                        JEV.modules.toggleManager.clearFeatures();
+                    }
+                }
+                
+                updateStatusBadge('register-status', 'error', '未激活');
+                logToConsole('success', '注销成功');
+                
+                // 禁用相关按钮
+                document.getElementById('logout-btn').disabled = true;
+                document.getElementById('get-permissions-btn').disabled = true;
+                document.getElementById('sync-permissions-btn').disabled = true;
+                
+                // 刷新功能开关状态
+                renderFeatureToggles();
+                
+            } catch (error) {
+                logToConsole('error', `注销失败: ${error.message}`);
+            }
+        }
+        
+        // 获取权限信息
+        function testGetPermissions() {
+            if (!JEV.modules.register) {
+                logToConsole('error', 'register模块未加载');
+                return;
+            }
+            
+            try {
+                const permissions = JEV.modules.register.getPermissions?.() || 
+                                   JEV.modules.register.activationData?.permissions || {};
+                
+                logToConsole('info', '当前权限信息:');
+                logToConsole('info', JSON.stringify(permissions, null, 2));
+                
+                // 显示权限详情
+                alert(JSON.stringify(permissions, null, 2));
+                
+            } catch (error) {
+                logToConsole('error', `获取权限信息失败: ${error.message}`);
+            }
+        }
+        
+        // 测试API连接
+        function testApiConnection() {
+            if (!JEV.modules.register) {
+                logToConsole('error', 'register模块未加载');
+                return;
+            }
+            
+            try {
+                logToConsole('info', '测试API连接...');
+                
+                // 模拟API连接测试
+                setTimeout(() => {
+                    logToConsole('success', 'API连接测试成功');
+                    alert('API连接测试成功');
+                }, mockResponseDelay);
+                
+            } catch (error) {
+                logToConsole('error', `API连接测试失败: ${error.message}`);
+            }
+        }
+        
+        // 初始化开关管理器
+        function initToggleManager() {
+            if (!JEV.modules.toggleManager) {
+                logToConsole('error', 'toggle_manager模块未加载');
+                return;
+            }
+            
+            try {
+                // 调用初始化方法
+                JEV.modules.toggleManager.init();
+                
+                updateStatusBadge('toggle-status', 'success', '已初始化');
+                logToConsole('success', '开关管理器初始化完成');
+                
+                // 启用相关按钮
+                document.getElementById('load-toggles-btn').disabled = false;
+                document.getElementById('save-toggles-btn').disabled = false;
+                document.getElementById('enable-all-btn').disabled = false;
+                document.getElementById('disable-all-btn').disabled = false;
+                document.getElementById('reset-toggles-btn').disabled = false;
+                
+                // 刷新功能开关列表
+                renderFeatureToggles();
+                
+            } catch (error) {
+                logToConsole('error', `初始化开关管理器失败: ${error.message}`);
+                updateStatusBadge('toggle-status', 'error', '初始化失败');
+            }
+        }
+        
+        // 加载开关状态
+        function loadToggles() {
+            if (!JEV.modules.toggleManager) {
+                logToConsole('error', 'toggle_manager模块未加载');
+                return;
+            }
+            
+            try {
+                JEV.modules.toggleManager.loadToggles();
+                logToConsole('success', '功能开关状态加载完成');
+                renderFeatureToggles();
+            } catch (error) {
+                logToConsole('error', `加载开关状态失败: ${error.message}`);
+            }
+        }
+        
+        // 保存开关状态
+        function saveToggles() {
+            if (!JEV.modules.toggleManager) {
+                logToConsole('error', 'toggle_manager模块未加载');
+                return;
+            }
+            
+            try {
+                JEV.modules.toggleManager.saveToggles();
+                logToConsole('success', '功能开关状态保存完成');
+            } catch (error) {
+                logToConsole('error', `保存开关状态失败: ${error.message}`);
+            }
+        }
+        
+        // 启用所有功能
+        function enableAllFeatures() {
+            if (!JEV.modules.toggleManager) {
+                logToConsole('error', 'toggle_manager模块未加载');
+                return;
+            }
+            
+            try {
+                JEV.modules.toggleManager.enableAllFeatures();
+                logToConsole('success', '已尝试启用所有功能');
+                renderFeatureToggles();
+            } catch (error) {
+                logToConsole('error', `启用所有功能失败: ${error.message}`);
+            }
+        }
+        
+        // 禁用所有功能
+        function disableAllFeatures() {
+            if (!JEV.modules.toggleManager) {
+                logToConsole('error', 'toggle_manager模块未加载');
+                return;
+            }
+            
+            try {
+                JEV.modules.toggleManager.disableAllFeatures();
+                logToConsole('success', '已禁用所有功能');
+                renderFeatureToggles();
+            } catch (error) {
+                logToConsole('error', `禁用所有功能失败: ${error.message}`);
+            }
+        }
+        
+        // 重置开关到默认状态
+        function resetToggles() {
+            if (!JEV.modules.toggleManager) {
+                logToConsole('error', 'toggle_manager模块未加载');
+                return;
+            }
+            
+            try {
+                JEV.modules.toggleManager.resetToDefaults();
+                logToConsole('success', '功能开关已重置为默认状态');
+                renderFeatureToggles();
+            } catch (error) {
+                logToConsole('error', `重置开关失败: ${error.message}`);
+            }
+        }
+        
+        // 测试权限同步
+        function testPermissionSync() {
+            if (!JEV.modules.register || !JEV.modules.toggleManager) {
+                logToConsole('error', '请先加载所有必要模块');
+                return;
+            }
+            
+            try {
+                const permissions = JSON.parse(document.getElementById('mock-permissions').value);
+                
+                logToConsole('info', '开始测试权限同步...');
+                logToConsole('info', '发送权限数据到toggle_manager');
+                
+                // 调用setFeatures方法
+                const result = JEV.modules.toggleManager.setFeatures(permissions.features);
+                
+                if (result) {
+                    logToConsole('success', '权限同步成功');
+                    // 保存完整权限信息
+                    JEV.modules.toggleManager.permissions = permissions;
+                    // 应用权限限制
+                    JEV.modules.toggleManager.applyPermissionRestrictions();
+                    // 刷新功能开关列表
+                    renderFeatureToggles();
+                    alert('权限同步成功');
+                } else {
+                    logToConsole('error', '权限同步失败');
+                }
+                
+            } catch (error) {
+                logToConsole('error', `权限同步测试失败: ${error.message}`);
+            }
+        }
+        
+        // 检查功能可用性
+        function checkFeatureAvailability() {
+            if (!JEV.modules.toggleManager) {
+                logToConsole('error', 'toggle_manager模块未加载');
+                return;
+            }
+            
+            try {
+                const featureId = document.getElementById('feature-test-select').value;
+                const availability = JEV.modules.toggleManager.checkFeatureAvailability(featureId);
+                
+                logToConsole('info', `功能 ${featureId} 可用性检查结果:`);
+                logToConsole('info', JSON.stringify(availability, null, 2));
+                
+                alert(JSON.stringify(availability, null, 2));
+                
+            } catch (error) {
+                logToConsole('error', `检查功能可用性失败: ${error.message}`);
+            }
+        }
+        
+        // 测试权限限制
+        function testPermissionRestrictions() {
+            if (!JEV.modules.toggleManager) {
+                logToConsole('error', 'toggle_manager模块未加载');
+                return;
+            }
+            
+            try {
+                logToConsole('info', '开始测试权限限制...');
+                
+                // 临时禁用某个权限
+                const originalPermissions = [...JEV.modules.toggleManager.permissions.permissions];
+                JEV.modules.toggleManager.permissions.permissions = 
+                    originalPermissions.filter(p => p !== 'ai_reply');
+                
+                logToConsole('info', '已临时移除 AI 回复权限');
+                
+                // 应用权限限制
+                JEV.modules.toggleManager.applyPermissionRestrictions();
+                
+                // 尝试启用需要权限的功能
+                try {
+                    JEV.modules.toggleManager.toggleFeature('aiAutoReply', true);
+                    logToConsole('error', '预期失败的操作却成功了');
+                } catch (error) {
+                    logToConsole('success', `权限限制生效: ${error.message}`);
+                }
+                
+                // 恢复原始权限
+                JEV.modules.toggleManager.permissions.permissions = originalPermissions;
+                logToConsole('info', '已恢复原始权限');
+                
+                // 刷新功能开关列表
+                renderFeatureToggles();
+                
+                alert('权限限制测试完成');
+                
+            } catch (error) {
+                logToConsole('error', `权限限制测试失败: ${error.message}`);
+            }
+        }
+        
+        // 测试事件传递
+        function testEventPropagation() {
+            logToConsole('info', '开始测试事件传递机制...');
+            
+            // 模拟认证成功事件
+            const authEvent = new CustomEvent('jev_authenticated', {
+                detail: {
+                    isActivated: true,
+                    permissions: JSON.parse(document.getElementById('mock-permissions').value),
+                    activationCode: 'test_event_code'
+                },
+                bubbles: true,
+                cancelable: true
+            });
+            
+            // 模拟功能开关事件
+            const toggleEvent = new CustomEvent('jev_feature_toggled', {
+                detail: {
+                    feature: 'aiAutoReply',
+                    enabled: true,
+                    oldEnabled: false,
+                    featureInfo: { id: 'aiAutoReply', name: 'AI自动回复' }
+                },
+                bubbles: true,
+                cancelable: true
+            });
+            
+            // 触发事件
+            document.dispatchEvent(authEvent);
+            setTimeout(() => {
+                document.dispatchEvent(toggleEvent);
+                logToConsole('success', '事件传递测试完成，请查看事件日志');
+            }, 100);
+        }
+        
+        // 渲染功能开关列表
+        function renderFeatureToggles() {
+            const toggleList = document.getElementById('toggle-list');
+            
+            if (!JEV.modules.toggleManager || !JEV.modules.toggleManager.features) {
+                toggleList.innerHTML = `
+                    <li class="toggle-item">
+                        <div class="toggle-info">
+                            <span class="toggle-icon">❌</span>
+                            <div>
+                                <div class="toggle-name">开关管理器未初始化</div>
+                            </div>
+                        </div>
+                        <div class="toggle-controls">
+                            <span class="toggle-status locked">未初始化</span>
+                        </div>
+                    </li>
+                `;
+                return;
+            }
+            
+            const features = JEV.modules.toggleManager.features;
+            const toggles = JEV.modules.toggleManager.state.toggles;
+            const isActivated = JEV.state.isActivated || false;
+            const featureToPermissionMap = JEV.modules.toggleManager.featureToPermissionMap;
+            const permissions = JEV.modules.toggleManager.permissions.permissions || [];
+            
+            let html = '';
+            
+            Object.values(features).forEach(feature => {
+                const isEnabled = toggles[feature.id] === true;
+                const requiresPermission = featureToPermissionMap[feature.id];
+                const hasPermission = requiresPermission ? permissions.includes(requiresPermission) : true;
+                const isLocked = requiresPermission && (!isActivated || !hasPermission);
+                
+                html += `
+                    <li class="toggle-item">
+                        <div class="toggle-info">
+                            <span class="toggle-icon">${feature.icon}</span>
+                            <div>
+                                <div class="toggle-name">${feature.name}</div>
+                                <div class="toggle-description">${feature.description}</div>
+                            </div>
+                        </div>
+                        <div class="toggle-controls">
+                            <label class="toggle-switch">
+                                <input type="checkbox" 
+                                       id="toggle-${feature.id}" 
+                                       ${isEnabled ? 'checked' : ''}
+                                       ${isLocked ? 'disabled' : ''}
+                                       data-feature="${feature.id}">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-status ${isLocked ? 'locked' : (isEnabled ? 'enabled' : 'disabled')}">
+                                ${isLocked ? '未授权' : (isEnabled ? '已启用' : '已禁用')}
+                            </span>
+                        </div>
+                    </li>
+                `;
+            });
+            
+            toggleList.innerHTML = html;
+            
+            // 添加开关事件监听器
+            document.querySelectorAll('.toggle-switch input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const featureId = this.getAttribute('data-feature');
+                    const enabled = this.checked;
+                    
+                    if (!this.disabled && JEV.modules.toggleManager) {
+                        try {
+                            JEV.modules.toggleManager.toggleFeature(featureId, enabled);
+                        } catch (error) {
+                            logToConsole('error', `切换功能失败: ${error.message}`);
+                            // 恢复原始状态
+                            this.checked = !enabled;
+                            // 显示错误提示
+                            alert(`操作失败: ${error.message}`);
+                        }
+                    }
+                });
+            });
+        }
+        
+        // 渲染权限映射
+        function renderPermissionMap() {
+            const permissionMap = document.getElementById('permission-map');
+            
+            if (!JEV.modules.toggleManager || !JEV.modules.toggleManager.featureToPermissionMap) {
+                permissionMap.innerHTML = `
+                    <div class="permission-item">
+                        <h4>开关管理器未初始化</h4>
+                    </div>
+                `;
+                return;
+            }
+            
+            const map = JEV.modules.toggleManager.featureToPermissionMap;
+            const features = JEV.modules.toggleManager.features;
+            
+            let html = '';
+            
+            Object.entries(map).forEach(([featureId, permission]) => {
+                const feature = features[featureId];
+                if (feature) {
+                    html += `
+                        <div class="permission-item">
+                            <h4>${feature.icon} ${feature.name}</h4>
+                            <p><strong>功能ID:</strong> ${featureId}</p>
+                            <p><strong>所需权限:</strong> <span class="badge">${permission}</span></p>
+                            <p><strong>需要云端:</strong> ${feature.requiresRelay ? '是' : '否'}</p>
+                        </div>
+                    `;
+                }
+            });
+            
+            permissionMap.innerHTML = html || `
+                <div class="permission-item">
+                    <h4>暂无权限映射配置</h4>
+                </div>
+            `;
+        }
+        
+        // 模拟Ajax请求
+        function mockAjax(options) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    // 模拟成功响应
+                    resolve({
+                        success: true,
+                        data: {
+                            message: '模拟API响应成功',
+                            timestamp: Date.now()
+                        }
+                    });
+                }, mockResponseDelay);
+            });
+        }
+        
+        // 更新状态徽章
+        function updateStatusBadge(elementId, type, text) {
+            const badge = document.getElementById(elementId);
+            if (badge) {
+                badge.className = `status-badge ${type}`;
+                badge.textContent = text;
+            }
+        }
+        
+        // 记录事件
+        function logEvent(event) {
+            if (!document.getElementById('monitor-events').checked) return;
+            
+            const eventsLog = document.getElementById('events-log');
+            const eventTime = new Date().toLocaleTimeString();
+            const eventType = event.type;
+            const eventDetail = JSON.stringify(event.detail, null, 2);
+            
+            const logItem = document.createElement('div');
+            logItem.className = 'console-log info';
+            logItem.innerHTML = `
+                <strong>[${eventTime} #${++eventCounter}]</strong> 事件: <strong>${eventType}</strong><br>
+                <pre style="margin: 5px 0; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 3px; font-size: 12px;">${eventDetail}</pre>
+            `;
+            
+            eventsLog.appendChild(logItem);
+            eventsLog.scrollTop = eventsLog.scrollHeight;
+        }
+        
+        // 记录到调试控制台
+        function logToConsole(level, message) {
+            if (!document.getElementById('debug-log').checked) return;
+            
+            const logLevel = document.getElementById('log-level').value;
+            if (logLevel !== 'all' && level !== logLevel) return;
+            
+            const debugConsole = document.getElementById('debug-console');
+            const logTime = new Date().toLocaleTimeString();
+            
+            const logItem = document.createElement('div');
+            logItem.className = `console-log ${level}`;
+            logItem.innerHTML = `<strong>[${logTime} #${++debugCounter}] ${level.toUpperCase()}:</strong> ${message}`;
+            
+            debugConsole.appendChild(logItem);
+            debugConsole.scrollTop = debugConsole.scrollHeight;
+        }
+        
+        // 清除事件日志
+        function clearEvents() {
+            document.getElementById('events-log').innerHTML = '<div class="console-log info">事件日志已清空</div>';
+            eventCounter = 0;
+        }
+        
+        // 清除调试控制台
+        function clearDebugConsole() {
+            document.getElementById('debug-console').innerHTML = '<div class="console-log info">调试控制台已清空</div>';
+            debugCounter = 0;
+        }
+        
+        // 切换事件监控
+        function toggleEventMonitoring() {
+            const isEnabled = this.checked;
+            logToConsole('info', `事件监控已${isEnabled ? '开启' : '关闭'}`);
+        }
+        
+        // 切换调试日志
+        function toggleDebugLogging() {
+            const isEnabled = this.checked;
+            document.getElementById('debug-console').style.display = isEnabled ? 'block' : 'none';
+            logToConsole('info', `调试日志已${isEnabled ? '开启' : '关闭'}`);
+        }
+    </script>
+</body>
+</html>

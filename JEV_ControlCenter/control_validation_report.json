@@ -1,0 +1,10 @@
+{
+  "controlcenter_status": "online",
+  "relays_online": 9,
+  "workers_online": 9,
+  "optimizer_active": true,
+  "plugins_connected": 32,
+  "system_state": "stable",
+  "version": "v12.0",
+  "lock": "active"
+}

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEV Client Portal - 登录</title>
+  <style>
+    :root {
+      --primary-color: #4CAF50;
+      --primary-light: #81C784;
+      --primary-dark: #388E3C;
+      --bg-color: #f5f7fa;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --text-primary: #333;
+      --text-secondary: #666;
+      --border-radius: 12px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-color) 0%, #e8f5e9 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 背景装饰 */
+    body::before,
+    body::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+      opacity: 0.2;
+      z-index: -1;
+    }
+
+    body::before {
+      top: -100px;
+      left: -100px;
+      animation: float 15s ease-in-out infinite;
+    }
+
+    body::after {
+      bottom: -100px;
+      right: -100px;
+      animation: float 20s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(50px, 30px);
+      }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      perspective: 1000px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: var(--transition);
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+    }
+
+    .card:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      transform: translateY(-5px);
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo span {
+      color: var(--primary-color);
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.7);
+      font-size: 1rem;
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary-color);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: rgba(0, 0, 0, 0.4);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-dark), #2e7d32);
+      box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .form-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .form-footer a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .form-toggle {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .form-toggle span {
+      color: var(--text-secondary);
+    }
+
+    .form-toggle button {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .form-toggle button:hover {
+      background: rgba(76, 175, 80, 0.1);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .divider span {
+      padding: 0 10px;
+    }
+
+    .social-login {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .social-btn {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .social-btn:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      z-index: 1000;
+      transform: translateX(100%);
+      opacity: 0;
+      transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast-success {
+      background: linear-gradient(135deg, #4CAF50, #388E3C);
+    }
+
+    .toast-error {
+      background: linear-gradient(135deg, #f44336, #d32f2f);
+    }
+
+    .toast-info {
+      background: linear-gradient(135deg, #2196F3, #1976D2);
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(76, 175, 80, 0.2);
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 480px) {
+      .card {
+        padding: 25px 20px;
+      }
+      
+      .logo {
+        font-size: 2rem;
+      }
+      
+      .social-login {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 加载动画 -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <div class="logo">JEV<span>Client</span></div>
+        <div class="subtitle">连接多渠道消息，智能客户服务</div>
+      </div>
+
+      <!-- 登录表单 -->
+      <form id="login-form" class="form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-email" class="form-label">电子邮箱</label>
+          <input 
+            type="email" 
+            id="login-email" 
+            class="form-input" 
+            placeholder="请输入您的邮箱地址"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="login-password" class="form-label">密码</label>
+          <input 
+            type="password" 
+            id="login-password" 
+            class="form-input" 
+            placeholder="请输入您的密码"
+            required
+          >
+        </div>
+        
+        <button type="submit" class="btn btn-primary">登录</button>
+        
+        <div class="form-footer">
+          <a href="#" onclick="showForgotPassword()">忘记密码？</a>
+        </div>
+        
+        <div class="form-toggle">
+          <span>还没有账号？</span>
+          <button type="button" onclick="switchToRegister()">立即注册</button>
+        </div>
+      </form>
+
+      <!-- 注册表单 (默认隐藏) -->
+      <form id="register-form" class="form" style="display: none;" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="register-name" class="form-label">姓名</label>
+          <input 
+            type="text" 
+            id="register-name" 
+            class="form-input" 
+            placeholder="请输入您的姓名"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="register-email" class="form-label">电子邮箱</label>
+          <input 
+            type="email" 
+            id="register-email" 
+            class="form-input" 
+            placeholder="请输入您的邮箱地址"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="register-password" class="form-label">密码</label>
+          <input 
+            type="password" 
+            id="register-password" 
+            class="form-input" 
+            placeholder="请设置密码 (至少8位)"
+            minlength="8"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="register-invite" class="form-label">邀请码</label>
+          <input 
+            type="text" 
+            id="register-invite" 
+            class="form-input" 
+            placeholder="请输入邀请码"
+            required
+          >
+        </div>
+        
+        <button type="submit" class="btn btn-primary">注册</button>
+        
+        <div class="form-toggle">
+          <span>已有账号？</span>
+          <button type="button" onclick="switchToLogin()">返回登录</button>
+        </div>
+      </form>
+
+      <!-- 忘记密码表单 (默认隐藏) -->
+      <form id="forgot-form" class="form" style="display: none;" onsubmit="handleForgotPassword(event)">
+        <div class="card-header" style="margin-bottom: 20px;">
+          <h3 style="font-size: 1.2rem; color: var(--text-primary);">重置密码</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 10px;">我们将向您的邮箱发送重置链接</p>
+        </div>
+        
+        <div class="form-group">
+          <label for="forgot-email" class="form-label">电子邮箱</label>
+          <input 
+            type="email" 
+            id="forgot-email" 
+            class="form-input" 
+            placeholder="请输入您的注册邮箱"
+            required
+          >
+        </div>
+        
+        <button type="submit" class="btn btn-primary">发送重置链接</button>
+        
+        <div class="form-toggle">
+          <span>记得密码了？</span>
+          <button type="button" onclick="switchToLogin()">返回登录</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 通知提示 -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // 表单切换功能
+    function switchToRegister() {
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-form').style.display = 'block';
+      document.getElementById('forgot-form').style.display = 'none';
+    }
+
+    function switchToLogin() {
+      document.getElementById('login-form').style.display = 'block';
+      document.getElementById('register-form').style.display = 'none';
+      document.getElementById('forgot-form').style.display = 'none';
+    }
+
+    function showForgotPassword() {
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-form').style.display = 'none';
+      document.getElementById('forgot-form').style.display = 'block';
+    }
+
+    // 显示加载状态
+    function showLoading() {
+      document.getElementById('loading-overlay').classList.add('active');
+    }
+
+    function hideLoading() {
+      document.getElementById('loading-overlay').classList.remove('active');
+    }
+
+    // 显示通知提示
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast toast-${type}`;
+      toast.classList.add('show');
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // 处理登录
+    async function handleLogin(event) {
+      event.preventDefault();
+      showLoading();
+
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const response = await fetch('/client/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email,
+            password
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.token) {
+          // 保存token到本地存储
+          localStorage.setItem('JEV_TOKEN', data.token);
+          localStorage.setItem('JEV_USER', JSON.stringify(data.user || { email }));
+          
+          showToast('登录成功，正在跳转...', 'success');
+          
+          // 延迟跳转以显示成功提示
+          setTimeout(() => {
+            window.location.href = '/ui/client_dashboard.html';
+          }, 1500);
+        } else {
+          showToast(data.message || '登录失败，请检查您的邮箱和密码', 'error');
+        }
+      } catch (error) {
+        showToast('网络错误，请稍后重试', 'error');
+        console.error('Login error:', error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // 处理注册
+    async function handleRegister(event) {
+      event.preventDefault();
+      showLoading();
+
+      const name = document.getElementById('register-name').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      const inviteCode = document.getElementById('register-invite').value;
+
+      try {
+        // 先验证邀请码
+        const validateResponse = await fetch('/client/invite/validate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ invite_code: inviteCode })
+        });
+
+        const validateData = await validateResponse.json();
+
+        if (!validateData.success) {
+          showToast('邀请码无效或已过期', 'error');
+          hideLoading();
+          return;
+        }
+
+        // 邀请码有效，继续注册
+        const registerResponse = await fetch('/client/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password,
+            invite_code: inviteCode
+          })
+        });
+
+        const data = await registerResponse.json();
+
+        if (data.success) {
+          showToast('注册成功，请登录', 'success');
+          switchToLogin();
+        } else {
+          showToast(data.message || '注册失败，请稍后重试', 'error');
+        }
+      } catch (error) {
+        showToast('网络错误，请稍后重试', 'error');
+        console.error('Register error:', error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // 处理忘记密码
+    async function handleForgotPassword(event) {
+      event.preventDefault();
+      showLoading();
+
+      const email = document.getElementById('forgot-email').value;
+
+      try {
+        // 这里简化处理，实际应该调用忘记密码API
+        showToast('重置链接已发送到您的邮箱', 'success');
+        
+        // 模拟API调用延迟
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        switchToLogin();
+      } catch (error) {
+        showToast('发送失败，请稍后重试', 'error');
+        console.error('Forgot password error:', error);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // WebSocket连接（用于实时状态更新）
+    let socket = null;
+
+    function connectWebSocket() {
+      // 检查是否已经登录
+      const token = localStorage.getItem('JEV_TOKEN');
+      if (!token) return;
+
+      // 连接WebSocket
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//${window.location.host}/client/socket?token=${token}`;
+
+      socket = new WebSocket(wsUrl);
+
+      socket.onopen = () => {
+        console.log('WebSocket connected');
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          
+          // 处理不同类型的消息
+          switch (data.type) {
+            case 'system_notification':
+              showToast(data.message, 'info');
+              break;
+            case 'maintenance_alert':
+              showToast(`系统维护通知: ${data.message}`, 'info');
+              break;
+          }
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
+        }
+      };
+
+      socket.onclose = () => {
+        console.log('WebSocket disconnected');
+        // 5秒后重新连接
+        setTimeout(connectWebSocket, 5000);
+      };
+
+      socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+    }
+
+    // 页面加载时检查是否已登录
+    function checkLoginStatus() {
+      const token = localStorage.getItem('JEV_TOKEN');
+      if (token) {
+        // 如果已经登录，直接跳转到仪表盘
+        window.location.href = '/ui/client_dashboard.html';
+      } else {
+        // 否则尝试连接WebSocket（如果需要公共通知）
+        connectWebSocket();
+      }
+    }
+
+    // 页面加载完成后执行
+    window.addEventListener('DOMContentLoaded', () => {
+      checkLoginStatus();
+      
+      // 添加表单输入动画效果
+      const inputs = document.querySelectorAll('.form-input');
+      inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+          input.style.transform = 'scale(1.02)';
+        });
+        input.addEventListener('blur', () => {
+          input.style.transform = 'scale(1)';
+        });
+      });
+    });
+
+    // 页面关闭时清理WebSocket连接
+    window.addEventListener('beforeunload', () => {
+      if (socket) {
+        socket.close();
+      }
+    });
+  </script>
+</body>
+</html>

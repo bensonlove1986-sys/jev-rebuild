@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 控制面板</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 配置 Tailwind 暗色主题 -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#06B6D4',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1E293B',
+                        darker: '#0F172A',
+                        light: '#F1F5F9'
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .bg-glass {
+                background: rgba(15, 23, 42, 0.8);
+                backdrop-filter: blur(10px);
+            }
+            .border-glow {
+                box-shadow: 0 0 10px rgba(22, 93, 255, 0.5);
+            }
+            .animate-pulse-slow {
+                animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+            .animate-blink {
+                animation: blink 1s step-end infinite;
+            }
+            @keyframes blink {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0; }
+            }
+        }
+    </style>
+</head>
+<body class="bg-darker text-light font-sans min-h-screen">
+    <!-- 顶部导航栏 -->
+    <header class="bg-gradient-to-r from-darker to-dark p-4 border-b border-gray-700 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                    <i class="fa fa-terminal text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-white text-shadow">JEV 智能控制面板</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div id="connection-status" class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-400">系统状态:</span>
+                    <span id="system-status-text" class="text-sm font-medium text-warning">初始化中...</span>
+                    <span id="heartbeat-indicator" class="inline-block w-2 h-2 rounded-full bg-warning animate-pulse"></span>
+                </div>
+                <div id="current-time" class="text-sm text-gray-400"></div>
+                <button id="refresh-btn" class="p-2 rounded hover:bg-gray-700 transition-colors">
+                    <i class="fa fa-refresh"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4">
+        <!-- 状态指示面板 -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold mb-4 text-white">服务连接状态</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Worker 状态 -->
+                <div id="worker-status-card" class="bg-dark rounded-lg p-4 border border-gray-700 shadow">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold text-white">Worker 状态</h3>
+                        <div id="worker-indicator" class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
+                    </div>
+                    <p id="worker-status-text" class="text-sm text-gray-400">正在连接...</p>
+                </div>
+                
+                <!-- Agent 状态 -->
+                <div id="agent-status-card" class="bg-dark rounded-lg p-4 border border-gray-700 shadow">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold text-white">Agent 状态</h3>
+                        <div id="agent-indicator" class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
+                    </div>
+                    <p id="agent-status-text" class="text-sm text-gray-400">正在连接...</p>
+                </div>
+                
+                <!-- AI 服务状态 -->
+                <div id="ai-status-card" class="bg-dark rounded-lg p-4 border border-gray-700 shadow">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold text-white">AI 服务状态</h3>
+                        <div id="ai-indicator" class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
+                    </div>
+                    <p id="ai-status-text" class="text-sm text-gray-400">正在连接...</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 存储状态面板 -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold mb-4 text-white">存储系统状态</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- KV - JEVPI -->
+                <div class="bg-dark rounded-lg p-4 border border-gray-700 shadow">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold text-white">KV - JEVPI</h3>
+                        <div id="jevpi-indicator" class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
+                    </div>
+                    <p id="jevpi-status-text" class="text-sm text-warning">⏳ JEVPI 未就绪</p>
+                </div>
+                
+                <!-- KV - JEVUI -->
+                <div class="bg-dark rounded-lg p-4 border border-gray-700 shadow">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold text-white">KV - JEVUI</h3>
+                        <div id="jevui-indicator" class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
+                    </div>
+                    <p id="jevui-status-text" class="text-sm text-warning">⏳ JEVUI 未就绪</p>
+                </div>
+                
+                <!-- KV - MEM_STORE -->
+                <div class="bg-dark rounded-lg p-4 border border-gray-700 shadow">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold text-white">KV - MEM_STORE</h3>
+                        <div id="mem-store-indicator" class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
+                    </div>
+                    <p id="mem-store-status-text" class="text-sm text-warning">⏳ MEM_STORE 未就绪</p>
+                </div>
+                
+                <!-- R2 - R2_BUCKET -->
+                <div class="bg-dark rounded-lg p-4 border border-gray-700 shadow">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold text-white">R2 - R2_BUCKET</h3>
+                        <div id="r2-bucket-indicator" class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
+                    </div>
+                    <p id="r2-bucket-status-text" class="text-sm text-warning">⏳ R2_BUCKET 未就绪</p>
+                </div>
+            </div>
+            
+            <!-- 系统签名 -->
+            <div class="mt-4 bg-dark rounded-lg p-4 border border-gray-700 shadow border-glow">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-semibold text-white">系统签名状态</h3>
+                    <div id="signature-indicator" class="w-3 h-3 rounded-full bg-warning animate-pulse"></div>
+                </div>
+                <p id="signature-text" class="text-sm text-warning">⏳ 签名未验证</p>
+            </div>
+            
+            <!-- 云端存储状态 -->
+            <div class="mt-4 bg-dark rounded-lg p-4 border border-gray-700 shadow">
+                <h3 class="text-lg font-semibold mb-2 text-white">云端存储状态</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <tbody>
+                            <tr class="border-b border-gray-700">
+                                <td class="py-2 text-gray-300">KV 存储 (JEVPI / JEVUI / MEM_STORE)</td>
+                                <td id="kv-status" class="py-2 font-mono text-gray-400">检测中...</td>
+                            </tr>
+                            <tr class="border-b border-gray-700">
+                                <td class="py-2 text-gray-300">R2 存储桶 (R2_BUCKET)</td>
+                                <td id="r2-status" class="py-2 font-mono text-gray-400">检测中...</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 text-gray-300">系统签名 (JEV_SYSTEM_READY)</td>
+                                <td id="signature-status" class="py-2 font-mono text-gray-400">检测中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 功能模块选项卡 -->
+        <section class="mb-6">
+            <div class="border-b border-gray-700">
+                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="module-tabs">
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-primary text-primary rounded-t-lg" id="translation-tab">
+                            <i class="fa fa-language mr-2"></i>翻译助手
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-300 hover:border-gray-300 rounded-t-lg" id="ocr-tab">
+                            <i class="fa fa-file-image-o mr-2"></i>图片识别
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-300 hover:border-gray-300 rounded-t-lg" id="quote-tab">
+                            <i class="fa fa-file-text-o mr-2"></i>报价生成
+                        </button>
+                    </li>
+                    <li role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-300 hover:border-gray-300 rounded-t-lg" id="template-tab">
+                            <i class="fa fa-list-alt mr-2"></i>模板回复
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- 翻译助手模块 -->
+            <div id="translation-module" class="bg-dark p-6 rounded-b-lg border border-gray-700 shadow">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- 中文到英文 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">中文输入</label>
+                        <textarea id="zh-input" rows="6" class="w-full p-3 bg-darker border border-gray-700 rounded text-white focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
+                        <div class="mt-4 flex justify-end">
+                            <button id="zh-to-en-btn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded transition-colors">
+                                <i class="fa fa-arrow-right mr-2"></i>中译英
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 英文到中文 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">英文输入</label>
+                        <textarea id="en-input" rows="6" class="w-full p-3 bg-darker border border-gray-700 rounded text-white focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
+                        <div class="mt-4 flex justify-end">
+                            <button id="en-to-zh-btn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded transition-colors">
+                                <i class="fa fa-arrow-left mr-2"></i>英译中
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 翻译结果 -->
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">翻译结果</label>
+                    <div id="translation-result" class="p-4 bg-darker border border-gray-700 rounded text-white min-h-[100px]">
+                        <p class="text-gray-400 italic">翻译结果将显示在这里...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 图片识别模块 -->
+            <div id="ocr-module" class="hidden bg-dark p-6 rounded-b-lg border border-gray-700 shadow">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">上传图片</label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-700 border-dashed rounded-md">
+                        <div class="space-y-1 text-center">
+                            <i class="fa fa-cloud-upload text-gray-400 text-3xl mb-2"></i>
+                            <div class="flex text-sm text-gray-400">
+                                <label for="image-upload" class="relative cursor-pointer bg-darker rounded font-medium text-primary hover:text-primary/90">
+                                    <span>上传图片</span>
+                                    <input id="image-upload" name="image-upload" type="file" class="sr-only" accept="image/*">
+                                </label>
+                                <p class="pl-1">或拖拽图片到此处</p>
+                            </div>
+                            <p class="text-xs text-gray-500">支持 JPG, PNG, WEBP 格式</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 图片预览 -->
+                <div id="image-preview-container" class="hidden mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">图片预览</label>
+                    <div class="flex justify-center">
+                        <img id="image-preview" class="max-h-64 rounded border border-gray-700" src="" alt="图片预览">
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button id="analyze-image-btn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded transition-colors">
+                            <i class="fa fa-cog mr-2"></i>分析图片
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- OCR 结果 -->
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">识别结果</label>
+                    <div id="ocr-result" class="p-4 bg-darker border border-gray-700 rounded text-white min-h-[100px]">
+                        <p class="text-gray-400 italic">识别结果将显示在这里...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 报价生成模块 -->
+            <div id="quote-module" class="hidden bg-dark p-6 rounded-b-lg border border-gray-700 shadow">
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">产品信息</label>
+                    <textarea id="product-info" rows="4" class="w-full p-3 bg-darker border border-gray-700 rounded text-white focus:ring-2 focus:ring-primary focus:border-primary" placeholder="请输入产品名称、规格、数量等信息..."></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">客户名称</label>
+                        <input type="text" id="customer-name" class="w-full p-3 bg-darker border border-gray-700 rounded text-white focus:ring-2 focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">报价日期</label>
+                        <input type="date" id="quote-date" class="w-full p-3 bg-darker border border-gray-700 rounded text-white focus:ring-2 focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">有效期</label>
+                        <select id="validity-period" class="w-full p-3 bg-darker border border-gray-700 rounded text-white focus:ring-2 focus:ring-primary focus:border-primary">
+                            <option value="7">7天</option>
+                            <option value="15">15天</option>
+                            <option value="30">30天</option>
+                            <option value="60">60天</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-4 flex justify-end">
+                    <button id="generate-quote-btn" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded transition-colors">
+                        <i class="fa fa-file-text-o mr-2"></i>生成报价草稿
+                    </button>
+                </div>
+                
+                <!-- 报价结果 -->
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">报价草稿</label>
+                    <div id="quote-result" class="p-4 bg-darker border border-gray-700 rounded text-white min-h-[150px]">
+                        <p class="text-gray-400 italic">报价草稿将显示在这里...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模板回复模块 -->
+            <div id="template-module" class="hidden bg-dark p-6 rounded-b-lg border border-gray-700 shadow">
+                <h3 class="text-lg font-medium text-white mb-4">常用回复模板</h3>
+                <div class="space-y-4">
+                    <!-- 模板1 -->
+                    <div class="bg-darker p-4 rounded border border-gray-700">
+                        <h4 class="text-sm font-medium text-primary mb-2">模板 1：初次沟通</h4>
+                        <p class="text-sm text-gray-300 mb-3">您好！感谢您联系我们。我们是专业的技术服务团队，很高兴为您提供帮助。请问有什么可以为您服务的？</p>
+                        <div class="flex justify-end">
+                            <button class="template-btn text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded transition-colors" data-template="您好！感谢您联系我们。我们是专业的技术服务团队，很高兴为您提供帮助。请问有什么可以为您服务的？">
+                                <i class="fa fa-copy mr-1"></i>复制
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 模板2 -->
+                    <div class="bg-darker p-4 rounded border border-gray-700">
+                        <h4 class="text-sm font-medium text-primary mb-2">模板 2：技术支持</h4>
+                        <p class="text-sm text-gray-300 mb-3">感谢您的反馈。为了更好地解决您的问题，请提供以下信息：1) 具体错误信息；2) 使用的系统版本；3) 问题复现步骤。我们会尽快为您排查。</p>
+                        <div class="flex justify-end">
+                            <button class="template-btn text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded transition-colors" data-template="感谢您的反馈。为了更好地解决您的问题，请提供以下信息：1) 具体错误信息；2) 使用的系统版本；3) 问题复现步骤。我们会尽快为您排查。">
+                                <i class="fa fa-copy mr-1"></i>复制
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 模板3 -->
+                    <div class="bg-darker p-4 rounded border border-gray-700">
+                        <h4 class="text-sm font-medium text-primary mb-2">模板 3：服务确认</h4>
+                        <p class="text-sm text-gray-300 mb-3">您的请求已收到，我们将在1-2个工作日内为您处理。处理完成后，我们会第一时间通知您。如有其他问题，请随时联系我们。</p>
+                        <div class="flex justify-end">
+                            <button class="template-btn text-xs bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded transition-colors" data-template="您的请求已收到，我们将在1-2个工作日内为您处理。处理完成后，我们会第一时间通知您。如有其他问题，请随时联系我们。">
+                                <i class="fa fa-copy mr-1"></i>复制
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 日志控制台 -->
+        <section>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-white">系统日志</h2>
+                <button id="clear-log-btn" class="text-sm bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded transition-colors">
+                    <i class="fa fa-trash mr-1"></i>清空日志
+                </button>
+            </div>
+            <div id="log-console" class="bg-black/50 p-4 rounded-lg border border-gray-800 font-mono text-sm h-64 overflow-y-auto">
+                <div class="text-gray-500">{{ 系统初始化中... }}</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark p-4 border-t border-gray-800 mt-8">
+        <div class="container mx-auto text-center text-gray-500 text-sm">
+            <p>JEV 智能控制面板 v1.0 | 服务于 Worker + AI + Agent 生态</p>
+        </div>
+    </footer>
+
+    <!-- 引入 JS 文件 -->
+    <script src="jev_sync.js"></script>
+    <script src="jev_panel.js"></script>
+    
+    <!-- 云端状态检测脚本 -->
+    <script>
+    const WORKER_BASE = "https://jevshop.bensonlove1986.workers.dev";
+    
+    async function checkEndpoint(url, elementId, key) {
+        const fullUrl = WORKER_BASE + url;
+        const el = document.getElementById(elementId);
+        try {
+            const resp = await fetch(fullUrl, { cache: "no-cache" });
+            const data = await resp.json();
+            let ok = false;
+    
+            if (url === "/kv-test") ok = data.jevpi && data.jevui && data.mem;
+            else if (url === "/r2-test") ok = data.status === "ok";
+            else if (url === "/system-check") ok = data.check && Object.values(data.check).every(v => v);
+    
+            if (ok) {
+                el.innerHTML = `<span class="text-success">● 已连接</span> <span class="text-gray-400 ml-2">${new Date().toLocaleTimeString()}</span>`;
+            } else {
+                el.innerHTML = `<span class="text-danger">● 未连接</span> <span class="text-gray-400 ml-2">${new Date().toLocaleTimeString()}</span>`;
+            }
+        } catch (err) {
+            el.innerHTML = `<span class="text-danger">● 失败</span> <span class="text-gray-400 ml-2">${new Date().toLocaleTimeString()}</span>`;
+        }
+    }
+    
+    async function refreshStatus() {
+        await checkEndpoint("/kv-test", "kv-status");
+        await checkEndpoint("/r2-test", "r2-status");
+        await checkEndpoint("/system-check", "signature-status");
+    }
+    
+    // 初始化检测
+    refreshStatus();
+    // 每10秒自动刷新
+    setInterval(refreshStatus, 10000);
+    </script>
+<!-- JEV L11C · 内部中控监控插件入口 -->
+<link rel="stylesheet" href="./monitor_style.css" />
+<div id="monitor-root"></div>
+<script type="module" src="./monitor_module.js"></script>
+<!-- 客服监控子插件（JEV L11C-A1） -->
+<link rel="stylesheet" href="./monitor_agent_style.css" />
+<div id="agent-monitor-root"></div>
+<script type="module" src="./monitor_agent_module.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+  "success": true,
+  "status": 200,
+  "base": "https://rest.gohighlevel.com",
+  "path": "/v1/locations",
+  "data": {
+    "locations": [
+      {
+        "id": "3SsfTbU1lmAPpkG9iB6C",
+        "name": "JevIndustry",
+        "address": "975 N Lincoln Street Unit 630, Denver, CO 80203, US",
+        "city": "Denver",
+        "state": "CO",
+        "country": "US",
+        "postalCode": "80203",
+        "website": "jevindustry.com",
+        "timezone": "America/Los_Angeles",
+        "firstName": "HUANG",
+        "lastName": "YINCHENG",
+        "email": "jiaerweillc@jevmall.com",
+        "phone": "+17577743835",
+        "business": {
+          "name": "JevIndustry",
+          "email": "support@mail.jevindustry.com",
+          "address": "975 N Lincoln Street Unit 630, Denver, CO 80203, US",
+          "city": "Denver",
+          "state": "CO",
+          "country": "US",
+          "postalCode": "80203",
+          "website": "jevindustry.com",
+          "timezone": "America/Los_Angeles"
+        },
+        "social": {
+          "facebookUrl": "",
+          "googlePlus": "",
+          "linkedIn": "",
+          "foursquare": "",
+          "twitter": "",
+          "yelp": "",
+          "instagram": "",
+          "youtube": "",
+          "pinterest": "",
+          "blogRss": "",
+          "googlePlaceId": ""
+        },
+        "settings": {
+          "allowDuplicateContact": false,
+          "allowDuplicateOpportunity": false,
+          "allowFacebookNameMerge": false,
+          "disableContactTimezone": false
+        }
+      }
+    ]
+  }
+}

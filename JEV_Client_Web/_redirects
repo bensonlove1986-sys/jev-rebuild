@@ -1,0 +1,17 @@
+# 启用CORS
+*/*
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Headers: X-JEV-Token,Content-Type
+  Access-Control-Allow-Methods: GET,POST,PUT,DELETE,OPTIONS
+  Status: 200
+
+# 路由规则
+/ui/*  /ui/:splat  200
+/scripts/*  /scripts/:splat  200
+/modules/*  /modules/:splat  200
+ping  /ping.html  200
+/  /ui/client_portal.html  301
+
+# API代理规则
+/client/*  https://jevshop.bensonlove1986.workers.dev/client/:splat  200
+/client    https://jevshop.bensonlove1986.workers.dev/client  200

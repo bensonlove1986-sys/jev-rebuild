@@ -1,0 +1,84 @@
+{
+  "system": {
+    "name": "JEV 企业管理系统",
+    "version": "1.0.0",
+    "environment": "production"
+  },
+  "access_points": {
+    "management_console": {
+      "url": "http://localhost:1819/JEV_Client/ui/admin_panel.html",
+      "description": "系统管理后台",
+      "access_type": "admin",
+      "permissions": ["read", "write", "delete", "admin"],
+      "authentication_required": true,
+      "allowed_roles": ["super_admin", "system_admin"]
+    },
+    "user_portal": {
+      "url": "http://localhost:1819/JEV_Client/ui/client_portal.html",
+      "description": "用户前台门户",
+      "access_type": "user",
+      "permissions": ["read", "write"],
+      "authentication_required": true,
+      "allowed_roles": ["user", "customer", "partner"]
+    },
+    "api_endpoint": {
+      "url": "http://localhost:1819/api",
+      "description": "API接口服务",
+      "access_type": "api",
+      "api_key_required": true,
+      "rate_limits": {
+        "requests_per_minute": 100,
+        "burst_limit": 50
+      }
+    }
+  },
+  "security": {
+    "session_timeout": 3600,
+    "max_login_attempts": 5,
+    "password_policy": {
+      "min_length": 8,
+      "require_uppercase": true,
+      "require_lowercase": true,
+      "require_digit": true,
+      "require_special": true
+    },
+    "cors": {
+      "allowed_origins": ["http://localhost:1819"],
+      "allowed_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "allowed_headers": ["Content-Type", "Authorization", "X-Auth-Key"]
+    }
+  },
+  "browser_compatibility": {
+    "supported_browsers": [
+      {
+        "name": "Chrome",
+        "minimum_version": "90"
+      },
+      {
+        "name": "Firefox",
+        "minimum_version": "88"
+      },
+      {
+        "name": "Safari",
+        "minimum_version": "14"
+      },
+      {
+        "name": "Edge",
+        "minimum_version": "90"
+      }
+    ],
+    "mobile_support": {
+      "ios": {
+        "minimum_version": "14.0"
+      },
+      "android": {
+        "minimum_version": "10.0"
+      }
+    }
+  },
+  "performance": {
+    "target_load_time": 3,
+    "asset_compression": true,
+    "cdn_enabled": false
+  }
+}

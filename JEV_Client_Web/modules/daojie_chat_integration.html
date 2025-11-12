@@ -1,0 +1,151 @@
+<!-- JEV客服系统 - Daojie聊天窗口模块集成片段 -->
+<!-- 说明：将此代码片段添加到JEV系统的主页面或显相层HTML中 -->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV客服系统 - Daojie聊天集成示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .demo-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+        code {
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+            font-size: 14px;
+            color: #d14;
+        }
+        .integration-note {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #0078d4;
+            margin: 20px 0;
+        }
+        .warning {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .step {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>JEV客服系统 - Daojie聊天窗口模块集成指南</h1>
+        
+        <div class="integration-note">
+            <strong>注意：</strong>此文件提供了集成说明和示例代码。实际集成时，需要将指定的代码片段添加到JEV系统的主页面或显相层HTML中。
+        </div>
+        
+        <div class="step">
+            <h2>步骤1：确保模块文件存在</h2>
+            <p>确保 <code>daojie_chat_panel.js</code> 文件已正确放置在 <code>/modules/</code> 目录下。</p>
+        </div>
+        
+        <div class="step">
+            <h2>步骤2：在JEV系统页面中添加模块引用</h2>
+            <p>将以下代码添加到JEV系统显相层HTML文件的 <code>&lt;head&gt;</code> 或 <code>&lt;body&gt;</code> 结束标签前：</p>
+            
+            <pre><code>&lt;!-- JEV Daojie 聊天模块集成 -->
+&lt;script type="text/javascript" src="/modules/daojie_chat_panel.js"&gt;&lt;/script&gt;</code></pre>
+            
+            <div class="integration-note">
+                <strong>集成示例：</strong>
+                <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;JEV客服系统显相层&lt;/title&gt;
+    &lt;!-- 其他现有CSS和JS引用 -->
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- 现有JEV系统内容 -->
+    
+    &lt;!-- 添加Daojie聊天模块 -->
+    &lt;script type="text/javascript" src="/modules/daojie_chat_panel.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+        </div>
+        
+        <div class="step">
+            <h2>步骤3：模块功能说明</h2>
+            <ul>
+                <li><strong>聊天按钮：</strong>右下角显示 "💬 聊天" 按钮，点击可打开聊天窗口</li>
+                <li><strong>状态指示器：</strong>右上角显示 "Chat (Daojie) Online/Offline" 状态灯</li>
+                <li><strong>聊天窗口：</strong>居中显示，尺寸为 400px × 600px，背景半透明灰色</li>
+                <li><strong>加载状态：</strong>显示加载中提示，5秒超时后显示错误信息</li>
+                <li><strong>安全设置：</strong>iframe 配置了适当的 sandbox 属性，禁止跨域脚本执行</li>
+                <li><strong>日志记录：</strong>所有操作记录到 localStorage，键名为 jev_chat_module_log_&lt;timestamp&gt;</li>
+            </ul>
+        </div>
+        
+        <div class="warning">
+            <strong>安全注意事项：</strong>
+            <ul>
+                <li>模块已配置安全的 iframe sandbox 属性，限制了跨域操作</li>
+                <li>所有资源使用 HTTPS 协议加载</li>
+                <li>添加了 X-Agent-Token 头部（通过配置变量）</li>
+                <li>定期清理旧日志，避免 localStorage 溢出</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h2>步骤4：手动初始化（可选）</h2>
+            <p>如果需要手动控制模块的初始化时机，可以在页面加载完成后调用：</p>
+            
+            <pre><code>// 手动初始化聊天模块
+window.initializeDaojieChatModule();</code></pre>
+            
+            <p>或者直接创建实例：</p>
+            
+            <pre><code>// 创建聊天模块实例
+const chatModule = new window.DaojieChatModule();</code></pre>
+        </div>
+        
+        <div class="step">
+            <h2>步骤5：测试与验证</h2>
+            <p>模块加载后，应满足以下成功标准：</p>
+            <ol>
+                <li>右下角出现 "💬 聊天" 按钮</li>
+                <li>右上角显示 "Chat (Daojie) Offline" 状态灯</li>
+                <li>点击按钮弹出聊天窗口</li>
+                <li>成功加载后状态灯变为绿色 "Chat (Daojie) Online"</li>
+                <li>控制台输出加载成功信息，包含加载时间</li>
+                <li>localStorage 中存在聊天模块的操作日志</li>
+            </ol>
+        </div>
+    </div>
+    
+    <!-- 演示用：直接加载聊天模块 -->
+    <script type="text/javascript" src="/modules/daojie_chat_panel.js"></script>
+</body>
+</html>

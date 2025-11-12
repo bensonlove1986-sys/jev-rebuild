@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV插件整合系统</title>
+    <!-- 引入样式文件 -->
+    <link rel="stylesheet" href="theme.css">
+    <!-- 引入控制器 -->
+    <script src="../modules/integrated_controller.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧功能区 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>JEV 功能菜单</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">系统状态</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">模块管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">上传功能</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">设置</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">帮助</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- 右侧主内容区 -->
+        <main class="main-content">
+            <!-- 顶部导航 -->
+            <header class="main-header">
+                <h1>JEV 插件整合系统</h1>
+                <div class="header-actions">
+                    <button class="btn">刷新状态</button>
+                    <button class="btn btn-primary">添加模块</button>
+                </div>
+            </header>
+            
+            <!-- 状态面板 -->
+            <section class="status-panel">
+                <h3>系统状态</h3>
+                <div class="status-cards">
+                    <div class="status-card">
+                        <div class="status-label">控制器</div>
+                        <div class="status-value status-active">运行中</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-label">模块数</div>
+                        <div class="status-value">0</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-label">事件总线</div>
+                        <div class="status-value status-active">正常</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-label">状态缓存</div>
+                        <div class="status-value status-active">正常</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 上传记录面板 -->
+            <section class="upload-panel">
+                <h3>上传记录</h3>
+                <div class="upload-history">
+                    <div class="upload-empty">
+                        <p>暂无上传记录</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        // 页面加载完成后输出日志
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('[JEV UI] Base layout ready');
+            
+            // 初始化UI状态
+            initializeUI();
+        });
+        
+        // 初始化UI函数
+        function initializeUI() {
+            // 这里可以添加UI初始化逻辑
+            // 例如：更新状态面板、绑定事件监听器等
+            
+            // 监听控制器状态变化
+            if (window.JEV && JEV.Controller) {
+                // 可以在这里添加UI与控制器的交互逻辑
+                console.log('[JEV UI] Controller detected, UI integration ready');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV Durable Bridge - 会话可视化监控</title>
+    <link rel="stylesheet" href="sessionVisualizer.css">
+</head>
+<body>
+    <div class="jev-monitor-container">
+        <header class="monitor-header">
+            <h1>JEV L6.9 Durable Bridge</h1>
+            <p class="subtitle">会话同步状态监控面板</p>
+            <div class="status-indicator">
+                <span id="connection-status" class="status-offline">离线</span>
+                <span class="last-update">最后更新: --</span>
+            </div>
+        </header>
+
+        <div class="monitor-controls">
+            <div class="filter-section">
+                <label for="user-filter">用户筛选:</label>
+                <input type="text" id="user-filter" placeholder="输入会话ID">
+                <label for="status-filter">状态筛选:</label>
+                <select id="status-filter">
+                    <option value="all">全部状态</option>
+                    <option value="active">活跃</option>
+                    <option value="inactive">非活跃</option>
+                    <option value="error">错误</option>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button id="refresh-btn" class="btn-primary">刷新数据</button>
+                <button id="clear-cache-btn" class="btn-secondary">清除缓存</button>
+                <button id="export-report-btn" class="btn-secondary">导出报告</button>
+            </div>
+        </div>
+
+        <div class="stats-overview">
+            <div class="stat-card">
+                <h3>活跃会话</h3>
+                <div class="stat-value" id="active-sessions">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>平均延迟</h3>
+                <div class="stat-value" id="avg-latency">-- ms</div>
+            </div>
+            <div class="stat-card">
+                <h3>成功率</h3>
+                <div class="stat-value" id="success-rate">0%</div>
+            </div>
+            <div class="stat-card">
+                <h3>离线缓存</h3>
+                <div class="stat-value" id="pending-cache">0</div>
+            </div>
+        </div>
+
+        <div class="latency-chart">
+            <h3>延迟趋势</h3>
+            <div class="chart-container">
+                <canvas id="latencyChart"></canvas>
+                <div id="chart-placeholder" class="chart-placeholder">
+                    <p>暂无数据</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sessions-container">
+            <h2>会话列表</h2>
+            <div id="sessions-grid" class="sessions-grid">
+                <div class="loading-state">
+                    <p>正在加载会话数据...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="session-detail" class="session-detail">
+            <div class="detail-header">
+                <h3>会话详情</h3>
+                <button id="close-detail" class="close-btn">×</button>
+            </div>
+            <div class="detail-content">
+                <div class="detail-info">
+                    <p><strong>会话ID:</strong> <span id="detail-session-id">--</span></p>
+                    <p><strong>最后同步:</strong> <span id="detail-last-sync">--</span></p>
+                    <p><strong>状态:</strong> <span id="detail-status">--</span></p>
+                    <p><strong>延迟:</strong> <span id="detail-latency">--</span></p>
+                </div>
+                <div class="detail-memory">
+                    <h4>记忆数据</h4>
+                    <pre id="detail-memory-data">{}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟会话数据
+        let sessionsData = [
+            {
+                sessionId: 'user-123',
+                status: 'active',
+                lastSync: new Date().toISOString(),
+                latency: 243,
+                memory: { lastMsg: 'Hello', lang: 'en', context: 'conversation' }
+            },
+            {
+                sessionId: 'user-456',
+                status: 'active',
+                lastSync: new Date(Date.now() - 30000).toISOString(),
+                latency: 187,
+                memory: { lastMsg: '你好', lang: 'zh', context: 'support' }
+            },
+            {
+                sessionId: 'user-789',
+                status: 'inactive',
+                lastSync: new Date(Date.now() - 120000).toISOString(),
+                latency: 312,
+                memory: { lastMsg: 'Thanks', lang: 'en', context: 'transaction' }
+            }
+        ];
+
+        // 延迟历史数据
+        let latencyHistory = [243, 187, 312, 256, 201, 234, 289];
+        let timeLabels = [];
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            initialize();
+            setupEventListeners();
+            updateDashboard();
+        });
+
+        // 初始化
+        function initialize() {
+            // 设置时间标签
+            for (let i = 6; i >= 0; i--) {
+                const time = new Date(Date.now() - i * 60000);
+                timeLabels.push(time.getHours() + ':' + (time.getMinutes() < 10 ? '0' : '') + time.getMinutes());
+            }
+            
+            // 检查Bridge实例
+            if (window.jevDurableBridge) {
+                document.getElementById('connection-status').className = 'status-online';
+                document.getElementById('connection-status').textContent = '在线';
+            }
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 刷新按钮
+            document.getElementById('refresh-btn').addEventListener('click', updateDashboard);
+            
+            // 清除缓存按钮
+            document.getElementById('clear-cache-btn').addEventListener('click', () => {
+                if (window.jevDurableBridge) {
+                    window.jevDurableBridge.clearOfflineCache();
+                    updateDashboard();
+                    alert('离线缓存已清除');
+                }
+            });
+            
+            // 导出报告按钮
+            document.getElementById('export-report-btn').addEventListener('click', exportReport);
+            
+            // 过滤器
+            document.getElementById('user-filter').addEventListener('input', updateSessionsGrid);
+            document.getElementById('status-filter').addEventListener('change', updateSessionsGrid);
+            
+            // 关闭详情
+            document.getElementById('close-detail').addEventListener('click', () => {
+                document.getElementById('session-detail').style.display = 'none';
+            });
+            
+            // 监听Durable Bridge更新事件
+            window.addEventListener('jev-durable-update', (e) => {
+                const { sessionId, data } = e.detail;
+                updateSessionData(sessionId, data);
+                updateDashboard();
+            });
+        }
+
+        // 更新仪表盘
+        function updateDashboard() {
+            updateStats();
+            updateSessionsGrid();
+            updateLatencyChart();
+            
+            // 更新最后更新时间
+            const now = new Date();
+            document.querySelector('.last-update').textContent = 
+                `最后更新: ${now.getHours()}:${(now.getMinutes() < 10 ? '0' : '') + now.getMinutes()}:${(now.getSeconds() < 10 ? '0' : '') + now.getSeconds()}`;
+        }
+
+        // 更新统计数据
+        function updateStats() {
+            const activeSessions = sessionsData.filter(s => s.status === 'active').length;
+            const avgLatency = sessionsData.length > 0 
+                ? Math.round(sessionsData.reduce((sum, s) => sum + s.latency, 0) / sessionsData.length)
+                : 0;
+            const successRate = 98.7; // 模拟数据
+            const pendingCache = window.jevDurableBridge ? window.jevDurableBridge.getSyncStatus().pendingItems : 0;
+
+            document.getElementById('active-sessions').textContent = activeSessions;
+            document.getElementById('avg-latency').textContent = `${avgLatency} ms`;
+            document.getElementById('success-rate').textContent = `${successRate}%`;
+            document.getElementById('pending-cache').textContent = pendingCache;
+        }
+
+        // 更新会话网格
+        function updateSessionsGrid() {
+            const userFilter = document.getElementById('user-filter').value.toLowerCase();
+            const statusFilter = document.getElementById('status-filter').value;
+            
+            let filteredSessions = sessionsData.filter(session => {
+                const matchesUser = session.sessionId.toLowerCase().includes(userFilter);
+                const matchesStatus = statusFilter === 'all' || session.status === statusFilter;
+                return matchesUser && matchesStatus;
+            });
+
+            const grid = document.getElementById('sessions-grid');
+            grid.innerHTML = '';
+
+            if (filteredSessions.length === 0) {
+                grid.innerHTML = '<div class="no-data">暂无符合条件的会话</div>';
+                return;
+            }
+
+            filteredSessions.forEach(session => {
+                const card = document.createElement('div');
+                card.className = `session-card ${session.status}`;
+                
+                const lastSyncTime = new Date(session.lastSync);
+                const formattedTime = `${lastSyncTime.getHours()}:${(lastSyncTime.getMinutes() < 10 ? '0' : '') + lastSyncTime.getMinutes()}:${(lastSyncTime.getSeconds() < 10 ? '0' : '') + lastSyncTime.getSeconds()}`;
+                
+                let statusIcon = '⚠️';
+                let statusText = '异常';
+                
+                if (session.status === 'active') {
+                    statusIcon = '✅';
+                    statusText = '已同步';
+                } else if (session.status === 'inactive') {
+                    statusIcon = '⏳';
+                    statusText = '未活跃';
+                }
+
+                card.innerHTML = `
+                    <h3>Session ${session.sessionId}</h3>
+                    <p>Last Sync: ${formattedTime}</p>
+                    <p>Latency: ${session.latency}ms</p>
+                    <p>Status: ${statusIcon} ${statusText}</p>
+                `;
+
+                card.addEventListener('click', () => {
+                    showSessionDetail(session);
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        // 显示会话详情
+        function showSessionDetail(session) {
+            const detail = document.getElementById('session-detail');
+            
+            document.getElementById('detail-session-id').textContent = session.sessionId;
+            document.getElementById('detail-last-sync').textContent = new Date(session.lastSync).toLocaleString();
+            document.getElementById('detail-status').textContent = session.status;
+            document.getElementById('detail-latency').textContent = `${session.latency}ms`;
+            document.getElementById('detail-memory-data').textContent = JSON.stringify(session.memory, null, 2);
+            
+            detail.style.display = 'block';
+        }
+
+        // 更新延迟图表
+        function updateLatencyChart() {
+            // 简单的图表模拟
+            const canvas = document.getElementById('latencyChart');
+            const placeholder = document.getElementById('chart-placeholder');
+            
+            // 由于没有引入Chart.js，这里用简单的柱状图表示
+            if (latencyHistory.length > 0) {
+                placeholder.style.display = 'none';
+                canvas.style.display = 'block';
+                
+                const ctx = canvas.getContext('2d');
+                const width = canvas.width;
+                const height = canvas.height;
+                
+                // 清空画布
+                ctx.clearRect(0, 0, width, height);
+                
+                // 绘制柱状图
+                const barWidth = width / latencyHistory.length * 0.8;
+                const maxLatency = Math.max(...latencyHistory) * 1.2;
+                
+                latencyHistory.forEach((latency, index) => {
+                    const barHeight = (latency / maxLatency) * (height - 40);
+                    const x = index * (width / latencyHistory.length) + barWidth / 2;
+                    const y = height - barHeight - 20;
+                    
+                    // 绘制柱子
+                    ctx.fillStyle = latency > 300 ? '#e74c3c' : latency > 200 ? '#f39c12' : '#27ae60';
+                    ctx.fillRect(x, y, barWidth, barHeight);
+                    
+                    // 绘制标签
+                    ctx.fillStyle = '#333';
+                    ctx.font = '10px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(timeLabels[index], x + barWidth/2, height - 5);
+                });
+            } else {
+                placeholder.style.display = 'flex';
+                canvas.style.display = 'none';
+            }
+        }
+
+        // 更新会话数据
+        function updateSessionData(sessionId, data) {
+            const existingSessionIndex = sessionsData.findIndex(s => s.sessionId === sessionId);
+            
+            if (existingSessionIndex !== -1) {
+                sessionsData[existingSessionIndex] = {
+                    ...sessionsData[existingSessionIndex],
+                    memory: data,
+                    lastSync: new Date().toISOString(),
+                    status: 'active',
+                    latency: Math.floor(Math.random() * 200) + 150 // 模拟延迟
+                };
+            } else {
+                // 添加新会话
+                sessionsData.push({
+                    sessionId,
+                    memory: data,
+                    lastSync: new Date().toISOString(),
+                    status: 'active',
+                    latency: Math.floor(Math.random() * 200) + 150
+                });
+            }
+            
+            // 添加到延迟历史
+            latencyHistory.push(Math.floor(Math.random() * 200) + 150);
+            if (latencyHistory.length > 7) {
+                latencyHistory.shift();
+            }
+        }
+
+        // 导出报告
+        function exportReport() {
+            const report = {
+                generated_at: new Date().toISOString(),
+                sessions: sessionsData,
+                statistics: {
+                    active_sessions: sessionsData.filter(s => s.status === 'active').length,
+                    total_sessions: sessionsData.length,
+                    avg_latency: Math.round(sessionsData.reduce((sum, s) => sum + s.latency, 0) / sessionsData.length),
+                    success_rate: 98.7
+                }
+            };
+            
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `jev_durable_report_${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        // 自动更新
+        setInterval(updateDashboard, 10000);
+    </script>
+</body>
+</html>

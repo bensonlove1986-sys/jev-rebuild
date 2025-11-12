@@ -1,0 +1,159 @@
+{
+  "timestamp": "2025-11-08T10:12:13.593Z",
+  "summary": {
+    "services": {
+      "total": 3,
+      "success": 2,
+      "warning": 1,
+      "failed": 0
+    },
+    "apis": {
+      "total": 2,
+      "success": 2,
+      "warning": 0,
+      "failed": 0
+    }
+  },
+  "details": {
+    "services": [
+      {
+        "service": "Web服务器",
+        "status": "✅ 成功",
+        "reason": "连接成功",
+        "details": "Web服务器 响应状态码: 200",
+        "statusCode": 200
+      },
+      {
+        "service": "JEV客户端",
+        "status": "✅ 成功",
+        "reason": "连接成功",
+        "details": "JEV客户端 响应状态码: 200",
+        "statusCode": 200
+      },
+      {
+        "service": "JEV在线服务",
+        "status": "⚠️  警告",
+        "reason": "请求成功但状态码异常",
+        "details": "JEV在线服务 响应状态码: 404",
+        "statusCode": 404
+      }
+    ],
+    "apis": [
+      {
+        "endpoint": "Worker Ping接口",
+        "status": "✅ 成功",
+        "reason": "API调用成功",
+        "details": "Worker Ping接口 响应状态码: 200, 响应内容类型: JSON",
+        "statusCode": 200,
+        "responseLength": 135
+      },
+      {
+        "endpoint": "Worker Status接口",
+        "status": "✅ 成功",
+        "reason": "API调用成功",
+        "details": "Worker Status接口 响应状态码: 200, 响应内容类型: JSON",
+        "statusCode": 200,
+        "responseLength": 179
+      }
+    ],
+    "ports": [
+      {
+        "port": 8080,
+        "status": "✅ 占用",
+        "message": "端口 8080 正在使用中"
+      },
+      {
+        "port": 1819,
+        "status": "✅ 占用",
+        "message": "端口 1819 正在使用中"
+      },
+      {
+        "port": 1820,
+        "status": "❌ 空闲",
+        "message": "端口 1820 未被占用"
+      }
+    ],
+    "processes": [
+      {
+        "process": "Start-JEV-Client.bat",
+        "status": "⚠️  无法确认"
+      },
+      {
+        "process": "start_jev_online.py",
+        "status": "⚠️  无法确认"
+      },
+      {
+        "process": "start_web_server.py",
+        "status": "⚠️  无法确认"
+      }
+    ],
+    "environment": [
+      {
+        "variable": "MODE",
+        "status": "✅ 已配置",
+        "value": "production",
+        "securityLevel": "正常"
+      },
+      {
+        "variable": "ALLOW_ORIGIN",
+        "status": "✅ 已配置",
+        "value": "https://jev-cli...",
+        "securityLevel": "正常"
+      },
+      {
+        "variable": "JEV_API_KEY",
+        "status": "✅ 已配置",
+        "value": "JEV_2025_SECURE...",
+        "securityLevel": "正常"
+      },
+      {
+        "variable": "ACCOUNT_ID",
+        "status": "✅ 已配置",
+        "value": "156ce03fffc5959...",
+        "securityLevel": "正常"
+      }
+    ],
+    "files": [
+      {
+        "file": "Worker文件",
+        "path": "D:\\PDF转网页\\worker_auto_fix.js",
+        "status": "✅ 存在"
+      },
+      {
+        "file": "配置文件",
+        "path": "D:\\PDF转网页\\wrangler.toml",
+        "status": "✅ 存在"
+      },
+      {
+        "file": "环境文件",
+        "path": "D:\\PDF转网页\\.env",
+        "status": "✅ 存在"
+      },
+      {
+        "file": "检查脚本",
+        "path": "D:\\PDF转网页\\check_env_match.js",
+        "status": "✅ 存在"
+      }
+    ],
+    "logs": [
+      {
+        "file": "jev_server.log",
+        "status": "❌ 缺失",
+        "size": "N/A",
+        "modified": "N/A"
+      },
+      {
+        "file": "client.log",
+        "status": "❌ 缺失",
+        "size": "N/A",
+        "modified": "N/A"
+      },
+      {
+        "file": "prod_ping.txt",
+        "status": "✅ 存在",
+        "size": "0.06 KB",
+        "modified": "2025/10/30 09:07:52"
+      }
+    ]
+  }
+}

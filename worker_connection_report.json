@@ -1,0 +1,81 @@
+{
+  "timestamp": "2025-11-08T10:18:23.095Z",
+  "overallStatus": "ok",
+  "passRate": 100,
+  "testStats": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0,
+    "duration": 0.077
+  },
+  "results": [
+    {
+      "test": "初始化-ping",
+      "status": "passed",
+      "latency": 29,
+      "details": "状态码: 200"
+    },
+    {
+      "test": "初始化-status",
+      "status": "passed",
+      "latency": 3,
+      "details": "状态码: 200"
+    },
+    {
+      "test": "数据传输-small",
+      "status": "passed",
+      "latency": 4,
+      "payloadSize": 19,
+      "responseSize": 497
+    },
+    {
+      "test": "数据传输-medium",
+      "status": "passed",
+      "latency": 5,
+      "payloadSize": 291,
+      "responseSize": 497
+    },
+    {
+      "test": "数据传输-large",
+      "status": "passed",
+      "latency": 4,
+      "payloadSize": 24046,
+      "responseSize": 497
+    },
+    {
+      "test": "稳定性-1",
+      "status": "passed",
+      "latency": 3
+    },
+    {
+      "test": "稳定性-2",
+      "status": "passed",
+      "latency": 3
+    },
+    {
+      "test": "稳定性-3",
+      "status": "passed",
+      "latency": 3
+    },
+    {
+      "test": "稳定性-4",
+      "status": "passed",
+      "latency": 3
+    },
+    {
+      "test": "稳定性-5",
+      "status": "passed",
+      "latency": 3
+    },
+    {
+      "test": "双向通信",
+      "status": "passed",
+      "pingLatency": 2,
+      "statusLatency": 1
+    }
+  ],
+  "environment": {
+    "nodeVersion": "v22.16.0",
+    "platform": "win32"
+  }
+}

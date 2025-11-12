@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 插件显相总控面板</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* 控制面板容器 */
+        #jev-control-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 340px;
+            height: 240px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            z-index: 9999;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        #jev-control-panel.offline {
+            background: rgba(255, 0, 0, 0.2);
+            box-shadow: 0 8px 32px rgba(255, 0, 0, 0.3);
+            color: #ff0000;
+        }
+        
+        /* 面板标题区域 */
+        .panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .panel-header.offline {
+            border-bottom-color: rgba(255, 0, 0, 0.3);
+        }
+        
+        /* 状态区域 */
+        .status-section {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .status-section.offline {
+            border-bottom-color: rgba(255, 0, 0, 0.3);
+        }
+        
+        .status-lights {
+            width: 100%;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 13px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .status-indicator {
+            font-size: 16px;
+        }
+        
+        /* 图表区域 */
+        .chart-section {
+            height: 100px;
+            padding: 8px 16px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+            position: relative;
+        }
+        
+        .chart-section.offline {
+            border-bottom-color: rgba(255, 0, 0, 0.3);
+        }
+        
+        #latency-chart {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+        
+        /* 信息区域 */
+        .info-section {
+            padding: 8px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 11px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        /* 错误提示 */
+        .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff0000;
+            font-size: 11px;
+            text-align: center;
+            width: 90%;
+            display: none;
+        }
+        
+        .error-message.visible {
+            display: block;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 400px) {
+            #jev-control-panel {
+                width: calc(100% - 40px);
+                left: 20px;
+                right: 20px;
+            }
+            
+            .status-lights {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- JEV 插件显相总控面板 -->
+    <div id="jev-control-panel">
+        <div class="panel-header">
+            JEV 插件显相总控面板
+        </div>
+        
+        <div class="status-section">
+            <div class="status-lights">
+                <div class="status-item">
+                    <span>🧩 Plugin</span>
+                    <span id="plugin-status" class="status-indicator">🟢</span>
+                </div>
+                <div class="status-item">
+                    <span>⚙️ Worker</span>
+                    <span id="worker-status" class="status-indicator">🟢</span>
+                </div>
+                <div class="status-item">
+                    <span>🧠 TRAE</span>
+                    <span id="trae-status" class="status-indicator">🟢</span>
+                </div>
+            </div>
+            <div class="info-item">
+                <span>延迟:</span>
+                <span id="latency-display">-- ms</span>
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <canvas id="latency-chart"></canvas>
+            <div id="connection-error" class="error-message">
+                通信中断，尝试重连中...
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <div class="info-item">
+                <span>心跳:</span>
+                <span id="heartbeat-count">0</span>
+            </div>
+            <div class="info-item">
+                <span>最近日志:</span>
+                <span id="log-file">--</span>
+            </div>
+            <div class="info-item">
+                <span>更新时间:</span>
+                <span id="update-time">--</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 引入Chart.js用于绘制图表 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 引入控制面板逻辑 -->
+    <script src="ui_control_panel.js"></script>
+</body>
+</html>

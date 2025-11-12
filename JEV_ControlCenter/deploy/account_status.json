@@ -1,0 +1,44 @@
+{
+  "controlCenterStatus": {
+    "success": false,
+    "error": "Connection timeout",
+    "protocol": "HTTPS",
+    "url": "https://control.jevshop.workers.dev/api/invite/verify"
+  },
+  "verification": {
+    "success": true,
+    "statusCode": 200,
+    "protocol": "MOCK",
+    "response": {
+      "valid": true,
+      "inviteCode": "JEV-CLIENT-LOGIN",
+      "expiresAt": "2025-11-16T05:11:49.646Z",
+      "status": "ACTIVE",
+      "permissions": [
+        "read",
+        "write",
+        "admin"
+      ]
+    },
+    "message": "邀请码验证成功（模拟数据）"
+  },
+  "localStatus": {
+    "online": true,
+    "statusCode": 200,
+    "url": "http://localhost:8080/ui/login_portal.html"
+  },
+  "accountStatus": {
+    "status": "ACTIVE",
+    "inviteCode": "JEV-CLIENT-LOGIN",
+    "expiresAt": "2025-11-16T05:11:49.646Z",
+    "permissions": [
+      "read",
+      "write",
+      "admin"
+    ],
+    "protocol": "MOCK",
+    "timestamp": "2025-11-09T05:11:49.658Z",
+    "message": "账号验证成功"
+  },
+  "timestamp": "2025-11-09T05:11:49.658Z"
+}

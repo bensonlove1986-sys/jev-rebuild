@@ -1,0 +1,6 @@
+{
+    "ok":  false,
+    "status":  503,
+    "body":  "{\n  \"success\": false,\n  \"error\": \"图片下载失败\",\n  \"status\": 503,\n  \"details\": \"\u003chtml\u003e\\r\\n\u003chead\u003e\u003ctitle\u003e503 Service Temporarily Unavailable\u003c/title\u003e\u003c/head\u003e\\r\\n\u003cbody\u003e\\r\\n\u003ccenter\u003e\u003ch1\u003e503 Service Temporarily Unavailable\u003c/h1\u003e\u003c/center\u003e\\r\\n\u003c/body\u003e\\r\\n\u003c/html\u003e\\r\\n\",\n  \"attempts\": [\n    {\n      \"source\": \"direct\",\n      \"status\": 503,\n      \"ok\": false,\n      \"ct\": \"text/html\"\n    },\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://images.weserv.nl/?url=\",\n      \"status\": 0,\n      \"ok\": false,\n      \"error\": \"internal error; reference = lj52hpft3i9k9pgm8rajfo09\"\n    },\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://wsrv.nl/?url=\",\n      \"status\": 404,\n      \"ok\": false,\n      \"ct\": \"application/json\"\n    }\n  ]\n}",
+    "name":  "local_rehost_dev_httpbin_html.json"
+}

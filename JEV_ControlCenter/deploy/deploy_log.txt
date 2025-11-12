@@ -1,0 +1,17 @@
+===== JEV Client JS MIME 类型修复部署日志 =====
+修复时间: 2025/11/9 15:11:32
+
+【修复内容】
+1. 优化了 server.js 中的 Content-Type 处理逻辑
+2. 创建了 contentTypeMap 映射表
+3. 确保所有 .js 文件使用 application/javascript; charset=utf-8 MIME 类型
+4. 移除了重复的 Content-Type 设置代码
+5. 简化了 HTTP 响应头设置流程
+
+【验证结果】
+✅ 所有 JS 文件现已通过正确的 MIME 类型返回
+✅ 浏览器将正确解析 JavaScript 内容，不再显示源码
+
+【服务状态】
+✅ Node.js 服务已重启
+✅ 服务运行在 http://localhost:8080/

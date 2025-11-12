@@ -1,0 +1,22 @@
+{
+    "success":  true,
+    "count":  1,
+    "truncated":  false,
+    "cursor":  null,
+    "prefix":  "rehost/2025/10/31/",
+    "limit":  50,
+    "items":  [
+                  {
+                      "key":  "rehost/2025/10/31/prod_test.jpg",
+                      "size":  76819,
+                      "etag":  "cd482a6570924f7e91b69100e9c4c77e",
+                      "uploaded":  "2025-10-31T15:14:59.832Z",
+                      "http_metadata":  {
+
+                                        },
+                      "custom_metadata":  {
+
+                                          }
+                  }
+              ]
+}

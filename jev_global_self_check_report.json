@@ -1,0 +1,10 @@
+{
+  "worker_status": "❌",
+  "modules_status": "❌",
+  "kv_integrity": "❌",
+  "local_core_files": "✅",
+  "network_ports": "✅",
+  "worker_details": {},
+  "overall": "🔴 系统异常",
+  "timestamp": "2025-11-06 22:14:09"
+}

@@ -1,0 +1,30 @@
+{
+    "version": "1.1",
+    "lockStatus": "Semi-Locked",
+    "ports": {
+        "agent": 1820,
+        "controlPanel": 1819,
+        "fixed": true,
+        "changeDisabled": true
+    },
+    "status": {
+        "isRunning": false,
+        "lastHeartbeat": "",
+        "syncStatus": "synchronized"
+    },
+    "lastUpdate": "2024-05-15 00:00:00",
+    "encoding": "UTF-8 without BOM",
+    "paths": {
+        "agent": "d:\\PDF转网页\\desktopAgent.ps1",
+        "heartbeat": "d:\\PDF转网页\\central_heartbeat_watchdog.ps1",
+        "controlPanel": "d:\\PDF转网页\\control_panel.html",
+        "startup": "d:\\PDF转网页\\jev_autostart.ps1",
+        "commandCenter": "d:\\PDF转网页\\jev_command_center.py",
+        "pathsLocked": true,
+        "changeDisabled": true
+    },
+    "security": {
+        "onlyEntryPoint": "jev_autostart.ps1",
+        "preventChanges": true
+    }
+}

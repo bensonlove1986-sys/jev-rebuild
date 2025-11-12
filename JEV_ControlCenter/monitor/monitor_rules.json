@@ -1,0 +1,10 @@
+{
+  "rules": [
+    { "id": "ERR_TIMEOUT", "pattern": "timeout", "threshold": 5, "interval": "10m", "severity": "high" },
+    { "id": "ERR_403", "pattern": "unauthorized", "threshold": 3, "interval": "10m", "severity": "medium" },
+    { "id": "ERR_CONN", "pattern": "disconnect", "threshold": 10, "interval": "1h", "severity": "low" },
+    { "id": "ERR_ERROR", "pattern": "error", "threshold": 8, "interval": "10m", "severity": "high" },
+    { "id": "ERR_FAILED", "pattern": "failed", "threshold": 5, "interval": "10m", "severity": "medium" }
+  ],
+  "alert_channels": ["email", "webhook", "whatsapp"]
+}

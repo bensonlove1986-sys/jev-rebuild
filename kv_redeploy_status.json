@@ -1,0 +1,5 @@
+{
+    "status":  "failed",
+    "timestamp":  "2025-11-06T12:38:00.2905200Z",
+    "details":  "Max retries reached, deployment and verification failed"
+}

@@ -1,0 +1,806 @@
+/* JEV 嘉尔威智能客服插件 - 全局样式主题 */
+
+/* ========== 全局重置与基础样式 ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Consolas', 'Segoe UI', 'Roboto', monospace;
+    background: rgba(0, 0, 0, 0.95);
+    color: #0f0;
+    overflow: hidden;
+}
+
+/* ========== JEV主容器样式 ========== */
+#jev-container {
+    position: fixed;
+    top: 100px;
+    left: 200px;
+    width: 600px;
+    height: 400px;
+    background: rgba(15, 15, 15, 0.95);
+    border: 1px solid #0f0;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+/* ========== 窗口拖动区域样式 ========== */
+#jev-header {
+    height: 40px;
+    background: rgba(0, 20, 0, 0.8);
+    border-bottom: 1px solid #0f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    cursor: move;
+    user-select: none;
+    position: relative;
+}
+
+#jev-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #0f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#jev-window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.window-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #0f0;
+    background: transparent;
+    color: #0f0;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.window-btn:hover {
+    background: rgba(0, 255, 0, 0.2);
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+#btn-close:hover {
+    background: rgba(255, 0, 0, 0.2);
+    border-color: #f00;
+    color: #f00;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
+}
+
+/* ========== 导航栏样式 ========== */
+#jev-navigation {
+    height: 45px;
+    background: rgba(0, 15, 0, 0.8);
+    border-bottom: 1px solid #0f0;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    position: relative;
+}
+
+.nav-item {
+    padding: 8px 16px;
+    margin: 0 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #0a0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-item:hover {
+    background: rgba(0, 255, 0, 0.1);
+    border-color: #0f0;
+    color: #0f0;
+}
+
+.nav-item.active {
+    background: rgba(0, 255, 0, 0.2);
+    border-color: #0f0;
+    color: #0f0;
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+}
+
+/* ========== 模块内容区域样式 ========== */
+#jev-modules-container {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.jev-module {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    overflow-y: auto;
+    display: none;
+}
+
+.jev-module.active {
+    display: block;
+}
+
+/* ========== 底部状态栏样式 ========== */
+#jev-status-bar {
+    height: 30px;
+    background: rgba(0, 20, 0, 0.8);
+    border-top: 1px solid #0f0;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    font-size: 12px;
+    color: #0a0;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-right: 20px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #0f0;
+    box-shadow: 0 0 6px #0f0;
+}
+
+.status-dot.red {
+    background: #f00;
+    box-shadow: 0 0 6px #f00;
+}
+
+.status-dot.yellow {
+    background: #ffaa00;
+    box-shadow: 0 0 6px #ffaa00;
+}
+
+/* ========== 通用组件样式 ========== */
+
+/* 按钮基础样式 */
+.jev-btn {
+    background: transparent;
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.jev-btn:hover {
+    background: rgba(0, 255, 0, 0.2);
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.jev-btn:active {
+    transform: scale(0.98);
+}
+
+.jev-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.jev-btn.primary {
+    background: rgba(0, 255, 0, 0.1);
+    font-weight: bold;
+}
+
+.jev-btn.danger {
+    border-color: #f00;
+    color: #f00;
+}
+
+.jev-btn.danger:hover {
+    background: rgba(255, 0, 0, 0.1);
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
+}
+
+/* 输入框基础样式 */
+.jev-input,
+.jev-textarea,
+.jev-select {
+    background: rgba(0, 10, 0, 0.5);
+    border: 1px solid #0f0;
+    border-radius: 4px;
+    color: #0f0;
+    font-family: inherit;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.jev-input,
+.jev-select {
+    height: 32px;
+    padding: 0 12px;
+}
+
+.jev-textarea {
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.jev-input:focus,
+.jev-textarea:focus,
+.jev-select:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+    border-color: rgba(0, 255, 0, 0.8);
+}
+
+/* 卡片样式 */
+.jev-card {
+    background: rgba(0, 20, 0, 0.3);
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+}
+
+.jev-card:hover {
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    border-color: rgba(0, 255, 0, 0.8);
+}
+
+.jev-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.jev-card-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #0f0;
+}
+
+/* 标签样式 */
+.jev-tag {
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid #0f0;
+    border-radius: 12px;
+    padding: 2px 12px;
+    font-size: 12px;
+    color: #0f0;
+    display: inline-block;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.jev-tag.warning {
+    background: rgba(255, 170, 0, 0.1);
+    border-color: #ffaa00;
+    color: #ffaa00;
+}
+
+.jev-tag.error {
+    background: rgba(255, 0, 0, 0.1);
+    border-color: #f00;
+    color: #f00;
+}
+
+/* 分割线样式 */
+.jev-divider {
+    height: 1px;
+    background: rgba(0, 255, 0, 0.3);
+    margin: 20px 0;
+    position: relative;
+}
+
+.jev-divider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #0f0, transparent);
+}
+
+/* 滚动条全局样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 20, 0, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #0f0;
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+    transition: all 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 0, 0.8);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+    background: rgba(0, 20, 0, 0.5);
+}
+
+/* ========== 动画效果 ========== */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+    }
+}
+
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(0, 255, 0, 1), 0 0 30px rgba(0, 255, 0, 0.5);
+    }
+    100% {
+        text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* 动画类 */
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+.animate-glow {
+    animation: glow 2s infinite;
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* ========== 工具类 ========== */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.mb-0 { margin-bottom: 0; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.mt-0 { margin-top: 0; }
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.ml-0 { margin-left: 0; }
+.ml-10 { margin-left: 10px; }
+.mr-0 { margin-right: 0; }
+.mr-10 { margin-right: 10px; }
+
+.p-0 { padding: 0; }
+.p-10 { padding: 10px; }
+.p-20 { padding: 20px; }
+
+.d-flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.gap-10 {
+    gap: 10px;
+}
+
+.gap-20 {
+    gap: 20px;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/* ========== 响应式设计 ========== */
+@media (max-width: 768px) {
+    #jev-container {
+        width: 95vw;
+        height: 80vh;
+        top: 2.5vh;
+        left: 2.5vw;
+    }
+    
+    #jev-header {
+        height: 36px;
+        padding: 0 10px;
+    }
+    
+    #jev-title {
+        font-size: 12px;
+    }
+    
+    .window-btn {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
+    
+    #jev-navigation {
+        height: 40px;
+        padding: 0 5px;
+        flex-wrap: wrap;
+        overflow-x: auto;
+    }
+    
+    .nav-item {
+        padding: 6px 12px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    
+    .jev-module {
+        padding: 10px;
+    }
+    
+    .jev-card {
+        padding: 12px;
+    }
+    
+    .jev-btn {
+        padding: 6px 16px;
+        font-size: 12px;
+    }
+    
+    .jev-input,
+    .jev-select {
+        height: 28px;
+        font-size: 12px;
+    }
+    
+    .jev-textarea {
+        font-size: 12px;
+        min-height: 60px;
+    }
+    
+    #jev-status-bar {
+        font-size: 10px;
+        padding: 0 10px;
+    }
+    
+    .status-indicator {
+        margin-right: 10px;
+    }
+}
+
+/* ========== 暗黑模式适配 ========== */
+@media (prefers-color-scheme: dark) {
+    #jev-container {
+        background: rgba(10, 10, 10, 0.98);
+    }
+    
+    #jev-header,
+    #jev-status-bar {
+        background: rgba(0, 25, 0, 0.9);
+    }
+    
+    #jev-navigation {
+        background: rgba(0, 20, 0, 0.9);
+    }
+}
+
+/* ========== 高对比度模式支持 ========== */
+@media (prefers-contrast: high) {
+    #jev-container,
+    .jev-card {
+        border-width: 2px;
+    }
+    
+    .jev-input,
+    .jev-textarea,
+    .jev-select {
+        border-width: 2px;
+    }
+    
+    .jev-btn {
+        border-width: 2px;
+    }
+}
+
+/* ========== 打印样式 ========== */
+@media print {
+    #jev-container {
+        position: relative;
+        box-shadow: none;
+        border: 1px solid #000;
+        width: 100%;
+        height: auto;
+    }
+    
+    #jev-header,
+    #jev-navigation,
+    #jev-status-bar {
+        display: none;
+    }
+    
+    .jev-module {
+        display: block;
+        overflow: visible;
+        page-break-inside: avoid;
+    }
+    
+    .jev-btn {
+        display: none;
+    }
+}
+
+/* ========== 加载动画样式 ========== */
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 255, 0, 0.3);
+    border-top: 2px solid #0f0;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ========== 工具提示样式 ========== */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background: rgba(0, 20, 0, 0.95);
+    color: #0f0;
+    text-align: center;
+    border: 1px solid #0f0;
+    border-radius: 4px;
+    padding: 8px;
+    position: absolute;
+    z-index: 10000;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* ========== 通知样式 ========== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 20, 0, 0.9);
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    padding: 15px;
+    z-index: 10001;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    animation: slideInRight 0.5s ease-out;
+    max-width: 400px;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification.success {
+    border-color: #0f0;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+.notification.error {
+    border-color: #f00;
+    color: #f00;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+}
+
+.notification.warning {
+    border-color: #ffaa00;
+    color: #ffaa00;
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+}
+
+/* ========== 高亮文本样式 ========== */
+.highlight {
+    background: rgba(0, 255, 0, 0.2);
+    color: #0f0;
+    padding: 0 4px;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+.highlight-warning {
+    background: rgba(255, 170, 0, 0.2);
+    color: #ffaa00;
+    padding: 0 4px;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+.highlight-error {
+    background: rgba(255, 0, 0, 0.2);
+    color: #f00;
+    padding: 0 4px;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+/* ========== 表格样式 ========== */
+.jev-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.jev-table th,
+.jev-table td {
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    padding: 10px;
+    text-align: left;
+}
+
+.jev-table th {
+    background: rgba(0, 20, 0, 0.5);
+    color: #0f0;
+    font-weight: bold;
+}
+
+.jev-table tr:nth-child(even) {
+    background: rgba(0, 10, 0, 0.3);
+}
+
+.jev-table tr:hover {
+    background: rgba(0, 20, 0, 0.4);
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+}
+
+/* ========== 网格布局 ========== */
+.grid {
+    display: grid;
+    grid-gap: 15px;
+}
+
+.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 768px) {
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: 1fr;
+    }
+}

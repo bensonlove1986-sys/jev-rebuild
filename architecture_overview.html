@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV系统架构概览</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.4.0/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2 {
+            color: #007bff;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .mermaid {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .explanation {
+            background-color: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .file-reference {
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JEV系统架构概览</h1>
+        
+        <div class="mermaid">
+            flowchart TB
+                subgraph 终端用户交互层
+                    User[用户/客服人员] --> Client[客服端 JEV_Client]
+                end
+                
+                subgraph 管理层
+                    ControlCenter[中控层 JEV_ControlCenter]
+                end
+                
+                subgraph 通信层
+                    Relay[中转层 Cloud_Relay]
+                end
+                
+                subgraph 执行层
+                    Worker[Worker JEV_Worker]
+                end
+                
+                Client --> Relay: 发送请求/接收数据
+                ControlCenter --> Relay: 调度任务/监控状态
+                Relay --> Worker: 转发任务/接收结果
+                Worker --> Relay: 返回处理结果
+                Relay --> ControlCenter: 上报状态/数据汇总
+                Relay --> Client: 传递数据/执行结果
+                
+                classDef control fill:#f9f,stroke:#333,stroke-width:2px;
+                classDef client fill:#bbf,stroke:#333,stroke-width:2px;
+                classDef relay fill:#bfb,stroke:#333,stroke-width:2px;
+                classDef worker fill:#fbb,stroke:#333,stroke-width:2px;
+                
+                class ControlCenter control;
+                class Client client;
+                class Relay relay;
+                class Worker worker;
+            
+            %% 数据流细节
+            flowchart RL
+                subgraph 数据流示例
+                    Client1[客服端请求任务] --> Relay1[中转层路由]
+                    Relay1 --> Control1[中控层任务调度]
+                    Control1 --> Relay2[中转层转发]
+                    Relay2 --> Worker1[Worker执行任务]
+                    Worker1 --> Relay3[中转层处理结果]
+                    Relay3 --> Client2[返回给客服端]
+                    Worker1 --> Control2[上报给中控层]
+                    Client1 --> Control3[上报状态]
+                end
+        </div>
+        
+        <div class="explanation">
+            <p><strong>架构说明：</strong>JEV系统采用分层架构设计，包含四个核心层次：客服端、中控层、中转层和Worker。各层之间通过API或WebSocket进行通信，实现数据流转和任务协作。</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>1. 中控层（Control Center）</h2>
+        
+        <div class="explanation">
+            <p>中控层是整个系统的管理和监控中心，负责协调和监控所有客户端、Worker和其他系统模块的运行状态。</p>
+        </div>
+        
+        <h3>核心功能：</h3>
+        <table>
+            <tr>
+                <th>功能</th>
+                <th>说明</th>
+                <th>相关文件</th>
+            </tr>
+            <tr>
+                <td>监控与调度</td>
+                <td>协调和监控所有客户端、Worker和其他系统模块的运行状态</td>
+                <td><span class="file-reference">control_api.js</span></td>
+            </tr>
+            <tr>
+                <td>数据汇总与展示</td>
+                <td>从各个客户端和Worker收集数据，提供可视化界面</td>
+                <td><span class="file-reference">control_dashboard.js</span>, <span class="file-reference">control_global_dashboard.js</span></td>
+            </tr>
+            <tr>
+                <td>权限管理</td>
+                <td>管理用户权限和配置，确保只有授权用户可以执行特定操作</td>
+                <td><span class="file-reference">config/admin_config.json</span></td>
+            </tr>
+            <tr>
+                <td>任务分配与调度</td>
+                <td>根据业务需求，调度任务并分配给对应的Worker或客服端执行</td>
+                <td><span class="file-reference">control_api.js</span></td>
+            </tr>
+        </table>
+        
+        <h3>通信机制：</h3>
+        <p>中控层通过API接口与中转层通信，使用固定的RELAY_URL（<span class="highlight">https://relay.jevshop.workers.dev/api/relay</span>）进行数据交换。关键API功能包括：</p>
+        <ul>
+            <li><code>syncAgent(agentId)</code> - 同步代理数据</li>
+            <li><code>restartAgent(agentId)</code> - 重启代理模块</li>
+            <li><code>pauseAgent(agentId)</code> - 暂停代理</li>
+            <li><code>updateAgentStatus(agentId, status)</code> - 更新代理状态</li>
+            <li><code>getSystemStatus()</code> - 获取系统状态</li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <h2>2. 客服端（Client）</h2>
+        
+        <div class="explanation">
+            <p>客服端是面向终端用户或客服人员的应用，主要用于与客户交互，处理客户的询盘、订单、聊天等。</p>
+        </div>
+        
+        <h3>核心功能：</h3>
+        <table>
+            <tr>
+                <th>功能</th>
+                <th>说明</th>
+                <th>相关文件</th>
+            </tr>
+            <tr>
+                <td>用户交互界面</td>
+                <td>提供界面供客服人员与客户进行互动（WhatsApp、网页聊天等）</td>
+                <td><span class="file-reference">ui/</span> 目录下的HTML文件</td>
+            </tr>
+            <tr>
+                <td>API调用</td>
+                <td>通过API或WebSocket与中控层或Worker通讯，获取任务或数据</td>
+                <td><span class="file-reference">main.js</span></td>
+            </tr>
+            <tr>
+                <td>实时反馈</td>
+                <td>将操作结果、客服状态、聊天记录等实时反馈给中控层或客户</td>
+                <td><span class="file-reference">logs/</span> 目录下的日志文件</td>
+            </tr>
+            <tr>
+                <td>模块管理</td>
+                <td>管理客服端内部模块的加载和初始化</td>
+                <td><span class="file-reference">main.js</span> (JEVModuleManager)</td>
+            </tr>
+        </table>
+        
+        <h3>通信机制：</h3>
+        <p>客服端通过JEVModuleManager管理与其他组件的通信，负责初始化核心模块、验证连接状态、处理用户交互等功能。</p>
+    </div>
+    
+    <div class="container">
+        <h2>3. Worker</h2>
+        
+        <div class="explanation">
+            <p>Worker是后台的自动化处理单元，负责处理计算密集型或逻辑复杂的任务，如数据分析、OCR识别、自动化报价生成等。</p>
+        </div>
+        
+        <h3>核心功能：</h3>
+        <table>
+            <tr>
+                <th>功能</th>
+                <th>说明</th>
+                <th>相关文件</th>
+            </tr>
+            <tr>
+                <td>任务处理</td>
+                <td>接受中控层的任务，执行特定逻辑（OCR、数据分析、报价生成等）</td>
+                <td><span class="file-reference">JEV_Worker/worker.js</span></td>
+            </tr>
+            <tr>
+                <td>与中控层互动</td>
+                <td>向中控层报告任务状态、结果，或请求进一步指令</td>
+                <td><span class="file-reference">JEV_Worker/worker.js</span></td>
+            </tr>
+            <tr>
+                <td>与客户端互动</td>
+                <td>将处理结果传递给客户端，供客服人员展示或进一步处理</td>
+                <td>通过中转层间接通信</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="container">
+        <h2>4. 中转层（Proxy/Relay）</h2>
+        
+        <div class="explanation">
+            <p>中转层负责数据传递和路由，是各系统模块间的通信桥梁。</p>
+        </div>
+        
+        <h3>核心功能：</h3>
+        <table>
+            <tr>
+                <th>功能</th>
+                <th>说明</th>
+                <th>相关文件</th>
+            </tr>
+            <tr>
+                <td>API请求路由</td>
+                <td>将来自客户端或Worker的API请求转发到合适的服务</td>
+                <td><span class="file-reference">cloud_relay.js</span>, <span class="file-reference">relay_router.js</span></td>
+            </tr>
+            <tr>
+                <td>负载均衡</td>
+                <td>在多个Worker或服务实例间分配流量，确保高可用性</td>
+                <td><span class="file-reference">relay_router.js</span></td>
+            </tr>
+            <tr>
+                <td>权限控制</td>
+                <td>实现API的认证和授权，确保数据传输安全</td>
+                <td><span class="file-reference">cloud_relay.js</span> (validateRequest方法)</td>
+            </tr>
+            <tr>
+                <td>数据缓存与优化</td>
+                <td>缓存常用数据或中间处理结果，提高系统响应速度</td>
+                <td><span class="file-reference">cloud_relay.js</span> (enable_cache配置)</td>
+            </tr>
+        </table>
+        
+        <h3>通信机制：</h3>
+        <p>中转层通过HTTP/HTTPS服务器接收请求，并通过一系列同步方法与其他组件通信：</p>
+        <ul>
+            <li><code>syncWithComponents()</code> - 与所有组件同步</li>
+            <li><code>syncWithWorker()</code> - 与Worker同步</li>
+            <li><code>syncWithControlCenter()</code> - 与中控层同步</li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <h2>5. 数据流向与交互模式</h2>
+        
+        <div class="mermaid">
+            sequenceDiagram
+                participant Client as 客服端
+                participant Relay as 中转层
+                participant Control as 中控层
+                participant Worker as Worker
+                
+                Note over Client,Worker: 任务请求流程
+                Client->>Relay: 发起任务请求
+                Relay->>Control: 请求任务分配
+                Control-->>Relay: 返回任务分配结果
+                Relay->>Worker: 转发任务
+                Worker->>Worker: 执行任务
+                Worker-->>Relay: 返回执行结果
+                Relay-->>Client: 返回处理结果
+                Worker-->>Control: 上报任务状态
+                
+                Note over Client,Worker: 状态监控流程
+                Client->>Relay: 上报客户端状态
+                Relay->>Control: 汇总状态信息
+                Control-->>Relay: 返回控制指令
+                Relay-->>Client: 下发控制指令
+                Worker->>Relay: 上报Worker状态
+                Relay->>Control: 汇总Worker状态
+            
+            %% 详细API调用示例
+            sequenceDiagram
+                participant Client as 客服端
+                participant Relay as 中转层
+                participant Control as 中控层
+                
+                Client->>Relay: POST /jev/task (任务数据)
+                Relay->>Relay: 验证请求(validateRequest)
+                Relay->>Control: 转发到中控层API
+                Control->>Control: 处理任务分配逻辑
+                Control-->>Relay: 返回任务分配结果
+                Relay-->>Client: 200 OK { "task_id": "...", "status": "assigned" }
+                
+                Note over Client,Control: 定时状态同步
+                Client->>Relay: GET /jev/status (client_id)
+                Relay->>Control: 转发状态查询
+                Control-->>Relay: 返回系统状态
+                Relay-->>Client: 200 OK { "system": "online", "agents": [...] }
+            
+            %% 错误处理流程
+            sequenceDiagram
+                participant Client as 客服端
+                participant Relay as 中转层
+                participant Worker as Worker
+                
+                Client->>Relay: 请求处理数据
+                Relay->>Worker: 转发到Worker
+                Worker-->>Relay: 返回错误 { "error": "处理失败" }
+                Relay->>Relay: 记录错误日志
+                Relay-->>Client: 400 Bad Request { "error": "处理失败", "retry": true }
+            
+            %% 系统初始化流程
+            sequenceDiagram
+                participant Relay as 中转层
+                participant Control as 中控层
+                participant Worker as Worker
+                
+                Note over Relay,Worker: 系统启动初始化
+                Relay->>Relay: 加载配置(loadConfig)
+                Relay->>Control: 注册中转服务
+                Control-->>Relay: 确认注册
+                Relay->>Worker: 建立连接
+                Worker-->>Relay: 连接确认
+                Relay->>Control: 上报连接状态
+                Control-->>Relay: 返回系统配置
+                Relay->>Worker: 下发任务配置
+            
+            %% 权限验证流程
+            sequenceDiagram
+                participant Client as 客服端
+                participant Relay as 中转层
+                participant Control as 中控层
+                
+                Client->>Relay: 请求访问受限资源(带API密钥)
+                Relay->>Relay: 验证API密钥
+                alt API密钥有效
+                    Relay->>Control: 检查权限级别
+                    Control-->>Relay: 返回权限确认
+                    Relay-->>Client: 200 OK { "access": "granted" }
+                else API密钥无效
+                    Relay-->>Client: 401 Unauthorized { "error": "无效的API密钥" }
+                else 权限不足
+                    Relay-->>Client: 403 Forbidden { "error": "权限不足" }
+                end
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>6. 系统配置与部署</h2>
+        
+        <h3>关键配置文件：</h3>
+        <table>
+            <tr>
+                <th>配置文件</th>
+                <th>所属层次</th>
+                <th>主要功能</th>
+            </tr>
+            <tr>
+                <td><span class="file-reference">JEV_ControlCenter/config/admin_config.json</span></td>
+                <td>中控层</td>
+                <td>管理员配置、权限设置、系统参数</td>
+            </tr>
+            <tr>
+                <td><span class="file-reference">JEV_ControlCenter/config/agents.json</span></td>
+                <td>中控层</td>
+                <td>代理配置、状态管理、区域设置</td>
+            </tr>
+            <tr>
+                <td><span class="file-reference">Cloud_Relay/relay_config.json</span></td>
+                <td>中转层</td>
+                <td>中继服务器配置、API密钥、限流设置</td>
+            </tr>
+            <tr>
+                <td><span class="file-reference">Cloud_Relay/security_lock.ini</span></td>
+                <td>中转层</td>
+                <td>安全设置、访问控制、审计配置</td>
+            </tr>
+            <tr>
+                <td><span class="file-reference">JEV_Client/config/settings.json</span></td>
+                <td>客服端</td>
+                <td>客户端配置、界面设置、连接参数</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="container">
+        <h2>7. 错误处理与容错机制</h2>
+        
+        <div class="explanation">
+            <p>JEV系统实现了多层错误处理和容错机制，确保系统稳定运行：</p>
+        </div>
+        
+        <h3>主要容错机制：</h3>
+        <ul>
+            <li><strong>模拟响应：</strong>API调用失败时返回模拟数据，确保演示环境正常工作</li>
+            <li><strong>降级服务：</strong>关键组件不可用时，自动切换到备用模式</li>
+            <li><strong>错误日志：</strong>详细记录系统错误，便于排查问题</li>
+            <li><strong>重试机制：</strong>网络请求失败时自动重试</li>
+            <li><strong>安全锁：</strong>异常情况下启用严格安全模式，保护系统</li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <h2>总结</h2>
+        
+        <p>JEV系统采用分层架构设计，通过中控层、客服端、Worker和中转层的协作，实现了高效、可扩展的多语言智能中继系统。各层职责明确，通过标准API接口通信，确保了系统的可维护性和灵活性。</p>
+        
+        <div class="explanation">
+            <p><strong>核心优势：</strong></p>
+            <ul>
+                <li><strong>模块化设计：</strong>各层独立工作，便于维护和扩展</li>
+                <li><strong>多语言支持：</strong>内置翻译功能，支持多语言环境</li>
+                <li><strong>高可用性：</strong>容错机制确保系统稳定运行</li>
+                <li><strong>安全可靠：</strong>多层权限验证和安全控制</li>
+                <li><strong>实时监控：</strong>完整的状态监控和日志系统</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'default',
+            flowchart: {
+                rankSpacing: 40,
+                nodeSpacing: 20
+            },
+            sequenceDiagram: {
+                actorMargin: 50
+            }
+        });
+    </script>
+</body>
+</html>

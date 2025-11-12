@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 模块化系统演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: #e94560;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .module-card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #e94560;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .module-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .module-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        
+        .module-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .status-active {
+            background: #00b894;
+            color: white;
+        }
+        
+        .status-optional {
+            background: #fdcb6e;
+            color: #2d3436;
+        }
+        
+        .module-desc {
+            color: #b2bec3;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        
+        .module-deps {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+        
+        .module-deps-label {
+            color: #6c5ce7;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .module-deps-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .dep-badge {
+            background: rgba(108, 92, 231, 0.2);
+            color: #6c5ce7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        
+        .architecture-diagram {
+            background: #16213e;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .architecture-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        .arch-level {
+            margin-bottom: 25px;
+        }
+        
+        .arch-level-title {
+            color: #6c5ce7;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #6c5ce7;
+        }
+        
+        .arch-modules {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .arch-module {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 15px;
+            border-radius: 6px;
+            border-left: 3px solid #e94560;
+        }
+        
+        .usage-section {
+            background: #16213e;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .usage-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #ffffff;
+        }
+        
+        .code-block {
+            background: #0f3460;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #dfe6e9;
+        }
+        
+        .highlight {
+            color: #fdcb6e;
+        }
+        
+        .comment {
+            color: #00b894;
+        }
+        
+        .key {
+            color: #74b9ff;
+        }
+        
+        .string {
+            color: #fd79a8;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #16213e;
+            border-radius: 10px;
+            color: #b2bec3;
+        }
+        
+        .feature-list {
+            margin: 25px 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .feature-item::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #00b894;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JEV 智能自动化系统</h1>
+            <p>模块化架构演示平台</p>
+            <span class="version-badge">版本 L6.0</span>
+        </header>
+
+        <div class="module-grid">
+            <div class="module-card">
+                <div class="module-header">
+                    <h3 class="module-title">Dashboard</h3>
+                    <span class="module-status status-active">核心模块</span>
+                </div>
+                <p class="module-desc">中控面板UI渲染逻辑，显示客服状态与操作按钮</p>
+                <div class="module-deps">
+                    <span class="module-deps-label">依赖模块：</span>
+                    <div class="module-deps-list">
+                        <span class="dep-badge">config.js</span>
+                        <span class="dep-badge">api.js</span>
+                        <span class="dep-badge">agents.js</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <h3 class="module-title">AlertManager</h3>
+                    <span class="module-status status-active">核心模块</span>
+                </div>
+                <p class="module-desc">告警、监控与断线检测，实时通知系统状态变化</p>
+                <div class="module-deps">
+                    <span class="module-deps-label">依赖模块：</span>
+                    <div class="module-deps-list">
+                        <span class="dep-badge">config.js</span>
+                        <span class="dep-badge">strategy.js</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <h3 class="module-title">AnalyticsManager</h3>
+                    <span class="module-status status-active">核心模块</span>
+                </div>
+                <p class="module-desc">数据分析与统计模块，提供业务数据可视化</p>
+                <div class="module-deps">
+                    <span class="module-deps-label">依赖模块：</span>
+                    <div class="module-deps-list">
+                        <span class="dep-badge">config.js</span>
+                        <span class="dep-badge">strategy.js</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">
+                    <h3 class="module-title">MailerManager</h3>
+                    <span class="module-status status-optional">扩展模块</span>
+                </div>
+                <p class="module-desc">邮件自动生成与发送、AI辅助撰写、模板管理</p>
+                <div class="module-deps">
+                    <span class="module-deps-label">依赖模块：</span>
+                    <div class="module-deps-list">
+                        <span class="dep-badge">config.js</span>
+                        <span class="dep-badge">api.js</span>
+                        <span class="dep-badge">logger.js</span>
+                        <span class="dep-badge">utils.js</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="architecture-diagram">
+            <h2 class="architecture-title">模块化架构层级</h2>
+            
+            <div class="arch-level">
+                <h3 class="arch-level-title">core/ - 核心逻辑层</h3>
+                <div class="arch-modules">
+                    <div class="arch-module">config.js - 全局配置</div>
+                    <div class="arch-module">api.js - 接口封装</div>
+                    <div class="arch-module">logger.js - 日志模块</div>
+                    <div class="arch-module">agents.js - 状态管理</div>
+                    <div class="arch-module">strategy.js - 策略决策</div>
+                    <div class="arch-module">utils.js - 工具函数</div>
+                </div>
+            </div>
+
+            <div class="arch-level">
+                <h3 class="arch-level-title">modules/ - 功能模块层</h3>
+                <div class="arch-modules">
+                    <div class="arch-module">dashboard.js - 控制面板</div>
+                    <div class="arch-module">alert.js - 告警监控</div>
+                    <div class="arch-module">analytics.js - 数据分析</div>
+                    <div class="arch-module">mailer.js - 邮件模块</div>
+                    <div class="arch-module">wechat.js - 微信消息</div>
+                    <div class="arch-module">form.js - 表单处理</div>
+                    <div class="arch-module">whatsapp.js - WhatsApp渠道</div>
+                </div>
+            </div>
+
+            <div class="arch-level">
+                <h3 class="arch-level-title">入口文件</h3>
+                <div class="arch-modules">
+                    <div class="arch-module">main.js - 启动入口</div>
+                    <div class="arch-module">index.html - 调试入口</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="usage-section">
+            <h2 class="usage-title">模块化使用示例</h2>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>模块按需加载：</strong>通过配置文件控制模块的启用/禁用，优化资源使用
+                </div>
+                <div class="feature-item">
+                    <strong>统一配置管理：</strong>所有配置集中在config.js，避免硬编码
+                </div>
+                <div class="feature-item">
+                    <strong>标准化接口：</strong>每个模块导出标准接口，便于调用和替换
+                </div>
+                <div class="feature-item">
+                    <strong>事件驱动通信：</strong>模块间通过事件总线通信，降低耦合度
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px; color: #6c5ce7;">1. 模块引入示例</h3>
+            <div class="code-block">
+                <span class="comment">// 标准模块导入方式</span><br>
+                <span class="highlight">import</span> <span class="key">{ CONFIG }</span> <span class="highlight">from</span> <span class="string">'./core/config.js'</span>;<br>
+                <span class="highlight">import</span> logger <span class="highlight">from</span> <span class="string">'./core/logger.js'</span>;<br>
+                <span class="highlight">import</span> dashboard <span class="highlight">from</span> <span class="string">'./modules/dashboard.js'</span>;
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px; color: #6c5ce7;">2. 模块导出标准</h3>
+            <div class="code-block">
+                <span class="comment">// 模块标准导出格式</span><br>
+                <span class="highlight">export</span> <span class="highlight">const</span> Dashboard = {<br>
+                &nbsp;&nbsp;init(),<br>
+                &nbsp;&nbsp;render(),<br>
+                &nbsp;&nbsp;updateAgents(data)<br>
+                };
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px; color: #6c5ce7;">3. 条件初始化示例</h3>
+            <div class="code-block">
+                <span class="comment">// 条件初始化邮件模块</span><br>
+                <span class="highlight">async</span> initOptionalModules() {
+                &nbsp;&nbsp;<span class="highlight">try</span> {
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">if</span> (CONFIG.USE_MAILER === <span class="highlight">true</span>) {
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mailerManager = <span class="highlight">await</span> <span class="highlight">import</span>(<span class="string">'./modules/mailer.js'</span>);
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="highlight">await</span> mailerManager.init();
+                &nbsp;&nbsp;&nbsp;&nbsp;}
+                &nbsp;&nbsp;} <span class="highlight">catch</span> (error) {
+                &nbsp;&nbsp;&nbsp;&nbsp;logger.warning(<span class="string">`邮件模块初始化失败: ${error.message}`</span>);
+                &nbsp;&nbsp;}
+                }
+            </div>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px; color: #6c5ce7;">4. 事件通信示例</h3>
+            <div class="code-block">
+                <span class="comment">// 触发事件</span><br>
+                window.dispatchEvent(<span class="highlight">new</span> CustomEvent(<span class="string">'jev:mail:sent'</span>, {
+                &nbsp;&nbsp;detail: mailData
+                }));<br><br>
+                
+                <span class="comment">// 监听事件</span><br>
+                window.addEventListener(<span class="string">'jev:mail:sent'</span>, (event) => {
+                &nbsp;&nbsp;console.log(<span class="string">'邮件发送成功:'</span>, event.detail);
+                });
+            </div>
+        </div>
+        
+        <div class="usage-section">
+            <h2 class="usage-title">模块化架构演示</h2>
+            <div class="feature-demo">
+                <div class="demo-section">
+                    <h3>📊 系统状态</h3>
+                    <div id="system-status">正在加载系统状态...</div>
+                </div>
+                
+                <div class="demo-section">
+                    <h3>🔄 KV存储演示</h3>
+                    <div class="kv-demo-controls">
+                        <button id="save-kv-btn" class="action-btn">💾 保存当前状态到KV</button>
+                        <button id="load-kv-btn" class="action-btn">📁 从KV恢复状态</button>
+                        <button id="clear-kv-btn" class="action-btn">🗑️ 清除KV测试数据</button>
+                    </div>
+                    <div id="kv-status" class="status-message">KV存储演示区域</div>
+                </div>
+            </div>
+            
+            <style>
+                .feature-demo {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+                    margin-top: 20px;
+                }
+                
+                .demo-section {
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: 10px;
+                    padding: 20px;
+                    border-left: 3px solid #6c5ce7;
+                }
+                
+                .kv-demo-controls {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    margin-bottom: 15px;
+                }
+                
+                .action-btn {
+                    padding: 10px 15px;
+                    background: #6c5ce7;
+                    color: white;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: bold;
+                    transition: background-color 0.3s;
+                }
+                
+                .action-btn:hover {
+                    background: #5a4fd4;
+                }
+                
+                .status-message {
+                    background: rgba(0, 0, 0, 0.2);
+                    padding: 10px;
+                    border-radius: 6px;
+                    min-height: 40px;
+                }
+            </style>
+            
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    // 模拟系统状态
+                    setTimeout(() => {
+                        document.getElementById('system-status').textContent = 
+                            '✅ 系统正常运行 | 5个模块已加载 | CPU使用率: 12%';
+                    }, 1000);
+                    
+                    // KV存储模拟
+                    const saveKvBtn = document.getElementById('save-kv-btn');
+                    const loadKvBtn = document.getElementById('load-kv-btn');
+                    const clearKvBtn = document.getElementById('clear-kv-btn');
+                    const kvStatus = document.getElementById('kv-status');
+                    
+                    saveKvBtn.addEventListener('click', () => {
+                        // 模拟KV存储操作
+                        const systemState = {
+                            timestamp: new Date().toISOString(),
+                            modules: ['dashboard', 'alert', 'analytics'],
+                            status: 'active',
+                            version: 'L6.0'
+                        };
+                        
+                        // 在实际应用中，这里会调用KV存储API
+                        localStorage.setItem('jev-system-state', JSON.stringify(systemState));
+                        kvStatus.textContent = '✅ 系统状态已保存到KV存储';
+                        kvStatus.style.color = '#00b894';
+                    });
+                    
+                    loadKvBtn.addEventListener('click', () => {
+                        // 模拟从KV加载操作
+                        const savedState = localStorage.getItem('jev-system-state');
+                        if (savedState) {
+                            const state = JSON.parse(savedState);
+                            kvStatus.textContent = `✅ 已从KV恢复状态: ${state.modules.join(', ')} | 保存时间: ${new Date(state.timestamp).toLocaleString()}`;
+                            kvStatus.style.color = '#00b894';
+                        } else {
+                            kvStatus.textContent = '❌ 未找到KV存储的状态数据';
+                            kvStatus.style.color = '#e94560';
+                        }
+                    });
+                    
+                    clearKvBtn.addEventListener('click', () => {
+                        // 清除KV模拟数据
+                        localStorage.removeItem('jev-system-state');
+                        kvStatus.textContent = '✅ KV测试数据已清除';
+                        kvStatus.style.color = '#00b894';
+                    });
+                });
+            </script>
+        </div>
+
+        <footer>
+            <p>JEV 智能自动化系统 - 模块化架构演示平台</p>
+            <p>版本 L6.0 | 遵循模块化设计原则</p>
+        </footer>
+    </div>
+
+    <script>
+        // 简单的交互功能
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.module-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-5px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

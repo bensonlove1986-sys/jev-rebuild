@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEV L8.9.6 - 邀请码管理系统</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --success-color: #27ae60;
+      --danger-color: #e74c3c;
+      --warning-color: #f39c12;
+      --info-color: #1abc9c;
+      --light-color: #ecf0f1;
+      --glass-bg: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    }
+    
+    /* 全局样式 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+      color: var(--secondary-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    
+    /* 玻璃拟态基础样式 */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      transition: all 0.3s ease;
+    }
+    
+    .glass:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 40px rgba(31, 38, 135, 0.2);
+    }
+    
+    /* 头部样式 */
+    .header {
+      background: linear-gradient(90deg, rgba(52, 152, 219, 0.2), rgba(44, 62, 80, 0.2));
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .header h1 {
+      font-size: 1.8rem;
+      margin: 0;
+      font-weight: 600;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header .subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-top: 0.25rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .admin-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .admin-info .badge {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      backdrop-filter: blur(5px);
+    }
+    
+    .connection-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+    }
+    
+    /* 卡片样式 */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    
+    .glass-card-header {
+      background: linear-gradient(90deg, rgba(52, 152, 219, 0.3), rgba(52, 152, 219, 0.1));
+      color: white;
+      font-weight: 600;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .glass-card-body {
+      padding: 1.5rem;
+    }
+    
+    /* 表单样式 */
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+      color: rgba(255, 255, 255, 0.9);
+      display: block;
+    }
+    
+    .form-control,
+    .form-select,
+    .form-control:focus,
+    .form-select:focus {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      transition: all 0.3s ease;
+      box-shadow: none;
+    }
+    
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .form-control:focus,
+    .form-select:focus {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
+    }
+    
+    /* 按钮样式 */
+    .btn {
+      border-radius: 10px;
+      padding: 0.875rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.5s ease;
+      z-index: -1;
+    }
+    
+    .btn:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), #2980b9);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2980b9, var(--primary-color));
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color), #229954);
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: linear-gradient(135deg, #229954, var(--success-color));
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(39, 174, 96, 0.4);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger-color), #c0392b);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: linear-gradient(135deg, #c0392b, var(--danger-color));
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(231, 76, 60, 0.4);
+    }
+    
+    .btn-outline-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+    
+    .btn-outline-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-1px);
+    }
+    
+    .btn-sm {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+    
+    /* 选项卡样式 */
+    .nav-tabs {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: 16px 16px 0 0;
+      margin: 0;
+      border-bottom: none;
+      padding: 0 0.5rem;
+    }
+    
+    .nav-item .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      border: none;
+      border-radius: 10px 10px 0 0;
+      margin-right: 0.5rem;
+      padding: 1rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      background: transparent;
+      margin-top: 0.5rem;
+    }
+    
+    .nav-item .nav-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    
+    .nav-item .nav-link.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      box-shadow: 0 -2px 0 0 var(--primary-color);
+    }
+    
+    /* 标签内容 */
+    .tab-content {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: 0 0 16px 16px;
+      padding: 2rem;
+      border-top: none;
+      min-height: 400px;
+    }
+    
+    /* 提醒框 */
+    .alert {
+      border-radius: 12px;
+      border: none;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .alert-success {
+      background: rgba(39, 174, 96, 0.2);
+      border-left: 4px solid var(--success-color);
+    }
+    
+    .alert-error {
+      background: rgba(231, 76, 60, 0.2);
+      border-left: 4px solid var(--danger-color);
+    }
+    
+    .alert-info {
+      background: rgba(52, 152, 219, 0.2);
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .alert-warning {
+      background: rgba(243, 156, 18, 0.2);
+      border-left: 4px solid var(--warning-color);
+    }
+    
+    /* 表格样式 */
+    .table-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-top: 1.5rem;
+    }
+    
+    .table {
+      margin-bottom: 0;
+      color: white;
+    }
+    
+    .table thead {
+      background: rgba(44, 62, 80, 0.3);
+    }
+    
+    .table th,
+    .table td {
+      padding: 1rem;
+      vertical-align: middle;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .table tbody tr {
+      transition: all 0.3s ease;
+    }
+    
+    .table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    /* 邀请码显示 */
+    .invite-code {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 1.5rem;
+      border-radius: 12px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      text-align: center;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      word-break: break-all;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* 状态指示器 */
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+      box-shadow: 0 0 10px currentColor;
+    }
+    
+    .status-active {
+      background-color: var(--success-color);
+      color: var(--success-color);
+    }
+    
+    .status-expired {
+      background-color: var(--warning-color);
+      color: var(--warning-color);
+    }
+    
+    .status-revoked {
+      background-color: var(--danger-color);
+      color: var(--danger-color);
+    }
+    
+    /* 加载动画 */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 3rem;
+    }
+    
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+      color: white;
+      background: transparent;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* 结果容器 */
+    .results-container {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .result-item {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    
+    .result-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .result-item:last-child {
+      border-bottom: none;
+    }
+    
+    .result-code {
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 600;
+      color: white;
+      word-break: break-all;
+      flex: 1;
+    }
+    
+    /* 分页控件 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+    
+    .pagination .page-item .page-link {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      margin: 0 0.25rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .pagination .page-item .page-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: var(--primary-color);
+    }
+    
+    .pagination .page-item.active .page-link {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    
+    /* 页脚 */
+    .footer {
+      background: rgba(44, 62, 80, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: white;
+      padding: 1.5rem 0;
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .footer .version {
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .admin-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      
+      .nav-item .nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .tab-content {
+        padding: 1.25rem;
+      }
+      
+      .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+      
+      .invite-code {
+        font-size: 1.25rem;
+        padding: 1rem;
+      }
+      
+      .table th,
+      .table td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .header {
+        padding: 1rem 0;
+      }
+      
+      .header h1 {
+        font-size: 1.3rem;
+      }
+      
+      .glass-card-body {
+        padding: 1rem;
+      }
+      
+      .tab-content {
+        padding: 1rem;
+      }
+      
+      .invite-code {
+        font-size: 1.1rem;
+        padding: 0.875rem;
+      }
+    }
+    
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+    
+    /* 工具提示 */
+    .tooltip-inner {
+      background: rgba(44, 62, 80, 0.9);
+      color: white;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .tooltip-arrow {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- 头部 -->
+  <header class="header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1><i class="fa fa-key"></i> JEV L8.9.6 - 邀请码管理系统</h1>
+          <div class="subtitle">安全邀请码生成、验证与管理平台</div>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+          <div class="admin-info">
+            <span class="badge"><i class="fa fa-user-circle"></i> 管理员</span>
+            <span id="connection-status" class="connection-indicator">
+              <i class="fa fa-circle text-success"></i> 已连接
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容 -->
+  <main class="container mt-5 mb-5">
+    <!-- 消息提示区域 -->
+    <div id="message-area" style="display: none;" class="mb-4"></div>
+    
+    <!-- 连接设置 -->
+    <div class="glass-card mb-5">
+      <div class="glass-card-header">
+        <i class="fa fa-cog"></i> 连接设置
+      </div>
+      <div class="glass-card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="api-url" class="form-label">API 地址</label>
+              <input type="url" id="api-url" class="form-control" value="http://localhost:8787" placeholder="输入 API 地址">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="admin-token" class="form-label">管理员 Token</label>
+              <input type="text" id="admin-token" class="form-control" value="jev-admin-token-2025" placeholder="输入管理员 Token">
+            </div>
+          </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button id="test-connection" class="btn btn-outline-secondary">
+            <i class="fa fa-check"></i> 测试连接
+          </button>
+          <button id="save-config" class="btn btn-outline-secondary">
+            <i class="fa fa-save"></i> 保存配置
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 选项卡 -->
+    <div class="mb-5">
+      <ul class="nav nav-tabs" id="management-tabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="single-tab" data-bs-toggle="tab" href="#single" role="tab" aria-controls="single" aria-selected="true">
+            <i class="fa fa-key"></i> 单码生成
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="batch-tab" data-bs-toggle="tab" href="#batch" role="tab" aria-controls="batch" aria-selected="false">
+            <i class="fa fa-list-alt"></i> 批量生成
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="list-tab" data-bs-toggle="tab" href="#list" role="tab" aria-controls="list" aria-selected="false">
+            <i class="fa fa-table"></i> 邀请码列表
+          </a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="revoke-tab" data-bs-toggle="tab" href="#revoke" role="tab" aria-controls="revoke" aria-selected="false">
+            <i class="fa fa-ban"></i> 撤销邀请码
+          </a>
+        </li>
+      </ul>
+      
+      <div class="tab-content" id="management-tabs-content">
+        <!-- 单码生成 -->
+        <div class="tab-pane fade show active" id="single" role="tabpanel" aria-labelledby="single-tab">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="single-uses-allowed" class="form-label">允许使用次数</label>
+                <select id="single-uses-allowed" class="form-select">
+                  <option value="1">仅一次</option>
+                  <option value="5">5 次</option>
+                  <option value="10">10 次</option>
+                  <option value="0">无限次</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="single-expires" class="form-label">有效期</label>
+                <select id="single-expires" class="form-select">
+                  <option value="">永不过期</option>
+                  <option value="7">7 天</option>
+                  <option value="30">30 天</option>
+                  <option value="90">90 天</option>
+                  <option value="custom">自定义...</option>
+                </select>
+              </div>
+              
+              <div id="single-custom-date" class="form-group" style="display: none;">
+                <label for="single-expires-date" class="form-label">自定义过期日期</label>
+                <input type="datetime-local" id="single-expires-date" class="form-control">
+              </div>
+              
+              <div class="form-group">
+                <label for="single-role" class="form-label">用户角色</label>
+                <select id="single-role" class="form-select">
+                  <option value="user">普通用户</option>
+                  <option value="agent">代理</option>
+                  <option value="admin">管理员</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="single-note" class="form-label">备注</label>
+                <textarea id="single-note" class="form-control" rows="3" placeholder="输入备注信息（可选）"></textarea>
+              </div>
+              
+              <button id="generate-single" class="btn btn-primary w-100">
+                <i class="fa fa-refresh"></i> 生成邀请码
+              </button>
+            </div>
+            
+            <div class="col-md-6">
+              <div id="single-result" class="alert alert-info">
+                <i class="fa fa-info-circle"></i> 点击生成按钮创建新的邀请码
+              </div>
+              
+              <div id="single-result-code" style="display: none;">
+                <div class="mb-4">
+                  <label class="form-label">邀请码</label>
+                  <div class="invite-code" id="single-code-display"></div>
+                </div>
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">创建时间</label>
+                    <div class="form-control" id="single-created-at" readonly></div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">状态</label>
+                    <div class="form-control" id="single-status" readonly>
+                      <span class="status-indicator status-active"></span> 活跃
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label">使用次数</label>
+                    <div class="form-control" id="single-uses-remaining" readonly></div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">过期时间</label>
+                    <div class="form-control" id="single-expires-at" readonly></div>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">用户角色</label>
+                  <div class="form-control" id="single-role-display" readonly></div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">备注</label>
+                  <div class="form-control" id="single-note-display" readonly></div>
+                </div>
+                
+                <button id="copy-single-code" class="btn btn-outline-secondary btn-sm mt-3">
+                  <i class="fa fa-copy"></i> 复制邀请码
+                </button>
+              </div>
+              
+              <div id="single-loading" class="loading-spinner">
+                <div class="spinner-border" role="status"></div>
+                <div class="mt-3 text-white">生成中...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 批量生成 -->
+        <div class="tab-pane fade" id="batch" role="tabpanel" aria-labelledby="batch-tab">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="batch-count" class="form-label">生成数量</label>
+                <select id="batch-count" class="form-select">
+                  <option value="5">5 个</option>
+                  <option value="10">10 个</option>
+                  <option value="20">20 个</option>
+                  <option value="50">50 个</option>
+                  <option value="100">100 个</option>
+                  <option value="custom">自定义...</option>
+                </select>
+              </div>
+              
+              <div id="batch-custom-count" class="form-group" style="display: none;">
+                <label for="batch-count-input" class="form-label">自定义数量</label>
+                <input type="number" id="batch-count-input" class="form-control" min="1" max="500" value="10">
+                <div class="form-text" style="color: rgba(255, 255, 255, 0.7);">最大值：500</div>
+              </div>
+              
+              <div class="form-group">
+                <label for="batch-uses-allowed" class="form-label">每个允许使用次数</label>
+                <select id="batch-uses-allowed" class="form-select">
+                  <option value="1">仅一次</option>
+                  <option value="5">5 次</option>
+                  <option value="10">10 次</option>
+                  <option value="0">无限次</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="batch-expires" class="form-label">有效期</label>
+                <select id="batch-expires" class="form-select">
+                  <option value="">永不过期</option>
+                  <option value="7">7 天</option>
+                  <option value="30">30 天</option>
+                  <option value="90">90 天</option>
+                  <option value="custom">自定义...</option>
+                </select>
+              </div>
+              
+              <div id="batch-custom-date" class="form-group" style="display: none;">
+                <label for="batch-expires-date" class="form-label">自定义过期日期</label>
+                <input type="datetime-local" id="batch-expires-date" class="form-control">
+              </div>
+              
+              <div class="form-group">
+                <label for="batch-role" class="form-label">用户角色</label>
+                <select id="batch-role" class="form-select">
+                  <option value="user">普通用户</option>
+                  <option value="agent">代理</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label for="batch-note" class="form-label">备注</label>
+                <textarea id="batch-note" class="form-control" rows="2" placeholder="输入备注信息（可选）"></textarea>
+              </div>
+              
+              <button id="generate-batch" class="btn btn-primary w-100">
+                <i class="fa fa-refresh"></i> 批量生成
+              </button>
+            </div>
+            
+            <div class="col-md-6">
+              <div id="batch-result" class="alert alert-info">
+                <i class="fa fa-info-circle"></i> 设置参数后点击批量生成按钮
+              </div>
+              
+              <div id="batch-results-list" class="results-container" style="display: none;">
+                <div id="batch-codes-list"></div>
+              </div>
+              
+              <div id="batch-results-summary" style="display: none; margin-top: 1.5rem;">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="glass p-3">
+                      <div class="text-center">
+                        <div class="text-3xl font-bold" id="batch-total-count">0</div>
+                        <div class="text-sm opacity-80">生成总数</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="glass p-3">
+                      <div class="text-center">
+                        <div class="text-3xl font-bold" id="batch-active-count">0</div>
+                        <div class="text-sm opacity-80">活跃数量</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-3">
+                  <button id="copy-all-codes" class="btn btn-outline-secondary btn-sm flex-1">
+                    <i class="fa fa-copy"></i> 复制所有
+                  </button>
+                  <button id="export-csv" class="btn btn-outline-secondary btn-sm flex-1">
+                    <i class="fa fa-download"></i> 导出CSV
+                  </button>
+                </div>
+              </div>
+              
+              <div id="batch-loading" class="loading-spinner">
+                <div class="spinner-border" role="status"></div>
+                <div class="mt-3 text-white">批量生成中...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 邀请码列表 -->
+        <div class="tab-pane fade" id="list" role="tabpanel" aria-labelledby="list-tab">
+          <div class="row mb-4">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="list-status" class="form-label">状态筛选</label>
+                <select id="list-status" class="form-select">
+                  <option value="">全部</option>
+                  <option value="valid">有效</option>
+                  <option value="expired">已过期</option>
+                  <option value="revoked">已撤销</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="list-role" class="form-label">角色筛选</label>
+                <select id="list-role" class="form-select">
+                  <option value="">全部</option>
+                  <option value="user">普通用户</option>
+                  <option value="agent">代理</option>
+                  <option value="admin">管理员</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="list-limit" class="form-label">每页数量</label>
+                <select id="list-limit" class="form-select">
+                  <option value="10">10 条</option>
+                  <option value="20">20 条</option>
+                  <option value="50">50 条</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-between mb-4">
+            <div>
+              <button id="refresh-list" class="btn btn-outline-secondary btn-sm">
+                <i class="fa fa-refresh"></i> 刷新列表
+              </button>
+            </div>
+            <div>
+              <button id="export-all-csv" class="btn btn-outline-secondary btn-sm">
+                <i class="fa fa-download"></i> 导出全部CSV
+              </button>
+            </div>
+          </div>
+          
+          <div id="list-loading" class="loading-spinner">
+            <div class="spinner-border" role="status"></div>
+            <div class="mt-3 text-white">加载中...</div>
+          </div>
+          
+          <div id="invite-codes-table" style="display: none;">
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>邀请码</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>过期时间</th>
+                    <th>使用次数</th>
+                    <th>角色</th>
+                    <th>备注</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="invite-codes-list">
+                  <!-- 动态生成 -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div id="pagination" class="pagination"></div>
+          </div>
+          
+          <div id="no-results" class="alert alert-info" style="display: none;">
+            <i class="fa fa-info-circle"></i> 没有找到符合条件的邀请码
+          </div>
+        </div>
+        
+        <!-- 撤销邀请码 -->
+        <div class="tab-pane fade" id="revoke" role="tabpanel" aria-labelledby="revoke-tab">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="revoke-code" class="form-label">邀请码</label>
+                <input type="text" id="revoke-code" class="form-control" placeholder="输入要撤销的邀请码（如：AGT-XXXX-XXXX）">
+                <div class="form-text" style="color: rgba(255, 255, 255, 0.7);">支持单个邀请码撤销</div>
+              </div>
+              
+              <div class="form-group mt-4">
+                <label class="form-label">或选择撤销模式</label>
+                <div class="glass p-4">
+                  <div class="form-check mb-3">
+                    <input type="radio" id="revoke-expired" name="revoke-mode" class="form-check-input" checked>
+                    <label for="revoke-expired" class="form-check-label" style="color: white; cursor: pointer;">撤销所有已过期邀请码</label>
+                  </div>
+                  <div class="form-check mb-3">
+                    <input type="radio" id="revoke-unused" name="revoke-mode" class="form-check-input">
+                    <label for="revoke-unused" class="form-check-label" style="color: white; cursor: pointer;">撤销所有未使用的邀请码</label>
+                  </div>
+                  <div class="form-check">
+                    <input type="radio" id="revoke-all" name="revoke-mode" class="form-check-input">
+                    <label for="revoke-all" class="form-check-label" style="color: white; cursor: pointer;">撤销所有邀请码（谨慎操作）</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="revoke-reason" class="form-label">撤销原因（可选）</label>
+                <textarea id="revoke-reason" class="form-control" rows="3" placeholder="输入撤销原因"></textarea>
+              </div>
+              
+              <button id="revoke-submit" class="btn btn-danger w-100">
+                <i class="fa fa-ban"></i> 执行撤销
+              </button>
+            </div>
+            
+            <div class="col-md-6">
+              <div id="revoke-result" class="alert alert-info">
+                <i class="fa fa-info-circle"></i> 选择撤销模式或输入单个邀请码后执行撤销操作
+              </div>
+              
+              <div id="revoke-preview" class="glass p-4 mt-4" style="display: none;">
+                <h4 class="mb-3">撤销预览</h4>
+                <div id="revoke-preview-content">
+                  <!-- 动态生成 -->
+                </div>
+              </div>
+              
+              <div id="revoke-loading" class="loading-spinner">
+                <div class="spinner-border" role="status"></div>
+                <div class="mt-3 text-white">撤销中...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col text-center">
+          <p class="version">JEV L8.9.6 - 邀请码管理系统 © 2024</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="invite_admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+{
+  "version": "v12.0",
+  "last_updated": "2025-11-09T06:17:00.000Z",
+  "supported_regions": ["CN", "VN", "BD", "IN", "PK", "DZ", "TH", "ID", "RU", "JP", "KR", "ES", "FR", "PT"],
+  "regions": [
+    {
+      "code": "CN",
+      "name": "中国",
+      "status": "online",
+      "priority": 1,
+      "endpoints": [
+        "http://localhost:3000/api/relay/cn",
+        "http://relay-cn.jev-cloud.local"
+      ],
+      "latency": 25,
+      "connections": 45,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "VN",
+      "name": "越南",
+      "status": "online",
+      "priority": 2,
+      "endpoints": [
+        "http://localhost:3000/api/relay/vn",
+        "http://relay-vn.jev-cloud.local"
+      ],
+      "latency": 35,
+      "connections": 28,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "BD",
+      "name": "孟加拉",
+      "status": "online",
+      "priority": 2,
+      "endpoints": [
+        "http://localhost:3000/api/relay/bd",
+        "http://relay-bd.jev-cloud.local"
+      ],
+      "latency": 45,
+      "connections": 32,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "IN",
+      "name": "印度",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/in",
+        "http://relay-in.jev-cloud.local"
+      ],
+      "latency": 52,
+      "connections": 24,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "PK",
+      "name": "巴基斯坦",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/pk",
+        "http://relay-pk.jev-cloud.local"
+      ],
+      "latency": 58,
+      "connections": 19,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "DZ",
+      "name": "阿尔及利亚",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/dz",
+        "http://relay-dz.jev-cloud.local"
+      ],
+      "latency": 85,
+      "connections": 12,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "TH",
+      "name": "泰国",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/th",
+        "http://relay-th.jev-cloud.local"
+      ],
+      "latency": 48,
+      "connections": 22,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "ID",
+      "name": "印度尼西亚",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/id",
+        "http://relay-id.jev-cloud.local"
+      ],
+      "latency": 55,
+      "connections": 26,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "RU",
+      "name": "俄罗斯",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/ru",
+        "http://relay-ru.jev-cloud.local"
+      ],
+      "latency": 95,
+      "connections": 15,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "JP",
+      "name": "日本",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/jp",
+        "http://relay-jp.jev-cloud.local"
+      ],
+      "latency": 62,
+      "connections": 20,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "KR",
+      "name": "韩国",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/kr",
+        "http://relay-kr.jev-cloud.local"
+      ],
+      "latency": 58,
+      "connections": 23,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "ES",
+      "name": "西班牙",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/es",
+        "http://relay-es.jev-cloud.local"
+      ],
+      "latency": 110,
+      "connections": 18,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "FR",
+      "name": "法国",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/fr",
+        "http://relay-fr.jev-cloud.local"
+      ],
+      "latency": 105,
+      "connections": 16,
+      "security_lock": "active",
+      "path_lock": true
+    },
+    {
+      "code": "PT",
+      "name": "葡萄牙",
+      "status": "online",
+      "priority": 3,
+      "endpoints": [
+        "http://localhost:3000/api/relay/pt",
+        "http://relay-pt.jev-cloud.local"
+      ],
+      "latency": 115,
+      "connections": 14,
+      "security_lock": "active",
+      "path_lock": true
+    }
+  ],
+  "global_settings": {
+    "default_region": "CN",
+    "fallback_enabled": true,
+    "auto_recover": true,
+    "security_level": "strict",
+    "path_lock": true,
+    "lock": "active"
+  },
+  "system_state": "stable"
+}

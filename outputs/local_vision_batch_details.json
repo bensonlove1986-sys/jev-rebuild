@@ -1,0 +1,32 @@
+[
+    {
+        "url":  "https://picsum.photos/400",
+        "status":  0,
+        "success":  false,
+        "count":  0,
+        "used_fallback":  "",
+        "used_source":  "",
+        "mode":  "",
+        "error":  "操作超时。"
+    },
+    {
+        "url":  "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Manhattan_at_Dusk_by_Francisco_Diez.jpg/640px-Manhattan_at_Dusk_by_Francisco_Diez.jpg",
+        "status":  500,
+        "success":  false,
+        "count":  0,
+        "used_fallback":  "",
+        "used_source":  "",
+        "mode":  "",
+        "error":  ""
+    },
+    {
+        "url":  "https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png",
+        "status":  504,
+        "success":  false,
+        "count":  0,
+        "used_fallback":  "",
+        "used_source":  "",
+        "mode":  "",
+        "error":  ""
+    }
+]

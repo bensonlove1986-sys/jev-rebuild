@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV Ping Test</title>
+    <script>
+        // 执行ping测试
+        async function runPingTest() {
+            try {
+                console.log('[JEV] 开始链路测试...');
+                
+                // 测试本地Worker
+                const workerResponse = await fetch('https://jevshop.bensonlove1986.workers.dev/ping');
+                const workerData = await workerResponse.json();
+                console.log('[JEV] Worker响应:', workerData);
+                
+                // 测试本地Agent
+                const agentResponse = await fetch('http://localhost:1820/status');
+                const agentData = await agentResponse.json();
+                console.log('[JEV] Agent响应:', agentData);
+                
+                console.log('✅ 全链路连接成功');
+            } catch (error) {
+                console.error('❌ 链路测试失败:', error);
+            }
+        }
+        
+        // 页面加载时执行测试
+        window.onload = runPingTest;
+    </script>
+</head>
+<body>
+    <h1>JEV Ping Test</h1>
+    <p>请在浏览器控制台查看测试结果</p>
+</body>
+</html>

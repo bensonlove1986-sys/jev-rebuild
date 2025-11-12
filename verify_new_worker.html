@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>验证新Worker连接</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+        }
+        input {
+            padding: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>新Worker验证工具</h1>
+        
+        <div>
+            <label for="workerUrl">Worker URL:</label>
+            <input type="text" id="workerUrl" value="https://jevshop.bensonlove1986.workers.dev">
+        </div>
+        
+        <div>
+            <label for="secret">Webhook密钥:</label>
+            <input type="text" id="secret" value="jevindustry2025">
+        </div>
+        
+        <button id="testBtn">测试连接</button>
+        
+        <div id="result" style="margin-top: 20px;"></div>
+    </div>
+    
+    <script>
+        document.getElementById('testBtn').addEventListener('click', async () => {
+            const workerUrl = document.getElementById('workerUrl').value;
+            const secret = document.getElementById('secret').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '<p>正在测试连接...</p>';
+            
+            try {
+                // 测试ping端点
+                const pingStart = Date.now();
+                const pingResponse = await fetch(`${workerUrl}/ping`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Webhook-Secret': secret
+                    },
+                    timeout: 10000
+                });
+                const pingTime = Date.now() - pingStart;
+                
+                let pingResult;
+                if (pingResponse.ok) {
+                    const pingData = await pingResponse.json();
+                    pingResult = `<div class="success">✅ /ping: 成功 (${pingTime}ms)</div>
+<pre>${JSON.stringify(pingData, null, 2)}</pre>`;
+                } else {
+                    pingResult = `<div class="error">❌ /ping: 失败 (状态码: ${pingResponse.status})</div>`;
+                }
+                
+                resultDiv.innerHTML = pingResult;
+                
+                // 显示Worker信息
+                resultDiv.innerHTML += `
+                <h2>Worker配置信息</h2>
+                <p>当前使用的Worker URL: <strong>${workerUrl}</strong></p>
+                <p>注意: 配置已全部更新为新域名。如果连接测试失败，请检查以下几点：</p>
+                <ol>
+                    <li>网络连接是否正常</li>
+                    <li>Cloudflare Worker是否完全部署完成（可能需要几分钟时间）</li>
+                    <li>是否有防火墙或网络限制阻止了连接</li>
+                    <li>Webhook密钥是否正确</li>
+                </ol>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ 测试失败: ${error.message}</div>
+                <p>错误详情: ${error.toString()}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

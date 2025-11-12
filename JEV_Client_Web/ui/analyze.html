@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图像分析 | JEV-UI-Origin-v9.3</title>
+    <link rel="stylesheet" href="jev_ui_style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .nav-bar {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #38bdf8;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #38bdf8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .upload-section,
+        .results-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #f1f5f9;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        
+        .upload-area {
+            border: 2px dashed rgba(56, 189, 248, 0.5);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(56, 189, 248, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover {
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #38bdf8;
+        }
+        
+        .upload-text {
+            color: #cbd5e1;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        #imagePreview {
+            display: none;
+            max-width: 100%;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        #imageFile {
+            display: none;
+        }
+        
+        .analyze-btn {
+            background: linear-gradient(45deg, #38bdf8, #0ea5e9);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 14px 0 rgba(56, 189, 248, 0.4);
+        }
+        
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(56, 189, 248, 0.6);
+        }
+        
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results-content {
+            min-height: 200px;
+        }
+        
+        #loadingIndicator {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(56, 189, 248, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #38bdf8;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #errorMessage {
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            color: #fca5a5;
+            margin-bottom: 20px;
+        }
+        
+        #resultsList {
+            display: none;
+        }
+        
+        .result-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #38bdf8;
+            margin-bottom: 5px;
+        }
+        
+        .result-value {
+            color: #e2e8f0;
+            word-break: break-all;
+        }
+        
+        .result-confidence {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+        
+        .camera-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #38bdf8;
+            border: 1px solid #38bdf8;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .camera-button:hover {
+            background: rgba(56, 189, 248, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            text-align: center;
+            color: #94a3b8;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #f1f5f9;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #f1f5f9;
+        }
+        
+        #videoElement {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            background: #000;
+        }
+        
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .capture-btn,
+        .cancel-camera-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .capture-btn {
+            background: linear-gradient(45deg, #38bdf8, #0ea5e9);
+            color: white;
+        }
+        
+        .capture-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px 0 rgba(56, 189, 248, 0.4);
+        }
+        
+        .cancel-camera-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+        
+        .cancel-camera-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #f1f5f9;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-bar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .upload-area {
+                padding: 30px 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .upload-section,
+            .results-section {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+        }
+        
+        /* AI助手按钮样式 */
+        .ai-assistant-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #38bdf8, #0ea5e9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .ai-assistant-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.6);
+        }
+        
+        .ai-icon {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-logo">JEV</a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">首页</a>
+            <a href="analyze.html" class="nav-link">图像分析</a>
+            <a href="console.html" class="nav-link">控制台</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">图像分析</h1>
+            <p class="page-subtitle">上传或拍摄图像，获取智能分析结果</p>
+        </header>
+        
+        <div class="main-content">
+            <section class="upload-section">
+                <h2 class="section-title">上传图像</h2>
+                
+                <div class="upload-area" id="image-upload" onclick="document.getElementById('imageFile').click()">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">点击或拖拽图像文件到此处</div>
+                    <div class="upload-hint">支持 JPG、PNG、WEBP 格式，最大 10MB</div>
+                </div>
+                
+                <input type="file" id="imageFile" accept="image/*" onchange="previewImage(event)">
+                
+                <img id="imagePreview" alt="预览图">
+                
+                <button id="analyzeButton" class="analyze-btn" disabled>开始分析</button>
+                <button id="cameraButton" class="camera-button">
+                    <span>📷</span>
+                    <span>使用摄像头</span>
+                </button>
+            </section>
+            
+            <section class="results-section">
+                <h2 class="section-title">分析结果</h2>
+                <div class="results-content">
+                    <div id="loadingIndicator">
+                        <div class="loading-spinner"></div>
+                        <p>正在分析图像，请稍候...</p>
+                    </div>
+                    
+                    <div id="errorMessage"></div>
+                    
+                    <div id="resultsList">
+                        <!-- 分析结果将在这里动态显示 -->
+                    </div>
+                    
+                    <div class="no-results">
+                        上传图像并点击「开始分析」查看结果
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <!-- 摄像头模态框 -->
+    <div id="cameraModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">使用摄像头</h3>
+                <button class="modal-close" onclick="closeCamera()">&times;</button>
+            </div>
+            <div>
+                <video id="videoElement" autoplay></video>
+                <div class="camera-controls">
+                    <button class="capture-btn" onclick="captureImage()">拍照</button>
+                    <button class="cancel-camera-btn" onclick="closeCamera()">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>JEV-UI-Origin-v9.3 &copy; 2024</p>
+    </footer>
+    
+    <!-- AI助手按钮 -->
+    <div id="ai-assistant" class="ai-assistant-button">
+        <div class="ai-icon">🤖</div>
+    </div>
+    
+    <script src="jev_image_capture.js"></script>
+    <script src="jev_ai_assistant.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化AI助手
+            if (window.jevAIAssistant) {
+                window.jevAIAssistant.initialize();
+            }
+            
+            // 摄像头按钮事件
+            document.getElementById('cameraButton').addEventListener('click', openCamera);
+            
+            // 分析按钮事件
+            document.getElementById('analyzeButton').addEventListener('click', analyzeImage);
+        });
+        
+        // 预览图像
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.getElementById('analyzeButton').disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // 打开摄像头
+        function openCamera() {
+            const modal = document.getElementById('cameraModal');
+            const video = document.getElementById('videoElement');
+            
+            modal.style.display = 'flex';
+            
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    video.srcObject = stream;
+                })
+                .catch(function(error) {
+                    console.error('无法访问摄像头:', error);
+                    alert('无法访问摄像头，请确保已授权并检查设备连接');
+                    modal.style.display = 'none';
+                });
+        }
+        
+        // 关闭摄像头
+        function closeCamera() {
+            const modal = document.getElementById('cameraModal');
+            const video = document.getElementById('videoElement');
+            
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }
+            modal.style.display = 'none';
+        }
+        
+        // 拍照
+        function captureImage() {
+            const video = document.getElementById('videoElement');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const imageDataUrl = canvas.toDataURL('image/jpeg');
+            
+            // 显示预览
+            const preview = document.getElementById('imagePreview');
+            preview.src = imageDataUrl;
+            preview.style.display = 'block';
+            
+            // 启用分析按钮
+            document.getElementById('analyzeButton').disabled = false;
+            
+            // 关闭摄像头
+            closeCamera();
+        }
+        
+        // 分析图像
+        async function analyzeImage() {
+            const preview = document.getElementById('imagePreview');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const errorMessage = document.getElementById('errorMessage');
+            const resultsList = document.getElementById('resultsList');
+            const noResults = document.querySelector('.no-results');
+            
+            // 显示加载状态
+            loadingIndicator.style.display = 'block';
+            errorMessage.style.display = 'none';
+            resultsList.style.display = 'none';
+            noResults.style.display = 'none';
+            
+            try {
+                // 从预览图创建Blob
+                const response = await fetch(preview.src);
+                const blob = await response.blob();
+                
+                // 创建FormData
+                const formData = new FormData();
+                formData.append('image', blob, 'upload.jpg');
+                
+                // 调用/analyze-image接口
+                const analyzeResponse = await fetch('/analyze-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!analyzeResponse.ok) {
+                    throw new Error('分析请求失败: ' + analyzeResponse.statusText);
+                }
+                
+                const results = await analyzeResponse.json();
+                
+                // 隐藏加载状态
+                loadingIndicator.style.display = 'none';
+                
+                // 显示结果
+                resultsList.style.display = 'block';
+                resultsList.innerHTML = '';
+                
+                if (results.objects && results.objects.length > 0) {
+                    results.objects.forEach(item => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item';
+                        
+                        resultItem.innerHTML = `
+                            <div class="result-label">${item.type || '识别对象'}</div>
+                            <div class="result-value">${item.description || 'N/A'}</div>
+                            ${item.confidence ? `<div class="result-confidence">置信度: ${(item.confidence * 100).toFixed(2)}%</div>` : ''}
+                        `;
+                        
+                        resultsList.appendChild(resultItem);
+                    });
+                } else if (results.text) {
+                    // 文本识别结果
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item';
+                    resultItem.innerHTML = `
+                        <div class="result-label">识别文本</div>
+                        <div class="result-value">${results.text}</div>
+                    `;
+                    resultsList.appendChild(resultItem);
+                } else {
+                    // 通用结果
+                    Object.entries(results).forEach(([key, value]) => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item';
+                        
+                        // 格式化键名
+                        const formattedKey = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+                        
+                        resultItem.innerHTML = `
+                            <div class="result-label">${formattedKey}</div>
+                            <div class="result-value">${typeof value === 'object' ? JSON.stringify(value) : value}</div>
+                        `;
+                        
+                        resultsList.appendChild(resultItem);
+                    });
+                }
+                
+            } catch (error) {
+                console.error('分析过程中出错:', error);
+                
+                // 显示错误信息
+                loadingIndicator.style.display = 'none';
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = '分析失败: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

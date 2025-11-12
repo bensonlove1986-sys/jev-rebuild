@@ -1,0 +1,25 @@
+{
+  "success": false,
+  "api_status": 401,
+  "domain": "https://rest.gohighlevel.com/v1",
+  "token_source": "DAOIJE_WABA_TOKEN",
+  "version": "2021-07-28",
+  "jwt_preview": "eyJhbGciOiJIUzI...rUqiH3Eu2g",
+  "locationId": null,
+  "contactId": null,
+  "token_check": {
+    "ok": false,
+    "note": "API Key 无效或过期",
+    "locationCheck": {
+      "statusCode": 401,
+      "message": "Unauthorized"
+    },
+    "conversationCheck": {
+      "statusCode": 404,
+      "message": "Not Found"
+    }
+  },
+  "sample_response": {
+    "msg": "Api key is invalid."
+  }
+}

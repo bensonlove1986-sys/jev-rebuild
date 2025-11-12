@@ -1,0 +1,15 @@
+{
+    "success":  true,
+    "key":  "uploads/2025/10/30/dao_whatsapp.jpg",
+    "bucket":  "jev-images",
+    "content_type":  "image/jpeg",
+    "url":  "https://pub-156ce03fffc59592e2b3b04dbc22aa6c.r2.dev/jev-images/uploads/2025/10/30/dao_whatsapp.jpg",
+    "worker_url":  "https://tupianlujing-local.bensonlove1986.workers.dev/images/uploads%2F2025%2F10%2F30%2Fdao_whatsapp.jpg",
+    "attempted":  [
+                      {
+                          "auth":  "none",
+                          "cookie":  "none",
+                          "status":  200
+                      }
+                  ]
+}

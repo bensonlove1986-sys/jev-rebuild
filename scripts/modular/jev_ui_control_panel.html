@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 JEV 嘉尔威智能客服工具</title>
+    <style>
+        /* 临时样式，将在ui-style.css中详细定义 */
+        body {
+            font-family: 'Consolas', 'Segoe UI', 'Roboto', sans-serif;
+            background: rgba(15,15,15,0.9);
+            color: #0f0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .jev-container {
+            border: 1px solid #0f0;
+            border-radius: 8px;
+            width: 800px;
+            height: 600px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            background: rgba(15,15,15,0.95);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .jev-header {
+            border-bottom: 1px solid #0f0;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 50, 0, 0.3);
+            cursor: move;
+        }
+        
+        .jev-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .jev-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .jev-btn {
+            background: transparent;
+            border: 1px solid #0f0;
+            color: #0f0;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .jev-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        }
+        
+        .jev-nav {
+            border-bottom: 1px solid #0f0;
+            padding: 10px;
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 30, 0, 0.3);
+        }
+        
+        .jev-nav-btn {
+            background: transparent;
+            border: 1px solid #0f0;
+            color: #0f0;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .jev-nav-btn:hover,
+        .jev-nav-btn.active {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        }
+        
+        .jev-content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .jev-module {
+            display: none;
+            height: 100%;
+        }
+        
+        .jev-module.active {
+            display: block;
+        }
+        
+        .jev-footer {
+            border-top: 1px solid #0f0;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 50, 0, 0.3);
+            font-size: 12px;
+        }
+        
+        .jev-status {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0f0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="jev-container" id="jev-container">
+        <div class="jev-header" id="jev-header">
+            <div class="jev-title">🌿 JEV 嘉尔威智能客服工具</div>
+            <div class="jev-controls">
+                <button class="jev-btn" id="btn-minimize">[—]</button>
+                <button class="jev-btn" id="btn-resize">[▢]</button>
+                <button class="jev-btn" id="btn-close">[✕]</button>
+            </div>
+        </div>
+        
+        <div class="jev-nav">
+            <button class="jev-nav-btn active" data-module="chat">💬 聊天</button>
+            <button class="jev-nav-btn" data-module="ai">🧠 AI推荐</button>
+            <button class="jev-nav-btn" data-module="image">📷 图片识别</button>
+            <button class="jev-nav-btn" data-module="settings">⚙️ 设置</button>
+        </div>
+        
+        <div class="jev-content">
+            <div class="jev-module active" id="jev-module-chat">
+                <h3>💬 聊天与翻译区</h3>
+                <div id="chat-content">
+                    <!-- 聊天内容将在此动态生成 -->
+                </div>
+            </div>
+            
+            <div class="jev-module" id="jev-module-ai">
+                <h3>🧠 AI推荐区</h3>
+                <div id="ai-recommendations">
+                    <!-- AI推荐内容将在此动态生成 -->
+                </div>
+            </div>
+            
+            <div class="jev-module" id="jev-module-image">
+                <h3>📷 图片识别区</h3>
+                <div id="image-upload-area">
+                    <!-- 图片上传区域将在此动态生成 -->
+                </div>
+            </div>
+            
+            <div class="jev-module" id="jev-module-settings">
+                <h3>⚙️ 设置</h3>
+                <div id="settings-content">
+                    <!-- 设置内容将在此动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="jev-footer">
+            <div class="jev-status">
+                <span class="status-item"><span class="status-indicator"></span>AI运行中</span>
+                <span class="status-item"><span class="status-indicator"></span>云端连接OK</span>
+                <span class="status-item"><span class="status-indicator"></span>DAOJIE同步ON</span>
+            </div>
+            <div class="jev-version">v1.0.0</div>
+        </div>
+    </div>
+    
+    <script src="./ui-core.js"></script>
+    <script>
+        // 初始化UI
+        document.addEventListener('DOMContentLoaded', async () => {
+            await JEV_UI.init();
+        });
+    </script>
+</body>
+</html>

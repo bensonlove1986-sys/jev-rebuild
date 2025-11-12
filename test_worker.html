@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare Worker 连接测试工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFFB',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        info: '#86909C',
+                        dark: '#1D2129',
+                        light: '#F2F3F5'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-blue {
+                background: linear-gradient(135deg, #165DFF 0%, #36CFFB 100%);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.1);
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-dark min-h-screen flex flex-col">
+    <!-- 顶部导航 -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-cloud text-primary text-2xl"></i>
+                <h1 class="text-xl font-bold text-primary">Cloudflare Worker 测试工具</h1>
+            </div>
+            <div class="text-sm text-info">
+                <span id="current-time"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 介绍卡片 -->
+        <div class="bg-gradient-blue rounded-2xl p-6 text-white mb-8 shadow-lg">
+            <h2 class="text-2xl font-bold mb-2 text-shadow">Worker 连接测试</h2>
+            <p class="opacity-90">使用此工具测试 Cloudflare Worker 的连接性和功能。确保 /ping 端点可正常访问，解决 Error 1101 问题。</p>
+        </div>
+
+        <!-- 配置部分 -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <h3 class="text-lg font-semibold mb-4 flex items-center">
+                <i class="fa fa-cog text-primary mr-2"></i>
+                Worker 配置
+            </h3>
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="worker-url" class="block text-sm font-medium text-gray-700 mb-1">Worker URL</label>
+                        <input
+                            type="text"
+                            id="worker-url"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition"
+                            value="https://jevshop.bensonlove1986.workers.dev"
+                            placeholder="输入 Worker URL"
+                        >
+                    </div>
+                    <div>
+                        <label for="auth-token" class="block text-sm font-medium text-gray-700 mb-1">认证密钥</label>
+                        <input
+                            type="text"
+                            id="auth-token"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition"
+                            value="jevindustry2025"
+                            placeholder="输入 Bearer Token"
+                        >
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button
+                        id="save-config"
+                        class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition flex items-center"
+                    >
+                        <i class="fa fa-save mr-2"></i>
+                        保存配置
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试部分 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- /ping 测试 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-4 bg-primary/10 border-b">
+                    <h3 class="font-semibold text-primary flex items-center">
+                        <i class="fa fa-heartbeat mr-2"></i>
+                        /ping 端点测试
+                    </h3>
+                </div>
+                <div class="p-4 space-y-3">
+                    <div class="text-sm text-gray-500">
+                        健康检查端点，验证 Worker 是否正常运行
+                    </div>
+                    <div class="flex space-x-2">
+                        <button
+                            id="test-ping"
+                            class="flex-1 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition text-sm"
+                        >
+                            测试
+                        </button>
+                        <button
+                            id="test-ping-auth"
+                            class="flex-1 px-4 py-2 bg-secondary hover:bg-secondary/90 text-white rounded-lg transition text-sm"
+                        >
+                            带认证测试
+                        </button>
+                    </div>
+                    <div id="ping-result" class="text-sm font-mono bg-gray-50 p-3 rounded border border-gray-200 min-h-[80px]">
+                        测试结果将显示在这里...
+                    </div>
+                </div>
+            </div>
+
+            <!-- /test-vision 测试 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-4 bg-primary/10 border-b">
+                    <h3 class="font-semibold text-primary flex items-center">
+                        <i class="fa fa-eye mr-2"></i>
+                        /test-vision 测试
+                    </h3>
+                </div>
+                <div class="p-4 space-y-3">
+                    <div class="text-sm text-gray-500">
+                        视觉服务健康检查端点
+                    </div>
+                    <button
+                        id="test-vision"
+                        class="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition text-sm"
+                    >
+                        测试
+                    </button>
+                    <div id="vision-result" class="text-sm font-mono bg-gray-50 p-3 rounded border border-gray-200 min-h-[80px]">
+                        测试结果将显示在这里...
+                    </div>
+                </div>
+            </div>
+
+            <!-- /analyze-image 测试 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                <div class="p-4 bg-primary/10 border-b">
+                    <h3 class="font-semibold text-primary flex items-center">
+                        <i class="fa fa-picture-o mr-2"></i>
+                        根路径测试
+                    </h3>
+                </div>
+                <div class="p-4 space-y-3">
+                    <div class="text-sm text-gray-500">
+                        测试 Worker 根路径响应
+                    </div>
+                    <button
+                        id="test-root"
+                        class="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition text-sm"
+                    >
+                        测试
+                    </button>
+                    <div id="root-result" class="text-sm font-mono bg-gray-50 p-3 rounded border border-gray-200 min-h-[80px]">
+                        测试结果将显示在这里...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果统计 -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <h3 class="text-lg font-semibold mb-4 flex items-center">
+                <i class="fa fa-bar-chart text-primary mr-2"></i>
+                测试结果统计
+            </h3>
+            <div class="grid grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <div class="text-3xl font-bold text-primary" id="total-tests">0</div>
+                    <div class="text-sm text-gray-500">总测试数</div>
+                </div>
+                <div class="text-center p-4 bg-success/10 rounded-lg">
+                    <div class="text-3xl font-bold text-success" id="success-tests">0</div>
+                    <div class="text-sm text-gray-500">成功</div>
+                </div>
+                <div class="text-center p-4 bg-danger/10 rounded-lg">
+                    <div class="text-3xl font-bold text-danger" id="failed-tests">0</div>
+                    <div class="text-sm text-gray-500">失败</div>
+                </div>
+                <div class="text-center p-4 bg-warning/10 rounded-lg">
+                    <div class="text-3xl font-bold text-warning" id="pending-tests">0</div>
+                    <div class="text-sm text-gray-500">进行中</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tampermonkey 配置指南 -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-lg font-semibold mb-4 flex items-center">
+                <i class="fa fa-users text-primary mr-2"></i>
+                Tampermonkey 配置与 CORS 解决方案
+            </h3>
+            
+            <!-- 标签页导航 -->
+            <div class="mb-6 border-b border-gray-200">
+                <ul class="flex space-x-8" id="guide-tabs">
+                    <li class="guide-tab active border-b-2 border-primary text-primary" data-tab="basics">基础配置</li>
+                    <li class="guide-tab text-gray-500 hover:text-primary" data-tab="cors">CORS 解决方案</li>
+                    <li class="guide-tab text-gray-500 hover:text-primary" data-tab="scripts">脚本模板</li>
+                    <li class="guide-tab text-gray-500 hover:text-primary" data-tab="testing">专用测试脚本</li>
+                </ul>
+            </div>
+            
+            <!-- 标签页内容 -->
+            <div id="basics-content" class="guide-content active space-y-4">
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h4 class="font-medium mb-2">正确的 Worker URL 配置</h4>
+                    <pre class="text-sm font-mono bg-white p-3 rounded border border-gray-200 overflow-x-auto">
+// 在 Tampermonkey 脚本中设置正确的 Worker URL
+window.JEV.STATE.workerUrl = 'https://jevshop.bensonlove1986.workers.dev';
+
+// 认证配置 (Bearer Token 方式)
+window.JEV.STATE.authToken = 'jevindustry2025';
+
+// 在请求中使用认证
+headers: {
+    'Authorization': `Bearer ${window.JEV.STATE.authToken}`
+}</pre>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-2">连接检查步骤</h4>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>确保 Worker URL 正确无误</li>
+                        <li>验证认证密钥是 <code class="bg-gray-100 px-1 py-0.5 rounded text-primary">jevindustry2025</code></li>
+                        <li>使用上方工具测试 <strong>/ping</strong> 端点，应返回 <code class="bg-gray-100 px-1 py-0.5 rounded text-success">{"success":true,"pong":true,...}</code></li>
+                        <li>在 Tampermonkey 脚本中设置相同的配置</li>
+                        <li>清除浏览器缓存后重新加载页面</li>
+                    </ol>
+                </div>
+                <div class="bg-warning/10 p-4 rounded-lg border border-warning/30">
+                    <h4 class="font-medium text-warning flex items-center mb-2">
+                        <i class="fa fa-exclamation-triangle mr-2"></i>
+                        常见问题排查
+                    </h4>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>如果 /ping 端点返回 401，检查认证密钥是否正确</li>
+                        <li>如果返回 500 错误，检查 Worker 日志中的错误信息</li>
+                        <li>如果连接超时，可能是网络问题或 Worker 部署失败</li>
+                        <li>确保使用 HTTPS 而不是 HTTP</li>
+                        <li>检查浏览器的跨域设置和安全策略</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="cors-content" class="guide-content hidden space-y-4">
+                <div class="bg-primary/5 p-4 rounded-lg border border-primary/20">
+                    <h4 class="font-medium text-primary mb-2">为什么会有 CORS 问题？</h4>
+                    <p class="text-gray-700">Tampermonkey 脚本运行在浏览器沙盒环境中，默认受到 CORS（跨域资源共享）限制。即使 Worker 设置了 <code class="bg-gray-100 px-1 py-0.5 rounded">Access-Control-Allow-Origin: *</code>，在某些情况下（特别是开发域名）仍然可能失败。</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- 方案 1 -->
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <h5 class="font-medium text-success mb-2 flex items-center">
+                            <i class="fa fa-check-circle mr-2"></i>
+                            方案 1: GM_xmlhttpRequest
+                        </h5>
+                        <p class="text-sm text-gray-600 mb-2">使用 Tampermonkey 的专用 API，完全绕过浏览器 CORS 限制</p>
+                        <div class="text-xs bg-gray-50 p-2 rounded">
+                            最推荐的解决方案，无需修改 Worker 配置
+                        </div>
+                    </div>
+                    
+                    <!-- 方案 2 -->
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <h5 class="font-medium text-primary mb-2 flex items-center">
+                            <i class="fa fa-globe mr-2"></i>
+                            方案 2: 使用正式域名
+                        </h5>
+                        <p class="text-sm text-gray-600 mb-2">使用正式 Worker 域名而非开发域名，减少 CORS 问题</p>
+                        <div class="text-xs bg-gray-50 p-2 rounded">
+                            推荐使用: <code>jevshop.bensonlove1986.workers.dev</code>
+                        </div>
+                    </div>
+                    
+                    <!-- 方案 3 -->
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <h5 class="font-medium text-info mb-2 flex items-center">
+                            <i class="fa fa-code mr-2"></i>
+                            方案 3: 配置 @connect
+                        </h5>
+                        <p class="text-sm text-gray-600 mb-2">确保在脚本元数据中正确配置域名连接权限</p>
+                        <div class="text-xs bg-gray-50 p-2 rounded">
+                            添加: <code>@connect jevshop.bensonlove1986.workers.dev</code>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h4 class="font-medium mb-2">Worker 已优化的 CORS 配置</h4>
+                    <pre class="text-sm font-mono bg-white p-3 rounded border border-gray-200 overflow-x-auto">
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, DELETE, PATCH',
+  'Access-Control-Allow-Headers': '*', // 允许所有头信息
+  'Access-Control-Expose-Headers': '*', // 暴露所有响应头
+  'Access-Control-Allow-Credentials': 'true', // 支持凭证
+  'Access-Control-Max-Age': '86400'
+};
+                    </pre>
+                    <p class="text-xs text-gray-500 mt-2">我们已更新 Worker 以支持最宽松的跨域访问策略</p>
+                </div>
+            </div>
+            
+            <div id="scripts-content" class="guide-content hidden space-y-4">
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <h4 class="font-medium mb-2 flex items-center">
+                        <i class="fa fa-file-code-o text-primary mr-2"></i>
+                        GM_xmlhttpRequest 基础模板
+                    </h4>
+                    <pre class="text-sm font-mono bg-gray-50 p-3 rounded border border-gray-200 overflow-x-auto max-h-64" id="basic-template">// ==UserScript==
+// @name         Cloudflare Worker 访问脚本
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  使用GM_xmlhttpRequest访问Cloudflare Worker，绕过CORS限制
+// @author       You
+// @match        https://app.daojiemarketing.com/*
+// @grant        GM_xmlhttpRequest
+// @connect      jevshop.bensonlove1986.workers.dev
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    
+    // Worker配置
+    const WORKER_URL = 'https://jevshop.bensonlove1986.workers.dev';
+    const API_KEY = 'jevindustry2025';
+    
+    // 测试Worker连接
+    function testWorkerConnection() {
+        console.log('测试Worker连接...');
+        
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: WORKER_URL + "/ping",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Webhook-Secret": API_KEY
+            },
+            onload: function(response) {
+                console.log("✅ Worker连接成功!");
+                try {
+                    const data = JSON.parse(response.responseText);
+                    console.log("响应数据:", data);
+                } catch (e) {
+                    console.log("响应文本:", response.responseText);
+                }
+            },
+            onerror: function(error) {
+                console.error("❌ Worker连接失败:", error);
+            },
+            ontimeout: function() {
+                console.error("❌ 请求超时");
+            }
+        });
+    }
+    
+    // 分析图像示例
+    function analyzeImage(imageData) {
+        GM_xmlhttpRequest({
+            method: "POST",
+            url: WORKER_URL + "/analyze-image",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Webhook-Secret": API_KEY
+            },
+            data: JSON.stringify({
+                image_id: imageData.id,
+                analysis_type: "basic"
+                // 可以添加更多参数
+            }),
+            onload: function(response) {
+                console.log("图像分析结果:", JSON.parse(response.responseText));
+            },
+            onerror: function(error) {
+                console.error("图像分析失败:", error);
+            }
+        });
+    }
+    
+    // 当页面加载完成时执行
+    window.addEventListener('load', function() {
+        console.log('Worker API客户端已初始化');
+        // 测试连接
+        testWorkerConnection();
+        
+        // 在这里添加您的业务逻辑
+    });
+})();
+                    </pre>
+                    <div class="mt-2 text-right">
+                        <button id="copy-basic-template" class="px-4 py-1 bg-primary/10 text-primary rounded text-sm hover:bg-primary/20 transition">
+                            <i class="fa fa-copy mr-1"></i> 复制模板
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                    <h4 class="font-medium mb-2 flex items-center">
+                        <i class="fa fa-file-code-o text-success mr-2"></i>
+                        Promise 封装版本 (推荐)
+                    </h4>
+                    <pre class="text-sm font-mono bg-gray-50 p-3 rounded border border-gray-200 overflow-x-auto max-h-64" id="promise-template">// ==UserScript==
+// @name         Cloudflare Worker Promise API
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  使用Promise封装GM_xmlhttpRequest，提供现代异步接口
+// @author       You
+// @match        https://app.daojiemarketing.com/*
+// @grant        GM_xmlhttpRequest
+// @connect      jevshop.bensonlove1986.workers.dev
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    
+    // Worker配置
+    const WORKER_URL = 'https://jevshop.bensonlove1986.workers.dev';
+    const API_KEY = 'jevindustry2025';
+    
+    // Promise封装GM_xmlhttpRequest
+    function callWorker(endpoint, method = 'GET', data = null) {
+        return new Promise((resolve, reject) => {
+            const options = {
+                method: method,
+                url: `${WORKER_URL}${endpoint}`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Webhook-Secret': API_KEY
+                },
+                onload: function(response) {
+                    try {
+                        const result = JSON.parse(response.responseText);
+                        resolve(result);
+                    } catch (e) {
+                        reject(new Error('无效的JSON响应'));
+                    }
+                },
+                onerror: function(error) {
+                    reject(new Error(`请求失败: ${error.message}`));
+                },
+                ontimeout: function() {
+                    reject(new Error('请求超时'));
+                }
+            };
+            
+            if (data && method !== 'GET') {
+                options.data = JSON.stringify(data);
+            }
+            
+            GM_xmlhttpRequest(options);
+        });
+    }
+    
+    // 异步测试函数
+    async function testWorkerAsync() {
+        try {
+            console.log('开始异步测试...');
+            
+            // 测试ping端点
+            const pingResult = await callWorker('/ping');
+            console.log('✅ Ping成功:', pingResult);
+            
+            // 测试分析图像
+            const analysisResult = await callWorker('/analyze-image', 'POST', {
+                image_id: 'test_image_123',
+                analysis_type: 'basic'
+            });
+            console.log('✅ 图像分析成功:', analysisResult);
+            
+            return { ping: pingResult, analysis: analysisResult };
+        } catch (error) {
+            console.error('❌ 测试失败:', error.message);
+            throw error;
+        }
+    }
+    
+    // 使用示例
+    window.addEventListener('load', async function() {
+        console.log('Worker Promise API已初始化');
+        
+        try {
+            await testWorkerAsync();
+            console.log('所有测试完成!');
+        } catch (error) {
+            console.error('测试过程中出错:', error);
+        }
+    });
+    
+    // 暴露API给全局作用域
+    window.WorkerAPI = {
+        call: callWorker,
+        testConnection: () => callWorker('/ping'),
+        analyzeImage: (data) => callWorker('/analyze-image', 'POST', data)
+    };
+})();
+                    </pre>
+                    <div class="mt-2 text-right">
+                        <button id="copy-promise-template" class="px-4 py-1 bg-primary/10 text-primary rounded text-sm hover:bg-primary/20 transition">
+                            <i class="fa fa-copy mr-1"></i> 复制模板
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="testing-content" class="guide-content hidden space-y-4">
+                <div class="bg-gradient-to-r from-primary/10 to-secondary/10 p-5 rounded-lg border border-primary/20">
+                    <h4 class="font-medium text-primary mb-3 flex items-center">
+                        <i class="fa fa-rocket mr-2"></i>
+                        专用 Tampermonkey 测试脚本
+                    </h4>
+                    <p class="text-gray-700 mb-4">我们创建了一个完整的测试脚本，可以直接导入到 Tampermonkey 中使用：</p>
+                    
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-4">
+                        <h5 class="font-medium mb-2">脚本位置</h5>
+                        <code class="bg-gray-100 px-2 py-1 rounded block text-sm">d:\PDF转网页\tampermonkey_worker_test.js</code>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-4">
+                        <h5 class="font-medium mb-2">主要功能</h5>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700 text-sm">
+                            <li>提供图形界面测试各种端点</li>
+                            <li>支持切换正式/开发域名</li>
+                            <li>同时测试 fetch 和 GM_xmlhttpRequest 两种方式</li>
+                            <li>自动生成可用的脚本代码</li>
+                            <li>兼容所有网站，特别是 <code>app.daojiemarketing.com</code></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button id="copy-full-script" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition">
+                            <i class="fa fa-file-code-o mr-2"></i>
+                            复制完整测试脚本
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-warning/10 p-4 rounded-lg border border-warning/30">
+                    <h4 class="font-medium text-warning flex items-center mb-2">
+                        <i class="fa fa-info-circle mr-2"></i>
+                        使用说明
+                    </h4>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700 text-sm">
+                        <li>复制脚本内容到剪贴板</li>
+                        <li>打开 Tampermonkey 扩展</li>
+                        <li>点击「添加新脚本」</li>
+                        <li>粘贴脚本内容并保存</li>
+                        <li>访问任意网页（或刷新当前页面）</li>
+                        <li>在页面顶部会显示测试面板</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-white border-t border-gray-200 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
+            <p>Cloudflare Worker 连接测试工具 | 版本 1.0.0</p>
+            <p class="mt-2">确保 /ping 端点可正常访问，解决 Error 1101 问题</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 全局测试统计
+        let testStats = {
+            total: 0,
+            success: 0,
+            failed: 0,
+            pending: 0
+        };
+
+        // 更新时间显示
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleString('zh-CN');
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 更新测试统计
+        function updateTestStats() {
+            document.getElementById('total-tests').textContent = testStats.total;
+            document.getElementById('success-tests').textContent = testStats.success;
+            document.getElementById('failed-tests').textContent = testStats.failed;
+            document.getElementById('pending-tests').textContent = testStats.pending;
+        }
+
+        // 保存配置到本地存储
+        document.getElementById('save-config').addEventListener('click', () => {
+            const workerUrl = document.getElementById('worker-url').value;
+            const authToken = document.getElementById('auth-token').value;
+            
+            localStorage.setItem('workerUrl', workerUrl);
+            localStorage.setItem('authToken', authToken);
+            
+            showNotification('配置已保存', 'success');
+        });
+
+        // 从本地存储加载配置
+        function loadConfig() {
+            const savedUrl = localStorage.getItem('workerUrl');
+            const savedToken = localStorage.getItem('authToken');
+            
+            if (savedUrl) {
+                document.getElementById('worker-url').value = savedUrl;
+            }
+            if (savedToken) {
+                document.getElementById('auth-token').value = savedToken;
+            }
+        }
+        loadConfig();
+
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-y-20 opacity-0`;
+            
+            const bgColors = {
+                success: 'bg-success text-white',
+                error: 'bg-danger text-white',
+                warning: 'bg-warning text-white',
+                info: 'bg-primary text-white'
+            };
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            notification.className += ' ' + bgColors[type];
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fa ${icons[type]} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 显示动画
+            setTimeout(() => {
+                notification.classList.remove('translate-y-20', 'opacity-0');
+            }, 10);
+            
+            // 自动关闭
+            setTimeout(() => {
+                notification.classList.add('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // 测试端点的通用函数
+        async function testEndpoint(endpoint, resultElement, useAuth = true) {
+            // 更新统计
+            testStats.total++;
+            testStats.pending++;
+            updateTestStats();
+            
+            const workerUrl = document.getElementById('worker-url').value;
+            const authToken = document.getElementById('auth-token').value;
+            
+            // 清空结果区域
+            resultElement.innerHTML = '<div class="text-center py-2"><i class="fa fa-spinner fa-spin text-primary"></i> 测试中...</div>';
+            
+            try {
+                const url = `${workerUrl}${endpoint}`;
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                };
+                
+                if (useAuth && authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+                
+                const startTime = Date.now();
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: headers,
+                    cache: 'no-cache'
+                });
+                const endTime = Date.now();
+                
+                const responseTime = endTime - startTime;
+                
+                // 尝试解析 JSON
+                let data;
+                try {
+                    data = await response.json();
+                    data = JSON.stringify(data, null, 2);
+                } catch (e) {
+                    data = await response.text();
+                }
+                
+                // 更新结果
+                const statusClass = response.ok ? 'bg-success/10 text-success' : 'bg-danger/10 text-danger';
+                const statusIcon = response.ok ? 'fa-check-circle' : 'fa-exclamation-circle';
+                
+                resultElement.innerHTML = `
+                    <div class="mb-2 text-xs text-gray-500">
+                        <div>URL: ${url}</div>
+                        <div>状态码: <span class="font-medium ${statusClass}">${response.status} ${response.statusText}</span></div>
+                        <div>响应时间: ${responseTime}ms</div>
+                    </div>
+                    <pre class="text-xs overflow-x-auto">${data}</pre>
+                    <div class="mt-2 text-xs ${statusClass} p-1 rounded flex items-center">
+                        <i class="fa ${statusIcon} mr-1"></i>
+                        ${response.ok ? '测试成功' : '测试失败'}
+                    </div>
+                `;
+                
+                // 更新统计
+                testStats.pending--;
+                if (response.ok) {
+                    testStats.success++;
+                    showNotification(`成功连接到 ${endpoint}`, 'success');
+                } else {
+                    testStats.failed++;
+                    showNotification(`${endpoint} 测试失败: ${response.status}`, 'error');
+                }
+                updateTestStats();
+                
+            } catch (error) {
+                // 更新结果
+                resultElement.innerHTML = `
+                    <div class="mb-2 text-xs text-gray-500">
+                        <div>URL: ${workerUrl}${endpoint}</div>
+                    </div>
+                    <pre class="text-xs text-danger">连接错误: ${error.message}</pre>
+                    <div class="mt-2 text-xs bg-danger/10 text-danger p-1 rounded flex items-center">
+                        <i class="fa fa-exclamation-circle mr-1"></i>
+                        连接失败
+                    </div>
+                `;
+                
+                // 更新统计
+                testStats.pending--;
+                testStats.failed++;
+                updateTestStats();
+                
+                showNotification(`${endpoint} 连接失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 测试按钮事件监听
+        document.getElementById('test-ping').addEventListener('click', () => {
+            testEndpoint('/ping', document.getElementById('ping-result'), false);
+        });
+        
+        document.getElementById('test-ping-auth').addEventListener('click', () => {
+            testEndpoint('/ping', document.getElementById('ping-result'), true);
+        });
+        
+        document.getElementById('test-vision').addEventListener('click', () => {
+            testEndpoint('/test-vision?mode=ping', document.getElementById('vision-result'), true);
+        });
+        
+        document.getElementById('test-root').addEventListener('click', () => {
+            testEndpoint('/', document.getElementById('root-result'), false);
+        });
+
+        // 页面加载完成后自动运行一次 /ping 测试
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testEndpoint('/ping', document.getElementById('ping-result'), false);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

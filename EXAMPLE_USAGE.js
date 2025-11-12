@@ -1,0 +1,258 @@
+// DeepSeek 安全执行系统 - 操作示例脚本
+// 本示例展示如何向 DeepSeek 安全执行系统发送操作请�?
+const axios = require('axios');
+const readline = require('readline');
+
+// 创建命令行交互接�?const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+// 配置
+const CONFIG = {
+  // Operator 调度层端�?  operatorEndpoint: 'http://localhost:1820/execute',
+  // 授权令牌（必须在白名单中�?  authToken: 'TREA_MAIN',
+  // 默认确认设置
+  defaultConfirmRequired: true
+};
+
+/**
+ * 发送操作请求到 DeepSeek 系统
+ * @param {Object} action - 操作对象
+ * @param {boolean} confirmRequired - 是否需要人工确�? * @returns {Promise<Object>} - 操作结果
+ */
+async function executeAction(action, confirmRequired = CONFIG.defaultConfirmRequired) {
+  try {
+    console.log(`\n=== 发送操作请�?===`);
+    console.log(`操作类型: ${action.type}`);
+    console.log(`参数:`, action);
+    console.log(`需要确�? ${confirmRequired}`);
+    console.log(`正在发送请�?..`);
+    
+    const response = await axios.post(CONFIG.operatorEndpoint, {
+      token: CONFIG.authToken,
+      action: action,
+      confirmRequired: confirmRequired,
+      request_id: `req_${Date.now()}`
+    }, {
+      timeout: 30000 // 30秒超�?    });
+    
+    console.log(`\n=== 操作结果 ===`);
+    console.log(`状�? ${response.data.success ? '成功' : '失败'}`);
+    console.log(`消息: ${response.data.message}`);
+    
+    if (response.data.action_result) {
+      console.log(`操作结果详情:`, JSON.stringify(response.data.action_result, null, 2));
+    }
+    
+    return response.data;
+  } catch (error) {
+    console.error(`\n=== 操作失败 ===`);
+    if (error.response) {
+      console.error(`错误状态码: ${error.response.status}`);
+      console.error(`错误数据:`, error.response.data);
+    } else if (error.request) {
+      console.error(`无法连接到服务器: ${error.message}`);
+      console.error(`请检�?DesktopAgent 是否已启动，端口是否正确`);
+    } else {
+      console.error(`请求配置错误: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+/**
+ * 鼠标移动操作示例
+ */
+async function exampleMouseMove() {
+  await executeAction({
+    type: 'move',
+    x: 500,
+    y: 500
+  });
+}
+
+/**
+ * 鼠标点击操作示例
+ */
+async function exampleMouseClick() {
+  await executeAction({
+    type: 'click',
+    button: 'left',  // left, right, middle
+    x: 500,
+    y: 500
+  });
+}
+
+/**
+ * 键盘输入操作示例
+ */
+async function exampleKeyboardType() {
+  await executeAction({
+    type: 'type',
+    text: 'Hello, DeepSeek Security System!'
+  });
+}
+
+/**
+ * 屏幕截图操作示例
+ */
+async function exampleScreenCapture() {
+  const result = await executeAction({
+    type: 'capture',
+    x: 0,
+    y: 0,
+    width: -1,  // -1 表示使用全屏宽度
+    height: -1  // -1 表示使用全屏高度
+  });
+  
+  if (result.success && result.action_result.screenshot_path) {
+    console.log(`\n截图已保存至: ${result.action_result.screenshot_path}`);
+  }
+}
+
+/**
+ * 复杂操作序列示例
+ */
+async function exampleComplexSequence() {
+  console.log(`\n=== 执行复杂操作序列 ===`);
+  
+  try {
+    // 1. 移动鼠标到文本输入区�?    await executeAction({
+      type: 'move',
+      x: 300,
+      y: 400
+    });
+    
+    // 等待用户准备
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // 2. 点击激活输入框
+    await executeAction({
+      type: 'click',
+      button: 'left'
+    });
+    
+    // 3. 输入文本
+    await executeAction({
+      type: 'type',
+      text: 'DeepSeek Security System Demo'
+    });
+    
+    // 等待显示
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // 4. 截图保存
+    await exampleScreenCapture();
+    
+    console.log(`\n操作序列执行完成！`);
+  } catch (error) {
+    console.error(`操作序列执行失败: ${error.message}`);
+  }
+}
+
+/**
+ * 检查系统状态示�? */
+async function checkSystemStatus() {
+  console.log(`\n=== 检查系统状�?===`);
+  
+  try {
+    // 发送一个简单的状态检查请�?    const response = await axios.get(`${CONFIG.operatorEndpoint}/status`, {
+      timeout: 5000
+    });
+    
+    console.log(`系统状�? 在线`);
+    console.log(`系统信息:`, response.data);
+  } catch (error) {
+    // 如果状态端点不存在，尝试通过执行一个无害操作来检�?    try {
+      console.log(`状态端点不可用，尝试通过轻量级操作检查系�?..`);
+      
+      const testAction = {
+        type: 'capture',
+        x: 0,
+        y: 0,
+        width: 10,
+        height: 10
+      };
+      
+      await executeAction(testAction, false);
+      console.log(`系统状�? 在线`);
+    } catch (innerError) {
+      console.error(`系统状�? 离线或不可用`);
+      console.error(`错误详情: ${innerError.message}`);
+    }
+  }
+}
+
+/**
+ * 交互式菜�? */
+function showMenu() {
+  console.log(`\n========================================`);
+  console.log(`       DeepSeek 操作示例`);
+  console.log(`========================================`);
+  console.log(`1. 移动鼠标`);
+  console.log(`2. 鼠标点击`);
+  console.log(`3. 键盘输入`);
+  console.log(`4. 屏幕截图`);
+  console.log(`5. 执行复杂操作序列`);
+  console.log(`6. 检查系统状态`);
+  console.log(`0. 退出`);
+  console.log(`========================================`);
+  
+  rl.question('请选择操作 [0-6]: ', async (choice) => {
+    try {
+      switch (choice) {
+        case '1':
+          await exampleMouseMove();
+          break;
+        case '2':
+          await exampleMouseClick();
+          break;
+        case '3':
+          await exampleKeyboardType();
+          break;
+        case '4':
+          await exampleScreenCapture();
+          break;
+        case '5':
+          await exampleComplexSequence();
+          break;
+        case '6':
+          await checkSystemStatus();
+          break;
+        case '0':
+          console.log('谢谢使用，再见！');
+          rl.close();
+          return;
+        default:
+          console.log('无效选择，请重试');
+      }
+    } catch (error) {
+      console.error(`操作执行出错: ${error.message}`);
+    }
+    
+    // 操作完成后重新显示菜�?    showMenu();
+  });
+}
+
+/**
+ * 主函�? */
+async function main() {
+  console.log(`\nDeepSeek 安全执行系统 - 操作示例`);
+  console.log(`请确�?DesktopAgent 已启动并运行�? ${CONFIG.operatorEndpoint}`);
+  
+  // 首先检查系统状�?  await checkSystemStatus();
+  
+  // 显示交互式菜�?  showMenu();
+}
+
+// 启动程序
+main().catch(error => {
+  console.error(`程序启动失败: ${error.message}`);
+  rl.close();
+});
+
+// 捕获异常退�?process.on('SIGINT', () => {
+  console.log('\n程序被用户中�?);
+  rl.close();
+});

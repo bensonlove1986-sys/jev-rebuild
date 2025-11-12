@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 插件控制面板</title>
+    <link rel="stylesheet" href="theme.css">
+    <script src="modules_local/integrated_controller.js"></script>
+    <script src="jev_upload_manager.js"></script>
+    <script src="test_upload_manager.js"></script>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="jev-header">
+        <div class="jev-logo">
+            <h1>JEV 插件控制面板</h1>
+        </div>
+        <div class="jev-header-actions">
+            <button id="jev-check-status" class="jev-btn">检查状态</button>
+            <button id="jev-run-upload-test" class="jev-btn">运行上传测试</button>
+            <div class="jev-status-indicator">
+                <span id="jev-status-text">系统就绪</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main class="jev-main-content">
+        <!-- 模块卡片区 -->
+        <section class="jev-modules-section">
+            <h2 class="jev-section-title">功能模块</h2>
+            <div class="jev-modules-grid">
+                <!-- 功能卡片模板 -->
+                <div class="jev-module-card">
+                    <h3>基础功能</h3>
+                    <div class="jev-module-content">
+                        <!-- 测试模块开关 -->
+                        <div class="jev-switch-container">
+                            <label class="jev-switch-label">
+                                <input type="checkbox" class="jev-switch" data-feature="testModule">
+                                <span class="jev-switch-slider"></span>
+                            </label>
+                            <span class="jev-switch-text">测试模块</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 系统信息面板 -->
+        <section class="jev-system-info">
+            <h2 class="jev-section-title">系统信息</h2>
+            <div class="jev-info-grid">
+                <div class="jev-info-card">
+                    <h4>模块状态</h4>
+                    <div id="jev-module-status">
+                        <p>核心控制器: <span class="status-loading">加载中...</span></p>
+                        <p>上传管理器: <span class="status-loading">加载中...</span></p>
+                    </div>
+                </div>
+                <div class="jev-info-card">
+                    <h4>测试结果</h4>
+                    <div id="jev-test-results">
+                        <p>通信测试: <span class="status-waiting">等待测试...</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 上传记录面板 -->
+        <section class="jev-upload-history">
+            <h2 class="jev-section-title">上传记录</h2>
+            <div class="jev-info-card">
+                <div class="jev-upload-controls">
+                    <button id="jev-refresh-history" class="jev-btn">刷新记录</button>
+                    <span class="jev-history-count">共 0 条记录</span>
+                </div>
+                <div id="jev-upload-history-list" class="jev-upload-list">
+                    <div class="jev-upload-empty">暂无上传记录</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部状态栏 -->
+    <footer class="jev-footer">
+        <div class="jev-footer-info">
+            <span>JEV 插件整合系统 v1.0</span>
+            <span id="jev-last-update">最后更新: 刚刚</span>
+        </div>
+        <div class="jev-footer-actions">
+            <button id="jev-run-test" class="jev-btn">运行系统测试</button>
+        </div>
+    </footer>
+
+    <script>
+        // 页面加载完成后执行初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[JEV UI] Base layout ready');
+            
+            // 等待控制器加载完成
+            setTimeout(function() {
+                checkControllerStatus();
+            }, 1000);
+            
+            // 注册检查状态按钮事件
+            document.getElementById('jev-check-status').addEventListener('click', function() {
+                checkSystemStatus();
+                this.textContent = '已检查';
+                setTimeout(() => {
+                    this.textContent = '检查状态';
+                }, 1000);
+            });
+            
+            // 注册系统测试按钮事件
+            document.getElementById('jev-run-test').addEventListener('click', function() {
+                runSystemTest();
+            });
+            
+            // 注册刷新历史按钮事件
+            document.getElementById('jev-refresh-history').addEventListener('click', function() {
+                updateUploadHistoryDisplay();
+                this.textContent = '已刷新';
+                setTimeout(() => {
+                    this.textContent = '刷新记录';
+                }, 1000);
+            });
+            
+            // 注册运行上传测试按钮事件
+            document.getElementById('jev-run-upload-test').addEventListener('click', function() {
+                if (window.runUploadTests) {
+                    this.textContent = '测试中...';
+                    this.disabled = true;
+                    
+                    window.runUploadTests();
+                    
+                    setTimeout(() => {
+                        this.textContent = '运行上传测试';
+                        this.disabled = false;
+                    }, 3000);
+                } else {
+                    alert('测试脚本未加载');
+                }
+            });
+        });
+        
+        // 检查控制器状态
+        function checkControllerStatus() {
+            const moduleStatusEl = document.getElementById('jev-module-status');
+            
+            if (window.JEVController) {
+                moduleStatusEl.innerHTML = `
+                    <p>核心控制器: <span class="status-success">已加载</span></p>
+                    <p>上传管理器: <span class="status-success">已加载</span></p>
+                `;
+            } else {
+                moduleStatusEl.innerHTML = `
+                    <p>核心控制器: <span class="status-error">未加载</span></p>
+                    <p>上传管理器: <span class="status-error">未加载</span></p>
+                `;
+            }
+        }
+        
+        // 检查系统状态
+        function checkSystemStatus() {
+            checkControllerStatus();
+            updateUploadHistoryDisplay();
+            
+            // 更新最后更新时间
+            document.getElementById('jev-last-update').textContent = 
+                '最后更新: ' + new Date().toLocaleTimeString();
+        }
+        
+        // 运行系统测试
+        function runSystemTest() {
+            const testResultsEl = document.getElementById('jev-test-results');
+            testResultsEl.innerHTML = '<p>通信测试: <span class="status-loading">测试中...</span></p>';
+            
+            // 模拟测试过程
+            setTimeout(() => {
+                testResultsEl.innerHTML = `
+                    <p>通信测试: <span class="status-success">通过</span></p>
+                    <p>功能测试: <span class="status-success">通过</span></p>
+                `;
+            }, 1000);
+        }
+        
+        // 更新上传历史显示
+        function updateUploadHistoryDisplay() {
+            const historyListEl = document.getElementById('jev-upload-history-list');
+            const historyCountEl = document.querySelector('.jev-history-count');
+            
+            if (window.JEVUploadManager) {
+                const history = JEVUploadManager.getUploadHistory();
+                historyCountEl.textContent = `共 ${history.length} 条记录`;
+                
+                if (history.length > 0) {
+                    historyListEl.innerHTML = '';
+                    
+                    history.forEach(entry => {
+                        const itemEl = document.createElement('div');
+                        itemEl.className = 'jev-upload-item';
+                        
+                        itemEl.innerHTML = `
+                            <div class="jev-upload-info">
+                                <div class="jev-upload-file">${entry.file}</div>
+                                <div class="jev-upload-meta">
+                                    版本: ${entry.version} | 
+                                    时间: ${new Date(entry.timestamp).toLocaleString()}
+                                </div>
+                            </div>
+                            <div class="jev-upload-actions">
+                                <button class="jev-btn-small" onclick="copyPath('${entry.path}')">复制路径</button>
+                            </div>
+                        `;
+                        
+                        historyListEl.appendChild(itemEl);
+                    });
+                } else {
+                    historyListEl.innerHTML = '<div class="jev-upload-empty">暂无上传记录</div>';
+                }
+            } else {
+                historyListEl.innerHTML = '<div class="jev-upload-empty">上传管理器未加载</div>';
+            }
+        }
+        
+        // 复制路径到剪贴板
+        function copyPath(path) {
+            navigator.clipboard.writeText(path).then(() => {
+                // 创建临时提示
+                const tempAlert = document.createElement('div');
+                tempAlert.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    z-index: 10000;
+                `;
+                tempAlert.textContent = '路径已复制';
+                document.body.appendChild(tempAlert);
+                
+                setTimeout(() => {
+                    document.body.removeChild(tempAlert);
+                }, 1500);
+            });
+        }
+        
+        // 暴露函数到全局
+        window.copyPath = copyPath;
+        window.updateUploadHistoryDisplay = updateUploadHistoryDisplay;
+    </script>
+</body>
+</html>

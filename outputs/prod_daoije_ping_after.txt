@@ -1,0 +1,1 @@
+{"success":true,"mode":"both","results":[{"url":"https://app.daojiemarketing.com","status":200,"ok":true},{"url":"https://services.leadconnectorhq.com/","status":404,"ok":false},{"url":"https://services.leadconnectorhq.com/v2/locations","status":404,"ok":false},{"url":"https://services.leadconnectorhq.com/v1/locations","status":404,"ok":false}]}

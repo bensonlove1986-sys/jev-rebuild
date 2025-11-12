@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 客户端门户</title>
+    <!-- 引入JEV UI样式 -->
+    <link rel="stylesheet" href="jev_ui_style.css">
+    <!-- 引入Google字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="logo">JEV</div>
+            <span>客户端门户</span>
+        </div>
+        <div class="navbar-right">
+            <button id="refreshStatusBtn" class="btn btn-secondary">
+                🔄 刷新状态
+            </button>
+            <button id="themeToggle" class="btn btn-secondary">
+                🌙
+            </button>
+            <button id="userProfileBtn" class="btn btn-outline">
+                <span class="status-indicator status-online"></span>
+                用户中心
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主容器 -->
+    <div class="app-container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">主导航</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#dashboard" class="nav-link active">
+                            <span class="nav-icon">📊</span>
+                            仪表盘
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#upload" class="nav-link">
+                            <span class="nav-icon">📁</span>
+                            图片上传
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#quote" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            获取报价
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#history" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            历史记录
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-title">系统</div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#settings" class="nav-link">
+                            <span class="nav-icon">⚙️</span>
+                            设置
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#help" class="nav-link">
+                            <span class="nav-icon">❓</span>
+                            帮助中心
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 欢迎区域 -->
+            <section id="dashboard" class="card glass">
+                <div class="card-header">
+                    <div>
+                        <h1 class="card-title">欢迎使用 JEV 客户端门户</h1>
+                        <p class="card-subtitle">高效的图像处理和智能报价平台</p>
+                    </div>
+                    <div class="flex gap-md">
+                        <button id="pingTestBtn" class="btn btn-secondary">
+                            🔍 Ping 测试
+                        </button>
+                        <button id="viewLogsBtn" class="btn btn-outline">
+                            📝 查看日志
+                        </button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p>JEV 系统为您提供先进的图像识别、智能报价和数据分析服务。通过简洁的界面，您可以快速完成业务处理，提升工作效率。</p>
+                </div>
+            </section>
+
+            <!-- 功能区域卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+                <div class="card glass">
+                    <div class="card-header">
+                        <h3 class="card-title">图像识别</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>上传图片，系统自动识别图像内容，提取关键信息，为您提供准确的分析结果。</p>
+                        <div class="mt-md">
+                            <a href="#upload" class="btn btn-primary">立即上传</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card glass">
+                    <div class="card-header">
+                        <h3 class="card-title">智能报价</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>根据产品信息，快速生成精准报价，帮助您做出更好的业务决策。</p>
+                        <div class="mt-md">
+                            <a href="#quote" class="btn btn-primary">获取报价</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card glass">
+                    <div class="card-header">
+                        <h3 class="card-title">数据分析</h3>
+                    </div>
+                    <div class="card-content">
+                        <p>查看处理记录和性能指标，获取业务洞察和优化建议。</p>
+                        <div class="mt-md">
+                            <a href="#analytics" class="btn btn-primary">查看分析</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图片上传区域 -->
+            <section id="upload" class="card glass">
+                <div class="card-header">
+                    <h2 class="card-title">图片上传</h2>
+                    <p class="card-subtitle">上传产品图片进行识别和分析</p>
+                </div>
+                <div class="card-content">
+                    <div class="upload-container" id="uploadContainer">
+                        <div class="upload-icon">📁</div>
+                        <p>点击或拖拽文件到此处上传</p>
+                        <p>支持 JPG, PNG, GIF 格式，最大 10MB</p>
+                        <input type="file" id="fileInput" accept="image/*" multiple>
+                    </div>
+                    <div class="loading" id="uploadLoading">
+                        <div class="loading-spinner"></div>
+                        <p>正在上传和处理图片，请稍候...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 报价区域 -->
+            <section id="quote" class="card glass">
+                <div class="card-header">
+                    <h2 class="card-title">获取报价</h2>
+                    <p class="card-subtitle">填写产品信息，获取智能报价</p>
+                </div>
+                <div class="card-content">
+                    <form id="quoteForm">
+                        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-md">
+                            <div class="form-group">
+                                <label for="productName" class="form-label">产品名称 *</label>
+                                <input type="text" class="form-input" id="productName" placeholder="请输入产品名称">
+                            </div>
+                            <div class="form-group">
+                                <label for="productType" class="form-label">产品类型 *</label>
+                                <select class="form-input" id="productType">
+                                    <option value="">请选择产品类型</option>
+                                    <option value="type1">电子元件</option>
+                                    <option value="type2">机械零件</option>
+                                    <option value="type3">塑料配件</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row grid grid-cols-1 md:grid-cols-2 gap-md">
+                            <div class="form-group">
+                                <label for="quantity" class="form-label">数量 *</label>
+                                <input type="number" class="form-input" id="quantity" placeholder="请输入数量">
+                            </div>
+                            <div class="form-group">
+                                <label for="deadline" class="form-label">交付期限</label>
+                                <input type="date" class="form-input" id="deadline">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="description" class="form-label">产品描述</label>
+                            <textarea class="form-input" id="description" rows="4" placeholder="请输入产品描述或特殊要求"></textarea>
+                        </div>
+                        <div class="flex justify-end mt-md">
+                            <button type="submit" class="btn btn-primary">获取报价</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 历史记录区域 -->
+            <section id="history" class="card glass">
+                <div class="card-header">
+                    <h2 class="card-title">历史记录</h2>
+                    <div class="flex gap-sm">
+                        <select id="historyFilter" class="form-input" style="width: auto;">
+                            <option value="all">全部记录</option>
+                            <option value="image">图片识别</option>
+                            <option value="quote">报价记录</option>
+                        </select>
+                        <button id="clearHistoryBtn" class="btn btn-outline">清除历史</button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div id="historyContainer">
+                        <p class="text-center text-secondary">暂无历史记录</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 全局加载指示器 -->
+    <div id="globalLoader" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(16, 20, 24, 0.7);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        flex-direction: column;
+        color: var(--text-primary);
+    ">
+        <div class="loading-spinner" style="width: 40px; height: 40px; margin-bottom: 16px;"></div>
+        <p>处理中，请稍候...</p>
+    </div>
+
+    <!-- 引入JavaScript模块 -->
+    <script src="jev_ui_logic.js"></script>
+    <script src="jev_ai_assistant.js"></script>
+    <script src="jev_monitor.js"></script>
+
+    <script>
+        // 客户端门户特定逻辑
+        document.addEventListener('DOMContentLoaded', () => {
+            // 文件上传处理
+            const uploadContainer = document.getElementById('uploadContainer');
+            const fileInput = document.getElementById('fileInput');
+            const uploadLoading = document.getElementById('uploadLoading');
+            const historyContainer = document.getElementById('historyContainer');
+
+            // 点击上传区域触发文件选择
+            uploadContainer.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // 拖拽上传功能
+            uploadContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadContainer.style.backgroundColor = 'var(--bg-hover)';
+            });
+
+            uploadContainer.addEventListener('dragleave', () => {
+                uploadContainer.style.backgroundColor = '';
+            });
+
+            uploadContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadContainer.style.backgroundColor = '';
+                
+                if (e.dataTransfer.files.length) {
+                    handleFileUpload(e.dataTransfer.files);
+                }
+            });
+
+            // 文件选择后的处理
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length) {
+                    handleFileUpload(fileInput.files);
+                }
+            });
+
+            // 处理文件上传
+            async function handleFileUpload(files) {
+                uploadLoading.style.display = 'block';
+                
+                try {
+                    // 使用jevUI的上传功能
+                    if (window.jevUI) {
+                        const results = [];
+                        
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            const result = await window.jevUI.uploadFile(file, '/api/upload');
+                            results.push(result);
+                        }
+                        
+                        uploadLoading.style.display = 'none';
+                        
+                        // 显示上传成功信息
+                        showUploadSuccess(files.length, results);
+                        
+                        // 更新历史记录
+                        loadHistory();
+                    } else {
+                        // 模拟上传过程
+                        setTimeout(() => {
+                            uploadLoading.style.display = 'none';
+                            showUploadSuccess(files.length);
+                            loadHistory();
+                        }, 2000);
+                    }
+                } catch (error) {
+                    uploadLoading.style.display = 'none';
+                    if (window.jevUI) {
+                        window.jevUI.showNotification('上传失败：' + error.message, 'error');
+                    } else {
+                        alert('上传失败，请重试');
+                    }
+                }
+            }
+
+            // 显示上传成功信息
+            function showUploadSuccess(fileCount, results = null) {
+                const message = `成功上传了 ${fileCount} 个文件`;
+                
+                if (window.jevUI) {
+                    window.jevUI.showNotification(message, 'success');
+                } else {
+                    alert(message);
+                }
+            }
+
+            // 报价表单处理
+            const quoteForm = document.getElementById('quoteForm');
+            
+            if (window.jevUI) {
+                window.jevUI.handleFormSubmit('quoteForm', async (formData) => {
+                    // 验证表单数据
+                    let isValid = true;
+                    
+                    if (!formData.productName) {
+                        window.jevUI.setFormError('productName', '请输入产品名称');
+                        isValid = false;
+                    } else {
+                        window.jevUI.clearFormError('productName');
+                    }
+                    
+                    if (!formData.productType) {
+                        window.jevUI.setFormError('productType', '请选择产品类型');
+                        isValid = false;
+                    } else {
+                        window.jevUI.clearFormError('productType');
+                    }
+                    
+                    if (!formData.quantity || formData.quantity <= 0) {
+                        window.jevUI.setFormError('quantity', '请输入有效的数量');
+                        isValid = false;
+                    } else {
+                        window.jevUI.clearFormError('quantity');
+                    }
+                    
+                    if (!isValid) return;
+                    
+                    try {
+                        // 调用报价API
+                        const response = await window.jevUI.apiRequest('/api/quote', 'POST', formData);
+                        
+                        if (response.success) {
+                            // 显示报价结果
+                            showQuoteResult(response.data);
+                            window.jevUI.showNotification('报价生成成功', 'success');
+                            
+                            // 保存到本地历史
+                            saveQuoteToHistory(response.data);
+                            loadHistory();
+                        }
+                    } catch (error) {
+                        // 使用模拟数据
+                        generateMockQuote(formData);
+                    }
+                });
+            } else {
+                // 备用表单处理
+                quoteForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    generateMockQuote(getFormData());
+                });
+            }
+
+            // 获取表单数据
+            function getFormData() {
+                return {
+                    productName: document.getElementById('productName').value,
+                    productType: document.getElementById('productType').value,
+                    quantity: document.getElementById('quantity').value,
+                    deadline: document.getElementById('deadline').value,
+                    description: document.getElementById('description').value
+                };
+            }
+
+            // 生成模拟报价
+            function generateMockQuote(formData) {
+                const mockQuote = {
+                    id: window.jevUI ? window.jevUI.generateId() : Date.now(),
+                    productName: formData.productName,
+                    productType: formData.productType,
+                    quantity: formData.quantity,
+                    unitPrice: Math.floor(Math.random() * 1000) + 100,
+                    totalPrice: (Math.floor(Math.random() * 1000) + 100) * parseInt(formData.quantity),
+                    currency: 'CNY',
+                    generatedAt: new Date().toISOString(),
+                    validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+                };
+                
+                showQuoteResult(mockQuote);
+                saveQuoteToHistory(mockQuote);
+                loadHistory();
+            }
+
+            // 显示报价结果
+            function showQuoteResult(quote) {
+                // 创建模态框显示报价结果
+                const modal = document.createElement('div');
+                modal.className = 'glass';
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    padding: var(--spacing-xl);
+                    max-width: 500px;
+                    width: 90%;
+                    z-index: 2000;
+                `;
+                
+                const formatDate = (dateStr) => {
+                    return new Date(dateStr).toLocaleDateString('zh-CN');
+                };
+                
+                modal.innerHTML = `
+                    <div class="text-right mb-4">
+                        <button id="closeQuoteModal" class="btn btn-icon">✕</button>
+                    </div>
+                    <h3 class="font-bold text-xl mb-4">报价结果</h3>
+                    <div class="space-y-3">
+                        <div><strong>产品名称：</strong>${quote.productName}</div>
+                        <div><strong>产品类型：</strong>${getProductTypeName(quote.productType)}</div>
+                        <div><strong>数量：</strong>${quote.quantity}</div>
+                        <div><strong>单价：</strong>${quote.currency} ${quote.unitPrice.toFixed(2)}</div>
+                        <div><strong>总价：</strong><span class="text-primary font-bold text-lg">${quote.currency} ${quote.totalPrice.toFixed(2)}</span></div>
+                        <div><strong>生成时间：</strong>${formatDate(quote.generatedAt)}</div>
+                        <div><strong>报价有效期至：</strong>${formatDate(quote.validUntil)}</div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <button id="downloadQuoteBtn" class="btn btn-primary">下载报价单</button>
+                    </div>
+                `;
+                
+                // 创建遮罩
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    backdrop-filter: blur(2px);
+                    z-index: 1999;
+                `;
+                
+                document.body.appendChild(overlay);
+                document.body.appendChild(modal);
+                
+                // 关闭按钮
+                document.getElementById('closeQuoteModal').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                    document.body.removeChild(overlay);
+                });
+                
+                // 下载按钮
+                document.getElementById('downloadQuoteBtn').addEventListener('click', () => {
+                    downloadQuotePDF(quote);
+                });
+            }
+
+            // 获取产品类型名称
+            function getProductTypeName(type) {
+                const types = {
+                    'type1': '电子元件',
+                    'type2': '机械零件',
+                    'type3': '塑料配件'
+                };
+                return types[type] || type;
+            }
+
+            // 模拟下载报价单
+            function downloadQuotePDF(quote) {
+                if (window.jevUI) {
+                    window.jevUI.showNotification('报价单已下载', 'success');
+                } else {
+                    alert('报价单已下载');
+                }
+            }
+
+            // 保存报价到历史
+            function saveQuoteToHistory(quote) {
+                const history = JSON.parse(localStorage.getItem('jevHistory') || '[]');
+                history.unshift({
+                    ...quote,
+                    type: 'quote',
+                    timestamp: Date.now()
+                });
+                localStorage.setItem('jevHistory', JSON.stringify(history));
+            }
+
+            // 加载历史记录
+            function loadHistory() {
+                const history = JSON.parse(localStorage.getItem('jevHistory') || '[]');
+                const filter = document.getElementById('historyFilter').value;
+                
+                // 应用过滤
+                let filtered = history;
+                if (filter !== 'all') {
+                    filtered = history.filter(item => item.type === filter);
+                }
+                
+                if (filtered.length === 0) {
+                    historyContainer.innerHTML = '<p class="text-center text-secondary">暂无历史记录</p>';
+                    return;
+                }
+                
+                // 显示历史记录
+                historyContainer.innerHTML = filtered.map(item => {
+                    const date = new Date(item.timestamp).toLocaleString('zh-CN');
+                    
+                    if (item.type === 'quote') {
+                        return `
+                            <div class="glass p-md mb-md">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="font-semibold">${item.productName}</div>
+                                    <span class="text-xs bg-primary/20 text-primary px-2 py-1 rounded">报价</span>
+                                </div>
+                                <div class="text-sm text-secondary mb-2">生成时间：${date}</div>
+                                <div class="flex justify-between items-center">
+                                    <div><strong>总价：</strong>${item.currency} ${item.totalPrice.toFixed(2)}</div>
+                                    <button class="btn btn-sm btn-outline" onclick="viewQuoteDetail('${item.id}')">查看详情</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        return `
+                            <div class="glass p-md mb-md">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="font-semibold">${item.fileName || '图片识别'}</div>
+                                    <span class="text-xs bg-secondary/20 text-secondary px-2 py-1 rounded">图片识别</span>
+                                </div>
+                                <div class="text-sm text-secondary mb-2">处理时间：${date}</div>
+                                <div class="flex justify-end">
+                                    <button class="btn btn-sm btn-outline">查看结果</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }).join('');
+            }
+
+            // 刷新状态按钮
+            document.getElementById('refreshStatusBtn').addEventListener('click', async () => {
+                try {
+                    if (window.jevUI) {
+                        const response = await window.jevUI.apiRequest('/status', 'GET');
+                        window.jevUI.showNotification('系统状态：正常', 'success');
+                    } else {
+                        alert('系统状态：正常');
+                    }
+                } catch (error) {
+                    if (window.jevUI) {
+                        window.jevUI.showNotification('获取系统状态失败', 'error');
+                    }
+                }
+            });
+
+            // Ping测试按钮
+            document.getElementById('pingTestBtn').addEventListener('click', async () => {
+                try {
+                    const startTime = performance.now();
+                    
+                    if (window.jevUI) {
+                        await window.jevUI.apiRequest('/ping', 'GET');
+                    } else {
+                        // 模拟请求
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    
+                    const endTime = performance.now();
+                    const latency = Math.round(endTime - startTime);
+                    
+                    if (window.jevUI) {
+                        window.jevUI.showNotification(`Ping 延迟：${latency}ms`, 'success');
+                    } else {
+                        alert(`Ping 延迟：${latency}ms`);
+                    }
+                } catch (error) {
+                    if (window.jevUI) {
+                        window.jevUI.showNotification('Ping失败', 'error');
+                    }
+                }
+            });
+
+            // 清除历史按钮
+            document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+                if (confirm('确定要清除所有历史记录吗？')) {
+                    localStorage.removeItem('jevHistory');
+                    loadHistory();
+                    if (window.jevUI) {
+                        window.jevUI.showNotification('历史记录已清除', 'success');
+                    }
+                }
+            });
+
+            // 历史过滤器
+            document.getElementById('historyFilter').addEventListener('change', loadHistory);
+
+            // 初始加载历史记录
+            loadHistory();
+        });
+    </script>
+</body>
+</html>

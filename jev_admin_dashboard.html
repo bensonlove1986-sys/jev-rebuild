@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV系统管理面板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .status-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid;
+            transition: transform 0.2s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status-card.online {
+            border-left-color: #28a745;
+        }
+        
+        .status-card.offline {
+            border-left-color: #dc3545;
+        }
+        
+        .status-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .status-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-indicator.online {
+            background-color: #28a745;
+        }
+        
+        .status-indicator.offline {
+            background-color: #dc3545;
+        }
+        
+        .status-indicator.warning {
+            background-color: #ffc107;
+        }
+        
+        .control-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        
+        .logs-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .logs-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .log-tab {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.2s ease;
+        }
+        
+        .log-tab.active {
+            background: white;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+        
+        .log-content {
+            height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .info {
+            margin-top: 10px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 6px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .timestamp {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .logs-tabs {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JEV系统管理面板</h1>
+            <p class="subtitle">一站式管理JEV系统所有组件</p>
+            <div class="timestamp" id="last-update">最后更新: 加载中...</div>
+        </header>
+        
+        <section class="status-section">
+            <h2>系统状态</h2>
+            <div class="status-grid">
+                <div class="status-card" id="relay-status">
+                    <div class="status-title">
+                        <span class="status-indicator" id="relay-indicator"></span>
+                        中继服务器
+                    </div>
+                    <p id="relay-version">版本: 加载中...</p>
+                    <p id="relay-message">状态: 加载中...</p>
+                </div>
+                
+                <div class="status-card" id="control-status">
+                    <div class="status-title">
+                        <span class="status-indicator" id="control-indicator"></span>
+                        中控端
+                    </div>
+                    <p id="control-version">版本: 加载中...</p>
+                    <p id="control-system">系统状态: 加载中...</p>
+                </div>
+                
+                <div class="status-card" id="client-status">
+                    <div class="status-title">
+                        <span class="status-indicator" id="client-indicator"></span>
+                        客户端
+                    </div>
+                    <p id="client-version">版本: 加载中...</p>
+                    <p id="client-modules">模块数: 加载中...</p>
+                </div>
+                
+                <div class="status-card" id="overall-status">
+                    <div class="status-title">
+                        <span class="status-indicator" id="overall-indicator"></span>
+                        系统健康度
+                    </div>
+                    <p id="health-percentage">0%</p>
+                    <p id="health-status">状态: 加载中...</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="control-section">
+            <h2>系统控制</h2>
+            <div class="button-group">
+                <button class="btn-primary" onclick="startAllComponents()">启动所有组件</button>
+                <button class="btn-danger" onclick="stopAllComponents()">停止所有组件</button>
+                <button class="btn-secondary" onclick="refreshStatus()">刷新状态</button>
+                <button class="btn-success" onclick="runStatusCheck()">运行状态检查</button>
+            </div>
+            
+            <h2 style="margin-top: 30px;">组件控制</h2>
+            <div class="button-group">
+                <button class="btn-success" onclick="startComponent('relay')">启动中继服务器</button>
+                <button class="btn-danger" onclick="stopComponent('relay')">停止中继服务器</button>
+                <button class="btn-success" onclick="startComponent('control')">启动中控端</button>
+                <button class="btn-danger" onclick="stopComponent('control')">停止中控端</button>
+                <button class="btn-success" onclick="startComponent('client')">启动客户端</button>
+                <button class="btn-danger" onclick="stopComponent('client')">停止客户端</button>
+            </div>
+        </section>
+        
+        <section class="logs-section">
+            <h2>系统日志</h2>
+            <div class="logs-tabs">
+                <button class="log-tab active" onclick="showLog('relay')">中继服务器</button>
+                <button class="log-tab" onclick="showLog('control')">中控端</button>
+                <button class="log-tab" onclick="showLog('client')">客户端</button>
+                <button class="log-tab" onclick="showLog('system')">系统操作</button>
+            </div>
+            <div class="log-content" id="log-content">
+                <p>日志加载中...</p>
+            </div>
+        </section>
+        
+        <div class="info">
+            <h3>使用提示</h3>
+            <ul style="margin-top: 10px; margin-left: 20px;">
+                <li>点击状态卡片可查看详细信息</li>
+                <li>系统会自动每30秒刷新一次状态</li>
+                <li>日志仅显示最近的操作记录</li>
+                <li>操作按钮会在执行后自动刷新状态</li>
+            </ul>
+        </div>
+        
+        <footer class="footer">
+            <p>JEV系统管理面板 &copy; 2025</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 状态定时刷新
+        let refreshInterval;
+        let currentLog = 'relay';
+        const systemLogs = [];
+        
+        // 初始化
+        function init() {
+            addSystemLog('系统管理面板已加载');
+            refreshStatus();
+            // 设置定时刷新
+            refreshInterval = setInterval(refreshStatus, 30000);
+        }
+        
+        // 刷新系统状态
+        async function refreshStatus() {
+            try {
+                const relayStatus = await checkRelayStatus();
+                const controlStatus = await checkControlStatus();
+                const clientStatus = await checkClientStatus();
+                
+                updateOverallStatus(relayStatus.ok, controlStatus.ok, clientStatus.ok);
+                updateLastUpdateTime();
+                addSystemLog('系统状态已刷新');
+                
+            } catch (error) {
+                console.error('刷新状态失败:', error);
+                addSystemLog('错误: 刷新状态失败 - ' + error.message);
+            }
+        }
+        
+        // 检查中继服务器状态
+        async function checkRelayStatus() {
+            try {
+                const response = await fetch('http://localhost:3000/api/relay/ping');
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('relay-status');
+                const indicatorEl = document.getElementById('relay-indicator');
+                
+                if (response.ok && data.status === 'ok') {
+                    statusEl.className = 'status-card online';
+                    indicatorEl.className = 'status-indicator online';
+                    document.getElementById('relay-version').textContent = `版本: ${data.version}`;
+                    document.getElementById('relay-message').textContent = `状态: ${data.message}`;
+                    return { ok: true, data };
+                } else {
+                    statusEl.className = 'status-card offline';
+                    indicatorEl.className = 'status-indicator offline';
+                    document.getElementById('relay-version').textContent = '版本: 未知';
+                    document.getElementById('relay-message').textContent = '状态: 未运行';
+                    return { ok: false };
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('relay-status');
+                const indicatorEl = document.getElementById('relay-indicator');
+                statusEl.className = 'status-card offline';
+                indicatorEl.className = 'status-indicator offline';
+                document.getElementById('relay-version').textContent = '版本: 未知';
+                document.getElementById('relay-message').textContent = '状态: 未运行';
+                return { ok: false };
+            }
+        }
+        
+        // 检查中控端状态
+        async function checkControlStatus() {
+            try {
+                const response = await fetch('http://localhost:4000/api/health');
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('control-status');
+                const indicatorEl = document.getElementById('control-indicator');
+                
+                if (response.ok && data.status === 'ok') {
+                    statusEl.className = 'status-card online';
+                    indicatorEl.className = 'status-indicator online';
+                    document.getElementById('control-version').textContent = `版本: ${data.version}`;
+                    
+                    // 获取系统状态
+                    try {
+                        const statusResponse = await fetch('http://localhost:4000/api/status');
+                        const statusData = await statusResponse.json();
+                        document.getElementById('control-system').textContent = `系统状态: ${statusData.systemState}`;
+                    } catch (e) {
+                        document.getElementById('control-system').textContent = '系统状态: 未知';
+                    }
+                    
+                    return { ok: true, data };
+                } else {
+                    statusEl.className = 'status-card offline';
+                    indicatorEl.className = 'status-indicator offline';
+                    document.getElementById('control-version').textContent = '版本: 未知';
+                    document.getElementById('control-system').textContent = '状态: 未运行';
+                    return { ok: false };
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('control-status');
+                const indicatorEl = document.getElementById('control-indicator');
+                statusEl.className = 'status-card offline';
+                indicatorEl.className = 'status-indicator offline';
+                document.getElementById('control-version').textContent = '版本: 未知';
+                document.getElementById('control-system').textContent = '状态: 未运行';
+                return { ok: false };
+            }
+        }
+        
+        // 检查客户端状态
+        async function checkClientStatus() {
+            try {
+                const response = await fetch('http://localhost:5000/api/client/status');
+                const data = await response.json();
+                
+                const statusEl = document.getElementById('client-status');
+                const indicatorEl = document.getElementById('client-indicator');
+                
+                if (response.ok && data.status === 'running') {
+                    statusEl.className = 'status-card online';
+                    indicatorEl.className = 'status-indicator online';
+                    document.getElementById('client-version').textContent = `版本: ${data.version}`;
+                    document.getElementById('client-modules').textContent = `模块数: ${data.modulesLoaded}`;
+                    return { ok: true, data };
+                } else {
+                    statusEl.className = 'status-card offline';
+                    indicatorEl.className = 'status-indicator offline';
+                    document.getElementById('client-version').textContent = '版本: 未知';
+                    document.getElementById('client-modules').textContent = '状态: 未运行';
+                    return { ok: false };
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('client-status');
+                const indicatorEl = document.getElementById('client-indicator');
+                statusEl.className = 'status-card offline';
+                indicatorEl.className = 'status-indicator offline';
+                document.getElementById('client-version').textContent = '版本: 未知';
+                document.getElementById('client-modules').textContent = '状态: 未运行';
+                return { ok: false };
+            }
+        }
+        
+        // 更新总体状态
+        function updateOverallStatus(relayOk, controlOk, clientOk) {
+            const total = 3;
+            let success = 0;
+            
+            if (relayOk) success++;
+            if (controlOk) success++;
+            if (clientOk) success++;
+            
+            const percentage = Math.round((success / total) * 100);
+            
+            const statusEl = document.getElementById('overall-status');
+            const indicatorEl = document.getElementById('overall-indicator');
+            
+            document.getElementById('health-percentage').textContent = `${percentage}%`;
+            
+            if (percentage === 100) {
+                statusEl.className = 'status-card online';
+                indicatorEl.className = 'status-indicator online';
+                document.getElementById('health-status').textContent = '状态: 所有组件正常';
+            } else if (percentage > 0) {
+                statusEl.className = 'status-card warning';
+                indicatorEl.className = 'status-indicator warning';
+                document.getElementById('health-status').textContent = `状态: ${success}/${total} 组件正常`;
+            } else {
+                statusEl.className = 'status-card offline';
+                indicatorEl.className = 'status-indicator offline';
+                document.getElementById('health-status').textContent = '状态: 所有组件未运行';
+            }
+        }
+        
+        // 更新最后更新时间
+        function updateLastUpdateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('last-update').textContent = `最后更新: ${timeString}`;
+        }
+        
+        // 添加系统日志
+        function addSystemLog(message) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('zh-CN');
+            const logEntry = `[${timeString}] ${message}`;
+            
+            systemLogs.unshift(logEntry);
+            if (systemLogs.length > 100) {
+                systemLogs.pop();
+            }
+            
+            if (currentLog === 'system') {
+                document.getElementById('log-content').textContent = systemLogs.join('\n');
+            }
+        }
+        
+        // 显示不同组件的日志
+        function showLog(logType) {
+            // 更新标签状态
+            const tabs = document.querySelectorAll('.log-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            currentLog = logType;
+            const logContent = document.getElementById('log-content');
+            
+            if (logType === 'system') {
+                logContent.textContent = systemLogs.join('\n');
+            } else {
+                // 模拟日志内容
+                logContent.textContent = `[系统] 正在获取 ${logType} 的日志...\n[提示] 实时日志功能需要额外的服务器支持`;
+                
+                // 实际项目中，可以通过WebSocket或定期AJAX请求获取实时日志
+            }
+        }
+        
+        // 启动所有组件
+        function startAllComponents() {
+            addSystemLog('正在启动所有组件...');
+            // 实际项目中，这里应该调用后端API来执行批处理脚本
+            alert('启动命令已发送！系统将自动刷新状态。\n实际环境中会执行 start_jev_system.bat');
+            setTimeout(refreshStatus, 5000);
+        }
+        
+        // 停止所有组件
+        function stopAllComponents() {
+            if (confirm('确定要停止所有组件吗？')) {
+                addSystemLog('正在停止所有组件...');
+                // 实际项目中，这里应该调用后端API来执行批处理脚本
+                alert('停止命令已发送！系统将自动刷新状态。\n实际环境中会执行 stop_jev_system.bat');
+                setTimeout(refreshStatus, 3000);
+            }
+        }
+        
+        // 启动单个组件
+        function startComponent(component) {
+            addSystemLog(`正在启动 ${getComponentName(component)}...`);
+            // 实际项目中，这里应该调用后端API来启动特定组件
+            alert(`启动 ${getComponentName(component)} 命令已发送！`);
+            setTimeout(refreshStatus, 3000);
+        }
+        
+        // 停止单个组件
+        function stopComponent(component) {
+            addSystemLog(`正在停止 ${getComponentName(component)}...`);
+            // 实际项目中，这里应该调用后端API来停止特定组件
+            alert(`停止 ${getComponentName(component)} 命令已发送！`);
+            setTimeout(refreshStatus, 2000);
+        }
+        
+        // 运行状态检查
+        function runStatusCheck() {
+            addSystemLog('正在运行系统状态检查...');
+            // 实际项目中，这里应该调用后端API来运行 check_jev_status.js
+            alert('状态检查命令已发送！将显示详细的系统健康报告。');
+            setTimeout(refreshStatus, 2000);
+        }
+        
+        // 获取组件中文名
+        function getComponentName(component) {
+            const names = {
+                relay: '中继服务器',
+                control: '中控端',
+                client: '客户端'
+            };
+            return names[component] || component;
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+        
+        // 清理定时器
+        window.addEventListener('beforeunload', () => {
+            clearInterval(refreshInterval);
+        });
+    </script>
+</body>
+</html>

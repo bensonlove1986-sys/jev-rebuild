@@ -1,0 +1,51 @@
+DAOJIE Webhook 配置模板（指向 Cloudflare Worker 生产地址）
+
+1) 基本信息
+- 目标 URL: https://tupianlujing-local.bensonlove1986.workers.dev/attachments/ingest
+- 方法: POST
+- 请求头:
+  - Content-Type: application/json
+  - X-Webhook-Secret: jevindustry2025
+
+2) 请求体模板（直接粘贴为 JSON）
+{
+  "attachment_url": "{{message.attachment_url}}",
+  "filename": "whatsapp_{{message.id}}.jpg",
+  "contact_id": "{{contact.id}}",
+  "contact_phone": "{{contact.phone}}"
+}
+
+3) 可选增强字段（如 DAOJIE 需要鉴权）
+- 如果需要传 Token-Id 头/字段：
+  - 在请求体增加："token_id": "{{message.token_id}}"
+  - 或在请求体增加："override_token": "{{message.token_id}}"
+- 如果要传 Cookie：
+  - 在请求体增加："cookie": "{{message.cookie}}"
+- 注意：以上可选字段只有在 DAOJIE 能提供时才添加，否则保持最简模板。
+
+4) 成功返回示例
+{
+  "success": true,
+  "key": "uploads/2025/10/31/whatsapp_attach_ok.jpg",
+  "bucket": "jev-images",
+  "content_type": "image/jpeg",
+  "url": "https://pub-<account>.r2.dev/jev-images/uploads/2025/10/31/whatsapp_attach_ok.jpg",
+  "worker_url": "https://tupianlujing-local.../images/uploads%2F2025%2F10%2F31%2Fwhatsapp_attach_ok.jpg"
+}
+
+5) 发布后校验（生产）
+- 列表: GET https://tupianlujing-local.bensonlove1986.workers.dev/images-list?prefix=uploads/2025/10/31/&limit=50
+  - 头: X-Webhook-Secret: jevindustry2025
+- 元数据: GET https://tupianlujing-local.bensonlove1986.workers.dev/images-meta/uploads/2025/10/31/whatsapp_attach_ok.jpg
+  - 头: X-Webhook-Secret: jevindustry2025
+
+6) 常见问题
+- 403 Forbidden：确认 DAOJIE 中的 X-Webhook-Secret 与生产一致。
+- 非图片内容：DAOJIE 传入的 attachment_url 必须指向图片；返回 415 会说明 Content-Type。
+- 超时/失败：Worker 会优先直连抓取，失败再尝试 CDN 代理（可在 /get-image-by-url 调整 cdn_max 和 image_timeout）。
+
+7) 安全建议
+- 上线后请更换为新的生产密钥（WEBHOOK_SHARED_SECRET/WEBHOOK_SECRET），并在 DAOJIE 同步更新。
+- 如需审计：可在 /attachments/ingest 旁增加日志记录端点或将结果写入 R2/KV。
+
+备注：该模板可直接复制到 DAOJIE Webhook 的配置界面；如实际字段命名不同，请告知我以生成精确映射模板。

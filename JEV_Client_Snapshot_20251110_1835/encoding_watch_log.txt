@@ -1,0 +1,742 @@
+=== JEV UTF-8 Watchdog Log ===
+Started at: 2025-11-09T12:59:46.606Z
+Monitoring: D:\PDF转网页\JEV_Client\ui
+===================================
+[2025-11-09T12:59:46.657Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.658Z] 🟢 UTF-8 Normal - agent_console.css
+[2025-11-09T12:59:46.660Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.663Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.664Z] 🟢 UTF-8 Normal - ai_support.css
+[2025-11-09T12:59:46.665Z] 🟢 UTF-8 Normal - ai_support.html
+[2025-11-09T12:59:46.667Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.668Z] 🟢 UTF-8 Normal - client_insight_dashboard.html
+[2025-11-09T12:59:46.670Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.673Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.677Z] ⚙️ Fixed - client_portal.html → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.683Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.686Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.688Z] 🟢 UTF-8 Normal - client_theme.css
+[2025-11-09T12:59:46.688Z] 🟢 UTF-8 Normal - control_hub.html
+[2025-11-09T12:59:46.691Z] 🟢 UTF-8 Normal - control_hub.js
+[2025-11-09T12:59:46.693Z] 🟢 UTF-8 Normal - dashboard.css
+[2025-11-09T12:59:46.697Z] 🟢 UTF-8 Normal - dashboard.html
+[2025-11-09T12:59:46.699Z] 🟢 UTF-8 Normal - dashboard.js
+[2025-11-09T12:59:46.701Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.702Z] 🟢 UTF-8 Normal - faceCollector.html
+[2025-11-09T12:59:46.702Z] 🟢 UTF-8 Normal - harmony_visual.js
+[2025-11-09T12:59:46.704Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.705Z] 🟢 UTF-8 Normal - jev_client_dock.html
+[2025-11-09T12:59:46.708Z] 🟢 UTF-8 Normal - jev_client_dock.js
+[2025-11-09T12:59:46.709Z] 🟢 UTF-8 Normal - jev_client_dock_motion.js
+[2025-11-09T12:59:46.710Z] 🟢 UTF-8 Normal - lang_overlay.html
+[2025-11-09T12:59:46.713Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.714Z] 🟢 UTF-8 Normal - login_portal.html
+[2025-11-09T12:59:46.715Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.716Z] 🟢 UTF-8 Normal - login_portal_final_clean.js
+[2025-11-09T12:59:46.717Z] 🟢 UTF-8 Normal - login_portal_fixed.html
+[2025-11-09T12:59:46.718Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.719Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.720Z] 🟢 UTF-8 Normal - multichannel_dashboard.css
+[2025-11-09T12:59:46.721Z] 🟢 UTF-8 Normal - multichannel_dashboard.html
+[2025-11-09T12:59:46.722Z] 🟢 UTF-8 Normal - online_launcher_dashboard.html
+[2025-11-09T12:59:46.723Z] 🟢 UTF-8 Normal - orchestrator_panel.css
+[2025-11-09T12:59:46.724Z] 🟢 UTF-8 Normal - orchestrator_panel.html
+[2025-11-09T12:59:46.726Z] 🟢 UTF-8 Normal - panel.html
+[2025-11-09T12:59:46.727Z] 🟢 UTF-8 Normal - panel.js
+[2025-11-09T12:59:46.728Z] 🟢 UTF-8 Normal - preview_tone_panel.html
+[2025-11-09T12:59:46.729Z] 🟢 UTF-8 Normal - client_interface.css
+[2025-11-09T12:59:46.729Z] 🟢 UTF-8 Normal - client_interface.html
+[2025-11-09T12:59:46.731Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.732Z] 🟢 UTF-8 Normal - visual_event_client.css
+[2025-11-09T12:59:46.733Z] 🟢 UTF-8 Normal - recovery_panel.css
+[2025-11-09T12:59:46.734Z] 🟢 UTF-8 Normal - recovery_panel.html
+[2025-11-09T12:59:46.734Z] 🟢 UTF-8 Normal - sentinel_dashboard.html
+[2025-11-09T12:59:46.735Z] 🟢 UTF-8 Normal - sentinel_dashboard.js
+[2025-11-09T12:59:46.736Z] ⚙️ Fixed - test_faceid.html → [GBK] → [UTF-8]
+[2025-11-09T12:59:46.737Z] 🟢 UTF-8 Normal - topology.css
+[2025-11-09T12:59:46.737Z] 🟢 UTF-8 Normal - topologyCanvas.html
+[2025-11-09T12:59:46.738Z] 🟢 UTF-8 Normal - visual_learning_panel.html
+[2025-11-09T12:59:46.739Z] 🟢 UTF-8 Normal - visual_learning_panel.js
+[2025-11-09T12:59:46.741Z] 🟢 UTF-8 Normal - visual_sync_dashboard.html
+[2025-11-09T12:59:46.742Z] 🟢 UTF-8 Normal - visual_sync_dashboard.js
+[2025-11-09T12:59:46.743Z] 🟢 UTF-8 Normal - visual_sync_panel.css
+[2025-11-09T12:59:46.744Z] 🟢 UTF-8 Normal - visual_sync_panel.html
+[2025-11-09T12:59:46.746Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.687Z] ⚙️ Fixed - admin_panel.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.698Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.703Z] ⚙️ Fixed - agent_console.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.704Z] 🟢 UTF-8 Normal - agent_console.css
+[2025-11-09T13:12:55.705Z] ⚙️ Fixed - agent_console.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.707Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.716Z] ⚙️ Fixed - agent_console.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.757Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.777Z] ⚙️ Fixed - ai_support.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.801Z] 🟢 UTF-8 Normal - ai_support.css
+[2025-11-09T13:12:55.814Z] ⚙️ Fixed - ai_support.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.823Z] 🟢 UTF-8 Normal - ai_support.html
+[2025-11-09T13:12:55.836Z] ⚙️ Fixed - ai_support.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.851Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.853Z] ⚙️ Fixed - client_insight_dashboard.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.857Z] 🟢 UTF-8 Normal - client_insight_dashboard.html
+[2025-11-09T13:12:55.864Z] ⚙️ Fixed - client_insight_dashboard.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.873Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.877Z] ⚙️ Fixed - client_portal.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.883Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.885Z] ⚙️ Fixed - client_portal.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.889Z] ⚙️ Fixed - client_portal.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.894Z] ⚙️ Fixed - client_portal.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.900Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.902Z] ⚙️ Fixed - client_portal_sync.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.904Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.912Z] ⚙️ Fixed - client_theme.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.914Z] 🟢 UTF-8 Normal - client_theme.css
+[2025-11-09T13:12:55.915Z] ⚙️ Fixed - control_hub.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.917Z] 🟢 UTF-8 Normal - control_hub.html
+[2025-11-09T13:12:55.920Z] ⚙️ Fixed - control_hub.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.922Z] 🟢 UTF-8 Normal - control_hub.js
+[2025-11-09T13:12:55.926Z] ⚙️ Fixed - dashboard.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.928Z] 🟢 UTF-8 Normal - dashboard.css
+[2025-11-09T13:12:55.929Z] ⚙️ Fixed - dashboard.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.930Z] 🟢 UTF-8 Normal - dashboard.html
+[2025-11-09T13:12:55.932Z] ⚙️ Fixed - dashboard.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.946Z] 🟢 UTF-8 Normal - dashboard.js
+[2025-11-09T13:12:55.962Z] ⚙️ Fixed - encoding_verification.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.965Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.968Z] ⚙️ Fixed - faceCollector.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.972Z] 🟢 UTF-8 Normal - faceCollector.html
+[2025-11-09T13:12:55.978Z] ⚙️ Fixed - harmony_visual.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.980Z] 🟢 UTF-8 Normal - harmony_visual.js
+[2025-11-09T13:12:55.982Z] ⚙️ Fixed - html_encoding_fix.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:55.996Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:55.998Z] ⚙️ Fixed - jev_client_dock.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.000Z] 🟢 UTF-8 Normal - jev_client_dock.html
+[2025-11-09T13:12:56.003Z] ⚙️ Fixed - jev_client_dock.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.004Z] 🟢 UTF-8 Normal - jev_client_dock.js
+[2025-11-09T13:12:56.007Z] ⚙️ Fixed - jev_client_dock_motion.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.010Z] 🟢 UTF-8 Normal - jev_client_dock_motion.js
+[2025-11-09T13:12:56.011Z] ⚙️ Fixed - lang_overlay.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.012Z] 🟢 UTF-8 Normal - lang_overlay.html
+[2025-11-09T13:12:56.015Z] ⚙️ Fixed - learning_optimizer_panel.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.020Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.022Z] ⚙️ Fixed - login_portal.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.023Z] 🟢 UTF-8 Normal - login_portal.html
+[2025-11-09T13:12:56.029Z] ⚙️ Fixed - login_portal_backup.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.032Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.035Z] ⚙️ Fixed - login_portal_final_clean.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.036Z] 🟢 UTF-8 Normal - login_portal_final_clean.js
+[2025-11-09T13:12:56.038Z] ⚙️ Fixed - login_portal_fixed.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.039Z] 🟢 UTF-8 Normal - login_portal_fixed.html
+[2025-11-09T13:12:56.040Z] ⚙️ Fixed - login_portal_repair.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.043Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.045Z] ⚙️ Fixed - login_portal_repair_improved.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.048Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.052Z] ⚙️ Fixed - multichannel_dashboard.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.053Z] 🟢 UTF-8 Normal - multichannel_dashboard.css
+[2025-11-09T13:12:56.054Z] ⚙️ Fixed - multichannel_dashboard.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.055Z] 🟢 UTF-8 Normal - multichannel_dashboard.html
+[2025-11-09T13:12:56.057Z] ⚙️ Fixed - online_launcher_dashboard.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.058Z] 🟢 UTF-8 Normal - online_launcher_dashboard.html
+[2025-11-09T13:12:56.062Z] ⚙️ Fixed - orchestrator_panel.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.063Z] 🟢 UTF-8 Normal - orchestrator_panel.css
+[2025-11-09T13:12:56.066Z] ⚙️ Fixed - orchestrator_panel.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.068Z] 🟢 UTF-8 Normal - orchestrator_panel.html
+[2025-11-09T13:12:56.071Z] ⚙️ Fixed - panel.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.072Z] 🟢 UTF-8 Normal - panel.html
+[2025-11-09T13:12:56.073Z] ⚙️ Fixed - panel.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.075Z] 🟢 UTF-8 Normal - panel.js
+[2025-11-09T13:12:56.077Z] ⚙️ Fixed - preview_tone_panel.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.078Z] 🟢 UTF-8 Normal - preview_tone_panel.html
+[2025-11-09T13:12:56.083Z] ⚙️ Fixed - client_interface.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.084Z] 🟢 UTF-8 Normal - client_interface.css
+[2025-11-09T13:12:56.086Z] ⚙️ Fixed - client_interface.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.087Z] 🟢 UTF-8 Normal - client_interface.html
+[2025-11-09T13:12:56.089Z] ⚙️ Fixed - client_interface.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.094Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.098Z] ⚙️ Fixed - visual_event_client.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.099Z] 🟢 UTF-8 Normal - visual_event_client.css
+[2025-11-09T13:12:56.101Z] ⚙️ Fixed - recovery_panel.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.102Z] 🟢 UTF-8 Normal - recovery_panel.css
+[2025-11-09T13:12:56.104Z] ⚙️ Fixed - recovery_panel.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.105Z] 🟢 UTF-8 Normal - recovery_panel.html
+[2025-11-09T13:12:56.107Z] ⚙️ Fixed - sentinel_dashboard.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.110Z] 🟢 UTF-8 Normal - sentinel_dashboard.html
+[2025-11-09T13:12:56.113Z] ⚙️ Fixed - sentinel_dashboard.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.114Z] 🟢 UTF-8 Normal - sentinel_dashboard.js
+[2025-11-09T13:12:56.116Z] ⚙️ Fixed - test_faceid.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.116Z] 🟢 UTF-8 Normal - test_faceid.html
+[2025-11-09T13:12:56.118Z] ⚙️ Fixed - topology.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.119Z] 🟢 UTF-8 Normal - topology.css
+[2025-11-09T13:12:56.120Z] ⚙️ Fixed - topologyCanvas.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.121Z] 🟢 UTF-8 Normal - topologyCanvas.html
+[2025-11-09T13:12:56.122Z] ⚙️ Fixed - visual_learning_panel.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.123Z] 🟢 UTF-8 Normal - visual_learning_panel.html
+[2025-11-09T13:12:56.126Z] ⚙️ Fixed - visual_learning_panel.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.127Z] 🟢 UTF-8 Normal - visual_learning_panel.js
+[2025-11-09T13:12:56.128Z] ⚙️ Fixed - visual_sync_dashboard.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.129Z] 🟢 UTF-8 Normal - visual_sync_dashboard.html
+[2025-11-09T13:12:56.131Z] ⚙️ Fixed - visual_sync_dashboard.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.133Z] 🟢 UTF-8 Normal - visual_sync_dashboard.js
+[2025-11-09T13:12:56.135Z] ⚙️ Fixed - visual_sync_panel.css → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.136Z] 🟢 UTF-8 Normal - visual_sync_panel.css
+[2025-11-09T13:12:56.137Z] ⚙️ Fixed - visual_sync_panel.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.138Z] 🟢 UTF-8 Normal - visual_sync_panel.html
+[2025-11-09T13:12:56.139Z] ⚙️ Fixed - visual_sync_panel.js → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:12:56.144Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.219Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.528Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.530Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.532Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.533Z] 🟢 UTF-8 Normal - agent_console.css
+[2025-11-09T13:12:56.534Z] 🟢 UTF-8 Normal - agent_console.css
+[2025-11-09T13:12:56.535Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.537Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.539Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.540Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.732Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:56.737Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.040Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.060Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.069Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.081Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.098Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.130Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.133Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.134Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.136Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.138Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.140Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.145Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.154Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.161Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.284Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.339Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.421Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.553Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:57.786Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:58.090Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:58.536Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:12:59.188Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:13:00.204Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:13:01.720Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:13:04.136Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:13:07.984Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:13:13.927Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:13:24.585Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:13:44.768Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:14.449Z] ⚙️ Fixed - admin_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:14.578Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:14.598Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:14.624Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:14.762Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:14.841Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:14.912Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:15.012Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:15.172Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:15.433Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:15.807Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:16.413Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:17.239Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:18.511Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:20.462Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:23.160Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:15:27.267Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:16:40.163Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:17:47.616Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:18:28.847Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:19:07.804Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:19:47.442Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:20:27.945Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:21:09.781Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:21:49.486Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:22:29.118Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:23:07.692Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:23:46.725Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:24:25.702Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:25:08.827Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:25:50.888Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:26:30.965Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:27:10.717Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:27:54.399Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:28:33.507Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:29:12.688Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:29:52.059Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:30:31.062Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:31:11.921Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:31:53.898Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:32:38.618Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:33:20.252Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:34:00.481Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:34:40.761Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:35:20.475Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:36:00.159Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:36:39.084Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:37:20.219Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:37:58.545Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:38:37.297Z] ❌ Error - admin_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:38:42.375Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:38:49.714Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:38:58.618Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:39:12.371Z] ⚙️ Fixed - agent_console.html → [GBK] → [UTF-8]
+[2025-11-09T13:39:51.967Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:40:31.461Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:41:23.709Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:42:10.701Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:42:55.918Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:43:34.141Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:44:12.719Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:44:51.462Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:45:31.091Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:46:09.319Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:46:47.829Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:47:25.927Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:48:04.722Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:48:43.324Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:49:28.013Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:50:15.352Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:50:57.546Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:51:39.942Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:52:33.098Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:53:19.285Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:54:01.405Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:54:42.880Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:55:28.521Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:56:11.481Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:56:54.096Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:57:37.617Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:58:21.581Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:59:08.151Z] ❌ Error - agent_console.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T13:59:08.203Z] ⚙️ Fixed - client_portal.html → [UTF-8 with BOM] → [UTF-8]
+[2025-11-09T13:59:08.706Z] 🟢 UTF-8 Normal - client_portal.html
+[2025-11-09T13:59:08.724Z] 🟢 UTF-8 Normal - client_portal.html
+[2025-11-09T13:59:08.726Z] 🟢 UTF-8 Normal - client_portal.html
+[2025-11-09T13:59:13.414Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.430Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.438Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.441Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.444Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.449Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.450Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.452Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.455Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.463Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.465Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.466Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.467Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.468Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.470Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.472Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.477Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.485Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.487Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.489Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.490Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.492Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.494Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.497Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.507Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.515Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.538Z] 🟢 UTF-8 Normal - test_faceid.html
+[2025-11-09T13:59:13.539Z] 🟢 UTF-8 Normal - test_faceid.html
+[2025-11-09T13:59:13.572Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.579Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:13.935Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.003Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.032Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.071Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.074Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.080Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.087Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.141Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.155Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.163Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.167Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.171Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.175Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.177Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.182Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.186Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.192Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.201Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.212Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.227Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.233Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.235Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.238Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.241Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.243Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.245Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.249Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.251Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.254Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.257Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.261Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.266Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.276Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.301Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.320Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.347Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.350Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.352Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.355Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.360Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.363Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.365Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.367Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.369Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.373Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.378Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.387Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.395Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.402Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.412Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.430Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.449Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.456Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.467Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.481Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.503Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.561Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.632Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.737Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:14.916Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:15.260Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:15.685Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:16.281Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.120Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.139Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.166Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.182Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.199Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.228Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.278Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.413Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.530Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.535Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.541Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.552Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.568Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.587Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.615Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.652Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.708Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.714Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.717Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.720Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.726Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.733Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.742Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.756Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.776Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.796Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.823Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.866Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:17.928Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:18.034Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:18.219Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:18.586Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.082Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.089Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.095Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.102Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.114Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.133Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.184Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.233Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.295Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.299Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.303Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.307Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.314Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.324Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.341Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.365Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.391Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.401Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.412Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.437Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.461Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.489Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.543Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.612Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.710Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.761Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.834Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:19.969Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:20.176Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:20.410Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:20.738Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:21.309Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:21.983Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:21.989Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:21.998Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.009Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.029Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.069Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.100Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.139Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.205Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.211Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.217Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.225Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.234Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.249Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.266Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.289Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.321Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.330Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.340Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.356Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.381Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.413Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.461Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.546Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.656Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.683Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.717Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.769Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.845Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:22.963Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:23.133Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:23.395Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:23.786Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:23.814Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:23.854Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:23.915Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:24.005Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:24.140Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:24.338Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:24.643Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:25.106Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:26.401Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:28.316Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:31.159Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:35.692Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:42.826Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T13:59:53.607Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T14:00:11.530Z] ⚙️ Fixed - agent_console.js → [GBK] → [UTF-8]
+[2025-11-09T14:00:58.700Z] ❌ Error - agent_console.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:01:36.776Z] ❌ Error - agent_console.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:01:44.155Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:44.371Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:44.515Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:44.668Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:44.701Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:01:44.757Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:01:45.241Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:46.116Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:46.171Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:46.250Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:46.277Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:01:46.317Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:01:46.472Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:46.713Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:47.537Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:48.014Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:49.030Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T14:01:50.640Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T14:01:50.735Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:01:50.873Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:01:50.923Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:51.020Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:51.552Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:52.342Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:52.523Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:52.823Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:53.016Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:53.316Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:53.788Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:54.519Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:54.600Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:01:54.703Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:01:55.311Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:55.448Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:01:55.730Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:01:56.728Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:56.729Z] 🟢 UTF-8 Normal - test_faceid.html
+[2025-11-09T14:01:56.730Z] 🟢 UTF-8 Normal - test_faceid.html
+[2025-11-09T14:01:57.573Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:58.814Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T14:01:59.933Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:02.173Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:06.002Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:11.534Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:11.690Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:11.988Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:12.453Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:13.017Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:13.098Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:02:13.248Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:02:13.474Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:02:13.756Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:02:14.151Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:14.732Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:15.601Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:16.892Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:20.032Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:33.485Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:51.407Z] ⚙️ Fixed - client_portal.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:53.964Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:57.472Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:02:58.673Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:03:00.068Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:03:05.253Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:03:08.901Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:03:13.472Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:03:19.018Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:03:38.557Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:04:00.054Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:05:06.166Z] ⚙️ Fixed - client_portal_sync.js → [GBK] → [UTF-8]
+[2025-11-09T14:06:01.096Z] ❌ Error - client_portal_sync.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:06:49.877Z] ❌ Error - client_portal_sync.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:07:38.569Z] ❌ Error - client_portal_sync.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:07:43.006Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:07:47.773Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:07:48.858Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:07:50.444Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:07:50.805Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:07:51.379Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:08:36.955Z] ❌ Error - client_portal_sync.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:09:25.073Z] ❌ Error - client_portal_sync.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:09:28.229Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T14:09:31.429Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T14:09:35.586Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T14:09:42.459Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T14:09:51.801Z] ❌ Error - visual_sync_panel.js: EBUSY: resource busy or locked, open 'D:\PDF转网页\JEV_Client\ui\visual_sync_panel.js'
+[2025-11-09T14:10:02.842Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T14:10:15.204Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T14:10:42.519Z] ⚙️ Fixed - visual_sync_panel.js → [GBK] → [UTF-8]
+[2025-11-09T14:10:46.428Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:10:50.663Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:10:51.708Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:10:53.416Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:10:53.857Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:10:54.532Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:10:56.292Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:10:58.429Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:11:00.884Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T14:11:04.464Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T14:11:04.747Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:11:05.200Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:11:05.389Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:11:05.699Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:11:06.205Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:11:06.982Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:11:09.395Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T14:11:15.723Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T14:11:15.743Z] 🟢 UTF-8 Normal - test_faceid.html
+[2025-11-09T14:11:15.745Z] 🟢 UTF-8 Normal - test_faceid.html
+[2025-11-09T14:13:50.761Z] ❌ Error - visual_sync_panel.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:14:48.791Z] ❌ Error - visual_sync_panel.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:14:56.613Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:15:07.162Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:15:13.854Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:15:22.808Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:15:34.162Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:00.688Z] ⚙️ Fixed - client_insight_dashboard.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:03.299Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:16:06.523Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:16:07.318Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:16:08.584Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:16:12.253Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:17.936Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:24.718Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T14:16:36.324Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T14:16:37.066Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:16:38.051Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:16:38.406Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:38.951Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:40.193Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:41.989Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:48.357Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:55.455Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T14:16:55.458Z] 🟢 UTF-8 Normal - test_faceid.html
+[2025-11-09T14:16:55.459Z] 🟢 UTF-8 Normal - test_faceid.html
+[2025-11-09T14:18:32.307Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:19:42.955Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:19:47.778Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:19:55.011Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:20:06.057Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:20:19.144Z] ⚙️ Fixed - client_portal.css → [GBK] → [UTF-8]
+[2025-11-09T14:20:39.719Z] ⚙️ Fixed - ai_support.js → [GBK] → [UTF-8]
+[2025-11-09T14:21:23.781Z] ❌ Error - ai_support.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:22:46.259Z] ❌ Error - ai_support.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:23:42.686Z] ❌ Error - ai_support.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:24:41.995Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:25:43.359Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:26:51.357Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:27:52.928Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:28:55.001Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:29:53.178Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:30:52.951Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:31:51.415Z] ❌ Error - client_insight_dashboard.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:32:35.262Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:33:20.491Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:34:09.217Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:34:57.669Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:34:59.890Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:35:02.676Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:35:07.995Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:35:15.982Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:35:25.823Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:35:40.812Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:35:59.666Z] ⚙️ Fixed - html_encoding_fix.js → [GBK] → [UTF-8]
+[2025-11-09T14:36:55.348Z] ❌ Error - html_encoding_fix.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:37:07.296Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T14:37:25.892Z] ⚙️ Fixed - learning_optimizer_panel.html → [GBK] → [UTF-8]
+[2025-11-09T14:38:19.524Z] ❌ Error - learning_optimizer_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:39:11.900Z] ❌ Error - learning_optimizer_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:39:13.662Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:39:15.665Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:39:18.861Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:39:23.344Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T14:39:24.220Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:39:25.517Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:39:27.313Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:39:30.235Z] ⚙️ Fixed - login_portal_repair.js → [GBK] → [UTF-8]
+[2025-11-09T14:39:35.264Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:39:39.416Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:39:45.918Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:39:55.590Z] ⚙️ Fixed - login_portal_repair_improved.js → [GBK] → [UTF-8]
+[2025-11-09T14:40:07.091Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T14:40:19.690Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T14:40:40.796Z] ⚙️ Fixed - client_interface.js → [GBK] → [UTF-8]
+[2025-11-09T14:41:43.380Z] ❌ Error - client_interface.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:42:33.447Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:43:23.320Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:44:11.006Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:45:00.142Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:45:47.670Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:46:37.505Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:47:48.277Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:48:27.461Z] ❌ Error - client_portal.css: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:49:10.001Z] ❌ Error - ai_support.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:49:47.822Z] ❌ Error - ai_support.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:49:47.830Z] 🟢 UTF-8 Normal - login_portal.html
+[2025-11-09T14:49:48.104Z] 🟢 UTF-8 Normal - sentinel_dashboard.html
+[2025-11-09T14:49:48.107Z] 🟢 UTF-8 Normal - sentinel_dashboard.js
+[2025-11-09T14:49:48.114Z] 🟢 UTF-8 Normal - panel.html
+[2025-11-09T14:49:56.856Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:50:07.439Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:50:24.872Z] ⚙️ Fixed - encoding_verification.html → [GBK] → [UTF-8]
+[2025-11-09T14:51:12.940Z] ❌ Error - encoding_verification.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:52:03.688Z] ❌ Error - encoding_verification.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:53:01.554Z] ❌ Error - encoding_verification.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:54:23.595Z] ❌ Error - encoding_verification.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:55:21.198Z] ❌ Error - encoding_verification.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:56:07.246Z] ❌ Error - html_encoding_fix.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:56:55.118Z] ❌ Error - html_encoding_fix.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:57:41.141Z] ❌ Error - html_encoding_fix.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:58:27.308Z] ❌ Error - html_encoding_fix.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T14:59:15.643Z] ❌ Error - html_encoding_fix.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T15:00:02.659Z] ❌ Error - html_encoding_fix.js: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T15:00:50.537Z] ❌ Error - learning_optimizer_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T15:01:38.673Z] ❌ Error - learning_optimizer_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T15:02:26.027Z] ❌ Error - learning_optimizer_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T15:03:13.799Z] ❌ Error - learning_optimizer_panel.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T15:03:20.810Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T15:03:29.571Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T15:03:40.508Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T15:03:58.192Z] ⚙️ Fixed - login_portal_backup.html → [GBK] → [UTF-8]
+[2025-11-09T15:05:12.104Z] ❌ Error - login_portal_backup.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T15:06:06.516Z] ❌ Error - login_portal_backup.html: Cannot create a string longer than 0x1fffffe8 characters
+[2025-11-09T15:07:03.429Z] ❌ Error - login_portal_backup.html: Cannot create a string longer than 0x1fffffe8 characters

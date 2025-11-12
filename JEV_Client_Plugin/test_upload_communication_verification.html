@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 上传与通信验证测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background-color: #45a049;
+        }
+        .test-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .output-area {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .instruction {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin-bottom: 20px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .step {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JEV 上传与通信验证测试</h1>
+        
+        <div class="instruction">
+            <strong>说明：</strong>本页面用于测试JEV上传机制与通信功能。
+            请打开浏览器控制台查看详细输出。执行所有测试后，确保
+            控制台中出现以下输出：<br>
+            - [UPLOAD] JSON payload ready<br>
+            - [JEV Upload] Versioning system active<br>
+            - [JEV] Core systems online
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <button id="run-all-tests" class="test-button">执行所有测试</button>
+            <button id="run-upload-test" class="test-button">仅测试上传功能</button>
+            <button id="run-communication-test" class="test-button">仅测试通信功能</button>
+            <button id="clear-output" class="test-button" style="background-color: #f44336;">清除输出</button>
+        </div>
+        
+        <div class="output-area" id="output-area">
+            <!-- 输出结果将显示在这里 -->
+            测试输出将显示在这里...
+        </div>
+        
+        <div class="step">
+            <h3>上传验证结果</h3>
+            <div id="upload-result" class="result">
+                等待测试...
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>通信验证结果</h3>
+            <div id="communication-result" class="result">
+                等待测试...
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>最终验证结果</h3>
+            <div id="final-result" class="result">
+                等待测试...
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 日志输出函数
+        function log(message) {
+            const output = document.getElementById('output-area');
+            output.innerHTML += message + '\n';
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+        
+        // 更新结果显示
+        function updateResult(elementId, isSuccess, message) {
+            const element = document.getElementById(elementId);
+            element.className = isSuccess ? 'result success' : 'result error';
+            element.innerHTML = message;
+        }
+        
+        // 测试上传功能
+        async function testUpload() {
+            log('=== 开始上传测试 ===');
+            
+            try {
+                // 检查上传管理器是否存在
+                if (!window.jevUploadManager) {
+                    throw new Error('上传管理器未初始化');
+                }
+                
+                log('上传管理器已初始化');
+                
+                // 执行上传测试
+                const result = await window.jevUploadManager.uploadFile('integrated_controller.js', 'v1.0');
+                
+                log('上传结果:', JSON.stringify(result, null, 2));
+                
+                // 验证结果格式
+                if (result && result.file && result.version && result.path && result.timestamp) {
+                    log('✅ 上传测试通过！');
+                    updateResult('upload-result', true, `✅ 上传成功<br>文件: ${result.file}<br>版本: ${result.version}<br>路径: ${result.path}<br>时间戳: ${result.timestamp}`);
+                    return true;
+                } else {
+                    log('❌ 上传测试失败 - JSON格式不正确');
+                    updateResult('upload-result', false, '❌ 上传失败 - JSON格式不正确');
+                    return false;
+                }
+            } catch (error) {
+                log('❌ 上传测试异常:', error.message);
+                updateResult('upload-result', false, `❌ 上传测试异常: ${error.message}`);
+                return false;
+            }
+        }
+        
+        // 测试通信功能
+        function testCommunication() {
+            log('=== 开始通信测试 ===');
+            
+            try {
+                // 检查控制器是否存在
+                if (!window.JEVController) {
+                    throw new Error('控制器未初始化');
+                }
+                
+                log('控制器已初始化');
+                
+                // 注册testModule
+                if (!window.JEVController.modules || !window.JEVController.modules.testModule) {
+                    const testModule = { name: 'testModule', version: '1.0.0' };
+                    const registerResult = window.JEVController.registerModule('testModule', testModule);
+                    
+                    if (registerResult) {
+                        log('✅ testModule 注册成功');
+                    } else {
+                        throw new Error('testModule 注册失败');
+                    }
+                } else {
+                    log('✅ testModule 已注册');
+                }
+                
+                // 触发statusCheck事件
+                const emitResult = window.JEVController.emit('statusCheck', { timestamp: Date.now() });
+                log('触发 statusCheck 事件:', emitResult ? '成功' : '失败');
+                
+                // 运行系统测试
+                const systemTestResult = window.JEVController.runSystemTest();
+                log('系统测试结果:', systemTestResult ? '通过' : '失败');
+                
+                if (systemTestResult) {
+                    log('✅ 通信测试通过！');
+                    updateResult('communication-result', true, '✅ 通信测试通过！<br>testModule已注册<br>statusCheck事件已触发<br>系统测试通过');
+                    return true;
+                } else {
+                    log('❌ 通信测试失败 - 系统测试未通过');
+                    updateResult('communication-result', false, '❌ 通信测试失败 - 系统测试未通过');
+                    return false;
+                }
+            } catch (error) {
+                log('❌ 通信测试异常:', error.message);
+                updateResult('communication-result', false, `❌ 通信测试异常: ${error.message}`);
+                return false;
+            }
+        }
+        
+        // 执行所有测试
+        async function runAllTests() {
+            // 清除输出
+            document.getElementById('output-area').innerHTML = '';
+            log('开始执行所有测试...');
+            
+            // 禁用按钮
+            const buttons = document.querySelectorAll('.test-button');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            try {
+                // 等待脚本加载
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 执行上传测试
+                const uploadSuccess = await testUpload();
+                
+                // 延迟执行通信测试
+                await new Promise(resolve => setTimeout(resolve, 500));
+                const communicationSuccess = testCommunication();
+                
+                // 最终结果
+                if (uploadSuccess && communicationSuccess) {
+                    log('\n🎉 所有测试通过！');
+                    updateResult('final-result', true, '🎉 所有测试通过！请检查控制台确认以下输出：<br>- [UPLOAD] JSON payload ready<br>- [JEV Upload] Versioning system active<br>- [JEV] Core systems online');
+                } else {
+                    log('\n❌ 部分测试未通过！');
+                    updateResult('final-result', false, '❌ 部分测试未通过，请检查控制台输出');
+                }
+            } finally {
+                // 启用按钮
+                buttons.forEach(btn => btn.disabled = false);
+            }
+        }
+        
+        // 事件监听器
+        document.getElementById('run-all-tests').addEventListener('click', runAllTests);
+        document.getElementById('run-upload-test').addEventListener('click', testUpload);
+        document.getElementById('run-communication-test').addEventListener('click', testCommunication);
+        document.getElementById('clear-output').addEventListener('click', () => {
+            document.getElementById('output-area').innerHTML = '测试输出将显示在这里...';
+        });
+    </script>
+</body>
+</html>

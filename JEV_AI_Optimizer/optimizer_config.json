@@ -1,0 +1,23 @@
+{
+  "learning_interval_hours": 6,
+  "data_source": "../JEV_Client/logs/",
+  "languages_supported": ["en", "vi", "bn", "ur", "zh"],
+  "update_target": "../JEV_ControlCenter/config/ai_replies.json",
+  "auto_update_prompts": true,
+  "profit_analysis": true,
+  "max_training_records": 500,
+  "confidence_threshold": 0.8,
+  "keyword_min_frequency": 3,
+  "phrase_min_frequency": 2,
+  "sentiment_analysis": true,
+  "intent_detection": true,
+  "language_detection": true,
+  "profit_margin_tolerance": 0.15,
+  "auto_apply_updates": true,
+  "backup_before_update": true,
+  "logging_level": "info",
+  "report_format": "json",
+  "exclude_stop_words": true,
+  "max_keywords_per_intent": 20,
+  "max_phrases_per_category": 50
+}

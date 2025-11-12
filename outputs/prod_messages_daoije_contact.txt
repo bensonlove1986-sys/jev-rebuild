@@ -1,0 +1,25 @@
+{
+  "success": false,
+  "locationId": "3SsfTbU1lmAPpkG9iB6C",
+  "contactId": "GakCvF3msAuChq2DtER9",
+  "count": 0,
+  "messages": [],
+  "lastError": {
+    "status": 404,
+    "body": {
+      "msg": "Not found"
+    },
+    "url": "https://rest.gohighlevel.com/v1/conversations/messages/"
+  },
+  "attempts": [
+    {
+      "source": "post_list",
+      "status": 404,
+      "ok": false,
+      "reason": "error",
+      "body": {
+        "msg": "Not found"
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+    "success":  true,
+    "test":  "ping",
+    "endpoint":  "https://vision.googleapis.com/",
+    "status":  404,
+    "ok":  false,
+    "elapsed_ms":  58
+}

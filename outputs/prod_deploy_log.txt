@@ -1,0 +1,29 @@
+��
+ @��T{ wrangler 4.45.1 (update available 4.45.3)
+9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 9�� 
+Total Upload: 180.71 KiB / gzip: 26.86 KiB
+Your Worker has access to the following bindings:
+Binding                                                                       Resource                  
+env.R2_BUCKET (jev-images)                                                    R2 Bucket                 
+env.GOOGLE_VISION_API_KEY ("AIzaSyC8Rntlne_W6bML1CZRCtL2jjpAOeRmP8E")         Environment Variable      
+env.WEBHOOK_SHARED_SECRET ("jevindustry2025")                                 Environment Variable      
+env.WEBHOOK_SECRET ("jevindustry2025")                                        Environment Variable      
+env.DAOIJE_WABA_BASE_URL ("https://services.leadconnectorhq.com")             Environment Variable      
+env.DAOIJE_APP_URL ("https://app.daojiemarketing.com")                        Environment Variable      
+env.RETRY_MAX (5)                                                             Environment Variable      
+env.RETRY_MS (3000)                                                           Environment Variable      
+env.RETRY_STEP (2000)                                                         Environment Variable      
+env.RETRY_STRATEGY ("linear")                                                 Environment Variable      
+env.RETRY_JITTER (0.25)                                                       Environment Variable      
+env.CDN_PROXY_BASES ("https://images.weserv.nl/?url=|https:...")              Environment Variable      
+env.VISION_MODE ("auto")                                                      Environment Variable      
+env.IMAGE_FETCH_TIMEOUT_MS (15000)                                            Environment Variable      
+env.CDN_MAX_ATTEMPTS (2)                                                      Environment Variable      
+env.WORKER_PUBLIC_BASE ("https://tupianlujing-local.bensonlove...")           Environment Variable      
+env.RECEIVE_IMAGE_MAX_BYTES (20971520)                                        Environment Variable      
+env.R2_PUBLIC_BASE ("https://pub-156ce03fffc59592e2b3b04db...")               Environment Variable      
+
+Uploaded tupianlujing-local (7.93 sec)
+Deployed tupianlujing-local triggers (2.44 sec)
+  https://tupianlujing-local.bensonlove1986.workers.dev
+Current Version ID: 7e49cbaf-9d65-4b56-8aaf-01911c7115d9

@@ -1,0 +1,8 @@
+{
+    "success":  true,
+    "key":  "uploads/2025/10/30/cloud_cat.jpg",
+    "bucket":  "jev-images",
+    "content_type":  "image/jpeg",
+    "url":  "https://tupianlujing-local.bensonlove1986.workers.dev/images/uploads%2F2025%2F10%2F30%2Fcloud_cat.jpg",
+    "worker_url":  "https://tupianlujing-local.bensonlove1986.workers.dev/images/uploads%2F2025%2F10%2F30%2Fcloud_cat.jpg"
+}

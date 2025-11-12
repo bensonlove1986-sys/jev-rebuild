@@ -1,0 +1,11 @@
+# AI服务隧道配置
+tunnel: 84ce45b0-3c96-4aef-acc8-b6e8d0405de1
+credentials-file: C:\Users\HUAWEI\.cloudflared\84ce45b0-3c96-4aef-acc8-b6e8d0405de1.json
+
+ingress:
+  - hostname: ai.jevshop.workers.dev
+    service: http://localhost:1822
+  - service: http_status:404
+
+# 中控面板隧道配置
+# 需要单独启动这个隧道

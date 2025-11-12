@@ -1,0 +1,182 @@
+{
+  "success": false,
+  "conversationIds": [],
+  "items": [],
+  "attempts": [
+    {
+      "url": "https://rest.gohighlevel.com/conversations?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/conversations/threads?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/conversations/messages?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/contacts/GakCvF3msAuChq2DtER9/conversations",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/contacts/GakCvF3msAuChq2DtER9/threads",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/contacts/GakCvF3msAuChq2DtER9/messages",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/messages?contactId=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v1/conversations?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v2/conversations?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v1/conversations/threads?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v2/conversations/threads?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v1/conversations/messages?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v2/conversations/messages?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v1/contacts/GakCvF3msAuChq2DtER9/conversations",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v2/contacts/GakCvF3msAuChq2DtER9/conversations",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v1/contacts/GakCvF3msAuChq2DtER9/threads",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v2/contacts/GakCvF3msAuChq2DtER9/threads",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v1/contacts/GakCvF3msAuChq2DtER9/messages",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v2/contacts/GakCvF3msAuChq2DtER9/messages",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v1/messages?contactId=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    },
+    {
+      "url": "https://rest.gohighlevel.com/v2/messages?contactId=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": {
+        "msg": "Not found"
+      }
+    }
+  ],
+  "lastError": {
+    "status": 404,
+    "body": {
+      "msg": "Not found"
+    },
+    "url": "https://rest.gohighlevel.com/v2/messages?contactId=GakCvF3msAuChq2DtER9&limit=10"
+  }
+}

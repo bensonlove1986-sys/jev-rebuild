@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOLO地址提取测试页面</title>
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .address-block {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .address-block:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(45deg, #6e45e2, #88d3ce);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .control-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(110, 69, 226, 0.4);
+        }
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .result-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            background: rgba(136, 211, 206, 0.1);
+            border-left: 4px solid #88d3ce;
+        }
+        .error-item {
+            background: rgba(239, 83, 80, 0.1);
+            border-left: 4px solid #ef5350;
+        }
+        .test-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .test-input:focus {
+            outline: none;
+            border-color: #6e45e2;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        h3 {
+            color: #88d3ce;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>BOLO地址提取功能测试</h1>
+        
+        <!-- 测试控制区 -->
+        <div class="test-section">
+            <h3>测试控制</h3>
+            <div class="controls">
+                <button id="extract-all" class="control-btn">提取所有地址</button>
+                <button id="clear-results" class="control-btn">清除结果</button>
+                <button id="test-event" class="control-btn">测试事件通信</button>
+            </div>
+        </div>
+        
+        <!-- 自定义地址输入 -->
+        <div class="test-section">
+            <h3>自定义地址测试</h3>
+            <input type="text" id="custom-address" class="test-input" placeholder="输入地址进行测试...">
+            <button id="extract-custom" class="control-btn">提取该地址</button>
+        </div>
+        
+        <!-- 英文地址测试 -->
+        <div class="test-section">
+            <h3>英文地址测试</h3>
+            <div class="address-block" id="en-address-1">123 Main Street, New York, NY 10001, USA</div>
+            <div class="address-block" id="en-address-2">456 Park Avenue, San Francisco, CA 94111</div>
+            <div class="address-block" id="en-address-3">789 Broadway, Chicago, IL 60601, United States</div>
+            <div class="address-block" id="en-address-4">101 Market St, Seattle, WA 98101</div>
+        </div>
+        
+        <!-- 中文地址测试 -->
+        <div class="test-section">
+            <h3>中文地址测试</h3>
+            <div class="address-block" id="zh-address-1">北京市朝阳区建国路88号</div>
+            <div class="address-block" id="zh-address-2">上海市浦东新区张江高科技园区博云路2号</div>
+            <div class="address-block" id="zh-address-3">广东省深圳市南山区科技园南区T3栋</div>
+            <div class="address-block" id="zh-address-4">杭州市西湖区文三路478号华星科技大厦5层</div>
+        </div>
+        
+        <!-- 混合格式测试 -->
+        <div class="test-section">
+            <h3>混合格式测试</h3>
+            <div class="address-block" id="mixed-1">Company Name: ABC Inc.<br>Address: 中国上海市静安区南京西路1266号恒隆广场28楼<br>Postal Code: 200040</div>
+            <div class="address-block" id="mixed-2">Contact: John Doe<br>Location: Room 501, Building 3, 10086 Zhongshan Rd, Guangzhou, 510000</div>
+        </div>
+        
+        <!-- 结果显示区 -->
+        <div class="test-section">
+            <h3>提取结果</h3>
+            <div id="results-container" class="results">
+                <!-- 结果将在这里显示 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 加载必要的脚本 -->
+    <script src="../modules/integrated_controller.js"></script>
+    <script src="../modules/bolo_extractor.js"></script>
+    
+    <script>
+        // 等待页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Test Page] BOLO地址提取测试页面已加载');
+            
+            // 初始化
+            init();
+        });
+        
+        function init() {
+            // 绑定事件监听器
+            bindEvents();
+            
+            // 初始化控制器和BOLO提取器
+            ensureModulesLoaded();
+        }
+        
+        function bindEvents() {
+            // 提取所有地址按钮
+            document.getElementById('extract-all').addEventListener('click', extractAllAddresses);
+            
+            // 清除结果按钮
+            document.getElementById('clear-results').addEventListener('click', clearResults);
+            
+            // 测试事件通信按钮
+            document.getElementById('test-event').addEventListener('click', testEventCommunication);
+            
+            // 提取自定义地址按钮
+            document.getElementById('extract-custom').addEventListener('click', extractCustomAddress);
+            
+            // 为所有地址块添加点击事件
+            document.querySelectorAll('.address-block').forEach(block => {
+                block.addEventListener('click', function() {
+                    extractFromElement(this);
+                });
+            });
+            
+            // 监听地址提取结果事件
+            if (window.JEV && JEV.Controller) {
+                JEV.Controller.on('addressExtracted', displayExtractionResult);
+                console.log('[Test Page] 已注册地址提取结果监听器');
+            }
+        }
+        
+        function ensureModulesLoaded() {
+            // 确保JEV.Controller和BOLO.AddressExtractor已加载
+            if (!window.JEV || !JEV.Controller) {
+                console.error('[Test Page] JEV控制器未加载');
+            }
+            
+            if (!window.BOLO || !BOLO.AddressExtractor) {
+                console.error('[Test Page] BOLO地址提取器未加载');
+            }
+            
+            if (JEV.Controller && BOLO.AddressExtractor && !JEV.Controller.modules.boloExtractor) {
+                // 如果BOLO模块未注册，手动注册
+                JEV.Controller.registerModule('boloExtractor', {
+                    onInit: () => console.log('[Test Page] BOLO模块已手动注册'),
+                    extractAddress: (domNode) => BOLO.AddressExtractor.extractAddress(domNode),
+                    validateAddress: (address) => BOLO.AddressExtractor.validateAddress(address)
+                });
+            }
+        }
+        
+        function extractAllAddresses() {
+            console.log('[Test Page] 开始提取所有地址');
+            clearResults();
+            
+            const addressBlocks = document.querySelectorAll('.address-block');
+            addressBlocks.forEach(block => {
+                extractFromElement(block);
+            });
+        }
+        
+        function extractFromElement(element) {
+            console.log(`[Test Page] 从元素 ${element.id} 提取地址`);
+            
+            // 方法1：使用JEV.Controller提取
+            if (JEV.Controller && JEV.Controller.extractAddress) {
+                console.log('[Test Page] 使用控制器方法提取地址');
+                const result = JEV.Controller.extractAddress(element);
+                displayExtractionResult(result);
+            }
+            // 方法2：直接使用BOLO提取器
+            else if (BOLO.AddressExtractor) {
+                console.log('[Test Page] 直接使用BOLO提取器');
+                const result = BOLO.AddressExtractor.extractAddress(element);
+                displayExtractionResult(result);
+            }
+            // 方法3：通过事件总线触发提取
+            else if (JEV.Controller) {
+                console.log('[Test Page] 通过事件总线触发提取');
+                JEV.Controller.emit('extractAddress', { domNode: element });
+            }
+        }
+        
+        function extractCustomAddress() {
+            const input = document.getElementById('custom-address');
+            const addressText = input.value.trim();
+            
+            if (!addressText) {
+                alert('请输入地址文本');
+                return;
+            }
+            
+            // 创建临时元素
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = addressText;
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            document.body.appendChild(tempDiv);
+            
+            // 提取地址
+            extractFromElement(tempDiv);
+            
+            // 清理
+            document.body.removeChild(tempDiv);
+        }
+        
+        function displayExtractionResult(result) {
+            const container = document.getElementById('results-container');
+            const resultItem = document.createElement('div');
+            resultItem.className = result.success ? 'result-item' : 'result-item error-item';
+            
+            let content = '';
+            if (result.success) {
+                content = `
+                    <strong>✅ 提取成功：</strong>
+                    <div>格式化地址: ${result.address}</div>
+                `;
+            } else {
+                content = `
+                    <strong>❌ 提取失败：</strong>
+                    <div>错误: ${result.error || '未知错误'}</div>
+                `;
+            }
+            
+            resultItem.innerHTML = content;
+            container.appendChild(resultItem);
+            
+            // 滚动到底部
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function clearResults() {
+            const container = document.getElementById('results-container');
+            container.innerHTML = '';
+            console.log('[Test Page] 结果已清除');
+        }
+        
+        function testEventCommunication() {
+            console.log('[Test Page] 测试事件通信');
+            
+            // 创建测试元素
+            const testElement = document.createElement('div');
+            testElement.textContent = 'Test Address: 123 Test Street, City, State 12345';
+            testElement.style.position = 'absolute';
+            testElement.style.left = '-9999px';
+            document.body.appendChild(testElement);
+            
+            // 通过事件总线触发
+            if (JEV.Controller) {
+                console.log('[Test Page] 发送extractAddress事件');
+                JEV.Controller.emit('extractAddress', { domNode: testElement });
+            }
+            
+            // 清理
+            setTimeout(() => {
+                document.body.removeChild(testElement);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

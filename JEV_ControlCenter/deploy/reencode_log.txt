@@ -1,0 +1,113 @@
+===== JEV Client 文件重编码修复日志 =====
+时间: 2025/11/9 15:02:33
+
+【统计信息】
+总共扫描: 202 个文件
+成功处理: 202 个文件
+已修改: 102 个文件
+已跳过: 100 个文件
+处理错误: 0 个文件
+
+【修改文件详情】
+d:\PDF转网页\JEV_Client\auto_deploy_chatloop.html: 已重新编码
+d:\PDF转网页\JEV_Client\auto_deploy_chatloop.js: 已重新编码
+d:\PDF转网页\JEV_Client\chatloop_auto_deploy_complete.html: 已重新编码
+d:\PDF转网页\JEV_Client\chat_loop_dashboard.html: 已重新编码
+d:\PDF转网页\JEV_Client\chat_loop_test.html: 已重新编码
+d:\PDF转网页\JEV_Client\diagnostics\jev_routes_client.js: 已重新编码
+d:\PDF转网页\JEV_Client\diagnostics\status_panel.html: 已重新编码
+d:\PDF转网页\JEV_Client\diagnostics\status_panel.js: 已重新编码
+d:\PDF转网页\JEV_Client\diagnostics\test_jev_commands.js: 已重新编码
+d:\PDF转网页\JEV_Client\diagnostics\trae_relay_test.js: 已重新编码
+d:\PDF转网页\JEV_Client\fix_plugin.html: 已重新编码
+d:\PDF转网页\JEV_Client\index.html: 已重新编码
+d:\PDF转网页\JEV_Client\jev-environment-check.html: 已重新编码
+d:\PDF转网页\JEV_Client\jev-environment-upgrade-l5.js: 已重新编码
+d:\PDF转网页\JEV_Client\jev-environment-upgrade.js: 已重新编码
+d:\PDF转网页\JEV_Client\jev-l5-verification-dashboard.html: 已重新编码
+d:\PDF转网页\JEV_Client\jev-l5-verify-fix.js: 已重新编码
+d:\PDF转网页\JEV_Client\jev-upgrade-executor-l5.html: 已重新编码
+d:\PDF转网页\JEV_Client\jev-upgrade-executor.html: 已重新编码
+d:\PDF转网页\JEV_Client\jev_chatbot_plugin.user.js: 已重新编码
+d:\PDF转网页\JEV_Client\jev_module_registrar.js: 已重新编码
+d:\PDF转网页\JEV_Client\lib\learningUtils.js: 已重新编码
+d:\PDF转网页\JEV_Client\lib\perfAnalyzer.js: 已重新编码
+d:\PDF转网页\JEV_Client\lib\personaEngine.js: 已重新编码
+d:\PDF转网页\JEV_Client\main.js: 已重新编码
+d:\PDF转网页\JEV_Client\mock-jev-environment.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\agent-bridge.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\agentBridge.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\agentSession.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\aiBridge.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\autoHeal.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\autoLearningOptimizer.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\autoOrchestrator.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\bridgeInitializer.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\clientBridge.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\daojieCollector.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\daojieCollector_v1.1.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\emotionBridge.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\emotionLightClient.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\harmony_bridge.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\healLibrary.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\inviteCodeManager.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\langSyncHub.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\learning\index.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\learning\quantificationReport.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\learning\status.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\onlineLauncher.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\realtimeTranslate.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\toneTemplateOptimizer.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\topologyVisualizer.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\trae-bridge.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\visionBridge.js: 已重新编码
+d:\PDF转网页\JEV_Client\modules\watchdog.js: 已重新编码
+d:\PDF转网页\JEV_Client\module_registration_test.html: 已重新编码
+d:\PDF转网页\JEV_Client\recovery_demo.html: 已重新编码
+d:\PDF转网页\JEV_Client\reencode_files.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\auto_task_runner.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\core\app-init.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\core\config-service.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\core\request-interceptor.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\fix_plugin_visibility.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\interfaces\auth-service.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\interfaces\feedback-service.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\interfaces\security.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\jev_module_registrar.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\modules\auth-module.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\modules\chat.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\modules\checkUpdate.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\modules\jev-translate.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\modules\settings.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\module_automation.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\security_task_integration.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\services\auth-service.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\services\feedback-service.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\services\security-service.js: 已重新编码
+d:\PDF转网页\JEV_Client\scripts\ui-core.js: 已重新编码
+d:\PDF转网页\JEV_Client\simple-upgrade.html: 已重新编码
+d:\PDF转网页\JEV_Client\test-auth-module.js: 已重新编码
+d:\PDF转网页\JEV_Client\test-auth.html: 已重新编码
+d:\PDF转网页\JEV_Client\test-feedback-service.html: 已重新编码
+d:\PDF转网页\JEV_Client\test-integration.html: 已重新编码
+d:\PDF转网页\JEV_Client\test-upgrade.js: 已重新编码
+d:\PDF转网页\JEV_Client\test_auto_task.html: 已重新编码
+d:\PDF转网页\JEV_Client\ui\admin_panel.html: 已重新编码
+d:\PDF转网页\JEV_Client\ui\agent_console.html: 已重新编码
+d:\PDF转网页\JEV_Client\ui\agent_console.js: 已重新编码
+d:\PDF转网页\JEV_Client\ui\ai_support.js: 已重新编码
+d:\PDF转网页\JEV_Client\ui\client_insight_dashboard.js: 已重新编码
+d:\PDF转网页\JEV_Client\ui\client_portal.css: 已重新编码
+d:\PDF转网页\JEV_Client\ui\client_portal.js: 已重新编码
+d:\PDF转网页\JEV_Client\ui\client_portal_sync.js: 已重新编码
+d:\PDF转网页\JEV_Client\ui\learning_optimizer_panel.html: 已重新编码
+d:\PDF转网页\JEV_Client\ui\login_portal.html: 已重新编码
+d:\PDF转网页\JEV_Client\ui\online_launcher_dashboard.html: 已重新编码
+d:\PDF转网页\JEV_Client\ui\panel.html: 已重新编码
+d:\PDF转网页\JEV_Client\ui\panel.js: 已重新编码
+d:\PDF转网页\JEV_Client\ui\public\client_interface.css: 已重新编码
+d:\PDF转网页\JEV_Client\ui\public\client_interface.js: 已重新编码
+d:\PDF转网页\JEV_Client\ui\test_faceid.html: 已重新编码
+d:\PDF转网页\JEV_Client\ui\visual_sync_panel.js: 已重新编码
+d:\PDF转网页\JEV_Client\upgrade-fix.js: 已重新编码
+d:\PDF转网页\JEV_Client\upgrade-test.html: 已重新编码

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV WebSocket 实时仪表盘</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* 自定义样式 */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #3B82F6;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --danger-color: #EF4444;
+            --info-color: #6B7280;
+            --dark-bg: #0F172A;
+            --dark-card: #1E293B;
+            --dark-border: #334155;
+            --dark-text: #F8FAFC;
+            --dark-text-secondary: #94A3B8;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .card {
+            background-color: var(--dark-card);
+            border-radius: 12px;
+            border: 1px solid var(--dark-border);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .status-indicator {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: var(--dark-border);
+            border-radius: 2px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: var(--info-color);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563EB;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--dark-text-secondary);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+        
+        /* 警报动画 */
+        .alert-flash {
+            animation: flash 0.5s ease-in-out 3;
+        }
+        
+        @keyframes flash {
+            0%, 100% {
+                background-color: var(--dark-card);
+            }
+            50% {
+                background-color: rgba(239, 68, 68, 0.2);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 顶部导航栏 -->
+    <header class="bg-dark-card border-b border-dark-border sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold text-white">JEV WebSocket 实时仪表盘</h1>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <!-- WebSocket 连接状态 -->
+                <div id="ws-status" class="flex items-center text-sm px-3 py-1 rounded-full bg-warning/20 text-warning">
+                    <span class="inline-block w-2 h-2 rounded-full bg-warning mr-2 animate-pulse"></span>
+                    <span>连接中...</span>
+                </div>
+                
+                <!-- 控制按钮组 -->
+                <div class="flex items-center space-x-2">
+                    <button id="pause-btn" class="btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        暂停接收
+                    </button>
+                    <button id="refresh-btn" class="btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        手动刷新
+                    </button>
+                    <button id="export-btn" class="btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        导出数据
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-6">
+        <!-- 状态栏 -->
+        <div id="status-bar" class="mb-6 card p-4 slide-in">
+            <div id="worker-status" class="text-base">
+                <span class="inline-block w-2 h-2 rounded-full bg-warning mr-2 status-indicator"></span>
+                <span>正在连接 Worker...</span>
+            </div>
+        </div>
+
+        <!-- 统计卡片区域 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Agent 在线数 -->
+            <div class="card p-5 fade-in">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-dark-text-secondary font-medium">Agent 在线</h3>
+                    <div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-end space-x-2">
+                    <span id="agent-count" class="text-3xl font-bold text-white">--</span>
+                    <span id="agent-change" class="text-xs text-dark-text-secondary mb-1">+0</span>
+                </div>
+                <p class="text-xs text-dark-text-secondary mt-1">总计 <span id="agent-total">--</span> 个 Agent</p>
+            </div>
+
+            <!-- 成功率 -->
+            <div class="card p-5 fade-in" style="animation-delay: 0.1s">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-dark-text-secondary font-medium">检测成功率</h3>
+                    <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex items-end space-x-2">
+                    <span id="success-rate" class="text-3xl font-bold text-white">--</span>
+                    <span class="text-lg text-dark-text-secondary mb-1">%</span>
+                </div>
+                <p class="text-xs text-dark-text-secondary mt-1">共检测 <span id="success-count">0</span> 次</p>
+            </div>
+
+            <!-- R2 存储 -->
+            <div class="card p-5 fade-in" style="animation-delay: 0.2s">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-dark-text-secondary font-medium">R2 存储</h3>
+                    <div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <span id="r2-usage" class="text-2xl font-bold text-white">0 B</span>
+                </div>
+                <div class="w-full bg-dark-border rounded-full h-2">
+                    <div id="r2-progress" class="bg-purple-500 h-2 rounded-full" style="width: 0%"></div>
+                </div>
+                <p class="text-xs text-dark-text-secondary mt-1">使用 <span id="r2-percentage">0%</span></p>
+            </div>
+
+            <!-- 最近心跳 -->
+            <div class="card p-5 fade-in" style="animation-delay: 0.3s">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-dark-text-secondary font-medium">最近心跳</h3>
+                    <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="mb-1">
+                    <span id="last-check" class="text-lg font-medium text-white">--</span>
+                </div>
+                <p class="text-xs text-dark-text-secondary">延迟 <span id="latency">--</span> ms</p>
+                <p class="text-xs text-dark-text-secondary mt-1">连续成功 <span id="success-streak">0</span> 次</p>
+            </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+            <!-- 正常率折线图 -->
+            <div class="card p-4 lg:col-span-2 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-medium">最近10次检测成功率</h3>
+                    <span id="chart-success-rate" class="text-success text-sm font-medium">0</span>
+                </div>
+                <div class="h-64">
+                    <canvas id="chart-uptime"></canvas>
+                </div>
+            </div>
+
+            <!-- 成功率环图 -->
+            <div class="card p-4 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-medium">总体成功率</h3>
+                    <span id="chart-total" class="text-dark-text-secondary text-sm">总计: 0</span>
+                </div>
+                <div class="h-64 flex items-center justify-center">
+                    <canvas id="chart-success-rate"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent 列表区域 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <!-- Agent 状态列表 -->
+            <div class="card p-4 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-medium">Agent 状态列表</h3>
+                    <span id="agent-list-count" class="text-dark-text-secondary text-sm">共 0 个 Agent</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-dark-border">
+                                <th class="text-left py-2 px-1 text-dark-text-secondary font-medium">Agent ID</th>
+                                <th class="text-left py-2 px-1 text-dark-text-secondary font-medium">主机名</th>
+                                <th class="text-left py-2 px-1 text-dark-text-secondary font-medium">状态</th>
+                                <th class="text-left py-2 px-1 text-dark-text-secondary font-medium">最后心跳</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agent-list">
+                            <tr>
+                                <td colspan="4" class="text-center py-6 text-dark-text-secondary">
+                                    等待连接...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 实时日志区域 -->
+            <div class="card p-4 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-medium">实时检测日志</h3>
+                    <span id="report-count" class="text-dark-text-secondary text-sm">实时更新</span>
+                </div>
+                <div id="report-list" class="h-64 overflow-y-auto scrollbar-thin space-y-2">
+                    <div class="text-center py-6 text-dark-text-secondary">
+                        等待连接...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 警报区域 -->
+        <div id="alert-container" class="mb-6">
+            <!-- 警报会动态添加到这里 -->
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark-card border-t border-dark-border py-4">
+        <div class="container mx-auto px-4 text-center text-dark-text-secondary text-sm">
+            <p>JEV WebSocket 实时仪表盘 v1.0 | 最后更新: <span id="last-updated">--</span></p>
+        </div>
+    </footer>
+
+    <!-- Toast 通知容器 -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-3"></div>
+
+    <!-- 加载 JavaScript -->
+    <script src="ws_dashboard.js"></script>
+</body>
+</html>

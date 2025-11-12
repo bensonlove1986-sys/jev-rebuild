@@ -1,0 +1,77 @@
+#agent-monitor-root {
+  margin: 16px;
+  padding: 16px;
+  background: rgba(15, 17, 20, 0.6);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #d1d5db;
+  box-shadow: 0 0 8px rgba(0,255,255,0.1);
+  animation: fadeIn 0.6s ease-out;
+}
+
+.agent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.agent-card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 10px 12px;
+  transition: all 0.3s ease;
+}
+
+.agent-card:hover {
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 0 10px rgba(0,255,255,0.15);
+}
+
+.agent-name {
+  font-weight: 600;
+  color: #00ffff;
+  margin-bottom: 4px;
+}
+
+.agent-meta {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.timeline {
+  margin-top: 8px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+  padding: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+  font-size: 0.8rem;
+  line-height: 1.3em;
+}
+
+.timeline-item {
+  border-left: 2px solid #00ffff33;
+  padding-left: 6px;
+  margin-bottom: 4px;
+}
+
+.timeline-item.ai {
+  color: #00ffff;
+}
+.timeline-item.human {
+  color: #ffcc00;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

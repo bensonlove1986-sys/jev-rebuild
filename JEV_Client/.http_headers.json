@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "description": "JEV Client HTTP Headers",
+  "created": "2025-11-09T11:02:12.921Z",
+  "headers": {
+    "*.html": {
+      "Content-Type": "text/html; charset=utf-8"
+    },
+    "*.js": {
+      "Content-Type": "application/javascript; charset=utf-8"
+    },
+    "*.css": {
+      "Content-Type": "text/css; charset=utf-8"
+    }
+  }
+}

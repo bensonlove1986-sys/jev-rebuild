@@ -1,0 +1,57 @@
+{
+  "timestamp": "2025-11-08T09:31:59.878Z",
+  "environment": {
+    "DAOJIE_API_KEY": "your_api_key_here",
+    "JEV_API_KEY": "JEV_2025_AI_SYS_A92jskL0xY",
+    "ADMIN_TOKEN": "admin_secure_token_2025",
+    "MODE": "production",
+    "ALLOW_ORIGIN": "https://jev-client.pages.dev",
+    "CLOUDFLARE_API_TOKEN": "Sxhnh_R5uV-AD-WembMoyDj36WJgYne57k-oeuGn"
+  },
+  "api_keys": {
+    "DAOJIE_API_KEY": {
+      "value": "your_api_key_here",
+      "is_placeholder": true,
+      "length": 17
+    },
+    "JEV_API_KEY": {
+      "value": "JEV_2025_AI_SYS_A92jskL0xY",
+      "is_placeholder": false,
+      "length": 26
+    },
+    "ADMIN_TOKEN": {
+      "value": "admin_secure_token_2025",
+      "is_placeholder": false,
+      "length": 23
+    },
+    "CLOUDFLARE_API_TOKEN": {
+      "value": "Sxhnh_R5uV-AD-WembMoyDj36WJgYne57k-oeuGn",
+      "is_placeholder": false,
+      "length": 40
+    }
+  },
+  "header_verification": {
+    "auth_methods": [
+      "Authorization: Bearer",
+      "X-Auth-Key",
+      "X-Admin-Token",
+      "X-Monitor-Token"
+    ],
+    "required_headers_supported": true,
+    "origin_check_enabled": true
+  },
+  "issues": [
+    "DAOJIE_API_KEY 包含占位符值，请更新为实际密钥"
+  ],
+  "recommendations": [
+    "更新 DAOJIE_API_KEY 为有效的API密钥"
+  ],
+  "summary": {
+    "total_api_keys": 4,
+    "placeholder_keys": 1,
+    "auth_methods_count": 4,
+    "issues_count": 1,
+    "recommendations_count": 1,
+    "status": "warning"
+  }
+}

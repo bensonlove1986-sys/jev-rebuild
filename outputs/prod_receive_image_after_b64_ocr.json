@@ -1,0 +1,18 @@
+{
+    "success":  true,
+    "key":  "whatsapp/unknown/2025/11/02/cat_ab3df2f3d84e4fbd0a9666b616ab82087d856df25ddead35abe498d626d4cb28.jpg",
+    "bucket":  "jev-images",
+    "content_type":  "image/jpeg",
+    "url":  "https://pub-156ce03fffc59592e2b3b04dbc22aa6c.r2.dev/jev-images/whatsapp/unknown/2025/11/02/cat_ab3df2f3d84e4fbd0a9666b616ab82087d856df25ddead35abe498d626d4cb28.jpg",
+    "worker_url":  "https://tupianlujing-local.bensonlove1986.workers.dev/images/whatsapp%2Funknown%2F2025%2F11%2F02%2Fcat_ab3df2f3d84e4fbd0a9666b616ab82087d856df25ddead35abe498d626d4cb28.jpg",
+    "size_bytes":  581943,
+    "hash":  "ab3df2f3d84e4fbd0a9666b616ab82087d856df25ddead35abe498d626d4cb28",
+    "saved":  true,
+    "existing":  false,
+    "ocr":  {
+                "success":  false,
+                "error":  "ocr_failed"
+            },
+    "ocr_text":  null,
+    "translated_text":  null
+}

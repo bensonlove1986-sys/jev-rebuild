@@ -1,0 +1,144 @@
+{
+  "version": "v9.3",
+  "build": "20240101.001",
+  "environment": "production",
+  "api_endpoints": {
+    "ping": "/ping",
+    "status": "/status",
+    "analyze_image": "/analyze-image",
+    "login": "/auth/login",
+    "logout": "/auth/logout",
+    "refresh_token": "/auth/refresh",
+    "get_user_info": "/auth/user",
+    "get_dashboard_data": "/api/dashboard",
+    "get_system_info": "/api/system",
+    "get_activities": "/api/activities"
+  },
+  "files": [
+    {
+      "name": "index.html",
+      "path": "/",
+      "type": "html",
+      "minified": false,
+      "last_modified": "2024-01-01T00:00:00Z"
+    },
+    {
+      "name": "client_portal.html",
+      "path": "/ui/client_portal.html",
+      "type": "html",
+      "minified": false,
+      "last_modified": "2024-01-01T00:00:00Z"
+    },
+    {
+      "name": "console.html",
+      "path": "/ui/console.html",
+      "type": "html",
+      "minified": false,
+      "last_modified": "2024-01-01T00:00:00Z"
+    },
+    {
+      "name": "jev_ui_style.css",
+      "path": "/ui/jev_ui_style.css",
+      "type": "css",
+      "minified": false,
+      "last_modified": "2024-01-01T00:00:00Z"
+    },
+    {
+      "name": "jev_animations.js",
+      "path": "/ui/jev_animations.js",
+      "type": "javascript",
+      "minified": false,
+      "last_modified": "2024-01-01T00:00:00Z"
+    },
+    {
+      "name": "jev_ai_assistant.js",
+      "path": "/ui/jev_ai_assistant.js",
+      "type": "javascript",
+      "minified": false,
+      "last_modified": "2024-01-01T00:00:00Z"
+    },
+    {
+      "name": "jev_image_capture.js",
+      "path": "/ui/jev_image_capture.js",
+      "type": "javascript",
+      "minified": false,
+      "last_modified": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "config": {
+    "theme": "dark",
+    "debug": false,
+    "api_timeout": 30000,
+    "polling_interval": 15000,
+    "auto_refresh": true,
+    "notification_timeout": 5000,
+    "max_file_size": 10485760,
+    "allowed_file_types": ["image/jpeg", "image/png", "image/webp", "image/gif"]
+  },
+  "features": {
+    "ai_assistant": true,
+    "image_capture": true,
+    "real_time_updates": true,
+    "dark_mode": true,
+    "light_mode": false,
+    "responsive_design": true,
+    "offline_support": false,
+    "data_export": true,
+    "activity_logging": true
+  },
+  "browser_requirements": {
+    "chrome": ">=88",
+    "firefox": ">=85",
+    "safari": ">=14",
+    "edge": ">=88",
+    "ios_saf": ">=14",
+    "android": ">=10"
+  },
+  "dependencies": {
+    "external_libraries": [],
+    "internal_modules": [
+      "jev_ui_style.css",
+      "jev_animations.js",
+      "jev_ai_assistant.js",
+      "jev_image_capture.js"
+    ]
+  },
+  "backup": {
+    "enabled": true,
+    "frequency": "daily",
+    "retention": "30d"
+  },
+  "deployment": {
+    "date": "2024-01-01T00:00:00Z",
+    "deployed_by": "system",
+    "description": "JEV-UI-Origin-v9.3 版本部署",
+    "rollback": {
+      "enabled": true,
+      "previous_version": "v9.2"
+    }
+  },
+  "performance": {
+    "bundle_size": "~500KB",
+    "load_time": "<2s",
+    "animation_fps": 60,
+    "memory_usage": "<200MB"
+  },
+  "security": {
+    "cors": {
+      "enabled": true,
+      "allowed_origins": ["*"]
+    },
+    "csrf_protection": true,
+    "xss_protection": true,
+    "content_security_policy": {
+      "enabled": true,
+      "directives": {
+        "default-src": ["'self'"],
+        "script-src": ["'self'", "'unsafe-inline'"],
+        "style-src": ["'self'", "'unsafe-inline'"],
+        "img-src": ["'self'", "data:"],
+        "connect-src": ["'self'"]
+      }
+    }
+  }
+}

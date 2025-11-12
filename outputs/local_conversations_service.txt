@@ -1,0 +1,54 @@
+{
+  "success": false,
+  "conversationIds": [],
+  "items": [],
+  "attempts": [
+    {
+      "url": "https://services.leadconnectorhq.com/v1/conversations?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": ""
+    },
+    {
+      "url": "https://services.leadconnectorhq.com/v2/conversations?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": ""
+    },
+    {
+      "url": "https://services.leadconnectorhq.com/v1/contacts/GakCvF3msAuChq2DtER9/conversations",
+      "status": 404,
+      "ok": false,
+      "body": ""
+    },
+    {
+      "url": "https://services.leadconnectorhq.com/v2/contacts/GakCvF3msAuChq2DtER9/conversations",
+      "status": 404,
+      "ok": false,
+      "body": ""
+    },
+    {
+      "url": "https://services.leadconnectorhq.com/v1/conversations/threads?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": ""
+    },
+    {
+      "url": "https://services.leadconnectorhq.com/v2/conversations/threads?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": ""
+    },
+    {
+      "url": "https://services.leadconnectorhq.com/v1/conversations/messages?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": ""
+    }
+  ],
+  "lastError": {
+    "status": 404,
+    "body": "",
+    "url": "https://services.leadconnectorhq.com/v1/conversations/messages?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&limit=10"
+  }
+}

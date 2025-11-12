@@ -1,0 +1,8 @@
+{
+  "default_currency": "USD",
+  "supported_currencies": ["USD","RMB","INR","BDT","PKR","VND","DZD","EUR"],
+  "ai_engine": "DeepSeek",
+  "relay_endpoint": "https://relay.jevshop.workers.dev",
+  "profit_alert_threshold": 10,
+  "lock": "active"
+}

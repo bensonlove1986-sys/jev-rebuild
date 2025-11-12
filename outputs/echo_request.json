@@ -1,0 +1,17 @@
+{
+    "success":  true,
+    "method":  "POST",
+    "path":  "/echo-request",
+    "content_type":  "application/json",
+    "headers":  {
+                    "accept-encoding":  "br, gzip",
+                    "content-length":  "737",
+                    "content-type":  "application/json",
+                    "host":  "127.0.0.1:8787",
+                    "user-agent":  "Mozilla/5.0 (Windows NT; Windows NT 10.0; zh-CN) WindowsPowerShell/5.1.26100.6899"
+                },
+    "query":  {
+
+              },
+    "raw_body":  "{\r\n    \"message\":  {\r\n                    \"media\":  {\r\n                                  \"url\":  \"https://picsum.photos/600\"\r\n                              },\r\n                    \"body\":  {\r\n                                 \"string\":  \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB\"\r\n                             },\r\n                    \"attachments\":  [\r\n                                        {\r\n                                            \"url\":  \"https://picsum.photos/600\",\r\n                                            \"filename\":  \"sample.jpg\",\r\n                                            \"mime_type\":  \"image/jpeg\"\r\n                                        }\r\n                                    ]\r\n                }\r\n}"
+}

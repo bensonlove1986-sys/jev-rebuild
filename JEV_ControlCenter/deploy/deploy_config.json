@@ -1,0 +1,27 @@
+{
+  "plugin_path": "D:\\PDF转网页\\JEV_Client_Plugin",
+  "cloud_path": "D:\\PDF转网页\\Cloud_Modules",
+  "control_path": "D:\\PDF转网页\\JEV_ControlCenter",
+  "monitor_path": "D:\\PDF转网页\\JEV_ControlCenter\\monitor",
+  "repair_path": "D:\\PDF转网页\\JEV_ControlCenter\\auto_repair",
+  "version": "v2.0.7",
+  "relay_url": "https://jevshop.workers.dev/api",
+  "control_url": "https://control.jevshop.workers.dev/api",
+  "required_modules": [
+    "ai_responder.js",
+    "ocr_engine.js",
+    "relay_connector.js",
+    "storage_manager.js",
+    "toggle_manager.js"
+  ],
+  "expected_files": {
+    "plugin": 24,
+    "cloud": 18,
+    "control": 15,
+    "monitor": 7,
+    "repair": 6
+  },
+  "auto_repair_enabled": true,
+  "log_level": "info",
+  "check_interval": 60000
+}

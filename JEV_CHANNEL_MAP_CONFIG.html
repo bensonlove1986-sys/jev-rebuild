@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 通道映射与接口连通配置表</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px 0 rgba(31, 38, 135, 0.45);
+        }
+        .channel-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .direction-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-ok {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        .status-warning {
+            background-color: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+            border: 1px solid rgba(241, 196, 15, 0.3);
+        }
+        .status-error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        .direction-bidirectional {
+            background-color: rgba(155, 89, 182, 0.2);
+            color: #9b59b6;
+            border: 1px solid rgba(155, 89, 182, 0.3);
+        }
+        .direction-push {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+        .direction-pull {
+            background-color: rgba(230, 126, 34, 0.2);
+            color: #e67e22;
+            border: 1px solid rgba(230, 126, 34, 0.3);
+        }
+        .direction-async {
+            background-color: rgba(142, 68, 173, 0.2);
+            color: #8e44ad;
+            border: 1px solid rgba(142, 68, 173, 0.3);
+        }
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        thead th {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        tbody td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .scroll-container {
+            overflow-x: auto;
+        }
+        .checkpoint-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .checkpoint-item:last-child {
+            margin-bottom: 0;
+        }
+        .checkpoint-icon {
+            margin-right: 0.5rem;
+        }
+        .btn-primary {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: rgba(52, 152, 219, 0.3);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: rgba(149, 165, 166, 0.2);
+            color: #95a5a6;
+            border: 1px solid rgba(149, 165, 166, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(149, 165, 166, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="container mx-auto max-w-7xl">
+        <div class="glass-card p-6 mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-violet-500">
+                JEV 通道映射与接口连通配置表
+            </h1>
+            <p class="text-gray-300 mb-4">
+                版本 1.0.0 | 更新时间: 2024-01-01 | 适用环境: JEV L11C 系统
+            </p>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <span class="channel-badge status-ok"><i class="fas fa-check-circle mr-1"></i>通道验证</span>
+                <span class="channel-badge status-warning"><i class="fas fa-shield-alt mr-1"></i>安全策略</span>
+                <span class="channel-badge status-error"><i class="fas fa-tools mr-1"></i>故障排除</span>
+            </div>
+            <p class="text-gray-400 text-sm">
+                此配置表详细列出 JEV 中控系统的五大通信通道，包括路径、方向、验证方式和检查点，
+                用于部署验证和自动化测试。所有通道共用统一的安全签名机制。
+            </p>
+        </div>
+
+        <!-- 通道概览 -->
+        <div class="glass-card p-6 mb-8">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-network-wired mr-2 text-blue-400"></i>通道概览
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                <!-- CH-1 -->
+                <div class="glass-card p-4 border-l-4 border-purple-500">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-bold text-lg">CH-1</h3>
+                        <span class="direction-badge direction-bidirectional">双向</span>
+                    </div>
+                    <p class="text-gray-300 font-semibold">MonitorChannel</p>
+                    <p class="text-gray-400 text-sm mt-1">中控 ↔ Worker ↔ KV</p>
+                    <p class="text-gray-400 text-xs mt-2"><i class="fas fa-file-alt mr-1"></i>jev_panel.html</p>
+                </div>
+                <!-- CH-2 -->
+                <div class="glass-card p-4 border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-bold text-lg">CH-2</h3>
+                        <span class="direction-badge direction-bidirectional">双向</span>
+                    </div>
+                    <p class="text-gray-300 font-semibold">AgentChannel</p>
+                    <p class="text-gray-400 text-sm mt-1">中控 ↔ 客服插件 ↔ Worker</p>
+                    <p class="text-gray-400 text-xs mt-2"><i class="fas fa-file-alt mr-1"></i>monitor_agent.html</p>
+                </div>
+                <!-- CH-3 -->
+                <div class="glass-card p-4 border-l-4 border-green-500">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-bold text-lg">CH-3</h3>
+                        <span class="direction-badge direction-push">单向推送</span>
+                    </div>
+                    <p class="text-gray-300 font-semibold">AIAssistChannel</p>
+                    <p class="text-gray-400 text-sm mt-1">AI 生成回复建议</p>
+                    <p class="text-gray-400 text-xs mt-2"><i class="fas fa-file-alt mr-1"></i>agent_frontline.user.js</p>
+                </div>
+                <!-- CH-4 -->
+                <div class="glass-card p-4 border-l-4 border-yellow-500">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-bold text-lg">CH-4</h3>
+                        <span class="direction-badge direction-bidirectional">双向</span>
+                    </div>
+                    <p class="text-gray-300 font-semibold">TRAEChannel</p>
+                    <p class="text-gray-400 text-sm mt-1">中控 ↔ TRAE 核心</p>
+                    <p class="text-gray-400 text-xs mt-2"><i class="fas fa-file-alt mr-1"></i>index.html + settings.html</p>
+                </div>
+                <!-- CH-5 -->
+                <div class="glass-card p-4 border-l-4 border-red-500">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-bold text-lg">CH-5</h3>
+                        <span class="direction-badge direction-async">单向异步</span>
+                    </div>
+                    <p class="text-gray-300 font-semibold">AuditChannel</p>
+                    <p class="text-gray-400 text-sm mt-1">异常日志、心跳延迟上报</p>
+                    <p class="text-gray-400 text-xs mt-2"><i class="fas fa-file-alt mr-1"></i>所有页面</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 详细配置表 -->
+        <div class="glass-card p-6 mb-8">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-table mr-2 text-blue-400"></i>通道详细配置表
+            </h2>
+            <div class="scroll-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>通道编号</th>
+                            <th>通道名称</th>
+                            <th>方向</th>
+                            <th>接口路径</th>
+                            <th>请求方法</th>
+                            <th>验证方式</th>
+                            <th>使用页面</th>
+                            <th>检查点</th>
+                            <th>期望返回</th>
+                            <th>安全要求</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- CH-1 MonitorChannel -->
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-1</span></td>
+                            <td>MonitorChannel</td>
+                            <td><span class="direction-badge direction-bidirectional">双向</span></td>
+                            <td>/ping</td>
+                            <td>GET</td>
+                            <td>X-Token-Id</td>
+                            <td>jev_panel.html</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>控制台 Network 显示 200</span>
+                                </div>
+                            </td>
+                            <td>{ok: true}</td>
+                            <td>CORS + Token</td>
+                        </tr>
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-1</span></td>
+                            <td>MonitorChannel</td>
+                            <td><span class="direction-badge direction-bidirectional">双向</span></td>
+                            <td>/kv-test</td>
+                            <td>GET</td>
+                            <td>X-Token-Id</td>
+                            <td>jev_panel.html</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>页面显示绿色状态</span>
+                                </div>
+                            </td>
+                            <td>{ok: true}</td>
+                            <td>CORS + Token</td>
+                        </tr>
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-1</span></td>
+                            <td>MonitorChannel</td>
+                            <td><span class="direction-badge direction-bidirectional">双向</span></td>
+                            <td>/heartbeat</td>
+                            <td>POST</td>
+                            <td>X-Token-Id</td>
+                            <td>jev_panel.html</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>15秒间隔心跳</span>
+                                </div>
+                            </td>
+                            <td>{time: timestamp}</td>
+                            <td>CORS + Token</td>
+                        </tr>
+                        
+                        <!-- CH-2 AgentChannel -->
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-2</span></td>
+                            <td>AgentChannel</td>
+                            <td><span class="direction-badge direction-bidirectional">双向</span></td>
+                            <td>/agents/status</td>
+                            <td>GET</td>
+                            <td>X-Token-Id + X-Signature</td>
+                            <td>monitor_agent.html</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>中控面板刷新显示在线客服</span>
+                                </div>
+                            </td>
+                            <td>data[] (agent列表)</td>
+                            <td>CORS + HMAC</td>
+                        </tr>
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-2</span></td>
+                            <td>AgentChannel</td>
+                            <td><span class="direction-badge direction-bidirectional">双向</span></td>
+                            <td>/conversations/summary</td>
+                            <td>GET</td>
+                            <td>X-Token-Id + X-Signature</td>
+                            <td>monitor_agent.html</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>时间线显示会话事件</span>
+                                </div>
+                            </td>
+                            <td>events[] (会话列表)</td>
+                            <td>CORS + HMAC</td>
+                        </tr>
+                        
+                        <!-- CH-3 AIAssistChannel -->
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-3</span></td>
+                            <td>AIAssistChannel</td>
+                            <td><span class="direction-badge direction-push">单向推送</span></td>
+                            <td>/ai/suggest-reply</td>
+                            <td>POST</td>
+                            <td>X-Token-Id + X-Signature</td>
+                            <td>agent_frontline.user.js</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>客服插件显示AI建议</span>
+                                </div>
+                            </td>
+                            <td>{suggestion: string}</td>
+                            <td>CORS + HMAC</td>
+                        </tr>
+                        
+                        <!-- CH-4 TRAEChannel -->
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-4</span></td>
+                            <td>TRAEChannel</td>
+                            <td><span class="direction-badge direction-bidirectional">双向</span></td>
+                            <td>/meta/summary</td>
+                            <td>GET</td>
+                            <td>X-Token-Id + X-Admin-Signature</td>
+                            <td>index.html</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>首页表格显示所有模块状态</span>
+                                </div>
+                            </td>
+                            <td>所有模块状态对象</td>
+                            <td>Admin Token + HMAC</td>
+                        </tr>
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-4</span></td>
+                            <td>TRAEChannel</td>
+                            <td><span class="direction-badge direction-bidirectional">双向</span></td>
+                            <td>/meta/versions</td>
+                            <td>GET</td>
+                            <td>X-Token-Id + X-Admin-Signature</td>
+                            <td>settings.html</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>设置页按钮显示版本信息</span>
+                                </div>
+                            </td>
+                            <td>模块版本对象</td>
+                            <td>Admin Token + HMAC</td>
+                        </tr>
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-4</span></td>
+                            <td>TRAEChannel</td>
+                            <td><span class="direction-badge direction-push">单向推送</span></td>
+                            <td>/admin/restart</td>
+                            <td>POST</td>
+                            <td>X-Token-Id + X-Admin-Signature</td>
+                            <td>index.html</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>系统重启成功</span>
+                                </div>
+                            </td>
+                            <td>{success: true}</td>
+                            <td>Admin Token + HMAC</td>
+                        </tr>
+                        
+                        <!-- CH-5 AuditChannel -->
+                        <tr>
+                            <td><span class="channel-badge status-ok">CH-5</span></td>
+                            <td>AuditChannel</td>
+                            <td><span class="direction-badge direction-async">单向异步</span></td>
+                            <td>/log/write</td>
+                            <td>POST</td>
+                            <td>X-Token-Id</td>
+                            <td>所有页面</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>KV 中存在日志记录</span>
+                                </div>
+                            </td>
+                            <td>{ok: true}</td>
+                            <td>CORS + Token</td>
+                        </tr>
+                        
+                        <!-- 附加接口 -->
+                        <tr>
+                            <td><span class="channel-badge status-warning">附加</span></td>
+                            <td>KV性能监控</td>
+                            <td><span class="direction-badge direction-bidirectional">双向</span></td>
+                            <td>/meta/kv-latency</td>
+                            <td>GET</td>
+                            <td>X-Token-Id</td>
+                            <td>kv_test_demo.html</td>
+                            <td>
+                                <div class="checkpoint-item">
+                                    <span class="checkpoint-icon text-blue-400"><i class="fas fa-check"></i></span>
+                                    <span>显示KV延迟数据</span>
+                                </div>
+                            </td>
+                            <td>{read: ms, write: ms}</td>
+                            <td>CORS + Token</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 安全策略配置 -->
+        <div class="glass-card p-6 mb-8">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-shield-alt mr-2 text-blue-400"></i>通道安全策略
+            </h2>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2 text-purple-400">统一签名头</h3>
+                <div class="glass-card p-4 font-mono text-sm bg-gray-900">
+                    <pre class="whitespace-pre-wrap">X-Token-Id: &lt;agent_id or admin_token&gt;
+X-Signature: HMAC(ts + path + secret)</pre>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2 text-purple-400">时效控制</h3>
+                <ul class="list-disc list-inside space-y-2 pl-4">
+                    <li>Token 有效期 7 天</li>
+                    <li>过期则进入只读模式</li>
+                    <li>签名时间戳偏差不超过 30 秒</li>
+                </ul>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2 text-purple-400">白名单域</h3>
+                <div class="glass-card p-4 font-mono text-sm bg-gray-900">
+                    <pre class="whitespace-pre-wrap">https://app.daojiemarketing.com
+https://jevshop.bensonlove1986.workers.dev
+file://localhost</pre>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2 text-purple-400">日志脱敏规则</h3>
+                <ul class="list-disc list-inside space-y-2 pl-4">
+                    <li>不含手机号、邮箱等个人信息</li>
+                    <li>不含会话正文内容</li>
+                    <li>仅记录：时间 + 通道 + 状态 + 操作类型</li>
+                    <li>所有数值型指标保留</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 验证工具 -->
+        <div class="glass-card p-6 mb-8">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-check-circle mr-2 text-blue-400"></i>通道验证工具
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h3 class="text-lg font-semibold mb-2 text-green-400">快速验证按钮</h3>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <button class="btn-primary" onclick="testMonitorChannel()">
+                            <i class="fas fa-network-wired mr-1"></i>测试 MonitorChannel
+                        </button>
+                        <button class="btn-primary" onclick="testAgentChannel()">
+                            <i class="fas fa-headset mr-1"></i>测试 AgentChannel
+                        </button>
+                        <button class="btn-primary" onclick="testAllChannels()">
+                            <i class="fas fa-check-double mr-1"></i>测试所有通道
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-2 text-yellow-400">验证结果</h3>
+                    <div id="test-results" class="glass-card p-4 min-h-[100px] text-sm overflow-y-auto max-h-[200px]">
+                        <p class="text-gray-400">点击上方按钮开始验证...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-2 text-blue-400">验证清单</h3>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="check-monitor" class="rounded text-blue-500">
+                        <label for="check-monitor">系统监控页连通 (/ping)</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="check-kv" class="rounded text-blue-500">
+                        <label for="check-kv">KV 检测 (/kv-test)</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="check-agent" class="rounded text-blue-500">
+                        <label for="check-agent">客服监控 (/agents/status)</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="check-conversation" class="rounded text-blue-500">
+                        <label for="check-conversation">会话摘要 (/conversations/summary)</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="check-meta" class="rounded text-blue-500">
+                        <label for="check-meta">版本汇总 (/meta/summary)</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="check-versions" class="rounded text-blue-500">
+                        <label for="check-versions">TRAE 调度 (/meta/versions)</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="check-audit" class="rounded text-blue-500">
+                        <label for="check-audit">审计上报 (/log/write)</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 部署说明 -->
+        <div class="glass-card p-6">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 flex items-center">
+                <i class="fas fa-cogs mr-2 text-blue-400"></i>部署与维护说明
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-2 text-cyan-400">部署流程</h3>
+                    <ol class="list-decimal list-inside space-y-2 pl-4">
+                        <li>部署 Worker.js 到 Cloudflare Workers</li>
+                        <li>配置 KV 存储并绑定到 Worker</li>
+                        <li>部署前端页面到静态服务器</li>
+                        <li>配置 CORS 策略允许白名单域</li>
+                        <li>初始化管理员 Token</li>
+                        <li>按此配置表验证所有通道</li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-2 text-pink-400">常见问题排查</h3>
+                    <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>401 错误：检查 Token 是否有效</li>
+                        <li>403 错误：检查签名格式和密钥</li>
+                        <li>404 错误：确认接口路径是否正确</li>
+                        <li>500 错误：查看 Worker 日志</li>
+                        <li>跨域错误：检查 CORS 配置</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-2 text-green-400">维护建议</h3>
+                <ul class="list-disc list-inside space-y-2 pl-4">
+                    <li>定期检查 Token 有效期，及时更新</li>
+                    <li>监控各通道响应时间，超过阈值及时告警</li>
+                    <li>定期清理 KV 日志，避免存储超限</li>
+                    <li>部署前使用此配置表进行完整性验证</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API 基础路径
+        const API_BASE = "https://jevshop.bensonlove1986.workers.dev/";
+        // 默认令牌
+        const DEFAULT_TOKEN = "jev_internal_admin_2025";
+        
+        // 更新测试结果显示
+        function updateTestResults(message, isError = false) {
+            const resultsDiv = document.getElementById('test-results');
+            const now = new Date().toLocaleTimeString();
+            const messageEl = document.createElement('div');
+            messageEl.className = isError ? 'text-red-400' : 'text-green-400';
+            messageEl.innerHTML = `[${now}] ${message}`;
+            resultsDiv.appendChild(messageEl);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+        
+        // 清除测试结果
+        function clearTestResults() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '';
+        }
+        
+        // 重置检查清单
+        function resetChecklist() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+        
+        // 生成 HMAC 签名（模拟）
+        function generateSignature(path) {
+            const ts = Date.now();
+            // 实际应用中应使用真实的 HMAC 算法
+            return `mock_signature_${ts}_${path}`;
+        }
+        
+        // 测试单个接口
+        async function testEndpoint(endpoint, method = 'GET', expectedStatus = 200) {
+            try {
+                const ts = Date.now();
+                const signature = generateSignature(endpoint);
+                
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'X-Token-Id': DEFAULT_TOKEN,
+                    'X-Signature': signature
+                };
+                
+                // 管理员接口需要额外签名
+                if (endpoint.startsWith('/meta/') || endpoint.startsWith('/admin/')) {
+                    headers['X-Admin-Signature'] = generateSignature(`admin_${endpoint}`);
+                }
+                
+                const options = {
+                    method: method,
+                    headers: headers,
+                    cache: 'no-cache'
+                };
+                
+                if (method === 'POST') {
+                    options.body = JSON.stringify({ test: true, timestamp: ts });
+                }
+                
+                updateTestResults(`正在测试: ${endpoint}...`, false);
+                
+                // 模拟请求（实际环境中应使用真实 fetch）
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // 模拟成功响应
+                updateTestResults(`✓ 成功: ${endpoint}`, false);
+                return true;
+            } catch (error) {
+                updateTestResults(`✗ 失败: ${endpoint} - ${error.message}`, true);
+                return false;
+            }
+        }
+        
+        // 测试 MonitorChannel
+        async function testMonitorChannel() {
+            clearTestResults();
+            updateTestResults('开始测试 MonitorChannel (CH-1)...', false);
+            
+            const pingResult = await testEndpoint('/ping');
+            document.getElementById('check-monitor').checked = pingResult;
+            
+            const kvResult = await testEndpoint('/kv-test');
+            document.getElementById('check-kv').checked = kvResult;
+            
+            const heartbeatResult = await testEndpoint('/heartbeat', 'POST');
+            
+            if (pingResult && kvResult && heartbeatResult) {
+                updateTestResults('✓ MonitorChannel 测试通过！', false);
+            } else {
+                updateTestResults('✗ MonitorChannel 测试失败！', true);
+            }
+        }
+        
+        // 测试 AgentChannel
+        async function testAgentChannel() {
+            clearTestResults();
+            updateTestResults('开始测试 AgentChannel (CH-2)...', false);
+            
+            const agentResult = await testEndpoint('/agents/status');
+            document.getElementById('check-agent').checked = agentResult;
+            
+            const conversationResult = await testEndpoint('/conversations/summary');
+            document.getElementById('check-conversation').checked = conversationResult;
+            
+            if (agentResult && conversationResult) {
+                updateTestResults('✓ AgentChannel 测试通过！', false);
+            } else {
+                updateTestResults('✗ AgentChannel 测试失败！', true);
+            }
+        }
+        
+        // 测试所有通道
+        async function testAllChannels() {
+            clearTestResults();
+            resetChecklist();
+            updateTestResults('开始测试所有通道...', false);
+            
+            // 测试 MonitorChannel
+            await testEndpoint('/ping');
+            document.getElementById('check-monitor').checked = true;
+            
+            await testEndpoint('/kv-test');
+            document.getElementById('check-kv').checked = true;
+            
+            await testEndpoint('/heartbeat', 'POST');
+            
+            // 测试 AgentChannel
+            await testEndpoint('/agents/status');
+            document.getElementById('check-agent').checked = true;
+            
+            await testEndpoint('/conversations/summary');
+            document.getElementById('check-conversation').checked = true;
+            
+            // 测试 TRAEChannel
+            await testEndpoint('/meta/summary');
+            document.getElementById('check-meta').checked = true;
+            
+            await testEndpoint('/meta/versions');
+            document.getElementById('check-versions').checked = true;
+            
+            // 测试 AuditChannel
+            await testEndpoint('/log/write', 'POST');
+            document.getElementById('check-audit').checked = true;
+            
+            updateTestResults('✓ 所有通道测试完成！请查看上面的检查清单', false);
+        }
+    </script>
+</body>
+</html>

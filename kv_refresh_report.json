@@ -1,0 +1,16 @@
+{
+  "deploy_status": "success",
+  "kv_bindings_refreshed": [
+    "JEV_AI_CACHE",
+    "JEV_GLOBAL_CONFIG",
+    "JEV_LOGS",
+    "JEV_PLUGIN_STATE",
+    "Bensonai_memory",
+    "trea_memory",
+    "JEVPI",
+    "R2_BUCKET"
+  ],
+  "final_test_result": "✅ 全部通过",
+  "missing_bindings": [],
+  "timestamp": "2025-11-06 21:11:39"
+}

@@ -1,0 +1,17 @@
+{
+  "defaultEncoding": "utf-8",
+  "forceUTF8Save": true,
+  "stripHiddenBOM": true,
+  "autoRepairDoubleLayer": true,
+  "detectRuntimeMismatch": true,
+  "scanExtensions": [
+    ".html",
+    ".js",
+    ".css",
+    ".json",
+    ".txt",
+    ".md"
+  ],
+  "lastUpdated": "2025-11-09T12:00:23.601Z",
+  "enforcementLevel": "strict"
+}

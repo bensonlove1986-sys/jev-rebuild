@@ -1,0 +1,22 @@
+{
+  "auto_repair_enabled": true,
+  "scan_interval_minutes": 60,
+  "repair_threshold": 2,
+  "modules_to_monitor": [
+    "ai_responder.js",
+    "ocr_engine.js",
+    "relay_connector.js",
+    "storage_manager.js",
+    "toggle_manager.js"
+  ],
+  "scan_directories": [
+    "../modules_local",
+    "../../Cloud_Modules",
+    "../"
+  ],
+  "daily_repair_time": "03:00",
+  "backup_before_repair": true,
+  "max_backup_count": 10,
+  "auto_update_enabled": true,
+  "update_check_interval_hours": 24
+}

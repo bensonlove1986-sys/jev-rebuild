@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV Dashboard 控制台</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", "Heiti SC", "SimHei", sans-serif;
+        }
+        :root {
+            /* 盲赂禄茅垄聵猫聣虏氓陆漏 */
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary-color: #64748b;
+            --background-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            
+            /* 茅聴麓猫路聺 */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            
+            /* 氓聹聠猫搂聮 */
+            --radius-sm: 0.25rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --radius-xl: 0.75rem;
+            --radius-full: 9999px;
+            
+            /* 茅聵麓氓陆卤 */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            
+            /* 猫驴聡忙赂隆氓聤篓莽聰禄 */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.25s ease;
+            --transition-slow: 0.35s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            height: 100vh;
+            width: 100vw;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 鐧诲綍莽聲聦茅聺垄忙聽路氓录聫 */
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity var(--transition-normal), visibility var(--transition-normal);
+        }
+        
+        #loginScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        .login-container {
+            background-color: var(--surface-color);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-xl);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+        }
+        
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--text-primary);
+        }
+        
+        .login-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-lg);
+            font-size: 0.9rem;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--spacing-xs);
+        }
+        
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: border-color var(--transition-fast);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .form-button {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+        
+        .form-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .form-button:disabled {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+        }
+        
+        .login-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            margin-top: var(--spacing-sm);
+            display: none;
+        }
+        
+        /* 盲赂禄氓潞聰莽聰篓氓庐鹿氓聶篓 */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        /* 氓陇麓茅聝篓莽聤露忙聙聛忙聽聫 */
+        .header {
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .app-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 0.875rem;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            transition: background-color var(--transition-fast);
+        }
+        
+        .status-indicator.connected {
+            background-color: var(--success-color);
+        }
+        
+        .status-indicator.connecting {
+            background-color: var(--warning-color);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .status-indicator.disconnected {
+            background-color: var(--danger-color);
+        }
+        
+        .status-text {
+            color: var(--text-secondary);
+        }
+        
+        .latency {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .user-info {
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .logout-btn {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .logout-btn:hover {
+            background-color: var(--background-color);
+        }
+        
+        /* 盲赂禄氓聠聟氓庐鹿氓聦潞氓聼聼 */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* 猫聛聤氓陇漏氓聢聴猫隆篓氓聦潞氓聼聼 */
+        .chat-list {
+            width: 300px;
+            background-color: var(--surface-color);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        
+        .chat-list-header {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-primary);
+            flex-shrink: 0;
+        }
+        
+        .chat-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-sm);
+        }
+        
+        .chat-item {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .chat-item:hover {
+            background-color: var(--background-color);
+        }
+        
+        .chat-item.active {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        .chat-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .chat-item-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .chat-item-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .chat-item-preview {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* 猫聛聤氓陇漏莽陋聴氓聫拢氓聦潞氓聼聼 */
+        .chat-window {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface-color);
+            min-width: 0;
+        }
+        
+        .chat-window-header {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-primary);
+            flex-shrink: 0;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .no-chat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+        }
+        
+        .no-chat-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .no-chat-text {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .no-chat-subtext {
+            font-size: 0.875rem;
+            text-align: center;
+            max-width: 300px;
+        }
+        
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-lg);
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: var(--radius-sm);
+        }
+        
+        .message.agent {
+            align-self: flex-start;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            border-bottom-left-radius: var(--radius-sm);
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: var(--spacing-xs);
+        }
+        
+        .chat-input-area {
+            padding: var(--spacing-md);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: var(--spacing-md);
+            flex-shrink: 0;
+            background-color: var(--surface-color);
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            resize: none;
+            min-height: 40px;
+            max-height: 120px;
+            overflow-y: auto;
+            transition: border-color var(--transition-fast);
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .chat-input:disabled {
+            background-color: var(--background-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        
+        .send-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+            flex-shrink: 0;
+            height: fit-content;
+            align-self: flex-end;
+        }
+        
+        .send-btn:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+        }
+        
+        .send-btn:disabled {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+        }
+        
+        /* 茅聙職莽聼楼忙聽路氓录聫 */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            max-width: 300px;
+        }
+        
+        .notification {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            color: white;
+            font-size: 0.875rem;
+            animation: slideInRight 0.3s ease;
+        }
+        
+        .notification.success {
+            background-color: var(--success-color);
+        }
+        
+        .notification.error {
+            background-color: var(--danger-color);
+        }
+        
+        .notification.warning {
+            background-color: var(--warning-color);
+        }
+        
+        .notification.info {
+            background-color: var(--info-color);
+        }
+        
+        /* 氓聤聽猫陆陆莽聤露忙聙聛 */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            color: var(--text-secondary);
+            padding: var(--spacing-xl);
+        }
+        
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* 氓聤篓莽聰禄 */
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* 氓聯聧氓潞聰氓录聫猫庐戮猫庐隆 */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .chat-list {
+                width: 100%;
+                height: 40%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .chat-window {
+                height: 60%;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <!-- 鐧诲綍莽聲聦茅聺垄 -->
+    <div id="loginScreen">
+        <div class="login-container">
+            <div class="login-logo">
+                <span>冒聼聮卢</span>
+                <span>JEV 忙聶潞猫聝陆氓庐垄忙聹聧</span>
+            </div>
+            <h1 class="login-title">氓庐垄忙聹聧莽禄聢莽芦炉鐧诲綍</h1>
+            <p class="login-description">猫炉路猫戮聯氓聟楼忙聜篓莽職聞忙聨聢忙聺聝莽聽聛盲禄楼鐧诲綍JEV忙聶潞猫聝陆氓庐垄忙聹聧莽禄聢莽芦炉</p>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="licenseKey" class="form-label">忙聨聢忙聺聝莽聽聛</label>
+                    <input type="text" id="licenseKey" class="form-input" placeholder="猫炉路猫戮聯氓聟楼忙聨聢忙聺聝莽聽聛" autofocus>
+                </div>
+                <button id="loginBtn" class="form-button">鐧诲綍</button>
+                <div id="loginError" class="login-error"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 盲赂禄氓潞聰莽聰篓莽聲聦茅聺垄 -->
+    <div class="app-container">
+        <!-- 氓陇麓茅聝篓莽聤露忙聙聛忙聽聫 -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="app-title">JEV 忙聶潞猫聝陆氓庐垄忙聹聧莽禄聢莽芦炉</h1>
+                <div class="connection-status">
+                    <span id="statusIndicator" class="status-indicator disconnected"></span>
+                    <span id="statusText" class="status-text">忙聹陋猫驴聻忙聨楼</span>
+                    <span id="latency" class="latency">氓禄露猫驴聼: 0ms</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <span id="userInfo" class="user-info">氓庐垄忙聹聧茂录職忙聹陋鐧诲綍</span>
+                <button id="logoutBtn" class="logout-btn">閫€鍑虹櫥褰?/button>
+            </div>
+        </header>
+        
+        <!-- 盲赂禄氓聠聟氓庐鹿氓聦潞氓聼聼 -->
+        <main class="main-content">
+            <!-- 猫聛聤氓陇漏氓聢聴猫隆篓 -->
+            <div class="chat-list">
+                <div class="chat-list-header">盲录職猫炉聺氓聢聴猫隆篓</div>
+                <div id="chatItems" class="chat-items">
+                    <!-- 猫聛聤氓陇漏氓聢聴猫隆篓茅隆鹿氓掳聠茅聙職猫驴聡JavaScript氓聤篓忙聙聛忙路禄氓聤聽 -->
+                </div>
+            </div>
+            
+            <!-- 猫聛聤氓陇漏莽陋聴氓聫拢 -->
+            <div class="chat-window">
+                <div class="chat-window-header">
+                    <h3 id="chatTitle">茅聙聣忙聥漏盲录職猫炉聺氓录聙氓搂聥猫聛聤氓陇漏</h3>
+                </div>
+                <div id="chatMessages" class="chat-messages">
+                    <div class="no-chat">
+                        <div class="no-chat-icon">冒聼聮卢</div>
+                        <div class="no-chat-text">忙聹陋茅聙聣忙聥漏盲录職猫炉聺</div>
+                        <div class="no-chat-subtext">猫炉路盲禄聨氓路娄盲戮搂氓聢聴猫隆篓茅聙聣忙聥漏盲赂聙盲赂陋盲录職猫炉聺氓录聙氓搂聥猫聛聤氓陇漏</div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <textarea id="chatInput" class="chat-input" placeholder="猫戮聯氓聟楼忙露聢忙聛炉..." disabled></textarea>
+                    <button id="sendBtn" class="send-btn" disabled>氓聫聭茅聙聛</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- 茅聙職莽聼楼氓庐鹿氓聶篓 -->
+    <div id="notificationContainer" class="notification-container"></div>
+    
+    <!-- 茅聙職盲驴隆忙篓隆氓聺聴 -->
+    <script src="../scripts/lib/connection.js"></script>
+    
+    <!-- 瀹㈡埛绔┞€禄猫戮聭 -->
+    <script src="panel.js"></script>
+    
+    <script>
+        // 氓聢聺氓搂聥氓聦聳氓潞聰莽聰篓
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('JEV氓庐垄忙聹聧莽禄聢莽芦炉氓路虏氓聤聽猫陆陆');
+            
+            // 莽隆庐盲驴聺connection.js氓路虏莽禄聫氓聤聽猫陆陆氓鹿露氓聢聺氓搂聥氓聦聳JEV_CONNECTION
+            if (typeof JEV_CONNECTION === 'undefined') {
+                console.error('猫驴聻忙聨楼忙聹聧氓聤隆忙聹陋氓聤聽猫陆陆');
+                
+                // 氓聢聸氓禄潞莽庐聙氓聦聳莽聣聢猫驴聻忙聨楼忙聹聧氓聤隆盲陆聹盲赂潞氓聬聨氓陇聡
+                window.JEV_CONNECTION = {
+                    initialize: async () => Promise.resolve(),
+                    authenticate: async (license) => {
+                        // 忙篓隆忙聥聼璁よ瘉忙聢聬氓聤聼茂录聢忙录聰莽陇潞莽聰篓茂录聣
+                        return {
+                            success: true,
+                            user: { name: '忙碌聥猫炉聲氓庐垄忙聹聧' }
+                        };
+                    },
+                    disconnect: () => {},
+                    on: () => {},
+                    off: () => {},
+                    emit: () => {}
+                };
+            }
+            
+            // JEVClient盲录職氓聹篓panel.js氓聤聽猫陆陆氓庐聦忙聢聬氓聬聨猫聡陋氓聤篓氓聢聺氓搂聥氓聦聳
+        });
+    </script>
+</body>
+</html>

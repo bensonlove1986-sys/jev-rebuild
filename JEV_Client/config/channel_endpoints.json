@@ -1,0 +1,17 @@
+{
+  "daoJie": {
+    "base_url": "https://app.daojiemarketing.com",
+    "api_key": "DAOJIE_API_KEY"
+  },
+  "facebook": {
+    "page_id": "1234567890",
+    "access_token": "FACEBOOK_ACCESS_TOKEN"
+  },
+  "whatsapp": {
+    "waba_id": "987654321",
+    "token": "WHATSAPP_TOKEN"
+  },
+  "webchat": {
+    "webhook_url": "https://jevshop.workers.dev/chat/inbound"
+  }
+}

@@ -1,0 +1,11 @@
+{
+    "success":  true,
+    "used_fallback":  true,
+    "used_source":  "get-image-by-url(json)",
+    "ingest_source":  "get-image-by-url(json)",
+    "key":  "uploads/2025/11/01/ingest_test.jpg",
+    "bucket":  "jev-images",
+    "content_type":  "image/jpeg",
+    "url":  "https://pub-156ce03fffc59592e2b3b04dbc22aa6c.r2.dev/jev-images/uploads/2025/11/01/ingest_test.jpg",
+    "worker_url":  "https://tupianlujing-local.bensonlove1986.workers.dev/images/uploads%2F2025%2F11%2F01%2Fingest_test.jpg"
+}

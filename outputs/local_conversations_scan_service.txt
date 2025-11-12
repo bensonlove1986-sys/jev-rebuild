@@ -1,0 +1,30 @@
+{
+  "success": false,
+  "conversationIds": [],
+  "items": [],
+  "attempts": [
+    {
+      "url": "https://services.leadconnectorhq.com/conversations?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 404,
+      "ok": false,
+      "body": ""
+    },
+    {
+      "url": "https://services.leadconnectorhq.com/conversations/threads?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10",
+      "status": 401,
+      "ok": false,
+      "body": {
+        "statusCode": 401,
+        "message": "Invalid JWT"
+      }
+    }
+  ],
+  "lastError": {
+    "status": 401,
+    "body": {
+      "statusCode": 401,
+      "message": "Invalid JWT"
+    },
+    "url": "https://services.leadconnectorhq.com/conversations/threads?locationId=3SsfTbU1lmAPpkG9iB6C&contactId=GakCvF3msAuChq2DtER9&contact_id=GakCvF3msAuChq2DtER9&limit=10"
+  }
+}

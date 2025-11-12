@@ -1,0 +1,31 @@
+{
+    "name":  "batch_wiki_svg.json",
+    "url":  "https://upload.wikimedia.org/wikipedia/commons/6/6b/Bitmap_VS_SVG.svg",
+    "status":  200,
+    "ok":  true,
+    "parsed":  {
+                   "success":  true,
+                   "key":  "rehost/2025/10/31/rehost_1761905234441_o3sg1t.png",
+                   "bucket":  "jev-images",
+                   "content_type":  "image/png",
+                   "url":  "https://pub-156ce03fffc59592e2b3b04dbc22aa6c.r2.dev/jev-images/rehost/2025/10/31/rehost_1761905234441_o3sg1t.png",
+                   "worker_url":  "http://127.0.0.1:8787/images/rehost%2F2025%2F10%2F31%2Frehost_1761905234441_o3sg1t.png",
+                   "attempts":  [
+                                    {
+                                        "source":  "cdn",
+                                        "base":  "https://images.weserv.nl/?url=",
+                                        "status":  0,
+                                        "ok":  false,
+                                        "error":  "internal error; reference = h40s0bhlgrbakquchabc94vd"
+                                    },
+                                    {
+                                        "source":  "cdn",
+                                        "base":  "https://wsrv.nl/?url=",
+                                        "status":  200,
+                                        "ok":  true,
+                                        "ct":  "image/png"
+                                    }
+                                ]
+               },
+    "raw":  "{\n  \"success\": true,\n  \"key\": \"rehost/2025/10/31/rehost_1761905234441_o3sg1t.png\",\n  \"bucket\": \"jev-images\",\n  \"content_type\": \"image/png\",\n  \"url\": \"https://pub-156ce03fffc59592e2b3b04dbc22aa6c.r2.dev/jev-images/rehost/2025/10/31/rehost_1761905234441_o3sg1t.png\",\n  \"worker_url\": \"http://127.0.0.1:8787/images/rehost%2F2025%2F10%2F31%2Frehost_1761905234441_o3sg1t.png\",\n  \"attempts\": [\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://images.weserv.nl/?url=\",\n      \"status\": 0,\n      \"ok\": false,\n      \"error\": \"internal error; reference = h40s0bhlgrbakquchabc94vd\"\n    },\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://wsrv.nl/?url=\",\n      \"status\": 200,\n      \"ok\": true,\n      \"ct\": \"image/png\"\n    }\n  ]\n}"
+}

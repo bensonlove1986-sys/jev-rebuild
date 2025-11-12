@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 上传管理器测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .log {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .info {
+            color: #2196F3;
+        }
+        .error {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JEV 上传管理器测试</h1>
+        <p>点击按钮测试上传管理器的各项功能：</p>
+        
+        <div>
+            <button id="init-manager">初始化管理器</button>
+            <button id="test-upload">执行上传测试</button>
+            <button id="show-history">显示上传历史</button>
+            <button id="clear-history">清除上传历史</button>
+        </div>
+        
+        <div class="log" id="log-container">
+            <div class="log-entry info">测试页面就绪</div>
+        </div>
+    </div>
+
+    <script src="jev_upload_manager.js"></script>
+    <script>
+        // 日志功能
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('log-container');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // 初始化管理器按钮
+        document.getElementById('init-manager').addEventListener('click', function() {
+            if (window.JEVUploadManager) {
+                addLog('JEVUploadManager 已初始化', 'success');
+                addLog(`版本控制状态: ${JEVUploadManager.isVersioningActive() ? '激活' : '未激活'}`, 'info');
+                
+                // 检查上传管理器是否正常工作
+                const testResult = JEVUploadManager.testConnection();
+                addLog(`连接测试: ${testResult ? '成功' : '失败'}`, testResult ? 'success' : 'error');
+            } else {
+                addLog('JEVUploadManager 未找到', 'error');
+            }
+        });
+
+        // 执行上传测试按钮
+        document.getElementById('test-upload').addEventListener('click', function() {
+            if (!window.JEVUploadManager) {
+                addLog('JEVUploadManager 未初始化', 'error');
+                return;
+            }
+
+            addLog('开始上传测试...', 'info');
+            
+            // 测试文件列表
+            const testFiles = [
+                {
+                    path: '/ui/test_upload.html',
+                    version: 'v1.0'
+                },
+                {
+                    path: '/modules/test_module.js',
+                    version: 'v1.0'
+                }
+            ];
+
+            // 依次测试上传
+            testFiles.forEach((file, index) => {
+                setTimeout(() => {
+                    addLog(`测试上传: ${file.path} (${file.version})`, 'info');
+                    const result = JEVUploadManager.uploadFile(file.path, file.version);
+                    
+                    if (result) {
+                        addLog(`上传成功: ${result.file}`, 'success');
+                        addLog(`返回数据: ${JSON.stringify(result)}`, 'info');
+                    } else {
+                        addLog(`上传失败: ${file.path}`, 'error');
+                    }
+                }, index * 1000);
+            });
+        });
+
+        // 显示上传历史按钮
+        document.getElementById('show-history').addEventListener('click', function() {
+            if (!window.JEVUploadManager) {
+                addLog('JEVUploadManager 未初始化', 'error');
+                return;
+            }
+
+            const history = JEVUploadManager.getUploadHistory();
+            addLog(`上传历史记录数: ${history.length}`, 'info');
+            
+            if (history.length > 0) {
+                history.forEach((entry, index) => {
+                    addLog(`记录 ${index + 1}: ${entry.file} (${entry.version})`, 'info');
+                });
+            } else {
+                addLog('暂无上传历史', 'info');
+            }
+        });
+
+        // 清除上传历史按钮
+        document.getElementById('clear-history').addEventListener('click', function() {
+            if (window.JEVUploadManager) {
+                JEVUploadManager.clearUploadHistory();
+                addLog('上传历史已清除', 'success');
+            }
+        });
+
+        // 页面加载完成自动初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            addLog('页面加载完成，等待管理器初始化...', 'info');
+            
+            setTimeout(() => {
+                if (window.JEVUploadManager) {
+                    addLog('JEVUploadManager 自动检测成功', 'success');
+                    addLog(`版本控制状态: ${JEVUploadManager.isVersioningActive() ? '激活' : '未激活'}`, 'info');
+                } else {
+                    addLog('JEVUploadManager 未自动检测到，请点击初始化按钮', 'error');
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

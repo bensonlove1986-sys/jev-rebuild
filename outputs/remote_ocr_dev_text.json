@@ -1,0 +1,40 @@
+{
+    "success":  true,
+    "count":  0,
+    "items":  [
+
+              ],
+    "raw":  {
+                "responses":  [
+                                  {
+                                      "error":  {
+                                                    "code":  3,
+                                                    "message":  "The URL does not appear to be accessible by us. Please double check or download the content and pass it in."
+                                                }
+                                  }
+                              ]
+            },
+    "raw_preview":  [
+
+                    ],
+    "feature":  "TEXT_DETECTION",
+    "imageUrl":  "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Hello_World_%28film%29.png/640px-Hello_World_%28film%29.png",
+    "mode":  "uri",
+    "fetch_attempts":  [
+                           {
+                               "source":  "direct",
+                               "status":  403,
+                               "ok":  false
+                           },
+                           {
+                               "source":  "images.weserv.nl",
+                               "status":  404,
+                               "ok":  false
+                           },
+                           {
+                               "source":  "wsrv.nl",
+                               "status":  404,
+                               "ok":  false
+                           }
+                       ]
+}

@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外部记忆模块闭环测试系统</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .controls {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+        .btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-secondary {
+            background: #ed8936;
+        }
+        .btn-secondary:hover {
+            background: #dd6b20;
+        }
+        .btn-danger {
+            background: #e53e3e;
+        }
+        .btn-danger:hover {
+            background: #c53030;
+        }
+        .btn-success {
+            background: #38a169;
+        }
+        .btn-success:hover {
+            background: #2f855a;
+        }
+        .results {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .results pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .status {
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        .status-error {
+            background: #fed7d7;
+            color: #c53030;
+        }
+        .status-warning {
+            background: #fffaf0;
+            color: #c05621;
+        }
+        .status-info {
+            background: #bee3f8;
+            color: #2b6cb0;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .test-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .key-value-input {
+            margin: 15px 0;
+        }
+        .key-value-input input {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            width: 250px;
+        }
+        .test-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .test-card {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .test-card h3 {
+            margin: 0 0 10px 0;
+            color: #2d3748;
+            font-size: 1.1em;
+        }
+        .test-pass {
+            border-left-color: #38a169;
+        }
+        .test-fail {
+            border-left-color: #e53e3e;
+        }
+        .metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric-item {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .metric-label {
+            font-size: 0.9em;
+            color: #4a5568;
+        }
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            .btn {
+                display: block;
+                width: 100%;
+                margin: 5px 0;
+            }
+            .key-value-input input {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>外部记忆模块闭环测试系统</h1>
+        <p>测试 JEV.externalMemory ↔ Worker ↔ Cloudflare KV 的完整交互流程</p>
+    </div>
+
+    <div class="metrics">
+        <div class="metric-item">
+            <div class="metric-label">JEV 版本</div>
+            <div class="metric-value" id="jev-version">加载中...</div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-label">服务状态</div>
+            <div class="metric-value" id="service-status">未知</div>
+        </div>
+        <div class="metric-item">
+            <div class="metric-label">测试通过率</div>
+            <div class="metric-value" id="pass-rate">0%</div>
+        </div>
+    </div>
+
+    <!-- 基本操作测试 -->
+    <div class="test-section">
+        <h2>🔧 基本操作测试</h2>
+        <div class="controls">
+            <div class="key-value-input">
+                <input type="text" id="test-key" placeholder="测试键名" value="test_hello">
+                <input type="text" id="test-value" placeholder="测试值（JSON格式）" value="{\"message\": \"Hello World!\"}">
+            </div>
+            <button class="btn" onclick="testSet()">1. 测试存储 (set)</button>
+            <button class="btn" onclick="testGet()">2. 测试获取 (get)</button>
+            <button class="btn btn-secondary" onclick="testList()">3. 测试列表 (list)</button>
+            <button class="btn btn-danger" onclick="testDelete()">4. 测试删除 (delete)</button>
+            <button class="btn btn-success" onclick="testAllBasic()">📋 运行所有基本测试</button>
+        </div>
+    </div>
+
+    <!-- 批量操作测试 -->
+    <div class="test-section">
+        <h2>📦 批量操作测试</h2>
+        <div class="controls">
+            <button class="btn" onclick="testBatchSet()">批量存储 (batchSet)</button>
+            <button class="btn" onclick="testBatchGet()">批量获取 (batchGet)</button>
+            <button class="btn btn-danger" onclick="testBatchDel()">批量删除 (batchDel)</button>
+        </div>
+    </div>
+
+    <!-- 高级测试 -->
+    <div class="test-section">
+        <h2>⚡ 高级稳定性测试</h2>
+        <div class="controls">
+            <button class="btn btn-secondary" onclick="testHealth()">健康检查</button>
+            <button class="btn btn-secondary" onclick="testConfig()">配置测试</button>
+            <button class="btn btn-secondary" onclick="testConsistency()">数据一致性</button>
+            <button class="btn btn-secondary" onclick="testResilience()">恢复能力</button>
+            <button class="btn btn-danger" onclick="testStress()">压力测试</button>
+        </div>
+    </div>
+
+    <!-- 完整集成测试 -->
+    <div class="test-section">
+        <h2>🚀 完整集成测试</h2>
+        <div class="controls">
+            <button class="btn btn-success" id="run-integration" onclick="runFullIntegrationTest()">
+                🏁 运行完整闭环测试
+            </button>
+            <span id="test-status" class="status status-info">准备就绪</span>
+        </div>
+    </div>
+
+    <!-- 测试结果 -->
+    <div class="test-section">
+        <h2>📊 测试结果</h2>
+        <div class="test-results" id="test-results"></div>
+    </div>
+
+    <!-- 详细日志 -->
+    <div class="test-section">
+        <h2>📝 详细日志</h2>
+        <div class="results">
+            <pre id="log-output">正在初始化测试环境...</pre>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let batchTestKeys = [];
+        let testResults = {};
+        let passedTests = 0;
+        let totalTests = 0;
+        
+        // 日志函数
+        function log(message) {
+            const timestamp = new Date().toISOString();
+            const logLine = `[${timestamp}] ${message}\n`;
+            document.getElementById('log-output').textContent += logLine;
+            console.log(`[测试] ${message}`);
+            
+            // 自动滚动到底部
+            const logElement = document.getElementById('log-output');
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        // 更新测试结果卡片
+        function updateTestResult(testName, success, details = '') {
+            testResults[testName] = { success, details };
+            
+            // 统计
+            totalTests = Object.keys(testResults).length;
+            passedTests = Object.values(testResults).filter(r => r.success).length;
+            
+            // 更新通过率
+            const passRate = Math.round((passedTests / totalTests) * 100);
+            document.getElementById('pass-rate').textContent = `${passRate}%`;
+            
+            // 更新测试结果界面
+            const resultsContainer = document.getElementById('test-results');
+            resultsContainer.innerHTML = '';
+            
+            for (const [name, result] of Object.entries(testResults)) {
+                const card = document.createElement('div');
+                card.className = `test-card ${result.success ? 'test-pass' : 'test-fail'}`;
+                
+                const statusIcon = result.success ? '✅' : '❌';
+                const statusText = result.success ? '通过' : '失败';
+                
+                card.innerHTML = `
+                    <h3>${statusIcon} ${name}</h3>
+                    <div class="status ${result.success ? 'status-success' : 'status-error'}">
+                        ${statusText}
+                    </div>
+                    ${result.details ? `<div style="margin-top: 10px; font-size: 0.9em; color: #4a5568;">${result.details}</div>` : ''}
+                `;
+                
+                resultsContainer.appendChild(card);
+            }
+        }
+        
+        // 设置测试状态
+        function setTestStatus(message, isSuccess = false, isError = false) {
+            const statusElement = document.getElementById('test-status');
+            statusElement.textContent = message;
+            
+            // 重置类名
+            statusElement.className = 'status';
+            
+            if (isSuccess) {
+                statusElement.classList.add('status-success');
+            } else if (isError) {
+                statusElement.classList.add('status-error');
+            } else {
+                statusElement.classList.add('status-info');
+            }
+        }
+        
+        // 禁用/启用按钮
+        function setButtonsDisabled(disabled) {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.disabled = disabled;
+            });
+        }
+        
+        // 等待JEV加载
+        async function waitForJEV() {
+            log('等待JEV模块加载...');
+            
+            return new Promise((resolve, reject) => {
+                const checkInterval = setInterval(() => {
+                    if (window.JEV && window.JEV.externalMemory) {
+                        clearInterval(checkInterval);
+                        log('✅ JEV模块加载成功');
+                        resolve(window.JEV);
+                    }
+                }, 100);
+                
+                setTimeout(() => {
+                    clearInterval(checkInterval);
+                    const error = '❌ JEV模块加载超时';
+                    log(error);
+                    reject(new Error(error));
+                }, 15000);
+            });
+        }
+        
+        // 初始化测试环境
+        async function initTestEnvironment() {
+            try {
+                log('初始化测试环境...');
+                
+                // 等待JEV加载
+                const JEV = await waitForJEV();
+                
+                // 更新JEV版本信息
+                document.getElementById('jev-version').textContent = JEV.version || '未知';
+                
+                // 执行健康检查
+                log('执行初始健康检查...');
+                const healthStatus = await JEV.externalMemory.healthCheck();
+                const statusElement = document.getElementById('service-status');
+                
+                if (healthStatus) {
+                    statusElement.textContent = '✅ 在线';
+                    statusElement.style.color = '#38a169';
+                    setTestStatus('服务正常，准备开始测试');
+                } else {
+                    statusElement.textContent = '❌ 离线';
+                    statusElement.style.color = '#e53e3e';
+                    setTestStatus('服务不可用', false, true);
+                }
+                
+                // 配置默认参数
+                JEV.externalMemory.configure({
+                    timeout: 10000,
+                    maxRetries: 3,
+                    retryDelay: 1000
+                });
+                
+                log('测试环境初始化完成');
+                return JEV;
+                
+            } catch (error) {
+                log(`初始化失败: ${error.message}`);
+                setTestStatus('初始化失败', false, true);
+                throw error;
+            }
+        }
+        
+        // 基本操作测试函数
+        async function testSet() {
+            try {
+                const JEV = window.JEV;
+                const key = document.getElementById('test-key').value;
+                const valueInput = document.getElementById('test-value').value;
+                
+                log(`开始测试存储操作 - 键: ${key}`);
+                
+                let value;
+                try {
+                    value = JSON.parse(valueInput);
+                } catch (e) {
+                    throw new Error(`值格式错误: ${e.message}`);
+                }
+                
+                await JEV.externalMemory.set(key, value);
+                log(`✅ 存储成功 - 键: ${key}`);
+                updateTestResult('存储测试', true, `键: ${key}`);
+                setTestStatus('存储成功', true);
+                
+            } catch (error) {
+                log(`❌ 存储失败: ${error.message}`);
+                updateTestResult('存储测试', false, error.message);
+                setTestStatus('存储失败', false, true);
+            }
+        }
+        
+        async function testGet() {
+            try {
+                const JEV = window.JEV;
+                const key = document.getElementById('test-key').value;
+                
+                log(`开始测试获取操作 - 键: ${key}`);
+                const result = await JEV.externalMemory.get(key);
+                
+                log(`✅ 获取成功 - 键: ${key}, 值: ${JSON.stringify(result)}`);
+                updateTestResult('获取测试', true, `键: ${key}, 值大小: ${JSON.stringify(result).length} 字符`);
+                setTestStatus('获取成功', true);
+                
+            } catch (error) {
+                log(`❌ 获取失败: ${error.message}`);
+                updateTestResult('获取测试', false, error.message);
+                setTestStatus('获取失败', false, true);
+            }
+        }
+        
+        async function testList() {
+            try {
+                const JEV = window.JEV;
+                
+                log('开始测试列表操作');
+                const keys = await JEV.externalMemory.list();
+                
+                log(`✅ 列表获取成功 - 共 ${keys.length} 个键`);
+                updateTestResult('列表测试', true, `共 ${keys.length} 个键`);
+                setTestStatus('列表获取成功', true);
+                
+            } catch (error) {
+                log(`❌ 列表获取失败: ${error.message}`);
+                updateTestResult('列表测试', false, error.message);
+                setTestStatus('列表获取失败', false, true);
+            }
+        }
+        
+        async function testDelete() {
+            try {
+                const JEV = window.JEV;
+                const key = document.getElementById('test-key').value;
+                
+                log(`开始测试删除操作 - 键: ${key}`);
+                await JEV.externalMemory.delete(key);
+                
+                log(`✅ 删除成功 - 键: ${key}`);
+                
+                // 验证删除
+                const check = await JEV.externalMemory.get(key);
+                if (check === null) {
+                    log(`✅ 删除验证成功 - 键: ${key} 已不存在`);
+                    updateTestResult('删除测试', true, `键: ${key}`);
+                    setTestStatus('删除成功', true);
+                } else {
+                    log(`❌ 删除验证失败 - 键: ${key} 仍然存在`);
+                    updateTestResult('删除测试', false, '删除后仍然可以获取到数据');
+                    setTestStatus('删除验证失败', false, true);
+                }
+                
+            } catch (error) {
+                log(`❌ 删除失败: ${error.message}`);
+                updateTestResult('删除测试', false, error.message);
+                setTestStatus('删除失败', false, true);
+            }
+        }
+        
+        // 运行所有基本测试
+        async function testAllBasic() {
+            try {
+                setButtonsDisabled(true);
+                setTestStatus('正在运行基本测试...');
+                
+                log('开始运行所有基本测试...');
+                
+                // 生成唯一测试键
+                const uniqueKey = `test_basic_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                const testValue = { test: true, timestamp: Date.now(), random: Math.random() };
+                
+                // 存储
+                await window.JEV.externalMemory.set(uniqueKey, testValue);
+                log(`✅ 基本存储测试通过`);
+                
+                // 获取并验证
+                const retrievedValue = await window.JEV.externalMemory.get(uniqueKey);
+                const isEqual = JSON.stringify(retrievedValue) === JSON.stringify(testValue);
+                
+                if (isEqual) {
+                    log(`✅ 基本获取测试通过`);
+                } else {
+                    throw new Error('获取的数据与存储的数据不一致');
+                }
+                
+                // 列表验证
+                const keys = await window.JEV.externalMemory.list();
+                if (keys.includes(uniqueKey)) {
+                    log(`✅ 列表验证通过`);
+                } else {
+                    throw new Error('键不在列表中');
+                }
+                
+                // 删除
+                await window.JEV.externalMemory.delete(uniqueKey);
+                log(`✅ 基本删除测试通过`);
+                
+                // 删除验证
+                const deletedCheck = await window.JEV.externalMemory.get(uniqueKey);
+                if (deletedCheck === null) {
+                    log(`✅ 删除验证通过`);
+                } else {
+                    throw new Error('删除后仍然可以获取到数据');
+                }
+                
+                updateTestResult('基本操作全流程', true, '所有基本操作测试通过');
+                setTestStatus('基本测试全部通过', true);
+                
+            } catch (error) {
+                log(`❌ 基本测试失败: ${error.message}`);
+                updateTestResult('基本操作全流程', false, error.message);
+                setTestStatus('基本测试失败', false, true);
+            } finally {
+                setButtonsDisabled(false);
+            }
+        }
+        
+        // 批量操作测试
+        async function testBatchSet() {
+            try {
+                const JEV = window.JEV;
+                
+                // 生成测试数据
+                const testId = `batch_test_${Date.now()}`;
+                const batchData = {};
+                batchTestKeys = [];
+                
+                for (let i = 0; i < 5; i++) {
+                    const key = `${testId}_${i}`;
+                    batchTestKeys.push(key);
+                    batchData[key] = { batch: testId, index: i, timestamp: Date.now() };
+                }
+                
+                log(`开始批量存储测试 - ${batchTestKeys.length} 条数据`);
+                const results = await JEV.externalMemory.batchSet(batchData);
+                
+                log(`✅ 批量存储成功 - ${Object.keys(results).length} 条数据`);
+                updateTestResult('批量存储', true, `${batchTestKeys.length} 条数据`);
+                setTestStatus('批量存储成功', true);
+                
+            } catch (error) {
+                log(`❌ 批量存储失败: ${error.message}`);
+                updateTestResult('批量存储', false, error.message);
+                setTestStatus('批量存储失败', false, true);
+            }
+        }
+        
+        async function testBatchGet() {
+            try {
+                const JEV = window.JEV;
+                
+                if (batchTestKeys.length === 0) {
+                    throw new Error('请先运行批量存储测试');
+                }
+                
+                log(`开始批量获取测试 - ${batchTestKeys.length} 条数据`);
+                const results = await JEV.externalMemory.batchGet(batchTestKeys);
+                
+                const validCount = Object.values(results).filter(v => v !== null).length;
+                log(`✅ 批量获取成功 - 有效数据: ${validCount}/${batchTestKeys.length}`);
+                updateTestResult('批量获取', true, `有效: ${validCount}/${batchTestKeys.length}`);
+                setTestStatus('批量获取成功', true);
+                
+            } catch (error) {
+                log(`❌ 批量获取失败: ${error.message}`);
+                updateTestResult('批量获取', false, error.message);
+                setTestStatus('批量获取失败', false, true);
+            }
+        }
+        
+        async function testBatchDel() {
+            try {
+                const JEV = window.JEV;
+                
+                if (batchTestKeys.length === 0) {
+                    throw new Error('请先运行批量存储测试');
+                }
+                
+                log(`开始批量删除测试 - ${batchTestKeys.length} 条数据`);
+                const results = await JEV.externalMemory.batchDel(batchTestKeys);
+                
+                log(`✅ 批量删除成功 - ${Object.keys(results).length} 条数据`);
+                updateTestResult('批量删除', true, `${batchTestKeys.length} 条数据`);
+                setTestStatus('批量删除成功', true);
+                
+                // 清空测试键列表
+                batchTestKeys = [];
+                
+            } catch (error) {
+                log(`❌ 批量删除失败: ${error.message}`);
+                updateTestResult('批量删除', false, error.message);
+                setTestStatus('批量删除失败', false, true);
+            }
+        }
+        
+        // 高级测试
+        async function testHealth() {
+            try {
+                const JEV = window.JEV;
+                
+                log('开始健康检查测试');
+                const status = await JEV.externalMemory.healthCheck();
+                
+                log(`✅ 健康检查完成 - 状态: ${status ? '服务可用' : '服务不可用'}`);
+                updateTestResult('健康检查', status, status ? '服务正常' : '服务不可用');
+                setTestStatus(status ? '服务正常' : '服务不可用', status, !status);
+                
+            } catch (error) {
+                log(`❌ 健康检查失败: ${error.message}`);
+                updateTestResult('健康检查', false, error.message);
+                setTestStatus('健康检查失败', false, true);
+            }
+        }
+        
+        async function testConfig() {
+            try {
+                const JEV = window.JEV;
+                
+                log('开始配置测试');
+                
+                // 临时配置
+                JEV.externalMemory.configure({
+                    timeout: 8000,
+                    maxRetries: 2
+                });
+                
+                log(`✅ 配置测试成功 - 已设置超时: 8000ms, 重试: 2次`);
+                
+                // 恢复默认配置
+                JEV.externalMemory.configure({
+                    timeout: 10000,
+                    maxRetries: 3
+                });
+                
+                updateTestResult('配置测试', true, '配置更新成功');
+                setTestStatus('配置测试成功', true);
+                
+            } catch (error) {
+                log(`❌ 配置测试失败: ${error.message}`);
+                updateTestResult('配置测试', false, error.message);
+                setTestStatus('配置测试失败', false, true);
+            }
+        }
+        
+        async function testConsistency() {
+            try {
+                const JEV = window.JEV;
+                const testKey = `consistency_test_${Date.now()}`;
+                
+                // 复杂数据结构
+                const complexData = {
+                    string: '这是一个测试字符串',
+                    number: Math.PI,
+                    boolean: true,
+                    null: null,
+                    array: [1, 2, 3, 'test', { nested: 'value' }],
+                    object: {
+                        level1: {
+                            level2: {
+                                level3: 'deep value'
+                            }
+                        }
+                    },
+                    date: new Date().toISOString()
+                };
+                
+                log('开始数据一致性测试');
+                
+                // 存储数据
+                await JEV.externalMemory.set(testKey, complexData);
+                
+                // 多次获取验证
+                let consistent = true;
+                for (let i = 0; i < 3; i++) {
+                    const retrieved = await JEV.externalMemory.get(testKey);
+                    const isEqual = JSON.stringify(retrieved) === JSON.stringify(complexData);
+                    
+                    log(`验证#${i+1}: ${isEqual ? '一致' : '不一致'}`);
+                    if (!isEqual) {
+                        consistent = false;
+                    }
+                }
+                
+                // 清理
+                await JEV.externalMemory.delete(testKey);
+                
+                if (consistent) {
+                    log(`✅ 数据一致性测试通过`);
+                    updateTestResult('数据一致性', true, '3次验证全部一致');
+                    setTestStatus('数据一致性测试通过', true);
+                } else {
+                    log(`❌ 数据一致性测试失败`);
+                    updateTestResult('数据一致性', false, '数据不一致');
+                    setTestStatus('数据一致性测试失败', false, true);
+                }
+                
+            } catch (error) {
+                log(`❌ 数据一致性测试失败: ${error.message}`);
+                updateTestResult('数据一致性', false, error.message);
+                setTestStatus('数据一致性测试失败', false, true);
+            }
+        }
+        
+        async function testResilience() {
+            try {
+                const JEV = window.JEV;
+                const testKey = `resilience_test_${Date.now()}`;
+                
+                log('开始恢复能力测试');
+                
+                // 设置基准值
+                await JEV.externalMemory.set(testKey, { base: true, timestamp: Date.now() });
+                
+                // 临时降低超时以模拟网络不稳定
+                JEV.externalMemory.configure({ timeout: 1000 });
+                log('已临时降低超时时间以测试恢复能力');
+                
+                // 模拟多次快速操作
+                const promises = [];
+                for (let i = 0; i < 5; i++) {
+                    promises.push(
+                        JEV.externalMemory.set(`${testKey}_quick_${i}`, { quick: true, index: i })
+                            .catch(err => log(`快速操作${i}失败（预期可能发生）: ${err.message}`))
+                    );
+                }
+                
+                await Promise.all(promises);
+                
+                // 恢复正常配置
+                JEV.externalMemory.configure({ timeout: 10000 });
+                log('已恢复正常配置');
+                
+                // 验证系统仍然可用
+                const testData = await JEV.externalMemory.get(testKey);
+                
+                if (testData && testData.base === true) {
+                    log(`✅ 恢复能力测试通过 - 系统成功恢复`);
+                    updateTestResult('恢复能力', true, '系统从网络波动中成功恢复');
+                    setTestStatus('恢复能力测试通过', true);
+                } else {
+                    log(`❌ 恢复能力测试失败 - 系统未能正常恢复`);
+                    updateTestResult('恢复能力', false, '系统未能恢复');
+                    setTestStatus('恢复能力测试失败', false, true);
+                }
+                
+                // 清理
+                await JEV.externalMemory.delete(testKey);
+                for (let i = 0; i < 5; i++) {
+                    await JEV.externalMemory.delete(`${testKey}_quick_${i}`).catch(() => {});
+                }
+                
+            } catch (error) {
+                log(`❌ 恢复能力测试失败: ${error.message}`);
+                updateTestResult('恢复能力', false, error.message);
+                setTestStatus('恢复能力测试失败', false, true);
+            }
+        }
+        
+        async function testStress() {
+            try {
+                const JEV = window.JEV;
+                const testId = `stress_test_${Date.now()}`;
+                const iterations = 20;
+                const concurrency = 4;
+                
+                log(`开始压力测试 - ${iterations}次操作，${concurrency}个并发`);
+                
+                const batchSize = Math.ceil(iterations / concurrency);
+                const allPromises = [];
+                const startTime = performance.now();
+                
+                // 并发执行
+                for (let batch = 0; batch < concurrency; batch++) {
+                    const batchPromises = [];
+                    
+                    for (let i = 0; i < batchSize && (batch * batchSize + i) < iterations; i++) {
+                        const index = batch * batchSize + i;
+                        const key = `${testId}_${index}`;
+                        
+                        // 混合操作类型
+                        const opType = index % 3;
+                        if (opType === 0) {
+                            batchPromises.push(
+                                JEV.externalMemory.set(key, { op: 'set', index })
+                                    .catch(err => ({ success: false, type: 'set', index, error: err.message }))
+                            );
+                        } else if (opType === 1) {
+                            batchPromises.push(
+                                JEV.externalMemory.get(key)
+                                    .catch(err => ({ success: false, type: 'get', index, error: err.message }))
+                            );
+                        } else {
+                            batchPromises.push(
+                                JEV.externalMemory.set(key, { op: 'setdel', index })
+                                    .then(() => JEV.externalMemory.delete(key))
+                                    .catch(err => ({ success: false, type: 'setdel', index, error: err.message }))
+                            );
+                        }
+                    }
+                    
+                    allPromises.push(Promise.all(batchPromises));
+                }
+                
+                const results = await Promise.all(allPromises);
+                const flattenedResults = results.flat();
+                const endTime = performance.now();
+                
+                // 统计成功次数
+                const successful = flattenedResults.filter(r => r === undefined || r.success !== false).length;
+                const successRate = Math.round((successful / iterations) * 100);
+                const duration = (endTime - startTime).toFixed(2);
+                
+                log(`✅ 压力测试完成 - 成功: ${successful}/${iterations} (${successRate}%), 耗时: ${duration}ms`);
+                
+                // 清理 - 只清理存在的键
+                for (let i = 0; i < iterations; i++) {
+                    const key = `${testId}_${i}`;
+                    await JEV.externalMemory.delete(key).catch(() => {});
+                }
+                
+                const passed = successRate >= 80; // 允许20%的失败率
+                updateTestResult('压力测试', passed, `${successRate}% 成功率, ${duration}ms`);
+                setTestStatus(`压力测试${passed ? '通过' : '失败'} - ${successRate}% 成功率`, passed, !passed);
+                
+            } catch (error) {
+                log(`❌ 压力测试失败: ${error.message}`);
+                updateTestResult('压力测试', false, error.message);
+                setTestStatus('压力测试失败', false, true);
+            }
+        }
+        
+        // 运行完整集成测试
+        async function runFullIntegrationTest() {
+            try {
+                setButtonsDisabled(true);
+                setTestStatus('正在运行完整集成测试...');
+                
+                log('========== 开始完整闭环集成测试 ==========');
+                
+                // 调用JEV集成测试
+                if (window.JEV && window.JEV.externalMemory && window.JEV.externalMemory.test) {
+                    log('调用JEV.externalMemory.test.runIntegration()');
+                    const results = await window.JEV.externalMemory.test.runIntegration();
+                    
+                    log(`集成测试结果: ${results.success ? '成功' : '失败'}`);
+                    log(`测试总结: ${results.summary}`);
+                    
+                    // 更新测试结果
+                    if (results.success) {
+                        updateTestResult('完整集成测试', true, results.summary);
+                        setTestStatus('完整集成测试通过', true);
+                    } else {
+                        updateTestResult('完整集成测试', false, results.error || results.summary);
+                        setTestStatus('完整集成测试失败', false, true);
+                    }
+                    
+                } else {
+                    // 如果JEV中没有集成测试，运行本地实现的测试
+                    log('JEV中没有集成测试，运行本地测试套件');
+                    
+                    // 运行所有测试
+                    await testHealth();
+                    await testConfig();
+                    await testAllBasic();
+                    await testBatchSet();
+                    await testBatchGet();
+                    await testBatchDel();
+                    await testConsistency();
+                    await testResilience();
+                    await testStress();
+                    
+                    // 计算总体结果
+                    const overallPassed = passedTests === totalTests;
+                    log(`总体测试结果: ${overallPassed ? '全部通过' : '部分失败'}`);
+                    setTestStatus(overallPassed ? '所有测试通过' : '部分测试失败', overallPassed, !overallPassed);
+                }
+                
+                log('========== 集成测试结束 ==========');
+                
+            } catch (error) {
+                log(`❌ 集成测试失败: ${error.message}`);
+                updateTestResult('完整集成测试', false, error.message);
+                setTestStatus('集成测试失败', false, true);
+            } finally {
+                setButtonsDisabled(false);
+            }
+        }
+        
+        // 页面加载时初始化
+        window.onload = async function() {
+            log('页面加载完成，准备初始化测试环境...');
+            
+            try {
+                // 初始化测试环境
+                await initTestEnvironment();
+                
+                // 自动运行健康检查
+                setTimeout(() => {
+                    testHealth();
+                }, 1000);
+                
+            } catch (error) {
+                log(`初始化失败: ${error.message}`);
+            }
+        };
+    </script>
+</body>
+</html>

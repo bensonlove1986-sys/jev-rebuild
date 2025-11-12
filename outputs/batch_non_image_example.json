@@ -1,0 +1,20 @@
+{
+    "name":  "batch_non_image_example.json",
+    "url":  "https://example.com/",
+    "status":  415,
+    "ok":  false,
+    "parsed":  {
+                   "success":  false,
+                   "error":  "非图片内容",
+                   "ct":  "text/html",
+                   "attempts":  [
+                                    {
+                                        "source":  "direct",
+                                        "status":  200,
+                                        "ok":  true,
+                                        "ct":  "text/html"
+                                    }
+                                ]
+               },
+    "raw":  "{\n  \"success\": false,\n  \"error\": \"非图片内容\",\n  \"ct\": \"text/html\",\n  \"attempts\": [\n    {\n      \"source\": \"direct\",\n      \"status\": 200,\n      \"ok\": true,\n      \"ct\": \"text/html\"\n    }\n  ]\n}"
+}

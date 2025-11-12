@@ -1,0 +1,117 @@
+{
+  "worker_url": "https://jevshop.bensonlove1986.workers.dev",
+  "modules_endpoint": "/modules",
+  "execute_endpoint": "/execute",
+  "last_sync": "2025-11-06T21:16:59.929977",
+  "app": {
+    "name": "JEV 插件整合系统",
+    "version": "1.0.0",
+    "buildNumber": "2024051201",
+    "environment": "production",
+    "description": "PDF转网页 JEV插件整合项目 - 阶段四",
+    "author": "JEV开发团队",
+    "lastUpdated": "2024-05-12T00:00:00Z",
+    "releaseNotes": "系统集成与部署阶段完成，包含BOLO地址提取、OCR识别、翻译引擎、AI对话系统"
+  },
+  "modules": {
+    "boloExtractor": {
+      "enabled": true,
+      "version": "1.0.0",
+      "endpoint": "/api/bolo/extract",
+      "timeout": 10000,
+      "maxRetries": 3
+    },
+    "ocrEngine": {
+      "enabled": true,
+      "version": "1.0.0",
+      "endpoint": "/api/ocr/recognize",
+      "timeout": 15000,
+      "maxRetries": 2,
+      "supportedFormats": ["pdf", "jpg", "png", "tiff"]
+    },
+    "translationEngine": {
+      "enabled": true,
+      "version": "1.0.0",
+      "endpoint": "/api/translate/text",
+      "timeout": 8000,
+      "maxRetries": 3,
+      "defaultTargetLanguage": "zh-CN",
+      "supportedLanguages": ["en", "zh-CN", "zh-TW", "ja", "ko", "fr", "de", "es"]
+    },
+    "aiDialogSystem": {
+      "enabled": true,
+      "version": "1.0.0",
+      "endpoint": "/api/ai/dialog",
+      "timeout": 20000,
+      "maxRetries": 2
+    }
+  },
+  "cloudSync": {
+    "enabled": true,
+    "provider": "jev-cloud",
+    "syncInterval": 300000,
+    "syncOnStart": true,
+    "syncOnExit": false,
+    "syncOnSave": true,
+    "backupEnabled": true,
+    "backupInterval": 86400000,
+    "backupRetentionCount": 7,
+    "conflictResolution": "server_wins",
+    "encryption": {
+      "enabled": true,
+      "algorithm": "AES-256-GCM",
+      "keyDerivation": "PBKDF2",
+      "iterations": 100000
+    },
+    "excludedFiles": [
+      "*.tmp",
+      "*.log",
+      "node_modules/**",
+      ".git/**",
+      "*.bak"
+    ],
+    "includedDirectories": [
+      "./modules",
+      "./configs",
+      "./assets"
+    ]
+  },
+  "versionControl": {
+    "enabled": true,
+    "autoCommit": true,
+    "commitMessageTemplate": "自动提交: {timestamp} - {changes}",
+    "tagFormat": "v{version}-{buildNumber}",
+    "maxCommitHistory": 100,
+    "diffThreshold": 5,
+    "rollbackEnabled": true,
+    "maxRollbackPoints": 5,
+    "rollbackInterval": 3600000,
+    "metadata": {
+      "projectId": "jev-pdf-to-web",
+      "teamId": "jev-team-001",
+      "repositoryUrl": "jev-cloud://repo/jev-pdf-to-web"
+    }
+  },
+  "logging": {
+    "enabled": true,
+    "level": "info",
+    "consoleEnabled": true,
+    "fileEnabled": true,
+    "filePath": "./logs/jev-system.log",
+    "maxFileSize": 10485760,
+    "maxFiles": 5,
+    "rotationInterval": 86400000,
+    "compressOldLogs": true,
+    "captureErrors": true,
+    "captureWarnings": true,
+    "captureInfo": true,
+    "captureDebug": false,
+    "sanitizeSensitiveData": true,
+    "sensitivePatterns": [
+      "api[_-]?key",
+      "password",
+      "secret",
+      "token"
+    ]
+  }
+}

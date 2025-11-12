@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV系统 - 用户注册</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* 玻璃拟态效果容器 */
+        .register-container {
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            color: #ffffff;
+        }
+        
+        .register-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .register-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #4CAF50;
+            margin-bottom: 8px;
+        }
+        
+        .register-subtitle {
+            font-size: 1rem;
+            color: #cccccc;
+            opacity: 0.8;
+        }
+        
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+        
+        .form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        .form-input:focus {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        
+        .form-input::placeholder {
+            color: #888;
+        }
+        
+        .register-button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+        
+        .register-button:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+        }
+        
+        .register-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* 加载动画 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(76, 175, 80, 0.3);
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #4CAF50;
+            margin-top: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        /* 成功消息 */
+        .success-message {
+            text-align: center;
+            padding: 20px;
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 8px;
+            margin-top: 16px;
+            display: none;
+        }
+        
+        .success-icon {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-bottom: 12px;
+        }
+        
+        .success-text {
+            font-size: 1.1rem;
+            color: #4CAF50;
+            font-weight: 500;
+        }
+        
+        .success-subtext {
+            font-size: 0.9rem;
+            color: #cccccc;
+            margin-top: 8px;
+        }
+        
+        /* 错误消息 */
+        .error-message {
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #F44336;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+        
+        /* 关闭按钮 */
+        .close-button {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #cccccc;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .register-container {
+                margin: 20px;
+                padding: 24px;
+            }
+            
+            .register-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <button class="close-button" onclick="window.parent.closeRegisterWindow()">&times;</button>
+        
+        <div class="register-header">
+            <h1 class="register-title">JEV 系统注册</h1>
+            <p class="register-subtitle">创建您的账户以访问完整功能</p>
+        </div>
+        
+        <div id="error-message" class="error-message"></div>
+        
+        <form id="register-form" class="register-form" onsubmit="return false;">
+            <div class="form-group">
+                <label for="username" class="form-label">用户名</label>
+                <input type="text" id="username" class="form-input" placeholder="请输入用户名" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="form-label">邮箱</label>
+                <input type="email" id="email" class="form-input" placeholder="请输入邮箱地址" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">密码</label>
+                <input type="password" id="password" class="form-input" placeholder="请设置密码" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="inviteCode" class="form-label">邀请码</label>
+                <input type="text" id="inviteCode" class="form-input" placeholder="请输入邀请码" required>
+            </div>
+            
+            <button type="submit" id="register-button" class="register-button">注册</button>
+        </form>
+        
+        <div id="success-message" class="success-message">
+            <div class="success-icon">✅</div>
+            <div class="success-text">注册成功！</div>
+            <div class="success-subtext">正在同步系统状态...</div>
+        </div>
+    </div>
+    
+    <div id="loading-overlay" class="loading-overlay">
+        <div>
+            <div class="loading-spinner"></div>
+            <div class="loading-text">正在处理注册请求...</div>
+        </div>
+    </div>
+    
+    <script src="register_panel.js"></script>
+</body>
+</html>

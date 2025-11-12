@@ -1,0 +1,352 @@
+/* UTF-8 FIXED BY JEV @ 2025-11-09T15:11:17.872Z */
+/* JEV氓聵聣氓掳聰氓篓聛猫路篓氓垄聝忙聫聮盲禄露忙聽路氓录聫 */
+
+/* 盲赂禄氓庐鹿氓聶篓忙聽路氓录聫 */
+.jev-translate-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: rgba(10, 25, 15, 0.3);
+}
+
+/* 氓陇麓茅聝篓氓路楼氓聟路忙聽聫忙聽路氓录聫 */
+.jev-translate-header {
+  padding: 12px 16px;
+  background: rgba(10, 25, 15, 0.7);
+  border-bottom: 1px solid rgba(0, 255, 140, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.jev-translate-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e0ffe5;
+  text-shadow: 0 0 8px rgba(0, 255, 140, 0.3);
+}
+
+/* 氓赂聝氓卤聙忙聨搂氓聢露忙聦聣茅聮庐莽禄聞 */
+.jev-layout-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.jev-layout-btn {
+  padding: 6px 12px;
+  border: 1px solid rgba(0, 255, 140, 0.3);
+  background: rgba(10, 25, 15, 0.5);
+  color: #e0ffe5;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+}
+
+.jev-layout-btn:hover {
+  background: rgba(0, 255, 140, 0.2);
+  border-color: rgba(0, 255, 140, 0.6);
+  transform: translateY(-1px);
+}
+
+.jev-layout-btn.active {
+  background: rgba(0, 255, 140, 0.3);
+  border-color: rgba(0, 255, 140, 0.8);
+  font-weight: 600;
+}
+
+/* 盲赂禄氓聠聟氓庐鹿氓聦潞氓聼聼 */
+.jev-translate-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* 氓聢聠氓卤聫忙篓隆氓录聫 */
+.jev-translate-content.split-view {
+  flex-direction: row;
+}
+
+/* AI忙聨篓猫聧聬茅聺垄忙聺驴 */
+.jev-ai-panel {
+  width: 50%;
+  height: 100%;
+  border-right: 1px solid rgba(0, 255, 140, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 猫聛聤氓陇漏茅聺垄忙聺驴 */
+.jev-chat-panel {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 氓聟篓氓卤聫忙篓隆氓录聫茂录聢盲禄聟AI忙聢聳盲禄聟猫聛聤氓陇漏茂录聣 */
+.jev-translate-content.ai-only .jev-chat-panel,
+.jev-translate-content.chat-only .jev-ai-panel {
+  display: none;
+}
+
+.jev-translate-content.ai-only .jev-ai-panel,
+.jev-translate-content.chat-only .jev-chat-panel {
+  width: 100%;
+  border-right: none;
+}
+
+/* 猫驴聻忙聨楼莽聤露忙聙聛忙聦聡莽陇潞氓聶篓 */
+.jev-connection-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.jev-connection-indicator.connecting {
+  background: rgba(255, 255, 0, 0.15);
+  border: 1px solid rgba(255, 255, 0, 0.3);
+  color: #ffff00;
+}
+
+.jev-connection-indicator.connected {
+  background: rgba(0, 255, 140, 0.15);
+  border: 1px solid rgba(0, 255, 140, 0.3);
+  color: #00ff99;
+}
+
+.jev-connection-indicator.disconnected {
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff6b6b;
+}
+
+.jev-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.jev-status-dot.connecting {
+  background: #ffff00;
+}
+
+.jev-status-dot.connected {
+  background: #00ff99;
+  animation: none;
+}
+
+.jev-status-dot.disconnected {
+  background: #ff6b6b;
+  animation: blink 1s infinite;
+}
+
+/* 氓聤篓莽聰禄忙聲聢忙聻聹 */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0.5;
+  }
+}
+
+/* 氓颅聬忙篓隆氓聺聴氓庐鹿氓聶篓忙聽路氓录聫茅聡聧莽陆庐茂录聦茅聛驴氓聟聧氓聠虏莽陋聛 */
+.jev-ai-panel > div,
+.jev-chat-panel > div {
+  height: 100%;
+  width: 100%;
+}
+
+/* 忙聥聳忙聥陆莽聸赂氓聟鲁忙聽路氓录聫盲录聵氓聦聳 */
+.jev-draggable {
+  cursor: move;
+  user-select: none;
+  transition: transform 0.05s ease-out; /* 氓驴芦茅聙聼氓聯聧氓潞聰忙聥聳忙聥陆 */
+}
+
+.jev-resizable {
+  position: relative;
+}
+
+.jev-resize-handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: rgba(0, 255, 140, 0.5);
+  border-radius: 50%;
+}
+
+.jev-resize-handle.se {
+  bottom: 4px;
+  right: 4px;
+  cursor: se-resize;
+}
+
+/* 莽录漏忙聰戮忙聨搂氓聢露 */
+.jev-scale-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: rgba(10, 25, 15, 0.5);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 140, 0.3);
+}
+
+.jev-scale-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(0, 255, 140, 0.2);
+  color: #e0ffe5;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.jev-scale-btn:hover {
+  background: rgba(0, 255, 140, 0.4);
+}
+
+.jev-scale-input {
+  width: 60px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 140, 0.3);
+  border-radius: 4px;
+  color: #e0ffe5;
+  text-align: center;
+}
+
+.jev-scale-input:focus {
+  outline: none;
+  border-color: rgba(0, 255, 140, 0.8);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* 氓聺聬忙聽聡忙聵戮莽陇潞 */
+.jev-coordinate-display {
+  font-size: 11px;
+  color: rgba(224, 255, 229, 0.7);
+  background: rgba(10, 25, 15, 0.5);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 255, 140, 0.2);
+}
+
+/* 氓聯聧氓潞聰氓录聫猫庐戮猫庐隆 */
+
+/* 氓鹿鲁忙聺驴猫庐戮氓陇聡 (768px - 1024px) */
+@media (max-width: 1024px) {
+  .jev-translate-content.split-view {
+    flex-direction: column;
+  }
+  
+  .jev-ai-panel,
+  .jev-chat-panel {
+    width: 100%;
+    height: 50%;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 255, 140, 0.3);
+  }
+  
+  .jev-chat-panel {
+    border-bottom: none;
+  }
+  
+  .jev-layout-controls {
+    gap: 6px;
+  }
+  
+  .jev-layout-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}
+
+/* 莽搂禄氓聤篓猫庐戮氓陇聡 (< 768px) */
+@media (max-width: 767px) {
+  .jev-translate-header {
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 12px;
+    align-items: stretch;
+  }
+  
+  .jev-layout-controls {
+    justify-content: center;
+  }
+  
+  .jev-translate-content {
+    /* 氓聹篓莽搂禄氓聤篓猫庐戮氓陇聡盲赂聤茅禄聵猫庐陇盲禄聟忙聵戮莽陇潞盲赂聙盲赂陋茅聺垄忙聺驴 */
+    flex-direction: column;
+  }
+  
+  .jev-ai-panel,
+  .jev-chat-panel {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .jev-scale-controls {
+    gap: 6px;
+    padding: 3px 6px;
+  }
+  
+  .jev-scale-input {
+    width: 50px;
+    padding: 3px 6px;
+  }
+  
+  .jev-translate-title {
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  .jev-connection-indicator {
+    font-size: 11px;
+    padding: 3px 10px;
+  }
+}
+
+/* 氓陇搂氓卤聫氓鹿聲猫庐戮氓陇聡 (> 1440px) */
+@media (min-width: 1441px) {
+  .jev-translate-header {
+    padding: 14px 20px;
+  }
+  
+  .jev-translate-title {
+    font-size: 18px;
+  }
+  
+  .jev-layout-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "success": false,
+  "api_status": 200,
+  "token_source": "LEADCONNECTOR_API_KEY",
+  "version": "2021-07-28",
+  "jwt_preview": "eyJhbGciOiJIUzI...lqqqu1Cg6g",
+  "locationId": null,
+  "contactId": null,
+  "token_check": {
+    "ok": true,
+    "note": "API Key 有效",
+    "locationCheck": {
+      "statusCode": 200,
+      "message": "OK"
+    },
+    "conversationCheck": {
+      "statusCode": 404,
+      "message": "Not Found"
+    }
+  },
+  "count": 0,
+  "messages": [],
+  "lastError": {
+    "status": 404,
+    "body": {
+      "msg": "Not found"
+    },
+    "url": "https://rest.gohighlevel.com/v1/conversations/messages/"
+  },
+  "attempts": [
+    {
+      "source": "post_list",
+      "status": 404,
+      "ok": false,
+      "reason": "error",
+      "body": {
+        "msg": "Not found"
+      }
+    }
+  ]
+}

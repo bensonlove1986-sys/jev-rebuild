@@ -1,0 +1,51 @@
+{
+  "version": "1.0.0",
+  "strict_token_mode": true,
+  "token_expiry_minutes": 60,
+  "allowed_origins": [
+    "https://jev-client.pages.dev",
+    "http://localhost:8080",
+    "http://localhost:1819",
+    "http://localhost:1820",
+    "http://localhost:1822"
+  ],
+  "cors_policy": {
+    "allow_credentials": true,
+    "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": [
+      "Content-Type",
+      "Authorization",
+      "X-Daojie-Token",
+      "X-JEV-Session",
+      "Version",
+      "X-JEV-Auth-Signature"
+    ],
+    "expose_headers": [
+      "Content-Type",
+      "X-Daojie-Token",
+      "X-JEV-Session",
+      "Version",
+      "X-JEV-Auth-Signature"
+    ],
+    "max_age": 86400
+  },
+  "rate_limiting": {
+    "enabled": true,
+    "requests_per_minute": 100,
+    "burst_limit": 20
+  },
+  "api_endpoint_security": {
+    "/kv/*": {
+      "requires_auth": true,
+      "requires_admin": false
+    },
+    "/ai/*": {
+      "requires_auth": true,
+      "requires_admin": false
+    },
+    "/admin/*": {
+      "requires_auth": true,
+      "requires_admin": true
+    }
+  }
+}

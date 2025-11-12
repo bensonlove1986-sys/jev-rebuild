@@ -1,0 +1,115 @@
+{
+  "client": {
+    "name": "JEV 客户端",
+    "version": "1.0.0",
+    "theme": {
+      "primary_color": "#2c3e50",
+      "secondary_color": "#3498db",
+      "accent_color": "#e74c3c",
+      "text_color": "#333333",
+      "background_color": "#ffffff"
+    },
+    "responsive": {
+      "breakpoints": {
+        "xs": 0,
+        "sm": 576,
+        "md": 768,
+        "lg": 992,
+        "xl": 1200,
+        "xxl": 1400
+      },
+      "layouts": {
+        "mobile": {
+          "menu_style": "drawer",
+          "sidebar_collapsed": true
+        },
+        "tablet": {
+          "menu_style": "drawer",
+          "sidebar_collapsed": false
+        },
+        "desktop": {
+          "menu_style": "sidebar",
+          "sidebar_collapsed": false
+        }
+      }
+    },
+    "browser_compatibility": {
+      "polyfills": [
+        "core-js/stable",
+        "regenerator-runtime/runtime"
+      ],
+      "css_prefix": true,
+      "target_browsers": [
+        "> 0.5%",
+        "last 2 versions",
+        "Firefox ESR",
+        "not dead",
+        "Chrome >= 90",
+        "Firefox >= 88",
+        "Safari >= 14",
+        "Edge >= 90"
+      ],
+      "supported_browsers": [
+        {
+          "name": "Chrome",
+          "minimum_version": "90"
+        },
+        {
+          "name": "Firefox",
+          "minimum_version": "88"
+        },
+        {
+          "name": "Safari",
+          "minimum_version": "14"
+        },
+        {
+          "name": "Edge",
+          "minimum_version": "90"
+        }
+      ],
+      "mobile_support": {
+        "ios": {
+          "minimum_version": "14.0"
+        },
+        "android": {
+          "minimum_version": "10.0"
+        }
+      }
+    },
+    "performance": {
+      "lazy_loading": true,
+      "image_optimization": true,
+      "code_splitting": true,
+      "service_worker": false,
+      "prefetch": ["/api/cache/data"]
+    },
+    "features": {
+      "notifications": true,
+      "offline_mode": false,
+      "dark_mode": true,
+      "language_switcher": false
+    },
+    "api": {
+      "base_url": "/api",
+      "timeout": 30000,
+      "retry_count": 3,
+      "cache_strategy": "network_first"
+    },
+    "storage": {
+      "local_prefix": "jev_client_",
+      "session_prefix": "jev_session_",
+      "max_storage_size": 52428800
+    },
+    "analytics": {
+      "enabled": false,
+      "track_errors": true,
+      "track_performance": true
+    },
+    "accessibility": {
+      "wcag_compliance": "AA",
+      "keyboard_navigation": true,
+      "screen_reader_support": true,
+      "contrast_ratio": "4.5:1"
+    }
+  }
+}

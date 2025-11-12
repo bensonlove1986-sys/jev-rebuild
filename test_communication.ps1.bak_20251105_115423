@@ -1,0 +1,159 @@
+# Test script for communication and data exchange between Desktop Agent and Central Control
+
+# Configuration
+$AGENT_URL = "http://localhost:1818"
+$CENTRAL_URL = "http://localhost:8080"
+
+Write-Host "Testing Communication and Data Exchange..." -ForegroundColor Green
+Write-Host "=========================================="
+
+# Function to test API calls with data
+function Test-DataExchange($endpoint, $method, $data, $testName) {
+    try {
+        Write-Host "[$testName] Testing $method $endpoint with data..." -NoNewline
+        
+        if ($method -eq "GET") {
+            # For GET, append data as query parameters
+            $queryString = $data.GetEnumerator() | ForEach-Object { "$($_.Key)=$($_.Value)" } -join "&"
+            $fullEndpoint = if ($queryString) { "$endpoint?$queryString" } else { $endpoint }
+            $response = Invoke-RestMethod -Uri "$AGENT_URL$fullEndpoint" -Method Get -ErrorAction Stop
+        } else {
+            # For POST, send data as JSON body
+            $jsonBody = $data | ConvertTo-Json
+            $response = Invoke-RestMethod -Uri "$AGENT_URL$endpoint" -Method Post -ContentType "application/json" -Body $jsonBody -ErrorAction Stop
+        }
+        
+        Write-Host " SUCCESS" -ForegroundColor Green
+        return @{ success = $true; response = $response }
+    } catch {
+        Write-Host " FAILED: $_" -ForegroundColor Red
+        return @{ success = $false; error = $_ }
+    }
+}
+
+# Function to display JSON response nicely
+function Show-Response($response) {
+    if ($response -is [hashtable] -or $response -is [array]) {
+        Write-Host "Response:" -ForegroundColor Cyan
+        $response | ConvertTo-Json -Depth 3 | Write-Host
+    } else {
+        Write-Host "Response: $response" -ForegroundColor Cyan
+    }
+}
+
+# Test 1: Basic status check to verify agent is running
+Write-Host "\n--- Test 1: Basic Status Check ---"
+$statusResult = Test-DataExchange "/status" "GET" @{} "Status Check"
+if ($statusResult.success) {
+    Show-Response $statusResult.response
+}
+
+# Test 2: Connect to central control
+Write-Host "\n--- Test 2: Connect to Central Control ---"
+$connectResult = Test-DataExchange "/connect-to-central" "POST" @{} "Connect"
+if ($connectResult.success) {
+    Show-Response $connectResult.response
+    $agentId = $connectResult.response.agentId
+    Write-Host "Connected with Agent ID: $agentId" -ForegroundColor Green
+}
+
+# Test 3: Send heartbeat (communication test)
+Write-Host "\n--- Test 3: Send Heartbeat (Communication Test) ---"
+$heartbeatResult = Test-DataExchange "/send-heartbeat" "POST" @{} "Heartbeat"
+if ($heartbeatResult.success) {
+    Show-Response $heartbeatResult.response
+}
+
+# Test 4: Check central control status directly (testing central system)
+Write-Host "\n--- Test 4: Check Central Control Status Directly ---"
+try {
+    Write-Host "Testing direct connection to Central Control..." -NoNewline
+    $centralStatus = Invoke-RestMethod -Uri "$CENTRAL_URL/central-control" -Method Get -ErrorAction Stop
+    Write-Host " SUCCESS" -ForegroundColor Green
+    Show-Response $centralStatus
+    Write-Host "Connected Agents: $($centralStatus.connectedAgents)" -ForegroundColor Green
+} catch {
+    Write-Host " FAILED: $_" -ForegroundColor Red
+}
+
+# Test 5: Simulate data exchange (multiple heartbeats with timing)
+Write-Host "\n--- Test 5: Simulated Data Exchange Sequence ---"
+Write-Host "Sending 3 heartbeats in sequence to simulate continuous data exchange..."
+$exchangeResults = @()
+
+for ($i = 1; $i -le 3; $i++) {
+    Write-Host "`nHeartbeat ${i}:
+" -ForegroundColor Yellow
+    $startTime = Get-Date
+    $result = Test-DataExchange "/send-heartbeat" "POST" @{} "Exchange $i"
+    $endTime = Get-Date
+    $duration = ($endTime - $startTime).TotalMilliseconds
+    
+    $exchangeResults += @{ 
+        iteration = $i 
+        success = $result.success 
+        duration = $duration 
+    }
+    
+    if ($result.success) {
+        Write-Host "Time taken: ${duration:F2}ms" -ForegroundColor Cyan
+    }
+    
+    if ($i -lt 3) {
+        Write-Host "Waiting 1 second before next exchange..."
+        Start-Sleep -Seconds 1
+    }
+}
+
+# Calculate and display exchange statistics
+$successfulExchanges = ($exchangeResults | Where-Object { $_.success }).Count
+$totalExchanges = $exchangeResults.Count
+$successRate = ($successfulExchanges / $totalExchanges) * 100
+$avgDuration = ($exchangeResults | Where-Object { $_.success } | Measure-Object -Property duration -Average).Average
+
+Write-Host "\nData Exchange Statistics:" -ForegroundColor Yellow
+Write-Host "Total Exchanges: $totalExchanges"
+Write-Host "Successful Exchanges: $successfulExchanges"
+Write-Host "Success Rate: ${successRate:F2}%"
+Write-Host "Average Response Time: ${avgDuration:F2}ms"
+
+# Test 6: Disconnect (cleanup)
+Write-Host "\n--- Test 6: Disconnect (Cleanup) ---"
+$disconnectResult = Test-DataExchange "/disconnect-from-central" "POST" @{} "Disconnect"
+if ($disconnectResult.success) {
+    Show-Response $disconnectResult.response
+}
+
+# Final status check
+Write-Host "\n--- Final Status Check ---"
+$finalStatusResult = Test-DataExchange "/status" "GET" @{} "Final Status"
+if ($finalStatusResult.success) {
+    $isConnected = $finalStatusResult.response.centralConnection.isConnected
+    $connectionStatus = if ($isConnected) { "Connected" } else { "Disconnected" }
+    Write-Host "Final connection status: $connectionStatus" -ForegroundColor $(if ($isConnected) { "Green" } else { "Yellow" })
+}
+
+# Overall summary
+Write-Host "\n=========================================="
+Write-Host "COMMUNICATION TEST SUMMARY:" -ForegroundColor Yellow
+
+$allTests = @($statusResult, $connectResult, $heartbeatResult, $disconnectResult, $finalStatusResult)
+$successfulTests = ($allTests | Where-Object { $_.success }).Count
+$totalTests = $allTests.Count
+$overallSuccessRate = ($successfulTests / $totalTests) * 100
+
+Write-Host "Total Tests: $totalTests"
+Write-Host "Successful Tests: $successfulTests"
+Write-Host "Overall Success Rate: ${overallSuccessRate:F2}%"
+
+if ($overallSuccessRate -eq 100) {
+    Write-Host "\n✅ Communication functionality is WORKING PERFECTLY! All tests passed." -ForegroundColor Green
+} elseif ($overallSuccessRate -ge 80) {
+    Write-Host "\n⚠️ Communication functionality is MOSTLY WORKING. Some tests had issues." -ForegroundColor Yellow
+} else {
+    Write-Host "\n❌ Communication functionality has SIGNIFICANT ISSUES. Multiple tests failed." -ForegroundColor Red
+}
+
+Write-Host "\nData exchange simulation was successful in $successfulExchanges out of $totalExchanges attempts."
+Write-Host "=========================================="
+Write-Host "Communication test completed." -ForegroundColor Green

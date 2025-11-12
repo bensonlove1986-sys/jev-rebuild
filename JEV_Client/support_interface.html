@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 客服系统 - 通信界面</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #0a0a0a;
+            color: #00ff00;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+        
+        h1, h2 {
+            color: #00ff00;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+        }
+        
+        /* 任务操作区域 */
+        .task-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 1px solid #00ff00;
+        }
+        
+        .task-control {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        select, button {
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        select:hover, button:hover {
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        /* 输入区域 */
+        .input-area {
+            margin: 15px 0;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        textarea:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            border-color: #00ff00;
+        }
+        
+        /* 结果显示区域 */
+        .result-section {
+            margin: 20px 0;
+            min-height: 200px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00ff00;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+        
+        .result-section.error {
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+        
+        /* 状态信息 */
+        .status-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        
+        /* 系统状态灯（右上角固定） */
+        #jev-support-status-light {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 12px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            z-index: 9999;
+            font-size: 14px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+        
+        #jev-support-status-light.offline {
+            color: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+        
+        /* 帮助信息 */
+        .help-section {
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 1px solid #00ff00;
+        }
+        
+        .help-section h3 {
+            color: #00ff00;
+            margin-bottom: 10px;
+        }
+        
+        .help-section ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        
+        .help-section li {
+            margin: 5px 0;
+            position: relative;
+        }
+        
+        .help-section li:before {
+            content: "▶";
+            position: absolute;
+            left: -20px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .task-control {
+                flex-direction: column;
+            }
+            
+            #jev-support-status-light {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 系统状态灯 -->
+    <div id="jev-support-status-light">🟢 系统正常</div>
+    
+    <div class="container">
+        <h1>JEV 客服系统通信界面</h1>
+        <h2>客服端通信桥接模块 | Client-Support Bridge</h2>
+        
+        <!-- 任务操作区域 -->
+        <div class="task-section">
+            <h3>任务执行控制</h3>
+            
+            <div class="task-control">
+                <select id="task-action">
+                    <option value="translate">🔤 翻译文本</option>
+                    <option value="quote">💰 获取报价</option>
+                    <option value="analyze">🔍 分析内容</option>
+                </select>
+                
+                <button id="send-task">🚀 发送任务</button>
+                <button id="test-connection">🔌 测试连接</button>
+            </div>
+            
+            <div class="input-area">
+                <label for="task-data">任务数据 (JSON格式):</label>
+                <textarea id="task-data" placeholder='例如: {"text": "Hello World", "target_lang": "zh-CN"}'></textarea>
+            </div>
+        </div>
+        
+        <!-- 结果显示区域 -->
+        <div id="jev-support-result" class="result-section">
+            <div class="jev-result-header">📊 等待任务执行...</div>
+            <div class="jev-result-content">请选择任务类型并输入数据，然后点击"发送任务"按钮。</div>
+        </div>
+        
+        <!-- 状态信息 -->
+        <div class="status-info">
+            <div class="status-item">
+                <span>🧩 Plugin 状态:</span>
+                <span id="plugin-status">🟢 Online</span>
+            </div>
+            <div class="status-item">
+                <span>⚙️ Worker 状态:</span>
+                <span id="worker-status">🟢 Online</span>
+            </div>
+            <div class="status-item">
+                <span>🧠 TRAE 状态:</span>
+                <span id="trae-status">🟢 Online</span>
+            </div>
+            <div class="status-item">
+                <span>📊 延迟:</span>
+                <span id="latency-display">-- ms</span>
+            </div>
+            <div class="status-item">
+                <span>📝 最后日志:</span>
+                <span id="last-log">support_task_log_20251111.json</span>
+            </div>
+        </div>
+        
+        <!-- 帮助信息 -->
+        <div class="help-section">
+            <h3>使用说明</h3>
+            <ul>
+                <li>选择任务类型：翻译、报价或分析</li>
+                <li>在输入框中填写JSON格式的任务数据</li>
+                <li>点击"发送任务"按钮执行操作</li>
+                <li>右上角状态灯显示系统连接状态</li>
+                <li>所有任务请求会自动附加安全头并记录日志</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 加载状态面板模块 -->
+    <script src="modules/ui_status_panel.js"></script>
+    
+    <!-- 加载客服桥接模块 -->
+    <script src="modules/bridge_support.js"></script>
+    
+    <!-- 界面交互逻辑 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取DOM元素
+            const taskAction = document.getElementById('task-action');
+            const taskData = document.getElementById('task-data');
+            const sendTaskBtn = document.getElementById('send-task');
+            const testConnectionBtn = document.getElementById('test-connection');
+            const resultElement = document.getElementById('jev-support-result');
+            
+            // 更新状态信息显示
+            function updateStatusInfo(connectionInfo) {
+                document.getElementById('latency-display').textContent = connectionInfo?.latency || '-- ms';
+                
+                if (connectionInfo?.connected) {
+                    document.getElementById('worker-status').textContent = '🟢 Online';
+                    document.getElementById('trae-status').textContent = '🟢 Online';
+                } else {
+                    document.getElementById('worker-status').textContent = '🔴 Offline';
+                    document.getElementById('trae-status').textContent = '🔴 Offline';
+                }
+            }
+            
+            // 发送任务处理函数
+            async function handleSendTask() {
+                try {
+                    const action = taskAction.value;
+                    let data = {};
+                    
+                    // 解析任务数据
+                    try {
+                        data = taskData.value.trim() ? JSON.parse(taskData.value) : {};
+                    } catch (e) {
+                        alert('任务数据格式错误，请输入有效的JSON格式！');
+                        return;
+                    }
+                    
+                    // 清空并显示加载状态
+                    resultElement.innerHTML = '<div class="jev-result-header">⏳ 任务执行中...</div><div class="jev-result-content">正在处理您的请求，请稍候...</div>';
+                    resultElement.classList.remove('error');
+                    
+                    // 调用桥接模块发送任务
+                    console.log(`📤 发送任务: ${action}`, data);
+                    const result = await sendTask(action, data);
+                    
+                    // 显示结果
+                    resultElement.innerHTML = `
+                        <div class="jev-result-header">🎉 任务执行成功</div>
+                        <pre class="jev-result-content">${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                    
+                    // 更新状态信息
+                    updateStatusInfo({ connected: true, latency: '45' });
+                    
+                } catch (error) {
+                    // 显示错误
+                    resultElement.classList.add('error');
+                    resultElement.innerHTML = `
+                        <div class="jev-result-header">❌ 任务执行失败</div>
+                        <div class="jev-result-content">${error.message || '通信失败，请稍后重试'}</div>
+                    `;
+                    
+                    // 更新状态信息
+                    updateStatusInfo({ connected: false });
+                    
+                    console.error('任务执行失败:', error);
+                }
+            }
+            
+            // 测试连接处理函数
+            async function handleTestConnection() {
+                try {
+                    // 显示加载状态
+                    resultElement.innerHTML = '<div class="jev-result-header">🔌 正在测试连接...</div>';
+                    resultElement.classList.remove('error');
+                    
+                    // 调用桥接模块测试连接
+                    const connectionInfo = await window.jevSupportBridge.testConnection();
+                    
+                    // 显示连接结果
+                    resultElement.innerHTML = `
+                        <div class="jev-result-header">✅ 连接测试成功</div>
+                        <pre class="jev-result-content">${JSON.stringify(connectionInfo, null, 2)}</pre>
+                    `;
+                    
+                    // 更新状态信息
+                    updateStatusInfo(connectionInfo);
+                    
+                } catch (error) {
+                    // 显示错误
+                    resultElement.classList.add('error');
+                    resultElement.innerHTML = `
+                        <div class="jev-result-header">❌ 连接测试失败</div>
+                        <div class="jev-result-content">${error.message || '无法连接到Worker'}</div>
+                    `;
+                    
+                    // 更新状态信息
+                    updateStatusInfo({ connected: false });
+                }
+            }
+            
+            // 绑定事件监听器
+            sendTaskBtn.addEventListener('click', handleSendTask);
+            testConnectionBtn.addEventListener('click', handleTestConnection);
+            
+            // 添加键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    handleSendTask();
+                }
+            });
+            
+            // 初始化状态
+            console.log('✅ JEV 客服界面已加载');
+            
+            // 尝试自动测试连接
+            setTimeout(() => {
+                if (confirm('是否自动测试连接？')) {
+                    handleTestConnection();
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

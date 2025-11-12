@@ -1,0 +1,17 @@
+{
+    "success":  true,
+    "errors":  [
+
+               ],
+    "messages":  [
+
+                 ],
+    "result":  {
+                   "buckets":  [
+                                   {
+                                       "name":  "jev-images",
+                                       "creation_date":  "2025-10-30T17:02:25.674Z"
+                                   }
+                               ]
+               }
+}

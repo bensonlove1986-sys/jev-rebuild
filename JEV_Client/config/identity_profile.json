@@ -1,0 +1,6 @@
+{
+  "owner_id": "benson-jev-001",
+  "biometric_key_enabled": true,
+  "biometric_provider": "VisionBridge",
+  "face_template_source": "localStorage/JEV_FACE_TEMPLATE"
+}

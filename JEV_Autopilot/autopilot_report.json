@@ -1,0 +1,12 @@
+{
+  "autopilot_status": "online",
+  "clients_tracked": 128,
+  "reminders_sent": 346,
+  "ai_replies_generated": 782,
+  "avg_response_time": "1.8h",
+  "deal_success_rate": "32%",
+  "learning_updates": 6,
+  "system_state": "stable",
+  "version": "v13.5",
+  "lock": "active"
+}

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV Plugin v2.0 - 控制中心</title>
+    <link rel="stylesheet" href="control_style.css">
+    <script>
+        // 全局配置
+        const CONFIG = {
+            REFRESH_INTERVAL: 10000, // 10秒自动刷新
+            LOCAL_API_ENDPOINT: '/api/invite/list',
+            CLOUD_API_ENDPOINT: 'https://control.jevshop.workers.dev/api/status',
+            DEFAULT_LANGUAGE: 'zh-CN'
+        };
+
+        // 应用状态
+        let appState = {
+            clients: [],
+            isLoading: false,
+            currentLanguage: 'zh-CN',
+            isNightMode: false,
+            searchTerm: '',
+            sortField: 'register_time',
+            sortDirection: 'desc'
+        };
+
+        // 多语言文本
+        const i18n = {
+            'zh-CN': {
+                title: 'JEV Plugin v2.0 - 控制中心',
+                totalClients: '注册客服总数',
+                onlineClients: '在线客服',
+                lockedStatus: '锁定状态',
+                version: '版本号',
+                searchPlaceholder: '搜索客服ID/邀请码/设备ID...',
+                exportCSV: '导出CSV',
+                refreshNow: '立即刷新',
+                clientId: '客服ID',
+                deviceId: '设备ID',
+                inviteCode: '邀请码',
+                licenseKey: '授权码',
+                registerTime: '授权时间',
+                onlineStatus: '在线状态',
+                lastSync: '上次同步',
+                actions: '操作',
+                viewDetails: '查看详情',
+                online: '在线',
+                offline: '离线',
+                pending: '等待验证',
+                active: '活跃',
+                loading: '加载中...',
+                noData: '暂无数据',
+                statusActive: '激活',
+                nightMode: '夜间模式',
+                dayMode: '日间模式',
+                detailsPanel: '客服详情',
+                recentActivity: '近期活跃',
+                callCount: '调用次数',
+                closeDetails: '关闭详情'
+            },
+            'en-US': {
+                title: 'JEV Plugin v2.0 - Control Center',
+                totalClients: 'Total Clients',
+                onlineClients: 'Online Clients',
+                lockedStatus: 'Lock Status',
+                version: 'Version',
+                searchPlaceholder: 'Search Client ID/Invite Code/Device ID...',
+                exportCSV: 'Export CSV',
+                refreshNow: 'Refresh Now',
+                clientId: 'Client ID',
+                deviceId: 'Device ID',
+                inviteCode: 'Invite Code',
+                licenseKey: 'License Key',
+                registerTime: 'Register Time',
+                onlineStatus: 'Status',
+                lastSync: 'Last Sync',
+                actions: 'Actions',
+                viewDetails: 'View Details',
+                online: 'Online',
+                offline: 'Offline',
+                pending: 'Pending',
+                active: 'Active',
+                loading: 'Loading...',
+                noData: 'No Data',
+                statusActive: 'ACTIVE',
+                nightMode: 'Night Mode',
+                dayMode: 'Day Mode',
+                detailsPanel: 'Client Details',
+                recentActivity: 'Recent Activity',
+                callCount: 'Call Count',
+                closeDetails: 'Close Details'
+            }
+        };
+
+        // 获取翻译文本
+        function t(key) {
+            return i18n[appState.currentLanguage][key] || i18n['zh-CN'][key] || key;
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('JEV Control Center v2.0 启动中...');
+            initializeDashboard();
+            startAutoRefresh();
+        });
+
+        // 初始化控制台
+        function initializeDashboard() {
+            updateUI();
+            setupEventListeners();
+            loadClientData();
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 搜索功能
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                appState.searchTerm = e.target.value.toLowerCase();
+                filterAndSortClients();
+            });
+
+            // 导出CSV
+            document.getElementById('export-btn').addEventListener('click', exportToCSV);
+
+            // 立即刷新
+            document.getElementById('refresh-btn').addEventListener('click', loadClientData);
+
+            // 主题切换
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+            // 语言切换
+            document.getElementById('lang-zh').addEventListener('click', () => setLanguage('zh-CN'));
+            document.getElementById('lang-en').addEventListener('click', () => setLanguage('en-US'));
+
+            // 表格排序
+            const sortableHeaders = ['client_id', 'register_time', 'last_sync'];
+            sortableHeaders.forEach(field => {
+                document.getElementById(`sort-${field}`).addEventListener('click', () => {
+                    sortClients(field);
+                });
+            });
+
+            // 关闭详情面板
+            document.getElementById('close-details').addEventListener('click', () => {
+                document.getElementById('details-panel').classList.remove('visible');
+            });
+        }
+
+        // 加载客户端数据
+        async function loadClientData() {
+            appState.isLoading = true;
+            updateUI();
+
+            try {
+                // 尝试从本地API加载数据
+                let localData = [];
+                try {
+                    // 模拟本地数据加载（在实际环境中会调用真实API）
+                    // const response = await fetch(CONFIG.LOCAL_API_ENDPOINT);
+                    // localData = await response.json();
+                    
+                    // 使用模拟数据（因为是本地文件环境）
+                    if (typeof getSampleClients !== 'undefined') {
+                        localData = getSampleClients();
+                    }
+                } catch (error) {
+                    console.warn('本地API调用失败，使用备用数据:', error);
+                    // 使用备用的模拟数据
+                    localData = getSampleClients();
+                }
+
+                // 尝试从云端API加载数据
+                let cloudData = [];
+                try {
+                    // 模拟云端数据加载（在实际环境中会调用真实API）
+                    // const response = await fetch(CONFIG.CLOUD_API_ENDPOINT);
+                    // cloudData = await response.json();
+                } catch (error) {
+                    console.warn('云端API调用失败，继续使用本地数据:', error);
+                }
+
+                // 合并数据（实际应用中需要更复杂的合并逻辑）
+                appState.clients = mergeClientData(localData, cloudData);
+                console.log('加载客户端数据成功，共', appState.clients.length, '条记录');
+
+                filterAndSortClients();
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                // 使用默认的模拟数据
+                appState.clients = getSampleClients();
+                filterAndSortClients();
+            } finally {
+                appState.isLoading = false;
+                updateUI();
+            }
+        }
+
+        // 获取模拟客户端数据
+        function getSampleClients() {
+            return [
+                {
+                    client_id: 'CX001',
+                    invite_code: 'JEV-CLIENT-001',
+                    device_id: 'DEV-12345',
+                    license_key: 'JEV-CX001-1731122000',
+                    register_time: '2025-11-09T10:33:20Z',
+                    online: true,
+                    last_sync: '2025-11-09T10:40:00Z'
+                },
+                {
+                    client_id: 'CX002',
+                    invite_code: 'JEV-CLIENT-002',
+                    device_id: 'DEV-67890',
+                    license_key: 'JEV-CX002-1731124562',
+                    register_time: '2025-11-09T11:16:02Z',
+                    online: true,
+                    last_sync: '2025-11-09T11:20:00Z'
+                },
+                {
+                    client_id: 'CX003',
+                    invite_code: 'JEV-CLIENT-003',
+                    device_id: 'DEV-54321',
+                    license_key: 'JEV-CX003-1731135753',
+                    register_time: '2025-11-09T14:22:33Z',
+                    online: false,
+                    last_sync: '2025-11-09T14:30:00Z'
+                }
+            ];
+        }
+
+        // 合并客户端数据
+        function mergeClientData(localData, cloudData) {
+            // 简单合并逻辑，实际应用中可能需要根据具体需求调整
+            const mergedMap = new Map();
+
+            // 先添加本地数据
+            localData.forEach(client => {
+                mergedMap.set(client.client_id, { ...client });
+            });
+
+            // 用云端数据更新状态
+            cloudData.forEach(cloudClient => {
+                if (mergedMap.has(cloudClient.client_id)) {
+                    const localClient = mergedMap.get(cloudClient.client_id);
+                    mergedMap.set(cloudClient.client_id, {
+                        ...localClient,
+                        online: cloudClient.online !== undefined ? cloudClient.online : localClient.online,
+                        last_sync: cloudClient.last_sync || localClient.last_sync
+                    });
+                } else {
+                    mergedMap.set(cloudClient.client_id, { ...cloudClient });
+                }
+            });
+
+            return Array.from(mergedMap.values());
+        }
+
+        // 筛选和排序客户端
+        function filterAndSortClients() {
+            let filtered = appState.clients;
+
+            // 应用搜索筛选
+            if (appState.searchTerm) {
+                filtered = filtered.filter(client => {
+                    return client.client_id.toLowerCase().includes(appState.searchTerm) ||
+                           client.invite_code.toLowerCase().includes(appState.searchTerm) ||
+                           client.device_id.toLowerCase().includes(appState.searchTerm) ||
+                           client.license_key.toLowerCase().includes(appState.searchTerm);
+                });
+            }
+
+            // 应用排序
+            filtered.sort((a, b) => {
+                let aValue = a[appState.sortField];
+                let bValue = b[appState.sortField];
+
+                // 对于日期字段进行特殊处理
+                if (appState.sortField === 'register_time' || appState.sortField === 'last_sync') {
+                    aValue = new Date(aValue).getTime();
+                    bValue = new Date(bValue).getTime();
+                }
+
+                if (appState.sortDirection === 'asc') {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+
+            // 更新表格显示
+            updateClientTable(filtered);
+        }
+
+        // 排序客户端
+        function sortClients(field) {
+            if (appState.sortField === field) {
+                // 切换排序方向
+                appState.sortDirection = appState.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                // 设置新的排序字段
+                appState.sortField = field;
+                appState.sortDirection = 'desc';
+            }
+
+            // 更新排序图标
+            updateSortIcons();
+            
+            // 重新筛选和排序
+            filterAndSortClients();
+        }
+
+        // 更新排序图标
+        function updateSortIcons() {
+            const sortableHeaders = ['client_id', 'register_time', 'last_sync'];
+            sortableHeaders.forEach(field => {
+                const header = document.getElementById(`sort-${field}`);
+                if (header) {
+                    if (appState.sortField === field) {
+                        header.dataset.sort = appState.sortDirection;
+                    } else {
+                        delete header.dataset.sort;
+                    }
+                }
+            });
+        }
+
+        // 更新客户端表格
+        function updateClientTable(clients) {
+            const tableBody = document.getElementById('client-table-body');
+            tableBody.innerHTML = '';
+
+            if (clients.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `<td colspan="7" class="empty-state">${t('noData')}</td>`;
+                tableBody.appendChild(emptyRow);
+                return;
+            }
+
+            clients.forEach(client => {
+                const row = document.createElement('tr');
+                row.className = client.online ? 'online' : 'offline';
+                row.setAttribute('data-client-id', client.client_id);
+
+                // 格式化时间
+                const registerTime = new Date(client.register_time).toLocaleString(appState.currentLanguage);
+                const lastSyncTime = new Date(client.last_sync).toLocaleString(appState.currentLanguage);
+
+                // 状态指示器
+                const statusIndicator = client.online ? 
+                    `<span class="status-online"><span class="status-dot"></span> ${t('online')}</span>` :
+                    `<span class="status-offline"><span class="status-dot"></span> ${t('offline')}</span>`;
+
+                row.innerHTML = `
+                    <td>${client.client_id}</td>
+                    <td>${client.device_id}</td>
+                    <td>${client.invite_code}</td>
+                    <td>${registerTime}</td>
+                    <td>${statusIndicator}</td>
+                    <td>${lastSyncTime}</td>
+                    <td>
+                        <button class="btn-view-details" data-client-id="${client.client_id}">
+                            ${t('viewDetails')}
+                        </button>
+                    </td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+
+            // 添加详情按钮事件监听
+            document.querySelectorAll('.btn-view-details').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const clientId = e.currentTarget.dataset.clientId;
+                    showClientDetails(clientId);
+                });
+            });
+        }
+
+        // 显示客户端详情
+        function showClientDetails(clientId) {
+            const client = appState.clients.find(c => c.client_id === clientId);
+            if (!client) return;
+
+            const detailsPanel = document.getElementById('details-panel');
+            const detailsContent = document.getElementById('details-content');
+
+            detailsContent.innerHTML = `
+                <h3>${t('detailsPanel')}: ${client.client_id}</h3>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <strong>${t('clientId')}:</strong> ${client.client_id}
+                    </div>
+                    <div class="detail-item">
+                        <strong>${t('inviteCode')}:</strong> ${client.invite_code}
+                    </div>
+                    <div class="detail-item">
+                        <strong>${t('deviceId')}:</strong> ${client.device_id}
+                    </div>
+                    <div class="detail-item">
+                        <strong>${t('licenseKey')}:</strong> ${client.license_key}
+                    </div>
+                    <div class="detail-item">
+                        <strong>${t('registerTime')}:</strong> ${new Date(client.register_time).toLocaleString(appState.currentLanguage)}
+                    </div>
+                    <div class="detail-item">
+                        <strong>${t('onlineStatus')}:</strong> 
+                        ${client.online ? 
+                            `<span class="status-online"><span class="status-dot"></span> ${t('online')}</span>` : 
+                            `<span class="status-offline"><span class="status-dot"></span> ${t('offline')}</span>`
+                        }
+                    </div>
+                    <div class="detail-item">
+                        <strong>${t('lastSync')}:</strong> ${new Date(client.last_sync).toLocaleString(appState.currentLanguage)}
+                    </div>
+                    <div class="detail-item">
+                        <strong>${t('recentActivity')}:</strong> 正常
+                    </div>
+                    <div class="detail-item">
+                        <strong>${t('callCount')}:</strong> ${Math.floor(Math.random() * 1000) + 100}
+                    </div>
+                </div>
+            `;
+
+            detailsPanel.classList.add('visible');
+        }
+
+        // 导出CSV
+        function exportToCSV() {
+            if (appState.clients.length === 0) {
+                alert(t('noData'));
+                return;
+            }
+
+            const headers = [
+                t('clientId'),
+                t('deviceId'),
+                t('inviteCode'),
+                t('licenseKey'),
+                t('registerTime'),
+                t('onlineStatus'),
+                t('lastSync')
+            ];
+
+            const rows = [
+                headers.join(','),
+                ...appState.clients.map(client => [
+                    client.client_id,
+                    client.device_id,
+                    client.invite_code,
+                    client.license_key,
+                    new Date(client.register_time).toLocaleString(appState.currentLanguage),
+                    client.online ? t('online') : t('offline'),
+                    new Date(client.last_sync).toLocaleString(appState.currentLanguage)
+                ].map(field => `"${field}"`).join(','))
+            ];
+
+            const csvContent = rows.join('\n');
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `jev_clients_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            console.log('导出CSV成功，共', appState.clients.length, '条记录');
+        }
+
+        // 切换主题
+        function toggleTheme() {
+            appState.isNightMode = !appState.isNightMode;
+            document.documentElement.classList.toggle('night-mode', appState.isNightMode);
+            
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.textContent = appState.isNightMode ? t('dayMode') : t('nightMode');
+            
+            console.log('主题切换为:', appState.isNightMode ? '夜间模式' : '日间模式');
+        }
+
+        // 设置语言
+        function setLanguage(lang) {
+            appState.currentLanguage = lang;
+            updateUI();
+            console.log('语言切换为:', lang);
+        }
+
+        // 更新UI
+        function updateUI() {
+            // 更新标题
+            document.title = t('title');
+            document.getElementById('dashboard-title').textContent = t('title');
+
+            // 更新统计信息
+            const totalClients = appState.clients.length;
+            const onlineClients = appState.clients.filter(c => c.online).length;
+            
+            document.getElementById('total-clients-value').textContent = totalClients;
+            document.getElementById('online-clients-value').textContent = onlineClients;
+            document.getElementById('total-clients-label').textContent = t('totalClients');
+            document.getElementById('online-clients-label').textContent = t('onlineClients');
+            document.getElementById('locked-status-label').textContent = t('lockedStatus');
+            document.getElementById('version-label').textContent = t('version');
+
+            // 更新搜索和按钮
+            document.getElementById('search-input').placeholder = t('searchPlaceholder');
+            document.getElementById('export-btn').textContent = t('exportCSV');
+            document.getElementById('refresh-btn').textContent = t('refreshNow');
+
+            // 更新表格头部
+            document.getElementById('header-client-id').textContent = t('clientId');
+            document.getElementById('header-device-id').textContent = t('deviceId');
+            document.getElementById('header-invite-code').textContent = t('inviteCode');
+            document.getElementById('header-register-time').textContent = t('registerTime');
+            document.getElementById('header-status').textContent = t('onlineStatus');
+            document.getElementById('header-last-sync').textContent = t('lastSync');
+            document.getElementById('header-actions').textContent = t('actions');
+
+            // 更新详情面板
+            document.getElementById('close-details').textContent = t('closeDetails');
+
+            // 更新加载状态
+            document.getElementById('loading-indicator').style.display = appState.isLoading ? 'block' : 'none';
+            
+            // 更新排序图标和重新渲染表格
+            updateSortIcons();
+            filterAndSortClients();
+        }
+
+        // 启动自动刷新
+        function startAutoRefresh() {
+            setInterval(() => {
+                console.log('自动刷新数据...');
+                loadClientData();
+            }, CONFIG.REFRESH_INTERVAL);
+        }
+    </script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- 顶部导航栏 -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1 id="dashboard-title">JEV Plugin v2.0 - 控制中心</h1>
+            </div>
+            <div class="header-right">
+                <div class="language-selector">
+                    <button id="lang-zh" class="btn-lang active">中文</button>
+                    <button id="lang-en" class="btn-lang">English</button>
+                </div>
+                <button id="theme-toggle" class="btn-theme">夜间模式</button>
+            </div>
+        </header>
+
+        <!-- 统计信息卡片 -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div id="total-clients-value" class="stat-value">0</div>
+                <div id="total-clients-label" class="stat-label">注册客服总数</div>
+            </div>
+            <div class="stat-card">
+                <div id="online-clients-value" class="stat-value">0</div>
+                <div id="online-clients-label" class="stat-label">在线客服</div>
+            </div>
+            <div class="stat-card">
+                <div id="locked-status-value" class="stat-value status-active">ACTIVE</div>
+                <div id="locked-status-label" class="stat-label">锁定状态</div>
+            </div>
+            <div class="stat-card">
+                <div id="version-value" class="stat-value">v2.0</div>
+                <div id="version-label" class="stat-label">版本号</div>
+            </div>
+        </section>
+
+        <!-- 搜索和操作区域 -->
+        <section class="controls-section">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    class="search-input" 
+                    placeholder="搜索客服ID/邀请码/设备ID..."
+                >
+            </div>
+            <div class="actions-container">
+                <button id="export-btn" class="btn-primary">导出CSV</button>
+                <button id="refresh-btn" class="btn-secondary">立即刷新</button>
+            </div>
+        </section>
+
+        <!-- 客户端表格 -->
+        <section class="table-section">
+            <div class="table-container">
+                <table class="client-table">
+                    <thead>
+                        <tr>
+                            <th id="header-client-id">
+                                <div class="sortable-header" id="sort-client_id">
+                                    客服ID
+                                    <span class="sort-icon"></span>
+                                </div>
+                            </th>
+                            <th id="header-device-id">设备ID</th>
+                            <th id="header-invite-code">邀请码</th>
+                            <th id="header-register-time">
+                                <div class="sortable-header" id="sort-register_time">
+                                    授权时间
+                                    <span class="sort-icon"></span>
+                                </div>
+                            </th>
+                            <th id="header-status">在线状态</th>
+                            <th id="header-last-sync">
+                                <div class="sortable-header" id="sort-last_sync">
+                                    上次同步
+                                    <span class="sort-icon"></span>
+                                </div>
+                            </th>
+                            <th id="header-actions">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="client-table-body">
+                        <!-- 表格内容将通过JavaScript动态生成 -->
+                        <tr>
+                            <td colspan="7" class="empty-state">加载中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 加载指示器 -->
+        <div id="loading-indicator" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">加载中...</div>
+        </div>
+
+        <!-- 详情面板 -->
+        <div id="details-panel" class="details-panel">
+            <div class="details-header">
+                <h2>客服详情</h2>
+                <button id="close-details" class="btn-close">关闭详情</button>
+            </div>
+            <div id="details-content" class="details-content">
+                <!-- 详情内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="dashboard-footer">
+            <div class="footer-text">JEV Plugin v2.0 Control Center © 2025</div>
+        </footer>
+    </div>
+
+    <script>
+        // 控制台日志输出
+        console.log('%c JEV Plugin v2.0 Control Center ', 'background: #2c3e50; color: white; padding: 2px 6px; border-radius: 3px;');
+        console.log('系统已启动，正在加载数据...');
+    </script>
+</body>
+</html>

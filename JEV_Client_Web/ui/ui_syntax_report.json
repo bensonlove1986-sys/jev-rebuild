@@ -1,0 +1,187 @@
+{
+  "totalFiles": 4,
+  "fixedFiles": 2,
+  "totalErrors": 33,
+  "fixedErrors": 33,
+  "errorsByType": {
+    "JavaScript语法": 32,
+    "孤立字符": 1
+  },
+  "filesProcessed": [
+    {
+      "path": "D:\\PDF转网页\\JEV_Client_Web\\ui\\fix_syntax.js",
+      "errors": [
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        },
+        {
+          "type": "JavaScript语法",
+          "description": "为if语句添加了大括号",
+          "fixed": true
+        }
+      ]
+    },
+    {
+      "path": "D:\\PDF转网页\\JEV_Client_Web\\ui\\login_portal.html",
+      "errors": [
+        {
+          "type": "孤立字符",
+          "description": "移除了孤立字符",
+          "fixed": true
+        }
+      ]
+    }
+  ]
+}

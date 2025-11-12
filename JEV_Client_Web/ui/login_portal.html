@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 登录门户</title>
+    <!-- 引入JEV UI样式 -->
+    <link rel="stylesheet" href="jev_ui_style.css">
+    <!-- 引入Google字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 登录页面特定样式 */
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        /* 背景装饰 */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+            opacity: 0.1;
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        body::before {
+            top: -200px;
+            left: -200px;
+        }
+        
+        body::after {
+            bottom: -200px;
+            right: -200px;
+            animation-delay: 5s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(50px, 30px);
+            }
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            perspective: 1000px;
+            z-index: 10;
+        }
+        
+        .login-card {
+            background: var(--bg-secondary);
+            backdrop-filter: var(--backdrop-blur);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-xl);
+            border: 1px solid var(--border-color);
+            transition: var(--transition-all);
+            transform-style: preserve-3d;
+        }
+        
+        .login-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-5px) rotateX(2deg);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            transform: translateZ(20px);
+        }
+        
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-lg);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .login-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            transform: translateZ(10px);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            transition: var(--transition-all);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            backdrop-filter: var(--backdrop-blur);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-all);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .login-footer {
+            margin-top: var(--spacing-xl);
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transform: translateZ(5px);
+        }
+        
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            font-size: 14px;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        
+        .remember-me input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-color);
+        }
+        
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition-colors);
+        }
+        
+        .forgot-password:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+        
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: var(--spacing-lg);
+            }
+            
+            .login-title {
+                font-size: 24px;
+            }
+            
+            body::before,
+            body::after {
+                width: 300px;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card glass">
+            <div class="login-header">
+                <div class="login-logo">JEV</div>
+                <h1 class="login-title">JEV 登录门户</h1>
+                <p class="login-subtitle">登录以访问客服控制台和管理功能</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">用户名</label>
+                    <input type="text" id="username" class="form-input" placeholder="请输入用户名" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">密码</label>
+                    <input type="password" id="password" class="form-input" placeholder="请输入密码" required>
+                </div>
+                
+                <div class="login-options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember-me">
+                        记住我
+                    </label>
+                    <a href="#" class="forgot-password">忘记密码？</a>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="login-button">
+                    <span>登录</span>
+                    <div class="loading-spinner" style="display: none;"></div>
+                </button>
+                
+                <div id="login-message" class="message"></div>
+            </form>
+            
+            <div class="login-footer">
+                <p>版本 v3.0.0 | JEV-UI-Alignment-Pro</p>
+                <p class="mt-sm">© 2024 JEV 系统 - 云端客服解决方案</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入基础逻辑 -->
+    <script src="jev_ui_logic.js"></script>
+
+    <script>
+        // 登录页面特定逻辑
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化JEV UI
+            if (window.jevUI) {
+                jevUI.initialize();
+            }
+            
+            const loginForm = document.getElementById('login-form');
+            const loginMessage = document.getElementById('login-message');
+            const loginButton = document.getElementById('login-button');
+            const spinner = loginButton.querySelector('.loading-spinner');
+            
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('remember-me').checked;
+                
+                if (!username || !password) {
+                    showMessage('请输入用户名和密码', 'error');
+                    return;
+                }
+                
+                // 显示加载状态
+                loginButton.disabled = true;
+                spinner.style.display = 'block';
+                
+                try {
+                    // 模拟登录请求
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // 模拟API调用
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username,
+                            password
+                        }),
+                        credentials: 'include'
+                    });
+                    
+                    // 由于可能没有实际的API，这里使用模拟响应
+                    let result;
+                    if (response.ok) {
+                        result = await response.json();
+                    } else {
+                        // 模拟成功响应
+                        result = {
+                            success: true,
+                            token: 'mock-jwt-token',
+                            user: {
+                                username: username,
+                                role: 'admin',
+                                name: '管理员'
+                            }
+                        };
+                    }
+                    
+                    if (result.success) {
+                        // 保存登录状态
+                        if (rememberMe) {
+                            localStorage.setItem('jev_user', JSON.stringify(result.user));
+                            localStorage.setItem('jev_token', result.token);
+                        } else {
+                            sessionStorage.setItem('jev_user', JSON.stringify(result.user));
+                            sessionStorage.setItem('jev_token', result.token);
+                        }
+                        
+                        showMessage('登录成功，正在跳转...', 'success');
+                        
+                        // 延迟跳转
+                        setTimeout(() => {
+                            window.location.href = '/ui/client_portal.html';
+                        }, 1500);
+                    } else {
+                        showMessage(result.message || '登录失败，请检查用户名和密码', 'error');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showMessage('登录过程中发生错误，请稍后再试', 'error');
+                } finally {
+                    // 隐藏加载状态
+                    loginButton.disabled = false;
+                    spinner.style.display = 'none';
+                }
+            });
+            
+            // 忘记密码链接
+            document.querySelector('.forgot-password').addEventListener('click', (e) => {
+                e.preventDefault();
+                showMessage('密码重置功能暂未开放', 'info');
+            });
+            
+            // 显示消息的辅助函数
+            function showMessage(message, type = 'info') {
+                loginMessage.textContent = message;
+                loginMessage.className = `message ${type}`;
+                loginMessage.style.display = 'block';
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    loginMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        loginMessage.style.display = 'none';
+                        loginMessage.style.opacity = '1';
+                    }, 300);
+                }, 3000);
+            }
+            
+            // 检查是否已登录
+            const checkLoginStatus = () => {
+                const token = localStorage.getItem('jev_token') || sessionStorage.getItem('jev_token');
+                if (token) {
+                    // 自动登录
+                    showMessage('检测到登录状态，正在跳转...', 'info');
+                    setTimeout(() => {
+                        window.location.href = '/ui/client_portal.html';
+                    }, 1000);
+                }
+            };
+            
+            // 尝试自动登录
+            checkLoginStatus();
+        });
+    </script>
+</body>
+</html>

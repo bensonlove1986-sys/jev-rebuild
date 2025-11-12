@@ -1,0 +1,29 @@
+{
+    "name":  "batch_404_wiki.json",
+    "url":  "https://upload.wikimedia.org/wikipedia/commons/this-does-not-exist.png",
+    "status":  404,
+    "ok":  false,
+    "parsed":  {
+                   "success":  false,
+                   "error":  "图片下载失败",
+                   "status":  404,
+                   "details":  "{\"status\":\"error\",\"code\":404,\"message\":\"The requested URL returned error: 404\"}",
+                   "attempts":  [
+                                    {
+                                        "source":  "cdn",
+                                        "base":  "https://images.weserv.nl/?url=",
+                                        "status":  0,
+                                        "ok":  false,
+                                        "error":  "internal error; reference = 4ta8c524qppes74i19jn3ge4"
+                                    },
+                                    {
+                                        "source":  "cdn",
+                                        "base":  "https://wsrv.nl/?url=",
+                                        "status":  404,
+                                        "ok":  false,
+                                        "ct":  "application/json"
+                                    }
+                                ]
+               },
+    "raw":  "{\n  \"success\": false,\n  \"error\": \"图片下载失败\",\n  \"status\": 404,\n  \"details\": \"{\\\"status\\\":\\\"error\\\",\\\"code\\\":404,\\\"message\\\":\\\"The requested URL returned error: 404\\\"}\",\n  \"attempts\": [\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://images.weserv.nl/?url=\",\n      \"status\": 0,\n      \"ok\": false,\n      \"error\": \"internal error; reference = 4ta8c524qppes74i19jn3ge4\"\n    },\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://wsrv.nl/?url=\",\n      \"status\": 404,\n      \"ok\": false,\n      \"ct\": \"application/json\"\n    }\n  ]\n}"
+}

@@ -1,0 +1,122 @@
+{
+  "startTime": "2025-11-10T16:21:40.382Z",
+  "tests": [
+    {
+      "name": "初始化测试环境",
+      "success": true,
+      "status": "PASSED",
+      "timestamp": "2025-11-10T16:21:45.443Z",
+      "details": {
+        "message": "所有Docker容器已启动",
+        "responseTime": "1000ms"
+      },
+      "responseTime": "1000ms"
+    },
+    {
+      "name": "中控层与Worker通信测试",
+      "success": true,
+      "status": "PASSED",
+      "timestamp": "2025-11-10T16:21:46.565Z",
+      "details": {
+        "endpoint": "/control_api/tasks/12345",
+        "statusCode": 200,
+        "responseTime": "110ms",
+        "response": {
+          "success": true,
+          "task_id": 12345,
+          "status": "processing"
+        },
+        "taskId": 12345,
+        "taskType": "process_task"
+      },
+      "responseTime": "110ms"
+    },
+    {
+      "name": "客服端与中控层通信测试",
+      "success": true,
+      "status": "PASSED",
+      "timestamp": "2025-11-10T16:21:46.672Z",
+      "details": {
+        "endpoint": "/client_api/connect",
+        "statusCode": 200,
+        "responseTime": "106ms",
+        "response": {
+          "success": true,
+          "session_id": "test_session_123"
+        },
+        "clientId": "test-client-001"
+      },
+      "responseTime": "106ms"
+    },
+    {
+      "name": "中转层路由与负载均衡测试",
+      "success": true,
+      "status": "PASSED",
+      "timestamp": "2025-11-10T16:21:46.782Z",
+      "details": {
+        "endpoint": "/cloud_relay/route_request",
+        "statusCode": 200,
+        "responseTime": "109ms",
+        "response": {
+          "success": true,
+          "routed_to": "worker_1",
+          "latency": 15
+        }
+      },
+      "responseTime": "109ms"
+    },
+    {
+      "name": "权限与认证测试",
+      "success": true,
+      "status": "PASSED",
+      "timestamp": "2025-11-10T16:21:46.999Z",
+      "details": {
+        "endpoint": "/control_api/auth/verify",
+        "invalidTokenStatus": 401,
+        "validTokenStatus": 200,
+        "responseTime": "216ms"
+      },
+      "responseTime": "216ms"
+    },
+    {
+      "name": "Jest风格测试 - 中控层与Worker通信",
+      "success": true,
+      "status": "PASSED",
+      "timestamp": "2025-11-10T16:21:47.108Z",
+      "details": {
+        "testType": "Jest风格集成测试",
+        "statusCode": 200,
+        "assertion": "expect(response.statusCode).toBe(200)",
+        "assertionResult": true,
+        "responseTime": "模拟响应时间"
+      },
+      "responseTime": "模拟响应时间"
+    },
+    {
+      "name": "Jest风格测试 - 客服端与中控层通信",
+      "success": false,
+      "status": "FAILED",
+      "timestamp": "2025-11-10T16:21:47.264Z",
+      "details": {
+        "testType": "Jest风格集成测试",
+        "statusCode": 401,
+        "assertion": "expect(response.statusCode).toBe(200)",
+        "assertionResult": false,
+        "responseTime": "模拟响应时间"
+      },
+      "responseTime": "模拟响应时间"
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "failed": 1,
+    "duration": 6883,
+    "endTime": "2025-11-10T16:21:47.265Z"
+  },
+  "environment": {
+    "nodeVersion": "v22.16.0",
+    "baseUrl": "http://localhost:8080",
+    "authTokenUsed": "Bearer <your-jwt-token>"
+  }
+}

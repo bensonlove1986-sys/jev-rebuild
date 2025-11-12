@@ -1,0 +1,80 @@
+{
+  "[SOP_META]": {
+    "version": "1.0.0",
+    "updated_at": "2025-11-04T14:16:44.141Z",
+    "owner": "JEV Security",
+    "mode": "LEARN_ONLY",
+    "store_to": {
+      "namespace": "security",
+      "key": "security_sop_v1"
+    },
+    "reply_format": "LEARNED_OK::<hash>"
+  },
+  "version": "1.0.0",
+  "created": "2025-11-04T14:16:44.141Z",
+  "updated_at": "2025-11-04T14:16:44.141Z",
+  "description": "JEV系统安全操作流程(SOP)",
+  "procedures": [
+    {
+      "id": "PROC-001",
+      "name": "系统暂停",
+      "trigger": "执行暂停",
+      "actions": [
+        "1. 调用ExternalMemory.set()更新security命名空间中的security_policy",
+        "2. 设置paused字段为true",
+        "3. 记录暂停时间(pausedAt)和操作来源(pausedBy)",
+        "4. operator.js将自动检测paused状态并暂停任务执行",
+        "5. 新任务将被添加到等待队列(wait_queue)"
+      ],
+      "implementation": "securityPolicy.pauseSystem()"
+    },
+    {
+      "id": "PROC-002",
+      "name": "系统恢复",
+      "trigger": "恢复系统",
+      "actions": [
+        "1. 调用ExternalMemory.set()更新security命名空间中的security_policy",
+        "2. 设置paused字段为false",
+        "3. 记录恢复时间(resumedAt)和操作来源(resumedBy)",
+        "4. operator.js将检测到系统恢复并正常执行新任务",
+        "5. 可选：通过processWaitQueue()处理等待队列中的任务"
+      ],
+      "implementation": "securityPolicy.resumeSystem()"
+    },
+    {
+      "id": "PROC-003",
+      "name": "状态检查",
+      "trigger": "需要验证系统状态",
+      "actions": [
+        "1. 调用ExternalMemory.get()获取security命名空间中的security_policy",
+        "2. 检查paused字段的值",
+        "3. 验证其他安全策略参数"
+      ],
+      "implementation": "securityPolicy.checkSystemStatus()"
+    },
+    {
+      "id": "PROC-004",
+      "name": "等待队列处理",
+      "trigger": "系统恢复后需要处理暂停期间积累的任务",
+      "actions": [
+        "1. 获取security命名空间中的wait_queue",
+        "2. 按顺序执行队列中的任务",
+        "3. 记录处理结果",
+        "4. 根据选项决定是否清除已处理的任务"
+      ],
+      "implementation": "securityPolicy.processWaitQueue()"
+    }
+  ],
+  "rules": [
+    "1. 严格按照命令触发相应操作，不执行未授权操作",
+    "2. 所有操作必须记录到ExternalMemory",
+    "3. 操作失败时记录详细错误信息",
+    "4. 系统暂停时，所有任务必须进入等待队列",
+    "5. 系统恢复时，尊重原有的安全策略设置"
+  ],
+  "memoryKeys": {
+    "securityPolicy": "security:security_policy",
+    "waitQueue": "security:wait_queue",
+    "securityLogs": "security:logs"
+  }
+}

@@ -1,0 +1,2 @@
+url\tsuccess\tused_fallback\tused_source\tkey\tattempts
+https://backend.leadconnectorhq.com/phone-system/whatsapp/location/3SsfTbU1lmAPpkG9iB6C/messages/d3EPompkFvRSdkf2VPIM/attachment	ERROR				远程服务器返回错误: (403) 已禁止。

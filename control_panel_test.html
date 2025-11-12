@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+    <title>Control Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .status { padding: 20px; border-radius: 5px; }
+        .status-green { background-color: #d4edda; color: #155724; }
+        .status-red { background-color: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; margin: 10px 10px 10px 0; cursor: pointer; }
+        #logs { margin-top: 20px; padding: 10px; background: #f8f9fa; height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>Desktop Agent Control Panel</h1>
+    <div id="status" class="status"></div>
+    <div>
+        <button id="pauseBtn">Pause</button>
+        <button id="resumeBtn">Resume</button>
+        <button id="refreshBtn">Refresh Status</button>
+    </div>
+    <div id="logs"></div>
+    
+    <script>
+        // Update status
+        function updateStatus() {
+            fetch('/status')
+                .then(r => r.json())
+                .then(data => {
+                    const statusDiv = document.getElementById('status');
+                    if (data.running) {
+                        statusDiv.className = 'status status-green';
+                        statusDiv.innerHTML = <h2>馃煝 Service Running</h2><p>Time: </p>;
+                    } else {
+                        statusDiv.className = 'status status-red';
+                        statusDiv.innerHTML = '<h2>馃敶 Service Not Running</h2>';
+                    }
+                })
+                .catch(e => {
+                    const statusDiv = document.getElementById('status');
+                    statusDiv.className = 'status status-red';
+                    statusDiv.innerHTML = '<h2>馃敶 Service Error</h2><p>Cannot connect to service</p>';
+                });
+        }
+        
+        // Load logs
+        function loadLogs() {
+            fetch('/logs')
+                .then(r => r.json())
+                .then(data => {
+                    const logsDiv = document.getElementById('logs');
+                    logsDiv.innerHTML = data.logs.join('<br>');
+                    logsDiv.scrollTop = logsDiv.scrollHeight;
+                });
+        }
+        
+        // Attach event listeners
+        document.getElementById('pauseBtn').onclick = () => {
+            fetch('/pause', { method: 'POST' })
+                .then(() => updateStatus());
+        };
+        
+        document.getElementById('resumeBtn').onclick = () => {
+            fetch('/resume', { method: 'POST' })
+                .then(() => updateStatus());
+        };
+        
+        document.getElementById('refreshBtn').onclick = updateStatus;
+        
+        // Initial load
+        updateStatus();
+        loadLogs();
+        
+        // Auto refresh logs every 3 seconds
+        setInterval(loadLogs, 3000);
+    </script>
+</body>
+</html>

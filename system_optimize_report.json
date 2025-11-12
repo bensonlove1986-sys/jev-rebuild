@@ -1,0 +1,10 @@
+{
+  "local_cleanup": "✅ completed",
+  "kept_files": [
+    "desktopAgent.ps1",
+    "execute_task.ps1",
+    "config.json"
+  ],
+  "remote_modules": "已迁移至 Worker",
+  "last_sync_time": "2025-11-06 21:16:59"
+}

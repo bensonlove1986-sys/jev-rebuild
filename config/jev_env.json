@@ -1,0 +1,67 @@
+{
+  "version": "1.0.0",
+  "environment": "production",
+  "base_url": "https://jevshop.bensonlove1986.workers.dev",
+  "allowed_origins": [
+    "https://jev-client.pages.dev",
+    "http://localhost:8000"
+  ],
+  "kv_namespaces": {
+    "JEV_AI_CACHE": {
+      "description": "AI缓存存储",
+      "required": true,
+      "default_ttl": 86400
+    },
+    "JEV_GLOBAL_CONFIG": {
+      "description": "全局配置存储",
+      "required": true,
+      "default_ttl": 0
+    },
+    "JEV_LOGS": {
+      "description": "系统日志存储",
+      "required": true,
+      "default_ttl": 604800
+    },
+    "JEV_PLUGIN_STATE": {
+      "description": "插件状态存储",
+      "required": true,
+      "default_ttl": 0
+    },
+    "Bensonai_memory": {
+      "description": "Benson AI记忆存储",
+      "required": true,
+      "default_ttl": 0
+    },
+    "trea_memory": {
+      "description": "TRAE记忆存储",
+      "required": true,
+      "default_ttl": 0
+    },
+    "JEVPI": {
+      "description": "核心功能KV存储",
+      "required": true,
+      "default_ttl": 0
+    }
+  },
+  "r2_buckets": {
+    "R2_BUCKET": {
+      "description": "对象存储",
+      "required": true,
+      "bucket_name": "jev-images"
+    }
+  },
+  "endpoints": {
+    "modules": "/modules",
+    "execute": "/execute",
+    "kv_test": "/kv-test",
+    "log_event": "/log-event",
+    "get_kv_status": "/get-kv-status"
+  },
+  "ports": {
+    "agent": 1820,
+    "control_panel": 1819,
+    "ai_service": 1822
+  },
+  "timestamp": "2025-11-06 23:57:28",
+  "generated_by": "fix_environment_config.py"
+}

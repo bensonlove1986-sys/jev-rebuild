@@ -1,0 +1,12 @@
+{
+    "success":  true,
+    "count":  0,
+    "items":  [
+
+              ],
+    "raw_preview":  [
+
+                    ],
+    "feature":  "TEXT_DETECTION",
+    "imageUrl":  "https://picsum.photos/400"
+}

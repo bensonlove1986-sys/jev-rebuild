@@ -1,0 +1,42 @@
+{
+    "IsMutuallyAuthenticated":  false,
+    "Cookies":  [
+
+                ],
+    "Headers":  [
+                    "Connection",
+                    "CF-RAY",
+                    "access-control-allow-origin",
+                    "vary",
+                    "x-envoy-upstream-service-time",
+                    "strict-transport-security",
+                    "cf-cache-status",
+                    "Access-Control-Max-Age",
+                    "Content-Length",
+                    "Content-Type",
+                    "Date",
+                    "ETag",
+                    "Server",
+                    "X-Powered-By"
+                ],
+    "SupportsHeaders":  true,
+    "ContentLength":  65,
+    "ContentEncoding":  "",
+    "ContentType":  "application/json; charset=utf-8",
+    "CharacterSet":  "utf-8",
+    "Server":  "cloudflare",
+    "LastModified":  "\/Date(1761852916956)\/",
+    "StatusCode":  401,
+    "StatusDescription":  "Unauthorized",
+    "ProtocolVersion":  {
+                            "Major":  1,
+                            "Minor":  1,
+                            "Build":  -1,
+                            "Revision":  -1,
+                            "MajorRevision":  -1,
+                            "MinorRevision":  -1
+                        },
+    "ResponseUri":  "https://backend.leadconnectorhq.com/phone-system/whatsapp/location/3SsfTbU1lmAPpkG9iB6C/messages/d3EPompkFvRSdkf2VPIM/attachment?userId=AnkFwcdtquvQZ3dYfpSC",
+    "Method":  "GET",
+    "IsFromCache":  false
+}

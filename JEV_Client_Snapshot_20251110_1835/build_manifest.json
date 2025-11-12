@@ -1,0 +1,6 @@
+{
+  "build_id": "L8.9.9.9",
+  "date": "2025-11-08T16:00:00Z",
+  "modules": ["Dock", "Insight", "Visual Sync", "Bridge"],
+  "deployed_to": "https://jevshop.pages.dev"
+}

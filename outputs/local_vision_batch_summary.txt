@@ -1,0 +1,4 @@
+url	status	success	count	used_fallback	used_source	mode	error
+https://picsum.photos/400	0	False	0				操作超时。
+https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Manhattan_at_Dusk_by_Francisco_Diez.jpg/640px-Manhattan_at_Dusk_by_Francisco_Diez.jpg	500	False	0				
+https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png	504	False	0				

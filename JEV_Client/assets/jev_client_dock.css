@@ -1,0 +1,369 @@
+/* UTF-8 FIXED BY JEV @ 2025-11-09T15:11:17.084Z */
+/* Dock 氓聼潞莽隆聙忙聽路氓录聫 */
+#jev-dock {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 9999;
+  transition: all 0.4s ease;
+}
+
+/* 氓卤聲氓录聙/忙聰露猫碌路忙聦聣茅聮庐 */
+#dock-toggle {
+  background: rgba(59, 130, 246, 0.9);
+  padding: 12px;
+  border-radius: 8px 0 0 8px;
+  cursor: pointer;
+  color: white;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+  font-size: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+#dock-toggle:hover {
+  background: rgba(59, 130, 246, 1);
+  transform: scale(1.05);
+}
+
+#dock-toggle.active {
+  border-radius: 0;
+}
+
+/* 茅聺垄忙聺驴氓庐鹿氓聶篓 - 盲赂聨motion.css氓聧聫猫掳聝 */
+#dock-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 360px;
+  height: 100%;
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(12px);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+  padding: 8px;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+  transform: translateX(380px); /* 茅禄聵猫庐陇茅職聬猫聴聫 */
+}
+
+#dock-panel.visible {
+  transform: translateX(0); /* 忙聵戮莽陇潞茅聺垄忙聺驴 */
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+}
+
+/* 忙聽聡莽颅戮忙聽聫 */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.tabs button {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 8px 6px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.tabs button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.tabs button.active {
+  background: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+/* 氓聠聟氓庐鹿氓聦潞氓聼聼 */
+#tab-content {
+  height: calc(100% - 60px);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* iframe 忙聽路氓录聫 */
+iframe.tab-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+iframe.tab-frame.loading {
+  opacity: 0.4;
+}
+
+/* 氓鹿驴忙聮颅忙聴楼氓驴聴忙聽路氓录聫 */
+#broadcast-log {
+  height: 100%;
+  overflow-y: auto;
+  padding: 12px;
+  color: #e5e7eb;
+  font-size: 14px;
+}
+
+/* 茅聙職莽聼楼忙聽路氓录聫 - 氓垄聻氓录潞莽聣聢 */
+.jev-notification {
+  position: fixed;
+  top: 20px;
+  right: -400px;
+  background: rgba(59, 130, 246, 0.95);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.6);
+  transition: all 0.3s ease;
+  max-width: 320px;
+  z-index: 10000;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 500;
+}
+
+/* 盲赂聧氓聬聦莽卤禄氓聻聥茅聙職莽聼楼莽職聞忙聽路氓录聫 */
+.jev-notification.error {
+  background: rgba(239, 68, 68, 0.95);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.6);
+}
+
+.jev-notification.warning {
+  background: rgba(245, 158, 11, 0.95);
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.6);
+}
+
+.jev-notification.info {
+  background: rgba(59, 130, 246, 0.95);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.6);
+}
+
+.jev-notification.show {
+  right: 20px;
+}
+
+.jev-notification:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.8);
+}
+
+.jev-notification.error:hover {
+  box-shadow: 0 6px 24px rgba(239, 68, 68, 0.8);
+}
+
+.jev-notification.warning:hover {
+  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.8);
+}
+
+/* 忙聳掳忙露聢忙聛炉忙聦聡莽陇潞氓聶篓 */
+.new-message-indicator {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: pulseNotification 1.5s infinite;
+}
+
+@keyframes pulseNotification {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* 猫聞聣氓聠虏氓聤篓莽聰禄 */
+@keyframes pulseAlert {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 99, 99, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(255, 99, 99, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 99, 99, 0);
+  }
+}
+
+#dock-toggle.pulse {
+  animation: pulseAlert 1.5s ease-in-out;
+}
+
+/* 忙聜卢忙碌庐氓聤篓莽聰禄 */
+@keyframes floaty {
+  0% {
+    transform: translateY(-2px);
+  }
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+#dock-toggle {
+  animation: floaty 3s ease-in-out infinite alternate;
+}
+
+/* 忙禄職氓聤篓忙聺隆莽戮聨氓聦聳 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 氓聯聧氓潞聰氓录聫猫庐戮猫庐隆 */
+@media (max-width: 768px) {
+  #jev-dock {
+    display: none; /* 莽搂禄氓聤篓莽芦炉茅職聬猫聴聫 */
+  }
+  
+  .jev-notification {
+    right: -350px;
+    max-width: 280px;
+    font-size: 14px;
+  }
+  
+  .jev-notification.show {
+    right: 10px;
+    top: 10px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  #dock-panel {
+    width: 320px;
+    transform: translateX(340px);
+  }
+  
+  .tabs button {
+    font-size: 13px;
+    padding: 6px 4px;
+  }
+}
+
+/* 氓鹿鲁忙禄聭猫驴聡忙赂隆氓聤篓莽聰禄 */
+#dock-panel, #dock-toggle, .tabs button, .jev-notification {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 氓聤聽猫陆陆氓聤篓莽聰禄 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#tab-content > * {
+  animation: fadeIn 0.3s ease;
+}
+
+/* 盲赂禄茅垄聵氓聢聡忙聧垄忙聽路氓录聫 */
+.theme-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.3s ease;
+  font-size: 18px;
+  z-index: 1000;
+}
+
+.theme-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* 盲潞庐猫聣虏盲赂禄茅垄聵忙聽路氓录聫 */
+body.light {
+  background: #f5f5f5;
+  color: #111;
+}
+
+body.light .theme-btn {
+  background: rgba(0, 0, 0, 0.2);
+  color: black;
+}
+
+body.light #dock-panel {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light .tabs {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.light .tabs button {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+body.light .tabs button.active {
+  background: rgba(59, 130, 246, 0.8);
+  color: white;
+}
+
+body.light #tab-content {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.light #broadcast-log {
+  color: #333;
+}
+
+body.light #dock-toggle {
+  background: rgba(59, 130, 246, 0.85);
+}
+
+body.light ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body.light ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+body.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}

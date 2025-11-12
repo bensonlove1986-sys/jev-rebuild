@@ -1,0 +1,498 @@
+/* JEV UI组件样式文件 */
+/* 定义黑绿荧光主题的统一样式 */
+
+/* 重置样式 */
+.jev-component,
+.jev-component * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 根变量定义 */
+:root {
+  /* 黑绿荧光主题 */
+  --jev-primary-color: #00ff99;
+  --jev-primary-hover: #00cc77;
+  --jev-secondary-color: #1a1a1a;
+  --jev-background-color: #0f0f0f;
+  --jev-surface-color: #1a1a1a;
+  --jev-text-color: #00ff99;
+  --jev-text-secondary: #cccccc;
+  --jev-border-color: #333333;
+  --jev-shadow-color: rgba(0, 255, 153, 0.3);
+  
+  /* 状态颜色 */
+  --jev-success-color: #4caf50;
+  --jev-warning-color: #ff9800;
+  --jev-error-color: #f44336;
+  --jev-info-color: #2196f3;
+  
+  /* 尺寸变量 */
+  --jev-border-radius: 4px;
+  --jev-spacing-xs: 4px;
+  --jev-spacing-sm: 8px;
+  --jev-spacing-md: 12px;
+  --jev-spacing-lg: 16px;
+  --jev-spacing-xl: 24px;
+  
+  /* 字体大小 */
+  --jev-font-size-xs: 12px;
+  --jev-font-size-sm: 14px;
+  --jev-font-size-md: 16px;
+  --jev-font-size-lg: 18px;
+  --jev-font-size-xl: 20px;
+  
+  /* 阴影 */
+  --jev-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --jev-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --jev-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.4);
+  --jev-shadow-glow: 0 0 10px var(--jev-shadow-color);
+}
+
+/* Button 组件样式 */
+.jev-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--jev-spacing-sm) var(--jev-spacing-lg);
+  border: 1px solid var(--jev-primary-color);
+  border-radius: var(--jev-border-radius);
+  background-color: transparent;
+  color: var(--jev-primary-color);
+  font-size: var(--jev-font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  outline: none;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.jev-button:hover {
+  background-color: var(--jev-primary-color);
+  color: var(--jev-background-color);
+  box-shadow: var(--jev-shadow-glow);
+  transform: translateY(-1px);
+}
+
+.jev-button:active {
+  transform: translateY(0);
+}
+
+.jev-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.jev-button:disabled:hover {
+  background-color: transparent;
+  color: var(--jev-primary-color);
+}
+
+/* 按钮类型 */
+.jev-button-primary {
+  background-color: var(--jev-primary-color);
+  color: var(--jev-background-color);
+}
+
+.jev-button-primary:hover {
+  background-color: var(--jev-primary-hover);
+}
+
+.jev-button-success {
+  border-color: var(--jev-success-color);
+  color: var(--jev-success-color);
+}
+
+.jev-button-success:hover {
+  background-color: var(--jev-success-color);
+  color: white;
+}
+
+.jev-button-warning {
+  border-color: var(--jev-warning-color);
+  color: var(--jev-warning-color);
+}
+
+.jev-button-warning:hover {
+  background-color: var(--jev-warning-color);
+  color: white;
+}
+
+.jev-button-error {
+  border-color: var(--jev-error-color);
+  color: var(--jev-error-color);
+}
+
+.jev-button-error:hover {
+  background-color: var(--jev-error-color);
+  color: white;
+}
+
+/* 按钮尺寸 */
+.jev-button-small {
+  padding: var(--jev-spacing-xs) var(--jev-spacing-sm);
+  font-size: var(--jev-font-size-xs);
+}
+
+.jev-button-large {
+  padding: var(--jev-spacing-md) var(--jev-spacing-xl);
+  font-size: var(--jev-font-size-md);
+}
+
+/* 按钮图标 */
+.jev-button-icon {
+  margin-right: var(--jev-spacing-xs);
+}
+
+/* Dialog 组件样式 */
+.jev-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: jev-fade-in 0.3s ease;
+}
+
+.jev-dialog {
+  background-color: var(--jev-surface-color);
+  border: 1px solid var(--jev-border-color);
+  border-radius: var(--jev-border-radius);
+  box-shadow: var(--jev-shadow-lg), var(--jev-shadow-glow);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: jev-slide-up 0.3s ease;
+  overflow: hidden;
+}
+
+.jev-dialog-header {
+  padding: var(--jev-spacing-lg);
+  border-bottom: 1px solid var(--jev-border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.jev-dialog-title {
+  font-size: var(--jev-font-size-lg);
+  font-weight: 600;
+  color: var(--jev-text-color);
+}
+
+.jev-dialog-close {
+  background: none;
+  border: none;
+  color: var(--jev-text-color);
+  font-size: 20px;
+  cursor: pointer;
+  padding: var(--jev-spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  transition: background-color 0.2s;
+}
+
+.jev-dialog-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.jev-dialog-content {
+  padding: var(--jev-spacing-lg);
+  overflow-y: auto;
+  color: var(--jev-text-secondary);
+  flex: 1;
+  font-size: var(--jev-font-size-sm);
+  line-height: 1.6;
+}
+
+.jev-dialog-footer {
+  padding: var(--jev-spacing-lg);
+  border-top: 1px solid var(--jev-border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--jev-spacing-md);
+}
+
+/* Panel 组件样式 */
+.jev-panel {
+  background-color: var(--jev-surface-color);
+  border: 1px solid var(--jev-border-color);
+  border-radius: var(--jev-border-radius);
+  box-shadow: var(--jev-shadow-md), var(--jev-shadow-glow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.jev-panel-header {
+  padding: var(--jev-spacing-md);
+  border-bottom: 1px solid var(--jev-border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(0, 255, 153, 0.05);
+  cursor: move;
+}
+
+.jev-panel-title {
+  font-size: var(--jev-font-size-md);
+  font-weight: 600;
+  color: var(--jev-text-color);
+}
+
+.jev-panel-actions {
+  display: flex;
+  gap: var(--jev-spacing-xs);
+}
+
+.jev-panel-action-btn {
+  background: none;
+  border: none;
+  color: var(--jev-text-color);
+  font-size: 16px;
+  cursor: pointer;
+  padding: var(--jev-spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  width: 24px;
+  height: 24px;
+}
+
+.jev-panel-action-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.jev-panel-content {
+  padding: var(--jev-spacing-md);
+  overflow-y: auto;
+  color: var(--jev-text-secondary);
+  flex: 1;
+  font-size: var(--jev-font-size-sm);
+  line-height: 1.6;
+}
+
+.jev-panel-footer {
+  padding: var(--jev-spacing-md);
+  border-top: 1px solid var(--jev-border-color);
+}
+
+.jev-panel-collapsed {
+  max-height: 48px;
+}
+
+.jev-panel-collapsed .jev-panel-content,
+.jev-panel-collapsed .jev-panel-footer {
+  display: none;
+}
+
+/* ProgressBar 组件样式 */
+.jev-progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.jev-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--jev-primary-color), #00cc77);
+  transition: width 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.jev-progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: jev-progress-shine 2s infinite;
+}
+
+.jev-progress-bar-label {
+  margin-bottom: var(--jev-spacing-xs);
+  font-size: var(--jev-font-size-xs);
+  color: var(--jev-text-secondary);
+}
+
+.jev-progress-bar-percentage {
+  position: absolute;
+  right: var(--jev-spacing-xs);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--jev-font-size-xs);
+  color: var(--jev-text-color);
+  font-weight: 500;
+}
+
+/* 动画定义 */
+@keyframes jev-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes jev-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes jev-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes jev-slide-down {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes jev-progress-shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 加载动画 */
+@keyframes jev-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.jev-loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--jev-primary-color);
+  animation: jev-spin 0.8s linear infinite;
+}
+
+/* 工具类 */
+.jev-hidden {
+  display: none !important;
+}
+
+.jev-visible {
+  display: block;
+}
+
+.jev-flex {
+  display: flex;
+}
+
+.jev-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jev-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.jev-mt-xs { margin-top: var(--jev-spacing-xs); }
+.jev-mt-sm { margin-top: var(--jev-spacing-sm); }
+.jev-mt-md { margin-top: var(--jev-spacing-md); }
+.jev-mt-lg { margin-top: var(--jev-spacing-lg); }
+
+.jev-mb-xs { margin-bottom: var(--jev-spacing-xs); }
+.jev-mb-sm { margin-bottom: var(--jev-spacing-sm); }
+.jev-mb-md { margin-bottom: var(--jev-spacing-md); }
+.jev-mb-lg { margin-bottom: var(--jev-spacing-lg); }
+
+.jev-ml-xs { margin-left: var(--jev-spacing-xs); }
+.jev-ml-sm { margin-left: var(--jev-spacing-sm); }
+.jev-ml-md { margin-left: var(--jev-spacing-md); }
+.jev-ml-lg { margin-left: var(--jev-spacing-lg); }
+
+.jev-mr-xs { margin-right: var(--jev-spacing-xs); }
+.jev-mr-sm { margin-right: var(--jev-spacing-sm); }
+.jev-mr-md { margin-right: var(--jev-spacing-md); }
+.jev-mr-lg { margin-right: var(--jev-spacing-lg); }
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .jev-dialog {
+    width: 95%;
+    margin: var(--jev-spacing-lg);
+  }
+  
+  .jev-panel {
+    width: 100%;
+    margin: var(--jev-spacing-sm) 0;
+  }
+  
+  .jev-dialog-footer {
+    flex-direction: column;
+  }
+  
+  .jev-dialog-footer .jev-button {
+    width: 100%;
+  }
+}
+
+/* 滚动条样式 */
+.jev-dialog-content::-webkit-scrollbar,
+.jev-panel-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.jev-dialog-content::-webkit-scrollbar-track,
+.jev-panel-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.jev-dialog-content::-webkit-scrollbar-thumb,
+.jev-panel-content::-webkit-scrollbar-thumb {
+  background: var(--jev-primary-color);
+  border-radius: 4px;
+}
+
+.jev-dialog-content::-webkit-scrollbar-thumb:hover,
+.jev-panel-content::-webkit-scrollbar-thumb:hover {
+  background: var(--jev-primary-hover);
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 登录门户</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .form-group input.error {
+            border-color: #e74c3c;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .login-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .login-button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .login-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .login-footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .status-indicator {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .status-indicator.success {
+            color: #27ae60;
+        }
+        
+        .status-indicator.error {
+            color: #e74c3c;
+        }
+        
+        .status-indicator.warning {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>JEV 客户端登录</h1>
+            <p>请输入您的许可证密钥以继续</p>
+        </div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="license-key">许可证密钥</label>
+                <input type="text" id="license-key" placeholder="请输入许可证密钥" required>
+                <div id="license-error" class="error-message"></div>
+            </div>
+            
+            <button type="submit" class="login-button">登录</button>
+            
+            <div id="status-message" class="status-indicator"></div>
+        </form>
+        
+        <div class="login-footer">
+            <p>遇到问题？请联系 <a href="#">技术支持</a></p>
+            <p>版本: 1.0.0</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            const licenseKey = document.getElementById('license-key');
+            const licenseError = document.getElementById('license-error');
+            const statusMessage = document.getElementById('status-message');
+            const loginButton = document.querySelector('.login-button');
+            
+            // 表单提交事件
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // 重置错误信息
+                licenseError.textContent = '';
+                licenseKey.classList.remove('error');
+                statusMessage.textContent = '';
+                
+                // 简单验证
+                if (!licenseKey.value.trim()) {
+                    licenseError.textContent = '请输入许可证密钥';
+                    licenseKey.classList.add('error');
+                    return;
+                }
+                
+                // 模拟登录过程
+                loginButton.disabled = true;
+                statusMessage.textContent = '正在验证...';
+                statusMessage.className = 'status-indicator';
+                
+                // 模拟API调用
+                setTimeout(function() {
+                    try {
+                        // 这里应该是实际的登录逻辑
+                        console.log('登录请求发送，许可证密钥:', licenseKey.value);
+                        
+                        // 模拟成功响应
+                        statusMessage.textContent = '登录成功，正在重定向...';
+                        statusMessage.className = 'status-indicator success';
+                        
+                        // 存储许可证密钥
+                        localStorage.setItem('jev_license_key', licenseKey.value);
+                        
+                        // 重定向到主面板
+                        setTimeout(function() {
+                            window.location.href = 'panel.html';
+                        }, 1500);
+                        
+                    } catch (error) {
+                        loginButton.disabled = false;
+                        statusMessage.textContent = '登录失败: ' + error.message;
+                        statusMessage.className = 'status-indicator error';
+                        console.error('登录错误:', error);
+                    }
+                }, 1500);
+            });
+            
+            // 检查是否已有存储的许可证
+            const storedLicense = localStorage.getItem('jev_license_key');
+            if (storedLicense) {
+                licenseKey.value = storedLicense;
+                statusMessage.textContent = '检测到已保存的许可证';
+                statusMessage.className = 'status-indicator warning';
+            }
+        });
+    </script>
+</body>
+</html>

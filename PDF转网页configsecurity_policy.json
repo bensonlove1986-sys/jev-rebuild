@@ -1,0 +1,16 @@
+{
+  "allowedWorkers": [
+    "jevshop.bensonlove1986.workers.dev"
+  ],
+  "trustedModules": [
+    "sentinelMonitor",
+    "autoOrchestrator",
+    "autoRecoveryCluster"
+  ],
+  "blockedCalls": [
+    "fetch('file://')",
+    "exec()",
+    "PowerShell"
+  ],
+  "autonomyThreshold": 0.7
+}

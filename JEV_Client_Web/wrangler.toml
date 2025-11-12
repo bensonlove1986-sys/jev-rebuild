@@ -1,0 +1,136 @@
+# JEV-UI-Origin-v9.3 Cloudflare Worker 配置文件
+
+name = "jev-ui-origin-v9-3"
+type = "javascript"
+account_id = "" # 请填写您的Cloudflare账号ID
+build.command = "echo 'Building JEV-UI-Origin-v9.3...'"
+
+# 主要环境配置
+main = "worker.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat", "streams_enable_constructors"]
+
+# 环境变量配置
+[vars]
+STATE_LAYER = "https://jevshop.bensonlove1986.workers.dev"
+ANALYZE_IMAGE_URL = "https://jevshop.bensonlove1986.workers.dev/analyze-image"
+GREETING_MODE = "AI_WELCOME"
+DEPLOY_ENV = "production"
+MAX_REQUEST_SIZE = "10MB"
+
+# R2存储桶绑定
+[[r2_buckets]]
+binding = "public" # 在worker中通过 env.public 访问
+bucket_name = "jev-ui-origin-v9-3-assets"
+preview_bucket_name = "jev-ui-origin-v9-3-assets-preview"
+
+# KV命名空间绑定
+[[kv_namespaces]]
+binding = "JEV_CONFIG" # 配置存储
+id = "" # 请填写您的KV命名空间ID
+preview_id = "" # 预览环境的KV命名空间ID（可选）
+
+# 路由配置
+[[routes]]
+pattern = "jev-ui.example.com/*" # 生产环境路由
+zone_name = "example.com" # 您的域名
+
+# 开发环境配置
+[env.development]
+name = "jev-ui-origin-v9-3-dev"
+vars = {
+  DEPLOY_ENV = "development",
+  GREETING_MODE = "basic",
+  DEBUG = "true"
+}
+
+# 预览环境配置
+[env.preview]
+name = "jev-ui-origin-v9-3-preview"
+vars = {
+  DEPLOY_ENV = "preview",
+  DEBUG = "false"
+}
+
+# 构建配置
+[build.upload]
+format = "service-worker"
+compression = "gzip"
+
+# 缓存配置
+[build.upload.preview]
+format = "service-worker"
+
+# 测试配置（可选）
+[test]
+enabled = true
+env = "development"
+
+# 性能配置
+[minify]
+javascript = true
+css = true
+html = true
+
+# 安全配置
+[security]
+disable_scanning = false
+
+# 资源限制配置
+[limits]
+memory = 128 # MB
+timeout = 30 # 秒
+
+# 日志配置
+[logs]
+retention = 30 # 天
+level = "info" # trace, debug, info, warn, error
+
+# 自动扩展配置（企业版功能）
+[workers_dev]
+enabled = true
+
+# 分析配置（如果需要）
+[analytics]
+enabled = true
+
+# 队列配置（如果需要使用Cloudflare Queues）
+[[queues]]
+binding = "EVENT_QUEUE"
+queue_name = "jev-ui-events"
+
+# D1数据库配置（如果需要使用Cloudflare D1）
+[[d1_databases]]
+binding = "JEV_DB" # 在worker中通过 env.JEV_DB 访问
+database_name = "jev-ui-db"
+database_id = "" # 请填写您的D1数据库ID
+
+# Cache API配置
+[cache]
+default_ttl = 3600 # 秒
+enabled = true
+
+# CORS配置
+[cors]
+allow_origin = ["*"]
+allow_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+allow_headers = ["Content-Type", "Authorization", "X-Requested-With"]
+expose_headers = ["Content-Length", "Content-Type"]
+max_age = 86400
+allow_credentials = true
+
+# 资源配置
+[resources]
+bindings = [
+  # 可以在这里添加更多绑定配置
+]
+
+# 部署配置
+[deploy]
+promote = false # 设置为true自动部署到生产环境
+tail = true # 部署后显示日志
+
+# 环境变量（敏感信息应通过Cloudflare Dashboard设置）
+# 以下是示例，实际使用时请在Cloudflare Dashboard中设置
+# SECRET_API_KEY = "your-secret-api-key"
+# DATABASE_URL = "your-database-url"

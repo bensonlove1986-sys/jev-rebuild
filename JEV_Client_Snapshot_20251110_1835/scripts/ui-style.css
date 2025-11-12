@@ -1,0 +1,2735 @@
+/* UTF-8 FIXED BY JEV @ 2025-11-09T15:11:17.836Z */
+/* JEV 氓聵聣氓掳聰氓篓聛莽驴禄猫炉聭忙聫聮盲禄露 - 氓聟篓氓卤聙忙聽路氓录聫忙聳聡盲禄露 */
+/* 氓庐聻莽聨掳茅虏聹盲潞庐忙聵聨猫聣鲁莽職聞猫搂聠猫搂聣猫庐戮猫庐隆猫炉颅猫篓聙 */
+
+/* CSS 氓聫聵茅聡聫氓庐職盲鹿聣 - 盲戮驴盲潞聨盲赂禄茅垄聵绠＄悊 */
+:root {
+    /* 盲赂禄猫聣虏猫掳聝 - 茅虏聹盲潞庐忙聵聨猫聣鲁猫庐戮猫庐隆猫炉颅猫篓聙 */
+    --primary-color: #ff4081;       /* 盲赂禄猫聣虏猫掳聝 - 盲潞庐莽虏聣猫聣虏 */
+    --primary-light: #ff80ab;       /* 盲赂禄猫聣虏猫掳聝忙碌聟 */
+    --primary-dark: #f50057;        /* 盲赂禄猫聣虏猫掳聝忙路卤 */
+    --primary-glow: rgba(255, 64, 129, 0.4); /* 盲赂禄猫聣虏猫掳聝氓聫聭氓聟聣忙聲聢忙聻聹 */
+    
+    /* 猫戮聟氓聤漏猫聣虏 */
+    --success-color: #00c853;
+    --warning-color: #ffab00;
+    --error-color: #ff1744;
+    --info-color: #2979ff;          /* 茅虏聹盲潞庐猫聯聺猫聣虏 */
+    
+    /* 盲赂颅忙聙搂猫聣虏 - 莽潞炉茅禄聭猫聣虏猫聝聦忙聶炉盲赂禄茅垄聵 */
+    --bg-primary: #000000;          /* 盲赂禄猫聝聦忙聶炉 - 莽潞炉茅禄聭猫聣虏 */
+    --bg-secondary: #1a1a1a;        /* 忙卢隆猫娄聛猫聝聦忙聶炉 */
+    --bg-tertiary: #263238;         /* 莽卢卢盲赂聣莽潞搂猫聝聦忙聶炉 */
+    --bg-hover: #263238;            /* 忙聜卢忙碌庐猫聝聦忙聶炉 */
+    --bg-active: #37474f;           /* 忙驴聙忙麓禄猫聝聦忙聶炉 */
+    
+    /* 忙聳聡忙聹卢猫聣虏 */
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --text-muted: #a0a0a0;
+    
+    /* 猫戮鹿忙隆聠猫聣虏 */
+    --border-light: rgba(100, 116, 139, 0.2);
+    --border-medium: rgba(100, 116, 139, 0.3);
+    --border-dark: rgba(100, 116, 139, 0.4);
+    
+    /* 氓聹聠猫搂聮 */
+    --radius-small: 6px;
+    --radius-medium: 10px;
+    --radius-large: 16px;
+    
+    /* 茅聵麓氓陆卤 */
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 15px var(--primary-glow);
+    
+    /* 氓聤篓莽聰禄 */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* 氓聟篓氓卤聙忙聽路氓录聫茅聡聧莽陆庐 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* 莽聰篓忙聢路猫聡陋氓庐職盲鹿聣氓聼潞莽隆聙忙聽路氓录聫 */
+body {
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* 忙聦聣茅聮庐氓聼潞莽隆聙忙聽路氓录聫 */
+button, .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-medium);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    outline: none;
+}
+
+button:hover, .btn:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+button:active, .btn:active {
+    transform: translateY(0);
+    box-shadow: 0 0 20px var(--primary-glow);
+    background-color: var(--bg-active);
+}
+
+/* 盲赂禄忙聦聣茅聮庐忙聽路氓录聫 - 忙聸麓茅虏聹盲潞庐莽職聞猫庐戮猫庐隆 */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    font-weight: 700;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: white;
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.btn-primary:active {
+    background-color: var(--primary-dark);
+    box-shadow: 0 0 25px var(--primary-glow);
+}
+
+button:disabled, .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 猫戮聯氓聟楼忙隆聠氓聼潞莽隆聙忙聽路氓录聫 */
+input[type="text"], input[type="email"], input[type="password"], textarea, select {
+    padding: 10px 14px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-small);
+    font-family: inherit;
+    font-size: 14px;
+    transition: all var(--transition-normal);
+    outline: none;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+    background-color: var(--bg-active);
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-muted);
+}
+
+/* 猫聛聤氓陇漏忙隆聠忙聽路氓录聫 */
+.chatbox {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-medium);
+    padding: 16px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.chatbox:hover {
+    border-color: var(--primary-light);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.15);
+    transform: translateY(-2px);
+}
+
+/* 氓聸垄茅聵聼茅聺垄忙聺驴氓聢聡忙聧垄忙聦聣茅聮庐 */
+.team-toggle-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 8px 12px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-small);
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.team-toggle-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary-light);
+    color: var(--primary-light);
+}
+
+.team-toggle-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 氓聸垄茅聵聼茅聺垄忙聺驴忙聽路氓录聫 */
+.team-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 300px;
+    background: var(--bg-primary);
+    border-left: 1px solid var(--border-medium);
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    animation: slideInLeft 0.3s ease-out;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.team-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-medium);
+    background: var(--bg-secondary);
+}
+
+.team-panel-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.team-panel-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.team-panel-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* 氓聸垄茅聵聼忙聢聬氓聭聵氓聢聴猫隆篓 */
+.team-members-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.team-member-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: var(--radius-small);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-bottom: 4px;
+}
+
+.team-member-item:hover {
+    background: var(--bg-hover);
+}
+
+.team-member-item.online {
+    cursor: pointer;
+}
+
+.team-member-item.offline {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.team-member-item.offline:hover {
+    background: transparent;
+}
+
+.team-member-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.team-member-avatar.online::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--success-color);
+    border: 2px solid var(--bg-primary);
+}
+
+.team-member-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.team-member-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 14px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.team-member-role {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.team-member-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+}
+
+.team-member-status.online {
+    color: var(--success-color);
+}
+
+.team-member-status.offline {
+    color: var(--text-muted);
+}
+
+.status-indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+/* 氓聸垄茅聵聼忙聯聧盲陆聹氓聦潞氓聼聼 */
+.team-actions {
+    padding: 16px;
+    border-top: 1px solid var(--border-medium);
+    display: flex;
+    gap: 12px;
+}
+
+.team-actions .btn {
+    flex: 1;
+    font-size: 13px;
+    padding: 8px 12px;
+}
+
+/* 忙禄職氓聤篓忙聺隆忙聽路氓录聫 - 莽聨掳盲禄拢莽庐聙莽潞娄猫庐戮猫庐隆 */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 3px;
+    transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--bg-tertiary);
+}
+
+/* 盲赂禄氓庐鹿氓聶篓忙聽路氓录聫 - 茅虏聹盲潞庐忙聵聨猫聣鲁猫庐戮猫庐隆 */
+#jev-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-lg), 0 0 30px rgba(255, 64, 129, 0.2);
+    transition: all var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+#jev-container:hover {
+    box-shadow: var(--shadow-lg), 0 0 40px rgba(255, 64, 129, 0.3);
+    border-color: var(--primary-color);
+}
+
+#jev-container.dragging {
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(255, 64, 129, 0.1);
+    opacity: 0.95;
+    transform: scale(1.01);
+}
+
+/* 氓陇麓茅聝篓忙聽路氓录聫 - 莽聨掳盲禄拢莽庐聙莽潞娄猫庐戮猫庐隆 */
+#jev-header {
+    position: relative;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-medium);
+    border-top-left-radius: var(--radius-large);
+    border-top-right-radius: var(--radius-large);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    user-select: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+#jev-header:hover {
+    background: var(--bg-hover);
+}
+
+#jev-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#jev-title::before {
+    content: '冒聼聦聬';
+    font-size: 18px;
+}
+
+/* 忙聨搂氓聢露忙聦聣茅聮庐忙聽路氓录聫 - 茅虏聹盲潞庐猫庐戮猫庐隆 */
+.jev-control-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border-medium);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-radius: var(--radius-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 16px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jev-control-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.jev-control-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 0 20px var(--primary-glow);
+    background: var(--bg-active);
+}
+
+.jev-control-btn:last-child:hover {
+    background: rgba(255, 23, 68, 0.1);
+    border-color: var(--error-color);
+    color: var(--error-color);
+    box-shadow: 0 0 15px rgba(255, 23, 68, 0.3);
+}
+
+/* 氓炉录猫聢陋忙聽聫忙聽路氓录聫 - 茅虏聹盲潞庐猫庐戮猫庐隆 */
+#jev-nav {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-medium);
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--bg-tertiary);
+}
+
+.jev-nav-item {
+    padding: 12px 24px;
+    border-right: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+    color: var(--text-secondary);
+    font-weight: 600;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: fit-content;
+}
+
+.jev-nav-item:hover {
+    background: var(--bg-hover);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.jev-nav-item.active {
+    background: var(--bg-hover);
+    color: var(--primary-color);
+    font-weight: 700;
+    position: relative;
+}
+
+.jev-nav-item.active:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-color);
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    box-shadow: 0 0 12px var(--primary-glow);
+}
+
+/* 氓聠聟氓庐鹿氓聦潞氓聼聼忙聽路氓录聫 - 茅虏聹盲潞庐猫庐戮猫庐隆 */
+#jev-content {
+    flex: 1;
+    padding: 24px;
+    background: var(--bg-primary);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--bg-tertiary);
+    position: relative;
+    transition: background var(--transition-normal);
+}
+
+#jev-content:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--bg-primary), transparent);
+    pointer-events: none;
+    z-index: 1;
+}
+
+#jev-content:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to top, var(--bg-primary), transparent);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 忙篓隆氓聺聴氓庐鹿氓聶篓忙聽路氓录聫 */
+#jev-module-container {
+    min-height: 100%;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 氓潞聲茅聝篓莽聤露忙聙聛忙聽聫忙聽路氓录聫 - 莽聨掳盲禄拢莽庐聙莽潞娄猫庐戮猫庐隆 */
+#jev-footer {
+    padding: 10px 20px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-medium);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    position: sticky;
+    bottom: 0;
+    border-bottom-left-radius: var(--radius-large);
+    border-bottom-right-radius: var(--radius-large);
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* 莽聤露忙聙聛茅隆鹿忙聽路氓录聫 */
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    transition: all var(--transition-fast);
+    padding: 4px 8px;
+    border-radius: var(--radius-small);
+}
+
+.status-item:hover {
+    background: var(--bg-hover);
+    transform: translateY(-1px);
+}
+
+/* 莽聤露忙聙聛忙聦聡莽陇潞氓聶篓忙聽路氓录聫 - 莽聨掳盲禄拢莽庐聙莽潞娄猫庐戮猫庐隆 */
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: pulse-indicator 2s infinite;
+    box-shadow: 0 0 6px currentColor;
+    transition: all var(--transition-fast);
+}
+
+.status-indicator.green {
+    background: var(--success-color);
+    color: var(--success-color);
+}
+
+.status-indicator.blue {
+    background: var(--primary-color);
+    color: var(--primary-color);
+    animation-name: pulse-blue;
+}
+
+.status-indicator.red {
+    background: var(--error-color);
+    color: var(--error-color);
+    animation-name: pulse-red;
+}
+
+/* 猫聞聣氓聠虏氓聤篓莽聰禄盲录聵氓聦聳 */
+@keyframes pulse-indicator {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 140, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(0, 255, 140, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 140, 0);
+    }
+}
+
+@keyframes pulse-blue {
+    0% {
+        box-shadow: 0 0 0 0 rgba(77, 166, 255, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(77, 166, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(77, 166, 255, 0);
+    }
+}
+
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 59, 59, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(255, 59, 59, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 59, 59, 0);
+    }
+}
+
+/* 忙聦聣茅聮庐茅聙職莽聰篓忙聽路氓录聫 */
+.jev-btn {
+    padding: 10px 20px;
+    border: 1px solid rgba(0, 255, 140, 0.5);
+    background: rgba(0, 255, 140, 0.1);
+    color: #e0ffe5;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+}
+
+.jev-btn:hover {
+    background: rgba(0, 255, 140, 0.2);
+    border-color: rgba(0, 255, 140, 0.7);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 255, 140, 0.3);
+}
+
+.jev-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 255, 140, 0.3);
+}
+
+.jev-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.jev-btn-primary {
+    background: linear-gradient(135deg, rgba(0, 255, 140, 0.2), rgba(0, 255, 140, 0.4));
+    border-color: rgba(0, 255, 140, 0.6);
+}
+
+.jev-btn-primary:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 140, 0.3), rgba(0, 255, 140, 0.5));
+    border-color: rgba(0, 255, 140, 0.8);
+}
+
+.jev-btn-secondary {
+    background: rgba(10, 25, 15, 0.5);
+    border-color: rgba(0, 255, 140, 0.3);
+}
+
+.jev-btn-secondary:hover {
+    background: rgba(10, 25, 15, 0.7);
+    border-color: rgba(0, 255, 140, 0.5);
+}
+
+/* 猫戮聯氓聟楼忙隆聠忙聽路氓录聫 */
+.jev-input {
+    padding: 10px 15px;
+    background: rgba(10, 25, 15, 0.5);
+    border: 1px solid rgba(0, 255, 140, 0.3);
+    border-radius: 8px;
+    color: #e0ffe5;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    outline: none;
+    min-width: 200px;
+}
+
+.jev-input:focus {
+    border-color: rgba(0, 255, 140, 0.7);
+    box-shadow: 0 0 0 3px rgba(0, 255, 140, 0.1);
+    background: rgba(10, 25, 15, 0.7);
+}
+
+.jev-input::placeholder {
+    color: rgba(224, 255, 229, 0.5);
+}
+
+.jev-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 忙聳聡忙聹卢氓聦潞氓聼聼忙聽路氓录聫 */
+.jev-textarea {
+    padding: 12px 15px;
+    background: rgba(10, 25, 15, 0.5);
+    border: 1px solid rgba(0, 255, 140, 0.3);
+    border-radius: 8px;
+    color: #e0ffe5;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 120px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.jev-textarea:focus {
+    border-color: rgba(0, 255, 140, 0.7);
+    box-shadow: 0 0 0 3px rgba(0, 255, 140, 0.1);
+    background: rgba(10, 25, 15, 0.7);
+}
+
+.jev-textarea::placeholder {
+    color: rgba(224, 255, 229, 0.5);
+}
+
+/* 氓聧隆莽聣聡忙聽路氓录聫 */
+.jev-card {
+    background: rgba(10, 25, 15, 0.6);
+    border: 1px solid rgba(0, 255, 140, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.jev-card:hover {
+    border-color: rgba(0, 255, 140, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 255, 140, 0.2);
+    transform: translateY(-2px);
+}
+
+.jev-card::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 140, 0.6), transparent);
+}
+
+.jev-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.jev-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #00ff99;
+    margin-bottom: 8px;
+}
+
+.jev-card-content {
+    color: #e0ffe5;
+    line-height: 1.6;
+}
+
+.jev-card-footer {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 255, 140, 0.2);
+}
+
+/* 氓聤聽猫陆陆氓聤篓莽聰禄 */
+.jev-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    gap: 8px;
+    color: #00ff99;
+}
+
+.jev-loading-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.jev-loading-dot {
+    width: 8px;
+    height: 8px;
+    background: #00ff99;
+    border-radius: 50%;
+    animation: loading 1.4s infinite ease-in-out both;
+}
+
+.jev-loading-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.jev-loading-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+.jev-loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 255, 140, 0.3);
+    border-top: 2px solid #00ff99;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* 莽漏潞莽聤露忙聙聛忙聽路氓录聫 */
+.jev-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(224, 255, 229, 0.6);
+}
+
+.jev-empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+}
+
+.jev-empty-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #e0ffe5;
+}
+
+.jev-empty-desc {
+    font-size: 14px;
+    max-width: 300px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* 茅聰聶猫炉炉盲驴隆忙聛炉忙聽路氓录聫 */
+.jev-error {
+    background: rgba(255, 59, 59, 0.9);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(255, 59, 59, 0.3);
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    font-family: inherit;
+    font-size: 14px;
+    max-width: 300px;
+    border-left: 4px solid #ff3b3b;
+}
+
+/* 忙聢聬氓聤聼忙露聢忙聛炉忙聽路氓录聫 */
+.jev-success {
+    background: rgba(0, 255, 140, 0.2);
+    color: #00ff99;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 255, 140, 0.3);
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    font-size: 14px;
+    border: 1px solid rgba(0, 255, 140, 0.5);
+}
+
+/* 忙聽聡莽颅戮忙聽路氓录聫 */
+.jev-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    user-select: none;
+    background: rgba(0, 255, 140, 0.1);
+    color: #00ff99;
+    border: 1px solid rgba(0, 255, 140, 0.3);
+    transition: all 0.3s ease;
+}
+
+.jev-tag:hover {
+    background: rgba(0, 255, 140, 0.2);
+    border-color: rgba(0, 255, 140, 0.5);
+}
+
+/* 氓录聙氓聟鲁忙聽路氓录聫 */
+.jev-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.jev-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.jev-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(10, 25, 15, 0.6);
+    border: 1px solid rgba(0, 255, 140, 0.3);
+    transition: 0.4s;
+    border-radius: 24px;
+}
+
+.jev-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #e0ffe5;
+    transition: 0.4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .jev-switch-slider {
+    background-color: rgba(0, 255, 140, 0.3);
+    border-color: rgba(0, 255, 140, 0.7);
+}
+
+input:checked + .jev-switch-slider:before {
+    transform: translateX(24px);
+    background-color: #00ff99;
+    box-shadow: 0 2px 4px rgba(0, 255, 140, 0.4);
+}
+
+/* 氓聢聠氓聣虏莽潞驴忙聽路氓录聫 */
+.jev-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 140, 0.3), transparent);
+    margin: 20px 0;
+    border: none;
+}
+
+/* 莽陆聭忙聽录氓赂聝氓卤聙 */
+.jev-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+/* 猫隆篓氓聧聲莽禄聞忙聽路氓录聫 */
+.jev-form-group {
+    margin-bottom: 20px;
+}
+
+.jev-form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #e0ffe5;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* 氓路楼氓聟路忙聫聬莽陇潞忙聽路氓录聫 */
+.jev-tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.jev-tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background: rgba(10, 25, 15, 0.9);
+    color: #e0ffe5;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 140, 0.3);
+    padding: 12px;
+    position: absolute;
+    z-index: 1001;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.jev-tooltip:hover .jev-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.jev-tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(0, 255, 140, 0.3) transparent transparent transparent;
+}
+
+/* 氓聤篓莽聰禄氓庐職盲鹿聣 - 莽聨掳盲禄拢莽庐聙莽潞娄茅拢聨忙聽录 */
+@keyframes pulse-dots {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 6px currentColor;
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(0.95);
+        box-shadow: 0 0 12px currentColor, 0 0 20px currentColor;
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 6px currentColor;
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes loading {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1.0);
+    }
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(0, 255, 140, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(0, 255, 140, 0.8);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink-caret {
+    from, to {
+        border-color: transparent;
+    }
+    50% {
+        border-color: var(--primary-color);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 猫聛聤氓陇漏忙篓隆氓聺聴氓聦聟猫拢聟氓聶篓 */
+.jev-chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+/* 猫聛聤氓陇漏氓陇麓茅聝篓 */
+.jev-chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-medium);
+    gap: 20px;
+}
+
+.jev-chat-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.jev-chat-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.jev-chat-toolbar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.jev-chat-language-select {
+    padding: 6px 12px;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-small);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.jev-chat-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* 盲赂禄氓聠聟氓庐鹿氓聦潞氓聼聼 */
+.jev-chat-main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 忙露聢忙聛炉氓庐鹿氓聶篓 */
+.jev-chat-messages-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.jev-chat-messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background: var(--bg-primary);
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-light) var(--bg-tertiary);
+}
+
+.jev-chat-messages-main {
+    transition: margin-right var(--transition-normal);
+}
+
+/* 氓聤聽猫陆陆忙聦聡莽陇潞氓聶篓 */
+.jev-chat-loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.jev-loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-medium);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 莽漏潞莽聤露忙聙聛 */
+.jev-chat-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.jev-chat-empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+}
+
+.jev-chat-empty-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+/* 猫聛聤氓陇漏忙露聢忙聛炉忙聽路氓录聫 */
+.jev-chat-message-wrapper {
+    display: flex;
+    margin-bottom: 16px;
+    animation: fadeIn var(--transition-normal);
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.jev-chat-message-user {
+    flex-direction: row-reverse;
+}
+
+.jev-chat-message-bot {
+    flex-direction: row;
+}
+
+.jev-chat-message-system {
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.jev-chat-message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.jev-chat-message-user .jev-chat-message-avatar {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    color: white;
+}
+
+.jev-chat-message-bot .jev-chat-message-avatar {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-medium);
+    color: var(--primary-light);
+}
+
+.jev-chat-message-content {
+    max-width: 75%;
+    display: flex;
+    flex-direction: column;
+}
+
+.jev-chat-message-user .jev-chat-message-content {
+    align-items: flex-end;
+}
+
+.jev-chat-message-user-name {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.jev-chat-message-bubble {
+    position: relative;
+    padding: 12px 16px;
+    border-radius: 18px;
+    word-wrap: break-word;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.jev-chat-message-user .jev-chat-message-bubble {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.jev-chat-message-bot .jev-chat-message-bubble {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    color: var(--text-primary);
+    border-bottom-left-radius: 4px;
+}
+
+.jev-chat-message-text {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.jev-chat-message-translation {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 13px;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+.jev-chat-message-user .jev-chat-message-translation {
+    border-top-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.jev-chat-message-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.jev-chat-message-user .jev-chat-message-time {
+    text-align: right;
+}
+
+/* 莽鲁禄莽禄聼忙露聢忙聛炉忙聽路氓录聫 */
+.jev-chat-message-system .jev-chat-message {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    padding: 10px 16px;
+    border-radius: 16px;
+    max-width: 80%;
+    font-size: 13px;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.jev-chat-system-icon {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* @忙聢聬氓聭聵茅芦聵盲潞庐 */
+.jev-chat-message-mention {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: var(--primary-light);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.jev-chat-message-user .jev-chat-message-mention {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+/* 猫聛聤氓陇漏猫戮聯氓聟楼氓聦潞氓聼聼 */
+.jev-chat-input-wrapper {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-medium);
+    padding: 16px 20px;
+}
+
+.jev-chat-input-container {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-medium);
+    padding: 12px 16px;
+    transition: all var(--transition-fast);
+}
+
+.jev-chat-input-container:focus-within {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.jev-chat-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    min-height: 40px;
+    max-height: 120px;
+    outline: none;
+    font-family: inherit;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-light) var(--bg-tertiary);
+}
+
+.jev-chat-input::placeholder {
+    color: var(--text-muted);
+}
+
+.jev-chat-send-btn {
+    background: var(--primary-color);
+    border: none;
+    color: white;
+    border-radius: var(--radius-small);
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.jev-chat-send-btn:hover:not(:disabled) {
+    background: var(--primary-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.jev-chat-send-btn:active {
+    transform: translateY(0);
+}
+
+.jev-chat-send-btn:disabled {
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+/* 氓聸垄茅聵聼茅聺垄忙聺驴忙聽路氓录聫 */
+.jev-chat-team-panel {
+    width: 320px;
+    background: var(--bg-primary);
+    border-left: 1px solid var(--border-medium);
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform var(--transition-normal);
+    position: relative;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+.jev-chat-team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-medium);
+    background: var(--bg-secondary);
+}
+
+.jev-chat-team-header h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.jev-chat-team-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.jev-chat-team-close:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* 氓聸垄茅聵聼忙聢聬氓聭聵氓聢聴猫隆篓 */
+.jev-chat-team-members {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-light) var(--bg-tertiary);
+}
+
+.jev-chat-team-member {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: var(--radius-small);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-bottom: 4px;
+}
+
+.jev-chat-team-member:hover {
+    background: var(--bg-hover);
+}
+
+.jev-chat-team-member.online {
+    cursor: pointer;
+}
+
+.jev-chat-team-member.offline {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.jev-chat-team-member.offline:hover {
+    background: transparent;
+}
+
+.jev-chat-team-member-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.jev-chat-team-member-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.jev-chat-team-member-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 14px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.jev-chat-team-member-role {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.jev-chat-team-member-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+}
+
+.jev-chat-team-member-status.online {
+    color: var(--success-color);
+}
+
+.jev-chat-team-member-status.offline {
+    color: var(--text-muted);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+/* 氓聸垄茅聵聼忙聯聧盲陆聹氓聦潞氓聼聼 */
+.jev-chat-team-actions {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-medium);
+    display: flex;
+    gap: 12px;
+    background: var(--bg-secondary);
+}
+
+.jev-chat-team-actions .jev-btn {
+    flex: 1;
+    font-size: 13px;
+    padding: 10px;
+}
+
+/* 氓聸垄茅聵聼茅聺垄忙聺驴氓聢聡忙聧垄忙聦聣茅聮庐 */
+.jev-chat-team-toggle {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-medium);
+    color: var(--text-secondary);
+    border-radius: var(--radius-small);
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.jev-chat-team-toggle:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary-light);
+    color: var(--primary-light);
+}
+
+.jev-chat-team-toggle.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* 猫驴聻忙聨楼莽聤露忙聙聛忙聽路氓录聫 - 莽聨掳盲禄拢莽庐聙莽潞娄猫庐戮猫庐隆 */
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-medium);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: all var(--transition-fast);
+}
+
+.connection-status.connected {
+    border-color: var(--success-color);
+    background: rgba(46, 204, 113, 0.1);
+    color: var(--success-color);
+}
+
+.connection-status.disconnected {
+    border-color: var(--error-color);
+    background: rgba(231, 76, 60, 0.1);
+    color: var(--error-color);
+}
+
+.connection-status.connecting {
+    border-color: var(--warning-color);
+    background: rgba(243, 156, 18, 0.1);
+    color: var(--warning-color);
+}
+
+/* 氓聸垄茅聵聼忙聢聬氓聭聵氓聢聴猫隆篓忙聽路氓录聫 - 莽聨掳盲禄拢莽庐聙莽潞娄猫庐戮猫庐隆 */
+.team-members {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-medium);
+    margin-bottom: 16px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.team-member {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-small);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.team-member:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary-light);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.team-member.active {
+    border-color: var(--primary-light);
+    background: rgba(52, 152, 219, 0.1);
+}
+
+.member-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    border: 2px solid transparent;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.member-avatar.online::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--success-color);
+    border: 2px solid var(--bg-primary);
+}
+
+.member-info {
+    flex: 1;
+}
+
+.member-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.member-status {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.member-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.member-action {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 14px;
+}
+
+.member-action:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-light);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+}
+
+/* 茅聙職莽聼楼忙聽路氓录聫 - 莽聨掳盲禄拢莽庐聙莽潞娄猫庐戮猫庐隆 */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-medium);
+    color: var(--text-primary);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+    animation: slideIn var(--transition-normal);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    max-width: 360px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.notification.success {
+    border-color: var(--success-color);
+    background: rgba(46, 204, 113, 0.1);
+}
+
+.notification.error {
+    border-color: var(--error-color);
+    background: rgba(231, 76, 60, 0.1);
+    color: var(--error-color);
+}
+
+.notification.warning {
+    border-color: var(--warning-color);
+    background: rgba(243, 156, 18, 0.1);
+    color: var(--warning-color);
+}
+
+.notification-info {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.notification-message {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* 氓聤聽猫陆陆忙聦聡莽陇潞氓聶篓忙聽路氓录聫 - 莽聨掳盲禄拢莽庐聙莽潞娄猫庐戮猫庐隆 */
+.loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+}
+
+.loading-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    animation: pulse-dots 1.4s infinite ease-in-out;
+}
+
+.loading-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.loading-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+.loading-dot:nth-child(3) {
+    animation-delay: 0s;
+}
+
+/* 莽聰篓忙聢路忙卢垄猫驴聨莽鲁禄莽禄聼忙聽路氓录聫 */
+.jev-chat-welcome-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    z-index: 5;
+    opacity: 1;
+    transition: opacity var(--transition-long), transform var(--transition-long);
+}
+
+.jev-chat-welcome-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.jev-chat-welcome-content {
+    background: var(--bg-primary);
+    border-radius: var(--radius-large);
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid var(--border-medium);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: welcomeSlideIn 0.6s ease-out;
+}
+
+@keyframes welcomeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.jev-chat-welcome-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+    box-shadow: 0 8px 24px var(--primary-glow);
+}
+
+.jev-chat-welcome-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.jev-chat-welcome-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    line-height: 1.5;
+}
+
+/* 缁熻氓聧隆莽聣聡 */
+.jev-chat-welcome-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.jev-chat-welcome-stat-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-medium);
+    padding: 20px 16px;
+    border: 1px solid var(--border-medium);
+    transition: all var(--transition-fast);
+}
+
+.jev-chat-welcome-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.jev-chat-welcome-stat-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 4px;
+}
+
+.jev-chat-welcome-stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 氓聤聼猫聝陆氓聧隆莽聣聡 */
+.jev-chat-welcome-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.jev-chat-welcome-feature-card {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-medium);
+    padding: 20px;
+    border: 1px solid var(--border-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.jev-chat-welcome-feature-card:hover {
+    background: var(--bg-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.jev-chat-welcome-feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.jev-chat-welcome-feature-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* 忙聯聧盲陆聹忙聦聣茅聮庐 */
+.jev-chat-welcome-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.jev-chat-welcome-actions .jev-btn {
+    flex: 1;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 氓庐垄忙聹聧莽聣鹿氓庐職忙卢垄猫驴聨忙聽路氓录聫 */
+.jev-chat-welcome-customer-service .jev-chat-welcome-logo {
+    background: linear-gradient(135deg, var(--success-color), var(--success-light));
+    box-shadow: 0 8px 24px rgba(46, 204, 113, 0.3);
+}
+
+.jev-chat-welcome-customer-service .jev-chat-welcome-feature-icon {
+    background: var(--success-color);
+}
+
+.jev-chat-welcome-customer-service .jev-chat-welcome-stat-number {
+    color: var(--success-color);
+}
+
+/* 忙聳掳莽聰篓忙聢路莽聣鹿氓庐職忙卢垄猫驴聨忙聽路氓录聫 */
+.jev-chat-welcome-new-user .jev-chat-welcome-logo {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+}
+
+.jev-chat-welcome-new-user .jev-chat-welcome-feature-icon {
+    background: var(--primary-color);
+}
+
+/* 茅陋篓忙聻露氓卤聫氓聤聽猫陆陆氓聤篓莽聰禄 */
+.jev-chat-skeleton {
+    background: var(--bg-tertiary);
+    background: linear-gradient(
+        90deg,
+        var(--bg-tertiary) 25%,
+        var(--bg-secondary) 50%,
+        var(--bg-tertiary) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* 猫驴聻忙聨楼莽聤露忙聙聛忙聽路氓录聫 */
+.jev-chat-connection-status {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 16px;
+    border-radius: var(--radius-small);
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transition: all var(--transition-normal);
+    opacity: 0;
+    transform: translateY(15px);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.jev-chat-connection-status.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.jev-chat-connection-status.connected {
+    background: var(--success-bg);
+    color: var(--success-color);
+    border: 1px solid var(--success-border);
+}
+
+.jev-chat-connection-status.disconnected {
+    background: var(--error-bg);
+    color: var(--error-color);
+    border: 1px solid var(--error-border);
+}
+
+.jev-chat-connection-status.connecting {
+    background: var(--warning-bg);
+    color: var(--warning-color);
+    border: 1px solid var(--warning-border);
+}
+
+.welcome-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+}
+
+.welcome-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin: 0 0 32px 0;
+}
+
+/* 缁熻氓聧隆莽聣聡 */
+.welcome-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.welcome-stat-card {
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: var(--radius-medium);
+    border: 1px solid var(--border-light);
+    transition: all var(--transition-normal);
+}
+
+.welcome-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-light);
+}
+
+.welcome-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 4px;
+}
+
+.welcome-stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* 氓聤聼猫聝陆氓聧隆莽聣聡 */
+.welcome-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.welcome-feature-card {
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: var(--radius-medium);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-align: center;
+}
+
+.welcome-feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-light);
+    background: var(--bg-hover);
+}
+
+.welcome-feature-icon {
+    font-size: 32px;
+    color: var(--primary-light);
+    margin-bottom: 12px;
+}
+
+.welcome-feature-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.welcome-feature-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* 忙卢垄猫驴聨莽聲聦茅聺垄忙聯聧盲陆聹忙聦聣茅聮庐 */
+.welcome-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.welcome-actions .btn {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.welcome-actions .btn-primary {
+    min-width: 160px;
+}
+
+/* 莽聰篓忙聢路莽聣鹿氓庐職忙卢垄猫驴聨 */
+.user-welcome .welcome-header h2 {
+    background: linear-gradient(90deg, var(--primary-light), var(--text-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 氓庐垄忙聹聧莽聣鹿氓庐職忙卢垄猫驴聨 */
+.agent-welcome .welcome-header h2 {
+    background: linear-gradient(90deg, var(--success-color), var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.welcome-header {
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.welcome-logo {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    color: white;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(52, 152, 219, 0.3);
+    animation: float 3s ease-in-out infinite;
+}
+
+.welcome-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.welcome-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.welcome-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin: 40px 0;
+    width: 100%;
+    max-width: 900px;
+}
+
+.feature-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-medium);
+    padding: 24px;
+    transition: all var(--transition-normal);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-light);
+}
+
+.feature-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    border-radius: var(--radius-small);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    margin-bottom: 16px;
+}
+
+.feature-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.feature-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.welcome-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 40px;
+}
+
+/* 氓庐垄忙聹聧盲赂聯氓卤聻忙卢垄猫驴聨莽聲聦茅聺垄 */
+.agent-welcome {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(52, 152, 219, 0.1));
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: var(--radius-large);
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.agent-welcome::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+}
+
+.agent-greeting {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.agent-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    margin: 24px 0;
+}
+
+.stat-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-small);
+    padding: 16px;
+    text-align: center;
+    transition: all var(--transition-fast);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary-light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* 氓聯聧氓潞聰氓录聫猫庐戮猫庐隆 - 莽聨掳盲禄拢莽庐聙莽潞娄茅拢聨忙聽录 */
+@media (max-width: 768px) {
+    #jev-container {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        top: 0 !important;
+        left: 0 !important;
+        box-shadow: none !important;
+    }
+    
+    #jev-header {
+        padding: 10px 16px;
+    }
+    
+    #jev-title {
+        font-size: 14px;
+    }
+    
+    .jev-control-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    
+    #jev-content {
+        padding: 16px;
+    }
+    
+    .jev-nav-item {
+        padding: 10px 16px;
+        font-size: 14px;
+        min-width: unset;
+    }
+    
+    .message {
+        gap: 8px;
+    }
+    
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+    
+    .message-content {
+        max-width: 85%;
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+    
+    #message-input {
+        margin-top: 12px;
+    }
+    
+    .input-container {
+        padding: 6px 10px;
+    }
+    
+    #send-button {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+    
+    #jev-footer {
+        padding: 8px 16px;
+        font-size: 11px;
+    }
+    
+    .status-item {
+        font-size: 11px;
+        padding: 2px 6px;
+    }
+    
+    .team-member {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .member-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    
+    .member-info .member-name {
+        font-size: 13px;
+    }
+    
+    .member-info .member-status {
+        font-size: 11px;
+    }
+    
+    .member-action {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+    
+    .loading-indicator {
+        padding: 12px;
+    }
+    
+    .loading-dot {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .connection-status {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    .welcome-container {
+        padding: 20px 16px;
+    }
+    
+    .welcome-logo {
+        width: 80px;
+        height: 80px;
+        font-size: 36px;
+    }
+    
+    .welcome-title {
+        font-size: 24px;
+    }
+    
+    .welcome-subtitle {
+        font-size: 14px;
+    }
+    
+    .welcome-features {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .feature-card {
+        padding: 20px;
+    }
+    
+    .welcome-actions {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .agent-welcome {
+        padding: 20px;
+    }
+    
+    .agent-greeting {
+        font-size: 22px;
+    }
+    
+    .agent-stats {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .notification {
+        max-width: calc(100vw - 40px);
+        padding: 14px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    #jev-content {
+        padding: 12px;
+    }
+    
+    .jev-nav-item {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    
+    .message-content {
+        max-width: 90%;
+        padding: 8px 12px;
+    }
+    
+    .feature-card {
+        padding: 16px;
+    }
+    
+    .feature-title {
+        font-size: 16px;
+    }
+    
+    .feature-description {
+        font-size: 13px;
+    }
+}
+
+/* 忙聣聯氓聧掳忙聽路氓录聫 */
+@media print {
+    #jev-container {
+        background: white !important;
+        color: black !important;
+        border: none !important;
+        box-shadow: none !important;
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+    
+    #jev-header, #jev-nav, #jev-footer {
+        display: none;
+    }
+}

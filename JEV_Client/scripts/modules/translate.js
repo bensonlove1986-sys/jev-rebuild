@@ -1,0 +1,1 @@
+export default { name: "translate", init(){ console.log("translate loaded") } };

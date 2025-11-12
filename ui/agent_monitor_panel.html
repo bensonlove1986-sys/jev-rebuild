@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEV L8.9.7 - 客服与邀请码联动监控面板</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- 自定义样式 -->
+  <style>
+    /* 全局样式 */
+    :root {
+      --primary-color: #5a96ff;
+      --primary-light: rgba(90, 150, 255, 0.2);
+      --primary-dark: #3a76e6;
+      --success-color: #27ae60;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --info-color: #3498db;
+      --text-color: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.8);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-bg-hover: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+      background-attachment: fixed;
+      color: var(--text-color);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 玻璃拟态样式 */
+    .glass-effect {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+
+    /* 导航栏 */
+    .navbar {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 1rem 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .navbar-brand i {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+
+    .navbar-status {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    /* 状态指示器 */
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--warning-color);
+      box-shadow: 0 0 10px var(--warning-color);
+      transition: var(--transition);
+    }
+
+    .status-dot.connected {
+      background-color: var(--success-color);
+      box-shadow: 0 0 10px var(--success-color);
+    }
+
+    /* 卡片样式 */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      box-shadow: var(--glass-shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .card-header {
+      background: linear-gradient(90deg, rgba(90, 150, 255, 0.2), rgba(90, 150, 255, 0.05));
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* 统计卡片 */
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: var(--transition);
+      border: 1px solid var(--glass-border);
+    }
+
+    .stat-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* 搜索筛选区 */
+    .filter-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--glass-border);
+    }
+
+    /* 表单元素 */
+    .form-control {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      color: var(--text-color);
+      padding: 0.75rem 1rem;
+      transition: var(--transition);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(90, 150, 255, 0.2);
+      color: var(--text-color);
+    }
+
+    /* 按钮样式 */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      border: none;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(90, 150, 255, 0.4);
+    }
+
+    .btn-outline-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      color: var(--text-color);
+    }
+
+    .btn-outline-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* 表格样式 */
+    .table-container {
+      overflow-x: auto;
+      max-height: 600px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+    }
+
+    .agent-table {
+      width: 100%;
+      border-collapse: collapse;
+      color: var(--text-color);
+    }
+
+    .agent-table th,
+    .agent-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .agent-table th {
+      background: rgba(44, 62, 80, 0.2);
+      font-weight: 600;
+      color: var(--text-secondary);
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    .agent-table tbody tr {
+      transition: var(--transition);
+    }
+
+    .agent-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(2px);
+    }
+
+    /* 状态标签 */
+    .status-active {
+      color: var(--success-color);
+    }
+
+    .status-inactive {
+      color: var(--danger-color);
+    }
+
+    .status-unknown {
+      color: var(--warning-color);
+    }
+
+    /* 加载状态 */
+    .loading-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-top: 3px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    .no-data {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: var(--text-secondary);
+    }
+
+    .no-data i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* 动画 */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .navbar-brand {
+        font-size: 1.1rem;
+      }
+
+      .navbar-status {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .stat-card {
+        margin-bottom: 1rem;
+      }
+
+      .filter-section {
+        padding: 1rem;
+      }
+
+      .agent-table th,
+      .agent-table td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <i class="fas fa-user-tie"></i>
+        <span>JEV L8.9.7 - 客服与邀请码联动监控</span>
+      </div>
+      <div class="navbar-status">
+        <div class="status-indicator">
+          <span class="status-dot" id="connectionStatus"></span>
+          <span>连接状态: <span id="statusText">连接中...</span></span>
+        </div>
+        <div class="status-indicator">
+          <i class="fas fa-sync-alt"></i>
+          <span>上次更新: <span id="lastUpdate">--:--:--</span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <!-- 统计卡片 -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-3">
+        <div class="stat-card">
+          <i class="fas fa-user-cog stat-icon"></i>
+          <div class="stat-value" id="totalAgents">0</div>
+          <div class="stat-label">总客服数</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <i class="fas fa-signal stat-icon" style="color: var(--success-color);"></i>
+          <div class="stat-value" id="onlineAgents">0</div>
+          <div class="stat-label">在线客服</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <i class="fas fa-ticket-alt stat-icon" style="color: var(--warning-color);"></i>
+          <div class="stat-value" id="totalInvites">0</div>
+          <div class="stat-label">邀请码使用</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="stat-card">
+          <i class="fas fa-clock stat-icon" style="color: var(--info-color);"></i>
+          <div class="stat-value" id="recentRegistrations">0</div>
+          <div class="stat-label">今日注册</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 搜索筛选区 -->
+    <div class="filter-section glass-effect">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="搜索邀请码...">
+            <button id="searchButton" class="btn btn-primary">
+              <i class="fas fa-search"></i> 搜索
+            </button>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select id="statusFilter" class="form-control">
+            <option value="all">全部状态</option>
+            <option value="active">在线</option>
+            <option value="inactive">离线</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <div class="input-group">
+            <button id="refreshButton" class="btn btn-primary">
+              <i class="fas fa-sync-alt"></i> 刷新
+            </button>
+            <button id="exportButton" class="btn btn-outline-secondary">
+              <i class="fas fa-file-csv"></i> 导出
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 客服列表 -->
+    <div class="glass-card">
+      <div class="card-header">
+        <h3><i class="fas fa-users"></i> 客服与邀请码绑定列表</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-container">
+          <table class="agent-table">
+            <thead>
+              <tr>
+                <th>客服ID</th>
+                <th>客服名称</th>
+                <th>邀请码</th>
+                <th>状态</th>
+                <th>注册时间</th>
+                <th>最后在线</th>
+              </tr>
+            </thead>
+            <tbody id="agentTableBody">
+              <!-- 加载中状态 -->
+              <tr>
+                <td colspan="6" class="loading-indicator">
+                  <div class="spinner"></div>
+                  <p>加载客服列表中...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 加载更多数据的提示 -->
+  <div class="loading-indicator" id="loadMoreIndicator" style="display: none;">
+    <div class="spinner"></div>
+    <p>加载更多数据中...</p>
+  </div>
+
+  <!-- 消息提示组件 -->
+  <div id="messageContainer" class="fixed top-20 right-20 z-50" style="display: none;">
+    <div class="glass-effect p-4 rounded-lg shadow-lg max-w-sm">
+      <div class="d-flex align-items-center">
+        <i id="messageIcon" class="fas mr-3"></i>
+        <div>
+          <p id="messageText"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 脚本 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../modules/inviteAgentSync.js"></script>
+  <script src="agent_monitor_panel.js"></script>
+</body>
+</html>

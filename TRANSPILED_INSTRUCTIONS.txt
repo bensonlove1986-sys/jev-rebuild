@@ -1,0 +1,39 @@
+# Worker File Transpilation Instructions
+
+I've created a transpiled version of worker_final.js with the additional helper functions:
+- __defProp = Object.defineProperty
+- __name = (target, value) => __defProp(target, "name", { value, configurable: true })
+
+## Files Created:
+- worker_final_transpiled.js - Contains the transpiled code with helper functions and function name assignments
+- TRANSPILED_INSTRUCTIONS.txt - This file
+
+## Options for Using This Code:
+
+### Option 1: Replace Original File (Recommended)
+```powershell
+# Backup original file
+Copy-Item -Path worker_final.js -Destination worker_final.js.backup
+
+# Replace with transpiled version
+Copy-Item -Path worker_final_transpiled.js -Destination worker_final.js
+```
+
+### Option 2: Test Before Replacing
+You can test the transpiled version by deploying it first:
+```powershell
+wrangler deploy worker_final_transpiled.js --name jevshop-test
+```
+
+## Key Changes in Transpiled Version:
+1. Added helper functions at the top
+2. Converted all function declarations to use __name for better stack traces
+3. Applied __name to class definitions using static initializers
+4. Maintained all original functionality
+
+## Notes:
+- The transpiled version should behave identically to the original
+- The __name helper improves error stack traces by ensuring function names are preserved
+- This is especially useful for debugging in production environments
+
+Please let me know if you'd like me to automatically replace the original file or if you prefer to make other modifications.

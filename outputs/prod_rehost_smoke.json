@@ -1,0 +1,19 @@
+
+
+success       : True
+key           : rehost/2025/10/31/prod_test.jpg
+bucket        : jev-images
+content_type  : image/jpeg
+url           : https://pub-2bd0dcc03e004089b2594f35
+                86eec868.r2.dev/jev-images/rehost/20
+                25/10/31/prod_test.jpg
+worker_url    : https://tupianlujing-local.bensonlov
+                e1986.workers.dev/images/rehost%2F20
+                25%2F10%2F31%2Fprod_test.jpg
+attempts      : {@{source=direct; status=200; ok=Tru
+                e; ct=image/jpeg}}
+used_fallback : False
+used_source   : direct
+
+
+

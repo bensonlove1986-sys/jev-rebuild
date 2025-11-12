@@ -1,0 +1,144 @@
+{
+  "timestamp": "2025-11-08T09:35:27.727Z",
+  "env_file_keys": {
+    "DAOJIE_API_KEY": {
+      "value": "your_api_key_here",
+      "is_placeholder": true,
+      "is_default": false,
+      "length": 17
+    },
+    "JEV_API_KEY": {
+      "value": "JEV_2025_AI_SYS_A92jskL0xY",
+      "is_placeholder": false,
+      "is_default": false,
+      "length": 26
+    },
+    "ADMIN_TOKEN": {
+      "value": "admin_secure_token_2025",
+      "is_placeholder": false,
+      "is_default": false,
+      "length": 23
+    },
+    "CLOUDFLARE_API_TOKEN": {
+      "value": "Sxhnh_R5uV-AD-WembMoyDj36WJgYne57k-oeuGn",
+      "is_placeholder": false,
+      "is_default": false,
+      "length": 40
+    }
+  },
+  "worker_default_keys": {
+    "ADMIN_TOKEN": "jev-admin-token-2025",
+    "JEV_API_KEY": "JEV_2025_AI_SYS_A92jskL0xY",
+    "DAOJIE_API_KEY": "daojie-api-key-012",
+    "LEADCONNECTOR_API_KEY": "leadconnector-api-key-345",
+    "DAOIJE_WABA_TOKEN": "daoiije-waba-token-678",
+    "API_KEY": "api-key-456",
+    "GOOGLE_API_KEY": "AIzaSyC8Rntlne_W6bML1CZRCtL2jjpAOeRmP8E",
+    "DEEPSEEK_API_KEY": "sk-77dbd0cc5f30451daa863d5213e6607f",
+    "MODE": "development"
+  },
+  "validation_results": {
+    "DAOJIE_API_KEY": {
+      "env_value": "your_api_key_here",
+      "worker_default": "daojie-api-key-012",
+      "is_placeholder": true,
+      "is_default_value": false,
+      "status": "placeholder"
+    },
+    "JEV_API_KEY": {
+      "env_value": "JEV_2025_AI_SYS_A92jskL0xY",
+      "worker_default": "JEV_2025_AI_SYS_A92jskL0xY",
+      "is_placeholder": false,
+      "is_default_value": true,
+      "status": "default"
+    },
+    "ADMIN_TOKEN": {
+      "env_value": "admin_secure_token_2025",
+      "worker_default": "jev-admin-token-2025",
+      "is_placeholder": false,
+      "is_default_value": false,
+      "status": "custom"
+    },
+    "CLOUDFLARE_API_TOKEN": {
+      "env_value": "Sxhnh_R5uV-AD-WembMoyDj36WJgYne57k-oeuGn",
+      "worker_default": "未在worker.js中找到",
+      "is_placeholder": false,
+      "status": "unknown_worker"
+    },
+    "LEADCONNECTOR_API_KEY": {
+      "env_value": "未在.env文件中配置",
+      "worker_default": "leadconnector-api-key-345",
+      "is_placeholder": false,
+      "is_default_value": false,
+      "status": "missing"
+    },
+    "DAOIJE_WABA_TOKEN": {
+      "env_value": "未在.env文件中配置",
+      "worker_default": "daoiije-waba-token-678",
+      "is_placeholder": false,
+      "is_default_value": false,
+      "status": "missing"
+    },
+    "API_KEY": {
+      "env_value": "未在.env文件中配置",
+      "worker_default": "api-key-456",
+      "is_placeholder": false,
+      "is_default_value": false,
+      "status": "missing"
+    },
+    "GOOGLE_API_KEY": {
+      "env_value": "未在.env文件中配置",
+      "worker_default": "AIzaSyC8Rntlne_W6bML1CZRCtL2jjpAOeRmP8E",
+      "is_placeholder": false,
+      "is_default_value": false,
+      "status": "missing"
+    },
+    "DEEPSEEK_API_KEY": {
+      "env_value": "未在.env文件中配置",
+      "worker_default": "sk-77dbd0cc5f30451daa863d5213e6607f",
+      "is_placeholder": false,
+      "is_default_value": false,
+      "status": "missing"
+    },
+    "MODE": {
+      "env_value": "未在.env文件中配置",
+      "worker_default": "development",
+      "is_placeholder": false,
+      "is_default_value": false,
+      "status": "missing"
+    }
+  },
+  "issues": [
+    "DAOJIE_API_KEY 包含占位符值: your_api_key_here",
+    "JEV_API_KEY 仍使用默认值: JEV_2025_AI_SYS_A92jskL0xY",
+    "CLOUDFLARE_API_TOKEN 在worker.js中未找到对应的默认配置",
+    "LEADCONNECTOR_API_KEY 在.env文件中缺失，worker.js中使用默认值: leadconnector-api-key-345",
+    "DAOIJE_WABA_TOKEN 在.env文件中缺失，worker.js中使用默认值: daoiije-waba-token-678",
+    "API_KEY 在.env文件中缺失，worker.js中使用默认值: api-key-456",
+    "GOOGLE_API_KEY 在.env文件中缺失，worker.js中使用默认值: AIzaSyC8Rntlne_W6bML1CZRCtL2jjpAOeRmP8E",
+    "DEEPSEEK_API_KEY 在.env文件中缺失，worker.js中使用默认值: sk-77dbd0cc5f30451daa863d5213e6607f",
+    "MODE 在.env文件中缺失，worker.js中使用默认值: development"
+  ],
+  "recommendations": [
+    "更新 DAOJIE_API_KEY 为实际的API密钥",
+    "JEV_API_KEY 应该使用非默认的安全密钥",
+    "确认 CLOUDFLARE_API_TOKEN 是否需要在worker.js中配置",
+    "在.env文件中配置 LEADCONNECTOR_API_KEY 以覆盖默认值",
+    "在.env文件中配置 DAOIJE_WABA_TOKEN 以覆盖默认值",
+    "在.env文件中配置 API_KEY 以覆盖默认值",
+    "在.env文件中配置 GOOGLE_API_KEY 以覆盖默认值",
+    "在.env文件中配置 DEEPSEEK_API_KEY 以覆盖默认值",
+    "在.env文件中配置 MODE 以覆盖默认值"
+  ],
+  "statistics": {
+    "total_keys_checked": 10,
+    "placeholder_keys": 1,
+    "default_keys": 1,
+    "missing_keys": 6,
+    "custom_keys": 1,
+    "unknown_worker_keys": 1,
+    "issues_count": 9,
+    "recommendations_count": 9,
+    "overall_status": "warning"
+  }
+}

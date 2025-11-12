@@ -1,0 +1,254 @@
+# Enhanced Central Control System - Final Version
+
+# Configuration
+$PORT = 1820
+$CENTRAL_LOG_PATH = Join-Path -Path $PSScriptRoot -ChildPath "central_control.log"
+
+# Ensure log file exists
+if (-not (Test-Path -Path $CENTRAL_LOG_PATH)) {
+    New-Item -Path $CENTRAL_LOG_PATH -ItemType File -Force | Out-Null
+}
+
+# Global connection state
+$global:centralConnection = @{
+    isConnected = $false
+    agentId = ""
+    connectedAt = $null
+    lastHeartbeat = $null
+}
+
+# Log function
+function Write-CentralLog($message) {
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "[$timestamp] $message"
+    Add-Content -Path $CENTRAL_LOG_PATH -Value $logEntry -Force
+    Write-Host $logEntry
+}
+
+# Client connections tracking
+$connectedAgents = @{}
+$connectionIdCounter = 0
+
+# Start central control server
+try {
+    Write-CentralLog "Starting Central Control System on port $PORT"
+    $listener = New-Object System.Net.HttpListener
+    $listener.Prefixes.Add("http://localhost:$PORT/")
+    $listener.Start()
+    Write-CentralLog "Central Control System is running at http://localhost:$PORT/"
+    Write-CentralLog "Available endpoints: /ping, /status, /connect, /heartbeat"
+    
+    # Main loop
+    while ($true) {
+        $context = $listener.GetContext()
+        $request = $context.Request
+        $response = $context.Response
+        $path = $request.Url.AbsolutePath
+        $method = $request.HttpMethod
+        
+        Write-CentralLog "Received request: $method $path"
+        
+        # CORS handling
+        if ($method -eq "OPTIONS") {
+            $response.StatusCode = 200
+            $response.Headers.Add("Access-Control-Allow-Origin", "*")
+            $response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            $response.Headers.Add("Access-Control-Allow-Headers", "Content-Type")
+            $response.Close()
+            continue
+        }
+        
+        # Default response headers
+        $response.Headers.Add("Access-Control-Allow-Origin", "*")
+        
+        # Handle routes using switch statement
+        switch ($path) {
+            "/ping" {
+                # Simple ping endpoint - for UI connection check
+                $responseData = @{
+                    ok = $true
+                    time = (Get-Date).ToString("s")
+                }
+                $json = $responseData | ConvertTo-Json
+                $response.ContentType = "application/json"
+                $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
+            }
+            
+            "/status" {
+                # Status endpoint - returns system status
+                $responseData = @{
+                    port = $PORT
+                    time = (Get-Date).ToString("s")
+                    running = $true
+                    connectedAgents = $connectedAgents.Count
+                    centralConnection = $global:centralConnection
+                }
+                $json = $responseData | ConvertTo-Json
+                $response.ContentType = "application/json"
+                $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
+            }
+            
+            "/connect" {
+                # Connect endpoint for UI registration
+                if ($method -eq "POST") {
+                    try {
+                        $body = Get-Content $request.InputStream | ConvertFrom-Json
+                        $agentName = if ($body.agentName) { $body.agentName } else { "UI" }
+                        
+                        $global:centralConnection.isConnected = $true
+                        $global:centralConnection.agentId = $agentName
+                        $global:centralConnection.connectedAt = Get-Date
+                        $global:centralConnection.lastHeartbeat = Get-Date
+                        
+                        # Also add to connected agents
+                        $connectedAgents[$agentName] = @{
+                            connectedAt = $global:centralConnection.connectedAt
+                            lastHeartbeat = $global:centralConnection.lastHeartbeat
+                            type = "UI"
+                        }
+                        
+                        Write-CentralLog "UI connected: $agentName"
+                        
+                        $responseData = @{
+                            connected = $true
+                            agentId = $global:centralConnection.agentId
+                            time = (Get-Date).ToString("s")
+                            message = "Successfully connected"
+                        }
+                    } catch {
+                        $responseData = @{
+                            connected = $false
+                            error = $_.Exception.Message
+                            time = (Get-Date).ToString("s")
+                        }
+                    }
+                    $json = $responseData | ConvertTo-Json
+                    $response.ContentType = "application/json"
+                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
+                } else {
+                    # GET method for /connect - just return current connection status
+                    $responseData = @{
+                        connected = $global:centralConnection.isConnected
+                        agentId = $global:centralConnection.agentId
+                        time = (Get-Date).ToString("s")
+                    }
+                    $json = $responseData | ConvertTo-Json
+                    $response.ContentType = "application/json"
+                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
+                }
+            }
+            
+            "/heartbeat" {
+                # Heartbeat endpoint - maintains connection
+                $global:centralConnection.lastHeartbeat = Get-Date
+                
+                # Update agent's last heartbeat if exists
+                if ($global:centralConnection.agentId -and $connectedAgents.ContainsKey($global:centralConnection.agentId)) {
+                    $connectedAgents[$global:centralConnection.agentId].lastHeartbeat = $global:centralConnection.lastHeartbeat
+                }
+                
+                $responseData = @{
+                    status = "heartbeat_received"
+                    time = (Get-Date).ToString("s")
+                    connected = $global:centralConnection.isConnected
+                }
+                $json = $responseData | ConvertTo-Json
+                $response.ContentType = "application/json"
+                $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
+            }
+            
+            "/central-control" {
+                # Original connection endpoint (for backward compatibility)
+                if ($method -eq "GET") {
+                    # Get status of central control
+                    $status = @{
+                        running = $true
+                        time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                        connectedAgents = $connectedAgents.Count
+                        message = "Central Control System is running"
+                    }
+                    $json = $status | ConvertTo-Json
+                    $response.ContentType = "application/json"
+                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
+                }
+                elseif ($method -eq "POST") {
+                    # Accept connection from agent
+                    $connectionIdCounter++
+                    $agentId = "agent_$connectionIdCounter"
+                    $connectedAgents[$agentId] = @{
+                        connectedAt = Get-Date
+                        lastHeartbeat = Get-Date
+                    }
+                    
+                    Write-CentralLog "Agent connected: $agentId"
+                    
+                    $responseData = @{
+                        status = "connected"
+                        agentId = $agentId
+                        message = "Successfully connected to Central Control System"
+                    }
+                    $json = $responseData | ConvertTo-Json
+                    $response.ContentType = "application/json"
+                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
+                }
+            }
+            
+            "/central-control/heartbeat" {
+                # Original heartbeat endpoint (for backward compatibility)
+                if ($method -eq "POST") {
+                    $responseData = @{
+                        status = "heartbeat_received"
+                        time = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                    }
+                    $json = $responseData | ConvertTo-Json
+                    $response.ContentType = "application/json"
+                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
+                }
+            }
+            
+            "/central-control/disconnect" {
+                # Disconnect endpoint
+                if ($method -eq "POST") {
+                    # Clear all connections
+                    $disconnectedCount = $connectedAgents.Count
+                    $connectedAgents.Clear()
+                    
+                    # Reset global connection state
+                    $global:centralConnection.isConnected = $false
+                    $global:centralConnection.agentId = ""
+                    $global:centralConnection.lastHeartbeat = $null
+                    
+                    Write-CentralLog "All agents disconnected: $disconnectedCount"
+                    
+                    $responseData = @{
+                        status = "disconnected"
+                        disconnectedCount = $disconnectedCount
+                    }
+                    $json = $responseData | ConvertTo-Json
+                    $response.ContentType = "application/json"
+                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
+                }
+            }
+            
+            default {
+                # 404 Not Found
+                $response.StatusCode = 404
+                $buffer = [System.Text.Encoding]::UTF8.GetBytes('{"error":"Not found"}')
+            }
+        }
+        
+        # Send response
+        $response.ContentLength64 = $buffer.Length
+        $response.OutputStream.Write($buffer, 0, $buffer.Length)
+        $response.OutputStream.Close()
+        $response.Close()
+    }
+} catch {
+    Write-Host "Error in Central Control System: $_" -ForegroundColor Red
+    Write-CentralLog "ERROR: $_"
+} finally {
+    if ($listener -and $listener.IsListening) {
+        $listener.Stop()
+        Write-CentralLog "Central Control System stopped"
+    }
+}

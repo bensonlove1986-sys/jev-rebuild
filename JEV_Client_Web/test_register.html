@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV系统 - 注册功能测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(76, 175, 80, 0.1) 0%, transparent 50%);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 30px 0 20px 0;
+            color: #8BC34A;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .test-controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .test-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .test-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+        }
+        
+        .test-btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background-color: #FFC107;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #FFB300;
+        }
+        
+        .btn-danger {
+            background-color: #F44336;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #E53935;
+        }
+        
+        /* 弹窗容器 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            max-height: 90vh;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+        }
+        
+        .modal-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* 信息面板 */
+        .info-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .info-title {
+            font-size: 1.1rem;
+            color: #8BC34A;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .info-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .info-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .info-value {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            max-width: 60%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        /* 日志面板 */
+        .log-container {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .log-header {
+            color: #8BC34A;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .log-entry {
+            margin-bottom: 8px;
+            padding-left: 10px;
+            border-left: 3px solid #4CAF50;
+            color: #f0f0f0;
+            line-height: 1.5;
+        }
+        
+        .log-entry.success {
+            border-left-color: #4CAF50;
+        }
+        
+        .log-entry.error {
+            border-left-color: #F44336;
+        }
+        
+        .log-entry.info {
+            border-left-color: #2196F3;
+        }
+        
+        .log-timestamp {
+            color: #888;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+        
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+        
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .test-btn {
+                display: block;
+                margin: 10px auto;
+                width: 90%;
+            }
+            
+            .info-value {
+                max-width: 40%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JEV系统 - 注册功能测试</h1>
+            <p>测试注册窗口模块的完整功能与集成</p>
+        </header>
+        
+        <div class="section">
+            <h2>测试控制</h2>
+            
+            <div class="test-controls">
+                <button class="test-btn" onclick="openRegisterWindow()">打开注册窗口</button>
+                <button class="test-btn btn-secondary" onclick="checkUserStatus()">检查用户状态</button>
+                <button class="test-btn btn-danger" onclick="clearUserData()">清除用户数据</button>
+            </div>
+            
+            <div class="info-panel">
+                <div class="info-title">有效邀请码（测试用）</div>
+                <ul class="info-list">
+                    <li>JEV2025 <span class="info-value">普通用户</span></li>
+                    <li>ADMIN2025 <span class="info-value">管理员</span></li>
+                    <li>DEVELOPER <span class="info-value">开发者</span></li>
+                    <li>TEST2025 <span class="info-value">测试用户</span></li>
+                    <li>PREMIUM2025 <span class="info-value">高级用户</span></li>
+                </ul>
+            </div>
+            
+            <div class="info-panel" id="user-status-panel">
+                <div class="info-title">用户状态</div>
+                <ul class="info-list">
+                    <li>登录状态: <span class="info-value" id="login-status">未登录</span></li>
+                    <li>用户名: <span class="info-value" id="username-display">-</span></li>
+                    <li>用户ID: <span class="info-value" id="user-id-display">-</span></li>
+                    <li>邮箱: <span class="info-value" id="email-display">-</span></li>
+                    <li>最后登录: <span class="info-value" id="last-login-display">-</span></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>测试模拟</h2>
+            <p>直接模拟注册请求（无需打开注册窗口）：</p>
+            
+            <div class="form-group">
+                <label class="form-label">用户名</label>
+                <input type="text" class="form-input" id="test-username" placeholder="测试用户名">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">邮箱</label>
+                <input type="email" class="form-input" id="test-email" placeholder="test@example.com">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">密码</label>
+                <input type="password" class="form-input" id="test-password" placeholder="测试密码">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">邀请码</label>
+                <input type="text" class="form-input" id="test-invite-code" placeholder="JEV2025">
+            </div>
+            
+            <div class="test-controls">
+                <button class="test-btn" onclick="simulateRegister()">模拟注册</button>
+            </div>
+        </div>
+        
+        <div class="log-container">
+            <div class="log-header">操作日志</div>
+            <div id="log-content"></div>
+        </div>
+    </div>
+    
+    <!-- 注册窗口弹窗 -->
+    <div id="register-modal" class="modal-overlay">
+        <div class="modal-content">
+            <iframe id="register-iframe" src="/modules/register_panel.html"></iframe>
+        </div>
+    </div>
+    
+    <script>
+        // 日志记录函数
+        function log(message, type = 'info') {
+            const logContent = document.getElementById('log-content');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `<span class="log-timestamp">${timestamp}</span>${message}`;
+            
+            logContent.appendChild(logEntry);
+            logContent.scrollTop = logContent.scrollHeight;
+            
+            console.log(`[JEV测试] ${timestamp} ${message}`);
+        }
+        
+        // 打开注册窗口
+        function openRegisterWindow() {
+            const modal = document.getElementById('register-modal');
+            modal.style.display = 'flex';
+            log('打开注册窗口', 'info');
+        }
+        
+        // 关闭注册窗口
+        function closeRegisterWindow() {
+            const modal = document.getElementById('register-modal');
+            modal.style.display = 'none';
+            log('关闭注册窗口', 'info');
+            
+            // 检查用户状态是否已更新
+            checkUserStatus();
+        }
+        
+        // 检查用户状态
+        function checkUserStatus() {
+            log('检查用户状态', 'info');
+            
+            const token = localStorage.getItem('jev_user_token');
+            const username = localStorage.getItem('jev_username');
+            const userId = localStorage.getItem('jev_user_id');
+            const email = localStorage.getItem('jev_user_email');
+            const lastLogin = localStorage.getItem('jev_last_login');
+            
+            document.getElementById('login-status').textContent = token ? '已登录' : '未登录';
+            document.getElementById('username-display').textContent = username || '-';
+            document.getElementById('user-id-display').textContent = userId || '-';
+            document.getElementById('email-display').textContent = email || '-';
+            document.getElementById('last-login-display').textContent = lastLogin ? new Date(lastLogin).toLocaleString() : '-';
+            
+            if (token) {
+                log(`用户已登录: ${username} (${userId})`, 'success');
+            } else {
+                log('用户未登录', 'info');
+            }
+        }
+        
+        // 清除用户数据
+        function clearUserData() {
+            if (confirm('确定要清除所有用户数据吗？')) {
+                localStorage.removeItem('jev_user_token');
+                localStorage.removeItem('jev_username');
+                localStorage.removeItem('jev_user_id');
+                localStorage.removeItem('jev_user_email');
+                localStorage.removeItem('jev_last_login');
+                
+                // 清除注册日志
+                let logCount = 0;
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('jev_register_log_') || key.startsWith('register_log_')) {
+                        localStorage.removeItem(key);
+                        logCount++;
+                    }
+                }
+                
+                log('用户数据已清除', 'info');
+                if (logCount > 0) {
+                    log(`同时清除了 ${logCount} 条注册日志`, 'info');
+                }
+                
+                checkUserStatus();
+            }
+        }
+        
+        // 模拟注册
+        function simulateRegister() {
+            const username = document.getElementById('test-username').value.trim();
+            const email = document.getElementById('test-email').value.trim();
+            const password = document.getElementById('test-password').value;
+            const inviteCode = document.getElementById('test-invite-code').value.trim();
+            
+            // 验证表单
+            if (!username || !email || !password || !inviteCode) {
+                log('请填写完整的注册信息', 'error');
+                return;
+            }
+            
+            log('开始模拟注册请求', 'info');
+            
+            // 模拟Worker处理逻辑
+            simulateWorkerRegister(username, email, password, inviteCode)
+                .then((response) => {
+                    // 保存到localStorage
+                    localStorage.setItem('jev_user_token', response.token);
+                    localStorage.setItem('jev_username', username);
+                    localStorage.setItem('jev_user_id', response.userId);
+                    localStorage.setItem('jev_user_email', email);
+                    localStorage.setItem('jev_last_login', new Date().toISOString());
+                    
+                    // 记录日志到文件系统路径（模拟）
+                    log(`将创建日志文件: /jev_logs/register/register_log_${response.timestamp}.json`, 'info');
+                    
+                    // 保存日志到localStorage作为备份
+                    const logData = {
+                        timestamp: response.timestamp,
+                        userInfo: { username, email },
+                        success: true,
+                        userId: response.userId,
+                        tokenCreated: true,
+                        browserInfo: navigator.userAgent,
+                        storagePath: `/jev_logs/register/register_log_${response.timestamp}.json`
+                    };
+                    
+                    localStorage.setItem(`register_log_${response.timestamp}`, JSON.stringify(logData));
+                    
+                    log(`注册成功！用户ID: ${response.userId}`, 'success');
+                    log('用户信息已保存到localStorage', 'info');
+                    log(`Token已生成: ${response.token.substring(0, 10)}...`, 'success');
+                    
+                    // 更新状态显示
+                    checkUserStatus();
+                })
+                .catch((error) => {
+                    log(`注册失败: ${error.message}`, 'error');
+                });
+        }
+        
+        // 模拟Worker注册处理
+        function simulateWorkerRegister(username, email, password, inviteCode) {
+            return new Promise((resolve, reject) => {
+                // 模拟网络延迟
+                setTimeout(() => {
+                    // 验证邀请码
+                    const validInviteCodes = ['JEV2025', 'ADMIN2025', 'DEVELOPER', 'TEST2025', 'PREMIUM2025'];
+                    if (!validInviteCodes.includes(inviteCode)) {
+                        return reject(new Error('无效的邀请码'));
+                    }
+                    
+                    // 验证邮箱格式
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        return reject(new Error('无效的邮箱格式'));
+                    }
+                    
+                    // 生成用户ID和Token
+                    const timestamp = Date.now();
+                    const userId = 'U' + timestamp;
+                    const token = 'JEV-' + inviteCode.charAt(0) + '-' + 
+                                  Math.random().toString(36).substring(2, 10) + 
+                                  '-' + timestamp.toString().slice(-6);
+                    
+                    // 模拟密码哈希处理
+                    log('密码已进行哈希处理（Worker端）', 'info');
+                    
+                    // 模拟KV存储
+                    log(`用户数据将存储在KV: JEV_USER_${email}`, 'info');
+                    
+                    resolve({
+                        success: true,
+                        userId: userId,
+                        token: token,
+                        timestamp: timestamp,
+                        message: '注册成功！欢迎使用JEV系统',
+                        userType: inviteCode === 'ADMIN2025' ? 'admin' : 
+                                 inviteCode === 'DEVELOPER' ? 'developer' : 'user'
+                    });
+                }, 1500); // 模拟1.5秒的处理时间
+            });
+        }
+        
+        // 模拟拦截fetch请求，用于测试注册窗口
+        function setupFetchInterceptor() {
+            const originalFetch = window.fetch;
+            
+            window.fetch = function(url, options) {
+                // 拦截/register请求
+                if (url === '/register' && options && options.method === 'POST') {
+                    log('拦截到注册请求，使用模拟Worker处理', 'info');
+                    
+                    try {
+                        const body = JSON.parse(options.body);
+                        log(`请求数据: ${JSON.stringify(body)}`, 'info');
+                        
+                        // 验证Token
+                        const agentToken = options.headers['X-Agent-Token'] || options.headers['x-agent-token'];
+                        if (agentToken !== 'jev-secure-key-001') {
+                            log('无效的X-Agent-Token', 'error');
+                            return Promise.resolve({
+                                ok: false,
+                                status: 401,
+                                json: () => Promise.resolve({ success: false, error: '无效的安全令牌' })
+                            });
+                        }
+                        
+                        // 调用模拟Worker处理
+                        return simulateWorkerRegister(
+                            body.username,
+                            body.email,
+                            body.password,
+                            body.inviteCode
+                        ).then(response => ({
+                            ok: true,
+                            status: 200,
+                            json: () => Promise.resolve(response)
+                        }));
+                    } catch (error) {
+                        log(`请求解析错误: ${error.message}`, 'error');
+                        return Promise.resolve({
+                            ok: false,
+                            status: 400,
+                            json: () => Promise.resolve({ success: false, error: '请求数据无效' })
+                        });
+                    }
+                }
+                
+                // 其他请求使用原始fetch
+                return originalFetch.apply(this, arguments);
+            };
+            
+            log('Fetch请求拦截器已设置', 'info');
+        }
+        
+        // 更新用户状态（供注册窗口调用）
+        function updateUserStatus() {
+            log('收到用户状态更新通知', 'info');
+            checkUserStatus();
+        }
+        
+        // 监听来自iframe的消息
+        window.addEventListener('message', (event) => {
+            if (event.data === 'CLOSE_REGISTER_WINDOW') {
+                closeRegisterWindow();
+            } else if (event.data === 'JEV_USER_REGISTERED') {
+                updateUserStatus();
+            }
+        });
+        
+        // 页面加载时检查用户状态
+        document.addEventListener('DOMContentLoaded', () => {
+            log('JEV注册功能测试页面已加载', 'info');
+            
+            // 设置fetch拦截器，模拟Worker环境
+            setupFetchInterceptor();
+            
+            checkUserStatus();
+            
+            // 填充测试数据
+            document.getElementById('test-username').value = 'test_user_' + Math.floor(Math.random() * 1000);
+            document.getElementById('test-email').value = 'test' + Math.floor(Math.random() * 1000) + '@example.com';
+            document.getElementById('test-password').value = 'password123';
+            document.getElementById('test-invite-code').value = 'JEV2025';
+            
+            // 模拟Worker环境信息
+            log('=== 模拟Worker环境 ===', 'info');
+            log('✓ /register 接口已就绪', 'info');
+            log('✓ Token验证已配置', 'info');
+            log('✓ KV存储模拟已启用', 'info');
+            log('✓ 安全头检查已就绪', 'info');
+            log('======================', 'info');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV L7.1 MetaCognition Supervisor Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: #94a3b8;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .status-card {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.2);
+        }
+        
+        .status-card .label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #f1f5f9;
+            margin-bottom: 5px;
+        }
+        
+        .status-card .status {
+            font-size: 0.9rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        
+        .status.safe {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .status.warning {
+            background-color: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .status.critical {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .status.active {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .charts-section {
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 12px;
+            padding: 25px;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #3b82f6;
+        }
+        
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+        
+        .tables-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .tables-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .table-container {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .table-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, 0.1);
+            border-radius: 3px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 3px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .data-table th,
+        .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .data-table th {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .data-table tr:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        
+        .rating {
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        
+        .rating.A { background-color: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .rating.B { background-color: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+        .rating.C { background-color: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .rating.D { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .rating.E { background-color: rgba(234, 88, 12, 0.2); color: #ea580c; }
+        .rating.F { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        .control-btn.secondary {
+            background: linear-gradient(135deg, #64748b, #475569);
+        }
+        
+        .control-btn.danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert.warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .alert.critical {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🧠 JEV L7.1 MetaCognition Supervisor</h1>
+            <div class="subtitle">让系统学会"反思自己的思考"，并永远保持在人类控制之内</div>
+        </div>
+        
+        <div class="alert warning" id="systemAlert">
+            <strong>⚠️ 系统状态监控中</strong>
+        </div>
+        
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="label">🧠 Cognition</div>
+                <div class="value" id="cognitionActive">TRUE</div>
+                <div class="status active" id="cognitionStatus">Active</div>
+            </div>
+            
+            <div class="status-card">
+                <div class="label">🔍 Current Focus</div>
+                <div class="value" id="currentFocus">AutoLearning Optimizer</div>
+                <div class="status" id="focusStatus">Analyzing</div>
+            </div>
+            
+            <div class="status-card">
+                <div class="label">🧩 Reflection Chains</div>
+                <div class="value" id="reflectionChains">12</div>
+                <div class="status safe" id="chainsStatus">Normal</div>
+            </div>
+            
+            <div class="status-card">
+                <div class="label">⚠️ Autonomy Score</div>
+                <div class="value" id="autonomyScore">0.58</div>
+                <div class="status safe" id="autonomyStatus">Safe</div>
+            </div>
+            
+            <div class="status-card">
+                <div class="label">🛡️ Sentinel Status</div>
+                <div class="value" id="sentinelStatus">Stable</div>
+                <div class="status safe" id="sentinelLevel">Normal</div>
+            </div>
+            
+            <div class="status-card">
+                <div class="label">🚨 Alerts</div>
+                <div class="value" id="alertCount">0</div>
+                <div class="status safe" id="alertStatus">None</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <button class="control-btn secondary" onclick="exportReport()">📊 Export Report</button>
+            <button class="control-btn secondary" onclick="viewHistory()">📋 View History</button>
+            <button class="control-btn danger" onclick="resetSystem()" disabled>🔒 Reset System</button>
+        </div>
+        
+        <div class="charts-section">
+            <div class="section-title">📈 Autonomy Score Trend</div>
+            <div class="chart-container" id="autonomyChartContainer">
+                <canvas id="autonomyChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="tables-section">
+            <div class="table-container">
+                <div class="section-title">📋 Recent Decisions</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Decision</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="decisionsTable">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-container">
+                <div class="section-title">🛡️ Sentinel Events</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Module</th>
+                            <th>Type</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sentinelTable">
+                        <!-- 动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">
+            JEV L7.1 MetaCognition Supervisor & Sentinel Layer v1.0 | Last updated: <span id="lastUpdated">2025-11-08 19:15:00</span>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // 模拟数据
+        const mockDecisions = [
+            { module: 'autoLearningOptimizer', decision: 'reload aiBridge', rating: 'B', status: 'completed', time: '19:14:32' },
+            { module: 'predictivePlanner', decision: 'adjust threshold', rating: 'A', status: 'completed', time: '19:13:25' },
+            { module: 'eventReflection', decision: 'analyze pattern', rating: 'B', status: 'completed', time: '19:12:18' },
+            { module: 'memoryGraph', decision: 'update importance', rating: 'C', status: 'completed', time: '19:11:05' },
+            { module: 'autoLearningOptimizer', decision: 'optimize weights', rating: 'A', status: 'completed', time: '19:10:42' }
+        ];
+        
+        const mockSentinelEvents = [
+            { module: 'autoPlanner', type: 'autonomy_warning', score: 0.58, status: 'warning', time: '19:14:32' },
+            { module: 'realtimeTranslate', type: 'normal', score: 0.42, status: 'safe', time: '19:13:25' },
+            { module: 'aiBridge', type: 'normal', score: 0.45, status: 'safe', time: '19:12:18' },
+            { module: 'daoCollector', type: 'normal', score: 0.38, status: 'safe', time: '19:11:05' }
+        ];
+        
+        // 初始化图表
+        let autonomyChart;
+        function initChart() {
+            const ctx = document.getElementById('autonomyChart').getContext('2d');
+            
+            autonomyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['19:05', '19:06', '19:07', '19:08', '19:09', '19:10', '19:11', '19:12', '19:13', '19:14', '19:15'],
+                    datasets: [{
+                        label: 'Autonomy Score',
+                        data: [0.42, 0.45, 0.48, 0.52, 0.55, 0.53, 0.56, 0.59, 0.57, 0.58, 0.56],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#f1f5f9'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#94a3b8',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            },
+                            min: 0,
+                            max: 1,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: 0.5,
+                                yMax: 0.5,
+                                borderColor: '#f59e0b',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    content: 'Warning Threshold',
+                                    enabled: true,
+                                    color: '#f59e0b'
+                                }
+                            },
+                            line2: {
+                                type: 'line',
+                                yMin: 0.75,
+                                yMax: 0.75,
+                                borderColor: '#ef4444',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    content: 'Critical Threshold',
+                                    enabled: true,
+                                    color: '#ef4444'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 填充表格数据
+        function populateTables() {
+            const decisionsTable = document.getElementById('decisionsTable');
+            decisionsTable.innerHTML = '';
+            
+            mockDecisions.forEach(decision => {
+                const row = decisionsTable.insertRow();
+                row.innerHTML = `
+                    <td>${decision.module}</td>
+                    <td>${decision.decision}</td>
+                    <td><span class="rating ${decision.rating}">${decision.rating}</span></td>
+                    <td><span class="status ${decision.status === 'completed' ? 'safe' : decision.status}">${decision.status}</span></td>
+                    <td>${decision.time}</td>
+                `;
+            });
+            
+            const sentinelTable = document.getElementById('sentinelTable');
+            sentinelTable.innerHTML = '';
+            
+            mockSentinelEvents.forEach(event => {
+                const row = sentinelTable.insertRow();
+                row.innerHTML = `
+                    <td>${event.module}</td>
+                    <td>${event.type}</td>
+                    <td>${event.score.toFixed(2)}</td>
+                    <td><span class="status ${event.status}">${event.status}</span></td>
+                    <td>${event.time}</td>
+                `;
+            });
+        }
+        
+        // 刷新数据
+        function refreshData() {
+            // 模拟刷新动画
+            document.getElementById('cognitionActive').textContent = 'REFRESHING...';
+            
+            setTimeout(() => {
+                // 模拟数据更新
+                document.getElementById('autonomyScore').textContent = (0.45 + Math.random() * 0.2).toFixed(2);
+                document.getElementById('reflectionChains').textContent = Math.floor(10 + Math.random() * 5);
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+                document.getElementById('cognitionActive').textContent = 'TRUE';
+                
+                // 更新图表数据
+                if (autonomyChart) {
+                    const newData = autonomyChart.data.datasets[0].data.slice(1);
+                    newData.push(parseFloat(document.getElementById('autonomyScore').textContent));
+                    autonomyChart.data.datasets[0].data = newData;
+                    autonomyChart.update();
+                }
+            }, 800);
+        }
+        
+        // 导出报告
+        function exportReport() {
+            alert('Exporting meta_supervisor_report.json...');
+        }
+        
+        // 查看历史
+        function viewHistory() {
+            alert('Opening historical data viewer...');
+        }
+        
+        // 重置系统
+        function resetSystem() {
+            if (confirm('Are you sure you want to reset the system? This will clear all current monitoring data.')) {
+                alert('System reset initiated...');
+            }
+        }
+        
+        // 初始化
+        window.onload = function() {
+            initChart();
+            populateTables();
+            
+            // 模拟实时更新
+            setInterval(refreshData, 30000);
+        };
+    </script>
+</body>
+</html>

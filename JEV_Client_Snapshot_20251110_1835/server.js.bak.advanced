@@ -1,0 +1,52 @@
+// 璁剧疆绯荤粺璇█鐜涓篣TF-8
+process.env.LANG = "zh_CN.UTF-8";
+
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const PORT = 8080;
+const PUBLIC_DIR = path.join(__dirname);
+
+const server = http.createServer((req, res) => {
+  let filePath = path.join(PUBLIC_DIR, req.url === '/' ? 'index.html' : req.url);
+  
+  // 澶勭悊鐩綍璇锋眰锛岃嚜鍔ㄦ煡鎵緄ndex.html
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+    filePath = path.join(filePath, 'index.html');
+  }
+  
+  // 瀹氫箟Content-Type鏄犲皠锛岀‘淇?js鏂囦欢浣跨敤application/javascript
+  const contentTypeMap = {
+    '.html': 'text/html; charset=utf-8',
+    '.js': 'application/javascript; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpg',
+    '.gif': 'image/gif',
+    '.ico': 'image/x-icon'
+  };
+  
+  fs.readFile(filePath, "utf-8", (err, data) => {
+    if (err) {
+        res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+        res.end("鎵句笉鍒版枃浠?);
+        return;
+    }
+
+    // 鑾峰彇鏂囦欢鎵╁睍鍚嶅苟璁剧疆姝ｇ‘鐨凜ontent-Type
+    const extname = path.extname(filePath);
+    const contentType = contentTypeMap[extname] || 'application/octet-stream';
+
+    res.writeHead(200, { 
+      "Content-Type": contentType,
+      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"
+    });
+    res.end(data, "utf-8");
+  });
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}/`);
+});

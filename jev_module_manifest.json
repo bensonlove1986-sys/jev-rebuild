@@ -1,0 +1,96 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-01-01T00:00:00Z",
+  "modules": [
+    {
+      "id": "core",
+      "name": "核心模块",
+      "path": "modules/core.js",
+      "version": "1.0.0",
+      "required": true
+    },
+    {
+      "id": "auth",
+      "name": "认证模块",
+      "path": "modules/auth.js",
+      "version": "1.0.0",
+      "required": true
+    },
+    {
+      "id": "ui",
+      "name": "界面模块",
+      "path": "modules/ui.js",
+      "version": "1.0.0",
+      "required": true
+    },
+    {
+      "id": "data",
+      "name": "数据模块",
+      "path": "modules/data.js",
+      "version": "1.0.0",
+      "required": true
+    },
+    {
+      "id": "api",
+      "name": "API模块",
+      "path": "modules/api.js",
+      "version": "1.0.0",
+      "required": true
+    },
+    {
+      "id": "security",
+      "name": "安全模块",
+      "path": "modules/security.js",
+      "version": "1.0.0",
+      "required": true
+    },
+    {
+      "id": "invite",
+      "name": "邀请码模块",
+      "path": "modules/inviteCodeManager.js",
+      "version": "1.0.0",
+      "required": true
+    },
+    {
+      "id": "monitor",
+      "name": "监控模块",
+      "path": "modules/monitor.js",
+      "version": "1.0.0",
+      "required": false
+    },
+    {
+      "id": "client_gateway_bridge",
+      "name": "Client Gateway Bridge",
+      "path": "modules/client_gateway_bridge.js",
+      "version": "7.8.0",
+      "required": false,
+      "type": "server"
+    },
+    {
+      "id": "jev_client_web",
+      "name": "JEV Web Client",
+      "type": "frontend_portal",
+      "depends": ["client_gateway_bridge", "multiChannelGateway"],
+      "version": "7.8.0",
+      "status": "active",
+      "required": false
+    }
+  ],
+  "dependencies": {
+    "invite": [],
+    "auth": ["invite"],
+    "core": ["auth"],
+    "api": ["core"],
+    "data": ["api"],
+    "ui": ["core", "data"],
+    "security": ["auth"],
+    "monitor": ["core"],
+    "jev_client_web": ["client_gateway_bridge"]
+  },
+  "entry_points": {
+    "main": "main.js",
+    "login": "ui/login_portal.html",
+    "client_portal": "ui/client_portal.html",
+    "client_dashboard": "ui/client_dashboard.html"
+  }
+}

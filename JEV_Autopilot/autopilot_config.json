@@ -1,0 +1,9 @@
+{
+  "followup_intervals": [24, 48, 72],
+  "ai_model": "DeepSeek-v3",
+  "relay_endpoint": "https://relay.jevshop.workers.dev",
+  "autopilot_mode": "semi_auto",
+  "languages_supported": ["en","zh","vi","bn","ur","hi","id","ar","es","pt","fr","th","tr","de","ja","ko","ru"],
+  "reminder_template": "Hello {{name}}, following up on your recent inquiry about {{product}}. Please confirm if you'd like to proceed.",
+  "lock": "active"
+}

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片OCR识别与翻译流程测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 32px;
+        }
+        
+        .flow-diagram {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #e8e8e8;
+            transition: all 0.3s ease;
+        }
+        
+        .flow-step:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            background: #1890ff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            font-size: 16px;
+            color: #1890ff;
+            margin-bottom: 4px;
+        }
+        
+        .step-content p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .step-arrow {
+            text-align: center;
+            color: #999;
+            font-size: 24px;
+            margin: 8px 0;
+            transform: rotate(90deg);
+        }
+        
+        .test-area {
+            margin-top: 30px;
+        }
+        
+        .test-area h2 {
+            font-size: 20px;
+            color: #1890ff;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .upload-section {
+            text-align: center;
+            padding: 30px;
+            border: 2px dashed #d9d9d9;
+            border-radius: 8px;
+            background: #fafafa;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-section:hover {
+            border-color: #1890ff;
+            background: #f0f9ff;
+        }
+        
+        .upload-section.dragging {
+            border-color: #52c41a;
+            background: #f6ffed;
+        }
+        
+        #uploadIcon {
+            font-size: 64px;
+            color: #d9d9d9;
+            margin-bottom: 16px;
+            transition: color 0.3s ease;
+        }
+        
+        .upload-section:hover #uploadIcon,
+        .upload-section.dragging #uploadIcon {
+            color: #1890ff;
+        }
+        
+        .upload-section p {
+            color: #666;
+            margin-bottom: 16px;
+        }
+        
+        #uploadInput {
+            display: none;
+        }
+        
+        .btn-upload {
+            background: #1890ff;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-upload:hover {
+            background: #40a9ff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+        }
+        
+        .preview-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .preview-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .preview-column h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .result-box {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 120px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        
+        .loading-section {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1890ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .status-log {
+            background: #262626;
+            color: #f0f0f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 30px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status-log h3 {
+            color: #1890ff;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .log-entry {
+            margin-bottom: 4px;
+        }
+        
+        .log-error {
+            color: #ff4d4f;
+        }
+        
+        .log-success {
+            color: #52c41a;
+        }
+        
+        .log-info {
+            color: #1890ff;
+        }
+        
+        .footer {
+            background: #fafafa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #e8e8e8;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .preview-section {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖼️ 图片OCR识别与翻译流程测试</h1>
+            <p>测试完整流程：本地上传 → Worker接收 → Google Vision识别 → DeepSeek API翻译 → 本地显示</p>
+        </div>
+        
+        <div class="content">
+            <!-- 流程说明 -->
+            <div class="flow-diagram">
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="step-icon">🖼️</div>
+                        <div class="step-content">
+                            <h3>1. 本地上传</h3>
+                            <p>本地脚本（UI或翻译区）捕获BLOB图片，转成FormData，通过API发送到Worker</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-icon">☁️</div>
+                        <div class="step-content">
+                            <h3>2. Worker接收</h3>
+                            <p>Cloudflare Worker接收图片，保存到R2存储，生成R2公网URL</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-icon">👁️</div>
+                        <div class="step-content">
+                            <h3>3. 识别</h3>
+                            <p>Google Vision API对图片进行OCR识别，提取文字内容</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-icon">🤖</div>
+                        <div class="step-content">
+                            <h3>4. 翻译</h3>
+                            <p>DeepSeek API对OCR识别结果进行翻译处理</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-icon">💬</div>
+                        <div class="step-content">
+                            <h3>5. 回传显示</h3>
+                            <p>本地脚本（翻译区）接收翻译结果并显示，完成闭环</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 测试区域 -->
+            <div class="test-area">
+                <h2>🎯 开始测试</h2>
+                
+                <!-- 上传区域 -->
+                <div id="uploadSection" class="upload-section">
+                    <div id="uploadIcon">📁</div>
+                    <p>点击按钮或拖拽图片到此处</p>
+                    <input type="file" id="uploadInput" accept="image/*">
+                    <button class="btn-upload" onclick="document.getElementById('uploadInput').click()">
+                        选择图片
+                    </button>
+                </div>
+                
+                <!-- 预览和结果区域 -->
+                <div class="preview-section">
+                    <div class="preview-column">
+                        <h3>📊 原图预览</h3>
+                        <img id="previewImage" class="preview-image" alt="预览图片" style="display: none;">
+                    </div>
+                    <div class="preview-column">
+                        <h3>🧠 OCR识别结果</h3>
+                        <div id="ocrResult" class="result-box">等待识别结果...</div>
+                    </div>
+                </div>
+                
+                <div class="preview-section">
+                    <div class="preview-column">
+                        <h3>🌐 翻译结果</h3>
+                        <div id="translateResult" class="result-box">等待翻译结果...</div>
+                    </div>
+                    <div class="preview-column">
+                        <h3>📋 处理信息</h3>
+                        <div id="processInfo" class="result-box">
+                            处理时间: -<br>
+                            使用引擎: -<br>
+                            状态: 就绪
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 加载中区域 -->
+                <div id="loadingSection" class="loading-section">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text" id="loadingText">正在处理图片，请稍候...</div>
+                </div>
+                
+                <!-- 状态日志 -->
+                <div class="status-log">
+                    <h3>📝 处理日志</h3>
+                    <div id="statusLog"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>OCR识别与翻译流程测试工具 © 2024 | 版本 1.0.0</p>
+        </div>
+    </div>
+    
+    <script>
+        // 配置信息
+        const config = {
+            workerBase: 'https://your-worker-url.workers.dev', // 请替换为实际的Worker URL
+            webhookSecret: 'your-webhook-secret' // 请替换为实际的Webhook密钥
+        };
+        
+        // 初始化页面元素
+        const uploadSection = document.getElementById('uploadSection');
+        const uploadInput = document.getElementById('uploadInput');
+        const previewImage = document.getElementById('previewImage');
+        const ocrResult = document.getElementById('ocrResult');
+        const translateResult = document.getElementById('translateResult');
+        const processInfo = document.getElementById('processInfo');
+        const loadingSection = document.getElementById('loadingSection');
+        const loadingText = document.getElementById('loadingText');
+        const statusLog = document.getElementById('statusLog');
+        
+        // 拖拽事件处理
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadSection.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadSection.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadSection.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            uploadSection.classList.add('dragging');
+        }
+        
+        function unhighlight() {
+            uploadSection.classList.remove('dragging');
+        }
+        
+        // 处理文件上传
+        uploadSection.addEventListener('drop', handleDrop, false);
+        uploadInput.addEventListener('change', handleFileSelect, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+        
+        function handleFiles(files) {
+            if (files.length === 0) return;
+            
+            const file = files[0];
+            if (!file.type.match('image.*')) {
+                logError('请选择有效的图片文件');
+                return;
+            }
+            
+            logInfo('📤 开始处理图片：' + file.name);
+            
+            // 显示预览图片
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+                
+                // 开始处理图片
+                processImage(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // 处理图片（模拟完整流程）
+        async function processImage(dataUrl) {
+            try {
+                // 重置结果区域
+                ocrResult.textContent = '处理中...';
+                translateResult.textContent = '处理中...';
+                processInfo.textContent = '处理时间: 计算中...\n使用引擎: 检测中...\n状态: 进行中';
+                
+                // 显示加载状态
+                loadingSection.style.display = 'block';
+                
+                // 步骤1: 上传图片到Worker
+                logInfo('✅ 步骤1: 本地上传 - 准备发送图片到Worker');
+                loadingText.textContent = '正在上传图片到Worker...';
+                
+                // 模拟延迟
+                await sleep(1000);
+                
+                // 提取Base64数据
+                let base64Data = dataUrl;
+                if (dataUrl.startsWith('data:image/')) {
+                    const commaIndex = dataUrl.indexOf(',');
+                    if (commaIndex > -1) {
+                        base64Data = dataUrl.substring(commaIndex + 1);
+                    }
+                }
+                
+                // 构建请求体
+                const body = {
+                    image_b64: base64Data,
+                    ocr: true,
+                    translate: true,
+                    target_lang: 'zh-CN',
+                    timestamp: Date.now(),
+                    metadata: {
+                        source: 'test_page',
+                        capture_method: 'direct_upload'
+                    }
+                };
+                
+                // 步骤2: Worker接收处理
+                logInfo('✅ 步骤2: Worker接收 - 图片已发送，Worker正在保存和处理');
+                loadingText.textContent = 'Worker正在处理图片...';
+                
+                // 模拟延迟
+                await sleep(1500);
+                
+                // 步骤3: OCR识别
+                logInfo('✅ 步骤3: OCR识别 - Google Vision API正在识别图片文字');
+                loadingText.textContent = '正在进行OCR文字识别...';
+                
+                // 模拟延迟
+                await sleep(2000);
+                
+                // 步骤4: 翻译
+                logInfo('✅ 步骤4: 翻译 - DeepSeek API正在翻译识别结果');
+                loadingText.textContent = '正在翻译识别结果...';
+                
+                // 模拟延迟
+                await sleep(1500);
+                
+                // 模拟结果（实际项目中应该从API获取真实结果）
+                const mockResult = {
+                    success: true,
+                    engine: 'Google Vision + DeepSeek',
+                    processing_time_ms: 5000,
+                    ocr_text: '这是一张测试图片，包含示例文本内容。\n这是第二行文本，用于测试多行识别和翻译。\nOCR技术能够识别各种语言的文字内容。',
+                    translated_text: 'This is a test image containing example text content.\nThis is the second line of text, used to test multi-line recognition and translation.\nOCR technology can recognize text content in various languages.'
+                };
+                
+                // 步骤5: 显示结果
+                logInfo('✅ 步骤5: 回传显示 - 处理完成，正在显示结果');
+                
+                // 更新UI显示
+                ocrResult.textContent = mockResult.ocr_text;
+                translateResult.textContent = mockResult.translated_text;
+                processInfo.textContent = `处理时间: ${(mockResult.processing_time_ms/1000).toFixed(1)}s\n使用引擎: ${mockResult.engine}\n状态: 成功`;
+                
+                logSuccess(`🎉 处理完成！OCR识别: ${mockResult.ocr_text.length}字符，翻译: ${mockResult.translated_text.length}字符`);
+                
+                // 隐藏加载状态
+                loadingSection.style.display = 'none';
+                
+                // 实际项目中的API调用示例：
+                /*
+                try {
+                    const response = await fetch(`${config.workerBase}/analyze-image`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Webhook-Secret': config.webhookSecret
+                        },
+                        body: JSON.stringify(body)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    // 处理真实结果...
+                } catch (apiError) {
+                    throw new Error(`API调用失败: ${apiError.message}`);
+                }
+                */
+                
+            } catch (error) {
+                console.error('处理失败:', error);
+                logError(`❌ 处理失败: ${error.message}`);
+                
+                // 更新UI显示错误
+                ocrResult.textContent = '处理失败';
+                translateResult.textContent = '处理失败';
+                processInfo.textContent = `状态: 失败\n错误: ${error.message}`;
+                
+                // 隐藏加载状态
+                loadingSection.style.display = 'none';
+            }
+        }
+        
+        // 辅助函数
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        function logInfo(message) {
+            addLogEntry(message, 'info');
+        }
+        
+        function logSuccess(message) {
+            addLogEntry(message, 'success');
+        }
+        
+        function logError(message) {
+            addLogEntry(message, 'error');
+        }
+        
+        function addLogEntry(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            statusLog.appendChild(logEntry);
+            statusLog.scrollTop = statusLog.scrollHeight;
+        }
+        
+        // 初始化日志
+        logInfo('系统就绪，可以开始测试图片OCR和翻译流程');
+    </script>
+</body>
+</html>

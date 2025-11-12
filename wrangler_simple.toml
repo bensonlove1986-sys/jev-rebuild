@@ -1,0 +1,8 @@
+name = "jevshop"
+main = "worker_simple.js"
+account_id = "156ce03fffc59592e2b3b04dbc22aa6c"
+compatibility_date = "2025-11-08"
+
+[vars]
+ENVIRONMENT = "development"
+LOG_LEVEL = "info"

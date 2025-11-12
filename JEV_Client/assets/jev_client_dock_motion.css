@@ -1,0 +1,96 @@
+/* UTF-8 FIXED BY JEV @ 2025-11-09T15:11:17.086Z */
+/* 盲赂禄茅垄聵氓聢聡忙聧垄忙聽赂氓驴聝忙聽路氓录聫 - 盲赂聨CSS忙聳聡盲禄露氓聧聫猫掳聝 */
+body.dark {
+  background: #111;
+  color: #fff;
+}
+
+body.light {
+  background: #f5f5f5;
+  color: #111;
+}
+
+/* Dock茅聺垄忙聺驴忙聽赂氓驴聝氓聤篓莽聰禄 - 盲赂聨CSS忙聳聡盲禄露盲赂颅莽職聞transform氓聤篓莽聰禄盲驴聺忙聦聛盲赂聙猫聡麓 */
+#dock-panel {
+  transform: translateX(380px); /* 茅禄聵猫庐陇茅職聬猫聴聫盲陆聧莽陆庐 */
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
+}
+
+#dock-panel.visible {
+  transform: translateX(0); /* 忙聵戮莽陇潞盲陆聧莽陆庐 */
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+}
+
+/* 氓聢聡忙聧垄忙聦聣茅聮庐忙聜卢忙碌庐氓聤篓莽聰禄 */
+#dock-toggle:hover {
+  animation: floaty 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes floaty {
+  0% { transform: translateY(-2px); }
+  100% { transform: translateY(4px); }
+}
+
+/* 忙聳掳忙露聢忙聛炉猫聞聣氓聠虏氓聤篓莽聰禄 */
+@keyframes pulseAlert {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 99, 99, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(255, 99, 99, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 99, 99, 0);
+  }
+}
+
+/* 盲赂禄茅垄聵氓聢聡忙聧垄忙聦聣茅聮庐忙聽路氓录聫 */
+.theme-toggle {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* 氓聯聧氓潞聰氓录聫猫庐戮猫庐隆氓垄聻氓录潞 */
+@media (max-width: 768px) {
+  #dock-panel {
+    transform: translateX(400px);
+  }
+  
+  #dock-panel.visible {
+    width: 100%;
+    transform: translateX(0);
+  }
+}
+
+/* iframe氓聤聽猫陆陆猫驴聡忙赂隆忙聲聢忙聻聹 */
+iframe.tab-frame {
+  transition: opacity 0.3s ease-in-out;
+}
+
+iframe.tab-frame.loading {
+  opacity: 0.4;
+}
+
+iframe.tab-frame.loaded {
+  opacity: 1;
+}

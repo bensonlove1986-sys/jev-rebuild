@@ -1,0 +1,8 @@
+{
+  "success": true,
+  "count": 0,
+  "items": [],
+  "raw_preview": [],
+  "feature": "TEXT_DETECTION",
+  "imageUrl": "https://raw.githubusercontent.com/tesseract-ocr/tesseract/main/testing/eurotext.png"
+}

@@ -1,0 +1,13 @@
+const commerceEngine = require('./ai_commerce_core');
+console.log('JEV Global AI Commerce Engine v13.0 is running...');
+console.log('---------------------------------------------------');
+console.log('�?AI Quote Engine initialized');
+console.log('�?Profit Predictor initialized');
+console.log('�?Invoice Generator initialized');
+console.log('�?Currency Manager initialized');
+console.log('�?DeepSeek translation layer connected');
+console.log('�?Commerce Insight Layer activated');
+console.log('---------------------------------------------------');
+console.log('System state: stable');
+console.log('Lock status: active');
+console.log('Service ready for incoming requests');

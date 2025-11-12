@@ -1,0 +1,16 @@
+✅ JEV 系统开发规范总纲 (V1) 已成功建立并永久保存
+
+文档路径: docs\JEV_System_Development_Standards.md
+创建时间: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+
+包含内容:
+- 编码规范
+- 命名规范
+- 注释规范
+- API通信规范
+- 日志规范
+- 版本与变更规范
+- 文件结构规范
+- 代码生成与AI辅助规则
+
+所有后续生成的代码将自动遵循此规范。

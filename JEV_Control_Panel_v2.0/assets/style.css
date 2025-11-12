@@ -1,0 +1,529 @@
+/**
+ * JEV控制面板v2.0 Pro - 深色主题样式
+ */
+
+/* 全局样式重置 */
+.jev-panel, 
+.jev-panel * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 主面板样式 */
+.jev-panel {
+    position: fixed;
+    top: 50px;
+    right: 50px;
+    width: 550px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid #333;
+    z-index: 999999;
+    color: #e0e0e0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.jev-panel-dragging {
+    cursor: grabbing !important;
+    opacity: 0.9;
+}
+
+/* 面板头部 */
+.jev-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #252526;
+    border-bottom: 1px solid #3e3e42;
+    cursor: grab;
+    user-select: none;
+}
+
+.jev-panel-header:active {
+    cursor: grabbing;
+}
+
+.jev-panel-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.jev-panel-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.jev-btn {
+    padding: 6px 12px;
+    background-color: #0e639c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.jev-btn:hover {
+    background-color: #1177bb;
+}
+
+.jev-btn:active {
+    transform: translateY(1px);
+}
+
+.jev-btn-small {
+    padding: 4px 8px;
+    min-width: 30px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jev-btn-ai {
+    background-color: #16a34a;
+}
+
+.jev-btn-ai:hover {
+    background-color: #15803d;
+}
+
+.jev-btn-human {
+    background-color: #dc2626;
+}
+
+.jev-btn-human:hover {
+    background-color: #b91c1c;
+}
+
+/* 面板内容 */
+.jev-panel-content {
+    padding: 16px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* 状态区域 */
+.jev-status-section {
+    margin-bottom: 16px;
+    padding: 12px;
+    background-color: #252526;
+    border-radius: 6px;
+    border: 1px solid #3e3e42;
+}
+
+.jev-status-info, 
+.jev-current-agent {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    gap: 8px;
+}
+
+.jev-status-info:last-child, 
+.jev-current-agent:last-child {
+    margin-bottom: 0;
+}
+
+.jev-status-label {
+    color: #9e9e9e;
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.jev-status-value {
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.jev-status-value.connected {
+    color: #10b981;
+}
+
+.jev-status-value.disconnected {
+    color: #ef4444;
+}
+
+.jev-status-value.loading {
+    color: #f59e0b;
+}
+
+.jev-port-info {
+    color: #6b7280;
+    font-size: 11px;
+    margin-left: 8px;
+}
+
+.jev-agent-id {
+    font-family: 'Consolas', 'Monaco', monospace;
+    background-color: #333;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.jev-agent-mode {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid;
+}
+
+.jev-mode-ai {
+    color: #6ee7b7;
+    border-color: #10b981;
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.jev-mode-human {
+    color: #f87171;
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* 客服列表区域 */
+.jev-agents-section {
+    margin-bottom: 16px;
+}
+
+.jev-table-container {
+    background-color: #252526;
+    border-radius: 6px;
+    border: 1px solid #3e3e42;
+    overflow: hidden;
+}
+
+.jev-agents-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.jev-agents-table th {
+    background-color: #333333;
+    color: #cccccc;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid #3e3e42;
+}
+
+.jev-agents-table td {
+    padding: 8px;
+    border-bottom: 1px solid #2d2d2d;
+    vertical-align: middle;
+}
+
+.jev-agents-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.jev-current-agent-row {
+    background-color: rgba(25, 118, 210, 0.15);
+}
+
+.jev-agent-name {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-weight: 500;
+}
+
+.jev-you {
+    color: #3b82f6;
+    font-size: 10px;
+    margin-left: 4px;
+}
+
+.jev-risk-indicator {
+    color: #f59e0b;
+    margin-right: 4px;
+}
+
+.jev-mode-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.jev-switch-btn {
+    padding: 4px 10px;
+    background-color: #374151;
+    color: #e5e7eb;
+    border: 1px solid #4b5563;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.jev-switch-btn:hover {
+    background-color: #4b5563;
+    border-color: #6b7280;
+}
+
+.jev-loading, 
+.jev-empty {
+    text-align: center;
+    padding: 20px;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* 操作按钮区域 */
+.jev-actions-section {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.jev-actions-section .jev-btn {
+    flex: 1;
+    min-width: 80px;
+}
+
+/* 日志区域 */
+.jev-logs-section {
+    background-color: #252526;
+    border-radius: 6px;
+    border: 1px solid #3e3e42;
+    overflow: hidden;
+}
+
+.jev-logs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #333333;
+    border-bottom: 1px solid #3e3e42;
+}
+
+.jev-logs-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #cccccc;
+}
+
+.jev-logs-container {
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 8px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.jev-logs-container .jev-log-entry {
+    margin-bottom: 4px;
+    padding: 4px;
+    border-radius: 3px;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.jev-logs-container .jev-log-entry:hover {
+    background-color: #2d2d2d;
+}
+
+.jev-logs-container .jev-log-error {
+    color: #f87171;
+}
+
+.jev-logs-container .jev-log-warning {
+    color: #fbbf24;
+}
+
+.jev-logs-container .jev-log-success {
+    color: #6ee7b7;
+}
+
+.jev-logs-container .jev-log-info {
+    color: #93c5fd;
+}
+
+.jev-logs-container .jev-log-time {
+    color: #6b7280;
+    margin-right: 6px;
+}
+
+.jev-logs-container .jev-log-module {
+    color: #a78bfa;
+    margin-right: 6px;
+}
+
+/* 滚动条样式 */
+.jev-panel-content::-webkit-scrollbar,
+.jev-logs-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.jev-panel-content::-webkit-scrollbar-track,
+.jev-logs-container::-webkit-scrollbar-track {
+    background-color: #1e1e1e;
+    border-radius: 4px;
+}
+
+.jev-panel-content::-webkit-scrollbar-thumb,
+.jev-logs-container::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+    border-radius: 4px;
+}
+
+.jev-panel-content::-webkit-scrollbar-thumb:hover,
+.jev-logs-container::-webkit-scrollbar-thumb:hover {
+    background-color: #6b7280;
+}
+
+/* 通知样式 */
+.jev-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    min-width: 300px;
+    max-width: 400px;
+    background-color: #252526;
+    border: 1px solid #3e3e42;
+    border-radius: 6px;
+    padding: 12px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 999999;
+}
+
+.jev-notification-show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.jev-notification-title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.jev-notification-message {
+    font-size: 12px;
+    color: #9e9e9e;
+    margin-bottom: 8px;
+}
+
+.jev-notification-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: none;
+    color: #6b7280;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.jev-notification-close:hover {
+    background-color: #374151;
+    color: #e5e7eb;
+}
+
+.jev-notification-success .jev-notification-title {
+    color: #10b981;
+}
+
+.jev-notification-error .jev-notification-title {
+    color: #ef4444;
+}
+
+.jev-notification-warning .jev-notification-title {
+    color: #f59e0b;
+}
+
+.jev-notification-info .jev-notification-title {
+    color: #3b82f6;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+    .jev-panel {
+        width: 95% !important;
+        top: 10px !important;
+        right: 10px !important;
+        left: 10px !important;
+    }
+    
+    .jev-actions-section {
+        flex-direction: column;
+    }
+    
+    .jev-actions-section .jev-btn {
+        width: 100%;
+    }
+    
+    .jev-agents-table {
+        font-size: 11px;
+    }
+    
+    .jev-agents-table th,
+    .jev-agents-table td {
+        padding: 6px 4px;
+    }
+    
+    .jev-switch-btn {
+        padding: 2px 6px;
+        font-size: 10px;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.jev-panel {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 高对比度样式 */
+@media (prefers-contrast: high) {
+    .jev-panel {
+        border-width: 2px;
+    }
+    
+    .jev-btn {
+        border: 1px solid;
+    }
+}
+
+/* 减少动画设置 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

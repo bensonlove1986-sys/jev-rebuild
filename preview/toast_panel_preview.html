@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JEV 插件面板预览</title>
+  <style>
+    body { font-family: system-ui, Arial; margin: 0; padding: 24px; background: #121212; color: #eee; }
+    header { margin-bottom: 16px; }
+    .chat-area { border: 1px solid #333; padding: 12px; border-radius: 8px; min-height: 240px; }
+    .chat-message { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+    .chat-message img { width: 120px; height: auto; border-radius: 4px; }
+  </style>
+  <script>
+    // 可选：本地预览配置覆盖（也可通过面板设置）
+    window.JEV_WORKER_BASE = 'http://127.0.0.1:8787';
+    window.JEV_WEBHOOK_SECRET = 'jevindustry2025';
+    window.JEV_AUTO_PUSH = true;
+    window.JEV_SEND_MODE = 'worker';
+  </script>
+  <!-- 直接注入用户脚本（作为普通脚本执行IIFE） -->
+  <script src="../scripts/daojiem_capture.user.js"></script>
+</head>
+<body>
+  <header>
+    <h1>JEV 插件面板预览页</h1>
+    <p>此页面用于本地验证面板显示与交互。下方模拟一个聊天区域，便于扫描图片与发送测试。</p>
+  </header>
+  <section class="chat-area">
+    <div class="chat-message">
+      <img src="../outputs/hello_world.png" alt="示例图片" />
+      <div>示例图片消息（用于扫描演示）。</div>
+    </div>
+    <div class="chat-message">
+      <img src="../wiki_via_worker.jpg" alt="示例图片2" />
+      <div>示例图片消息2。</div>
+    </div>
+    <textarea style="width:100%;height:80px;margin-top:12px" placeholder="这里是聊天输入框，用于 sendViaUI 测试"></textarea>
+  </section>
+</body>
+</html>

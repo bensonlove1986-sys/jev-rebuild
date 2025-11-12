@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-11-08T09:55:56.436Z",
+  "overall_status": "success",
+  "config_comparison": {
+    "matched": [
+      ".env文件中 JEV_API_KEY 匹配",
+      ".env文件中 DAOJIE_API_KEY 匹配",
+      ".env文件中 ADMIN_TOKEN 匹配",
+      ".env文件中 LEADCONNECTOR_API_KEY 匹配",
+      ".env文件中 DAOIJE_WABA_TOKEN 匹配",
+      ".env文件中 API_KEY 匹配",
+      ".env文件中 GOOGLE_API_KEY 匹配",
+      ".env文件中 DEEPSEEK_API_KEY 匹配",
+      ".env文件中 MODE 匹配",
+      ".env文件中 ALLOW_ORIGIN 匹配",
+      ".env文件中 ACCOUNT_ID 匹配",
+      "wrangler.toml中 main 设置正确",
+      "wrangler.toml中 JEV_AI_CACHE KV命名空间已配置",
+      "wrangler.toml中 JEV_LOGS KV命名空间已配置",
+      "wrangler.toml中 JEV_GLOBAL_CONFIG KV命名空间已配置",
+      "wrangler.toml中 JEV_PLUGIN_STATE KV命名空间已配置"
+    ],
+    "mismatched": [],
+    "missing": []
+  },
+  "worker_implementation": {
+    "passed": [
+      "Worker中存在 /ping",
+      "Worker中存在 /status",
+      "Worker中存在 /auto-env",
+      "Worker中存在 /kv/test",
+      "Worker中存在 /invite",
+      "Worker中存在 /sync",
+      "Worker中存在 checkEnv",
+      "Worker中存在 autoFixEnv",
+      "Worker中存在 handleKvTest",
+      "Worker中存在 handleInvite",
+      "Worker中存在 handleSync"
+    ],
+    "failed": []
+  },
+  "environment_status": "✓ 环境完全匹配"
+}

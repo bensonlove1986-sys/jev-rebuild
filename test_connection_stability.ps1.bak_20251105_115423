@@ -1,0 +1,126 @@
+# Test script to verify connection stability between Desktop Agent and Central Control
+
+# Configuration
+$AGENT_URL = "http://localhost:1818"
+$TEST_ITERATIONS = 5
+$DELAY_BETWEEN_TESTS = 2 # seconds
+
+Write-Host "Starting connection stability test..." -ForegroundColor Green
+Write-Host "Running $TEST_ITERATIONS tests with $DELAY_BETWEEN_TESTS seconds delay between tests"
+Write-Host "--------------------------------------------"
+
+# Function to test GET requests
+function Test-GetRequest($endpoint, $testName) {
+    try {
+        Write-Host "[$testName] Testing GET $endpoint..." -NoNewline
+        $startTime = Get-Date
+        $response = Invoke-RestMethod -Uri "$AGENT_URL$endpoint" -Method Get -ErrorAction Stop
+        $endTime = Get-Date
+        $duration = ($endTime - $startTime).TotalMilliseconds
+        
+        Write-Host " SUCCESS (${duration:F2}ms)" -ForegroundColor Green
+        return @{ success = $true; response = $response; duration = $duration }
+    } catch {
+        Write-Host " FAILED: $_" -ForegroundColor Red
+        return @{ success = $false; error = $_ }
+    }
+}
+
+# Function to test POST requests
+function Test-PostRequest($endpoint, $testName) {
+    try {
+        Write-Host "[$testName] Testing POST $endpoint..." -NoNewline
+        $startTime = Get-Date
+        $response = Invoke-RestMethod -Uri "$AGENT_URL$endpoint" -Method Post -ContentType "application/json" -ErrorAction Stop
+        $endTime = Get-Date
+        $duration = ($endTime - $startTime).TotalMilliseconds
+        
+        Write-Host " SUCCESS (${duration:F2}ms)" -ForegroundColor Green
+        return @{ success = $true; response = $response; duration = $duration }
+    } catch {
+        Write-Host " FAILED: $_" -ForegroundColor Red
+        return @{ success = $false; error = $_ }
+    }
+}
+
+# Run tests
+$results = @()
+$successCount = 0
+$totalDuration = 0
+
+for ($i = 1; $i -le $TEST_ITERATIONS; $i++) {
+    Write-Host "\n--- Test Iteration $i ---"
+    
+    # Test 1: Get agent status
+    $testResult = Test-GetRequest "/status" "1"
+    $results += @{ test = "Status Check"; iteration = $i; result = $testResult }
+    if ($testResult.success) {
+        $successCount++
+        $totalDuration += $testResult.duration
+    }
+    
+    # Only connect to central if not already connected (based on first test result)
+    if ($i -eq 1) {
+        $isConnected = $testResult.response.centralConnection.isConnected
+        if (-not $isConnected) {
+            Write-Host "Agent not connected to central control. Attempting to connect..."
+            $connectResult = Test-PostRequest "/connect-to-central" "Connect"
+            $results += @{ test = "Connect to Central"; iteration = $i; result = $connectResult }
+            if ($connectResult.success) {
+                $successCount++
+                $totalDuration += $connectResult.duration
+            }
+        } else {
+            Write-Host "Agent already connected to central control."
+        }
+    }
+    
+    # Test 2: Send heartbeat (only if connected)
+    if ($i -gt 1 -or ($i -eq 1 -and $isConnected)) {
+        $heartbeatResult = Test-PostRequest "/send-heartbeat" "2"
+        $results += @{ test = "Heartbeat"; iteration = $i; result = $heartbeatResult }
+        if ($heartbeatResult.success) {
+            $successCount++
+            $totalDuration += $heartbeatResult.duration
+        }
+    }
+    
+    # Wait between tests
+    if ($i -lt $TEST_ITERATIONS) {
+        Write-Host "Waiting $DELAY_BETWEEN_TESTS seconds before next test..."
+        Start-Sleep -Seconds $DELAY_BETWEEN_TESTS
+    }
+}
+
+# Test 3: Disconnect at the end (if connected)
+Write-Host "\n--- Final Disconnect Test ---"
+$disconnectResult = Test-PostRequest "/disconnect-from-central" "Disconnect"
+$results += @{ test = "Disconnect from Central"; iteration = "Final"; result = $disconnectResult }
+if ($disconnectResult.success) {
+    $successCount++
+    $totalDuration += $disconnectResult.duration
+}
+
+# Calculate statistics
+$totalTests = $results.Count
+$successRate = ($successCount / $totalTests) * 100
+$avgDuration = if ($successCount -gt 0) { $totalDuration / $successCount } else { 0 }
+
+# Print summary
+Write-Host "\n--------------------------------------------"
+Write-Host "STABILITY TEST SUMMARY:" -ForegroundColor Yellow
+Write-Host "Total Tests: $totalTests"
+Write-Host "Successful Tests: $successCount"
+Write-Host "Success Rate: ${successRate:F2}%"
+Write-Host "Average Response Time: ${avgDuration:F2}ms"
+
+if ($successRate -eq 100) {
+    Write-Host "\n✅ Connection is STABLE! All tests passed." -ForegroundColor Green
+} elseif ($successRate -ge 80) {
+    Write-Host "\n⚠️ Connection is MODERATELY STABLE. Some tests failed." -ForegroundColor Yellow
+} else {
+    Write-Host "\n❌ Connection is UNSTABLE. Many tests failed." -ForegroundColor Red
+}
+
+Write-Host "--------------------------------------------"
+Write-Host "Test completed." -ForegroundColor Green

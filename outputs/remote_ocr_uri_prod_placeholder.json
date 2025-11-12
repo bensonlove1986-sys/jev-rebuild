@@ -1,0 +1,16 @@
+{
+    "success":  true,
+    "count":  0,
+    "items":  [
+
+              ],
+    "raw_preview":  [
+
+                    ],
+    "feature":  "DOCUMENT_TEXT_DETECTION",
+    "imageUrl":  "https://via.placeholder.com/640x200.png?text=Hello+World",
+    "mode":  "uri",
+    "fetch_attempts":  [
+
+                       ]
+}

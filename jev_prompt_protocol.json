@@ -1,0 +1,51 @@
+{
+  "protocol_version": "1.0",
+  "system": "JEV",
+  "description": "统一人-语言-执行三层提示词协议，用于主控(GPT)、执行(TRAE)、系统(Worker)之间的任务传递。",
+  "schema": {
+    "目标": "一句话说明最终想实现的状态。",
+    "背景": "系统环境、版本号、依赖模块、上下文。",
+    "输入": "执行所需的参数，如路径、API、文件等。",
+    "输出": "期望得到的结果或验证标准。",
+    "执行步骤": "逐步列出任务执行逻辑。",
+    "约束": "必须遵守的安全或逻辑边界。",
+    "回传": "执行完成后返回的数据格式与字段。"
+  },
+  "rules": {
+    "single_task": true,
+    "explicit_dependencies": true,
+    "verifiable_output": true,
+    "safe_boundaries": true,
+    "version_tracking": "JEV_LOGS"
+  },
+  "usage_flow": [
+    "1. 用户编写目标与背景草稿。",
+    "2. GPT 梳理逻辑并生成正式提示词。",
+    "3. TRAE 按提示词执行并返回结果。",
+    "4. GPT 验证输出与日志，更新模板。"
+  ],
+  "example": {
+    "目标": "部署 JEV 客服客户端模块。",
+    "背景": "系统版本 v2.0.0，通信核心 lib/connection.js。",
+    "输入": {
+      "worker_url": " https://jevshop.bensonlove1986.workers.dev ",
+      "kv": ["JEV_GLOBAL_CONFIG", "JEV_LOGS"]
+    },
+    "输出": "模块注册 window.JEV_MODULES['panel']，UI 显示正常。",
+    "执行步骤": [
+      "1. 检查并备份旧 panel.js。",
+      "2. 部署新模块。",
+      "3. 验证 /ping 与 /license。",
+      "4. 写入部署日志。"
+    ],
+    "约束": [
+      "不得修改 lib/connection.js",
+      "保持所有头部一致"
+    ],
+    "回传": {
+      "success": true,
+      "version": "L8.5-client-v1.0.0",
+      "timestamp": "<UTC>"
+    }
+  }
+}

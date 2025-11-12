@@ -1,0 +1,16 @@
+{
+    "success":  true,
+    "count":  0,
+    "items":  [
+
+              ],
+    "raw_preview":  [
+
+                    ],
+    "feature":  "DOCUMENT_TEXT_DETECTION",
+    "imageUrl":  "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/HelloWorld.png/640px-HelloWorld.png",
+    "mode":  "uri",
+    "fetch_attempts":  [
+
+                       ]
+}

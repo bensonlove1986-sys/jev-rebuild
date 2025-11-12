@@ -1,0 +1,25 @@
+{
+    "status":  "accessible",
+    "timestamp":  "2025-11-06 20:36:13",
+    "response":  {
+                     "success":  false,
+                     "count":  8,
+                     "success_count":  0,
+                     "result":  {
+                                    "JEV_AI_CACHE":  "â Missing binding",
+                                    "JEV_GLOBAL_CONFIG":  "â Missing binding",
+                                    "JEV_LOGS":  "â Missing binding",
+                                    "JEV_PLUGIN_STATE":  "â Missing binding",
+                                    "Bensonai_memory":  "â Missing binding",
+                                    "trea_memory":  "â Missing binding",
+                                    "JEVPI":  "â Missing binding",
+                                    "R2_BUCKET":  "â Missing binding"
+                                },
+                     "system":  {
+                                    "timestamp":  "2025-11-06T12:36:17.121Z",
+                                    "worker":  "online",
+                                    "version":  "L11C-AutoSync",
+                                    "memory_worker_status":  "connected"
+                                }
+                 }
+}

@@ -1,0 +1,29 @@
+name = "jev-cloudflare-worker"
+main = "worker_static.js"
+
+compatibility_date = "2023-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+# 环境变量
+[vars]
+JEV_VERSION = "16.0.0"
+DEBUG_MODE = "true"
+
+# 路由配置
+routes = [
+  { pattern = "jev-worker.example.com/*", zone_name = "example.com" }
+]
+
+# 资源绑定
+[[r2_buckets]]
+bucket_name = "jev-ui-assets"
+binding = "UI_BUCKET"
+
+# 开发环境配置
+[dev]
+port = 8787
+local_protocol = "https"
+
+# 日志配置
+[observability.logs]
+enabled = true

@@ -1,0 +1,1 @@
+export default { name: "upload", init(){ console.log("upload loaded") } };

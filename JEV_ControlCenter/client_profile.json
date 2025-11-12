@@ -1,0 +1,14 @@
+{
+  "worker_status": {
+    "online": true,
+    "stable": true,
+    "secure": true
+  },
+  "control_center": {
+    "active": true
+  },
+  "invite_code": "JEV-CLIENT-LOGIN",
+  "expires_at": "2025-11-16T04:55:16.810Z",
+  "verified_at": "2025-11-09T04:55:16.811Z",
+  "verify_endpoint": "https://control.jevshop.workers.dev/api/invite/verify"
+}

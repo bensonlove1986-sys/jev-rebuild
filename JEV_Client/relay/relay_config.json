@@ -1,0 +1,10 @@
+{
+  "relay_port": 8080,
+  "target_base": "https://jevshop.bensonlove1986.workers.dev",
+  "diagnostics_path": "../diagnostics",
+  "request_timeout": 30000,
+  "max_retries": 2,
+  "health_check_interval": 60000,
+  "enable_cors": true,
+  "cors_allow_origins": ["*"]
+}

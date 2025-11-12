@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV Intelligent Control Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .status-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .status-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .status-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .status-value {
+            font-weight: bold;
+        }
+        .status-connected {
+            color: #27ae60;
+        }
+        .status-disconnected {
+            color: #e74c3c;
+        }
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .indicator-green {
+            background-color: #27ae60;
+            animation: pulse 2s infinite;
+        }
+        .indicator-red {
+            background-color: #e74c3c;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        .logs-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .logs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .logs-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        .refresh-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .refresh-btn:hover {
+            background-color: #2980b9;
+        }
+        .logs-container {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .timestamp {
+            color: #7f8c8d;
+            font-weight: normal;
+        }
+        .alert {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>JEV Intelligent Control Panel</h1>
+        <p>中控与执行系统状态监控</p>
+    </div>
+
+    <div class="status-panel">
+        <h2>系统状态</h2>
+        <div class="status-item">
+            <div class="status-label">执行系统 (Agent)</div>
+            <div class="status-value status-connected connection-status">
+                <span class="status-indicator indicator-green"></span>
+                已连接 🟢 端口1820
+            </div>
+        </div>
+        <div class="status-item">
+            <div class="status-label">系统编码</div>
+            <div class="status-value">UTF-8 without BOM</div>
+        </div>
+        <div class="status-item">
+            <div class="status-label">TRAE 连接</div>
+            <div class="status-value status-connected">Active</div>
+        </div>
+        <div class="status-item">
+            <div class="status-label">启动时间</div>
+            <div class="status-value" id="start-time">--</div>
+        </div>
+        <div class="status-item">
+            <div class="status-label">运行时长</div>
+            <div class="status-value" id="uptime">--</div>
+        </div>
+    </div>
+
+    <div class="logs-panel">
+        <div class="logs-header">
+            <h2>系统日志</h2>
+            <button class="refresh-btn" onclick="refreshLogs()">刷新日志</button>
+        </div>
+        <div class="logs-container" id="logs-container">
+            <div class="log-entry">正在加载日志...</div>
+        </div>
+    </div>
+
+    <div class="alert">
+        <strong>注意：</strong>此系统正在运行，请勿关闭终端窗口。心跳监控每5秒检查一次系统状态。
+    </div>
+
+    <div class="footer">
+        <p>JEV Intelligent Control & Execution System © 2025</p>
+    </div>
+
+    <script>
+        // 设置启动时间
+        const startTime = new Date();
+        document.getElementById('start-time').textContent = startTime.toLocaleString('zh-CN');
+
+        // 更新运行时长
+        function updateUptime() {
+            const now = new Date();
+            const uptimeMs = now - startTime;
+            const hours = Math.floor(uptimeMs / (1000 * 60 * 60));
+            const minutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((uptimeMs % (1000 * 60)) / 1000);
+            document.getElementById('uptime').textContent = 
+                `${hours}小时 ${minutes}分钟 ${seconds}秒`;
+        }
+
+        // 初始加载日志
+        function loadLogs() {
+            // 模拟日志数据
+            const logsContainer = document.getElementById('logs-container');
+            logsContainer.innerHTML = '';
+            
+            const mockLogs = [
+                '[2025-11-05 16:14:27] ✅ Agent starting...',
+                '[2025-11-05 16:14:27] ✅ Encoding: UTF-8 without BOM',
+                '[2025-11-05 16:14:27] ✅ Agent listening on port 1820',
+                '[2025-11-05 16:14:27] ✅ TRAE Link Active',
+                '[2025-11-05 16:14:27] ✅ JEV Control and Execution System (1820) started successfully.',
+                '[2025-11-05 16:16:02] [WATCHDOG] Starting JEV System Heartbeat Watchdog...',
+                '[2025-11-05 16:16:02] [WATCHDOG] Monitoring agent on port 1820',
+                '[2025-11-05 16:16:03] [WATCHDOG] ✅ Agent is responsive on port 1820'
+            ];
+            
+            mockLogs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                
+                // 提取时间戳并添加样式
+                const timestampMatch = log.match(/\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]/);
+                if (timestampMatch) {
+                    const timestamp = timestampMatch[1];
+                    const message = log.replace(timestampMatch[0], '');
+                    logEntry.innerHTML = `<span class="timestamp">[${timestamp}]</span>${message}`;
+                } else {
+                    logEntry.textContent = log;
+                }
+                
+                logsContainer.appendChild(logEntry);
+            });
+            
+            // 滚动到底部
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        // 刷新日志
+        function refreshLogs() {
+            loadLogs();
+        }
+
+        // 定期检查Agent状态
+        function checkAgentStatus() {
+            fetch('http://localhost:1820/ping')
+                .then(response => {
+                    if (response.ok) {
+                        const statusIndicator = document.querySelector('.status-indicator');
+                        const statusText = document.querySelector('.connection-status');
+                        statusIndicator.className = 'status-indicator indicator-green';
+                        statusText.className = 'status-value status-connected connection-status';
+                    }
+                })
+                .catch(error => {
+                    console.warn('Agent check failed:', error);
+                });
+        }
+
+        // 初始化
+        loadLogs();
+        updateUptime();
+        checkAgentStatus();
+
+        // 设置定时器
+        setInterval(updateUptime, 1000);
+        setInterval(checkAgentStatus, 5000);
+    </script>
+</body>
+</html>

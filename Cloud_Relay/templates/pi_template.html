@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Proforma Invoice - {{pi_number}}</title>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 40px;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid #ddd;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 2px solid #0066cc;
+      padding-bottom: 20px;
+    }
+    .header h1 {
+      color: #0066cc;
+      margin: 0;
+    }
+    .invoice-info {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .customer-info {
+      margin-bottom: 30px;
+    }
+    h2 {
+      color: #0066cc;
+      font-size: 18px;
+      margin-top: 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      color: #0066cc;
+    }
+    .total-row {
+      font-weight: bold;
+      background-color: #f9f9f9;
+    }
+    .footer {
+      margin-top: 40px;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+      font-size: 12px;
+      color: #666;
+    }
+    .company-info {
+      margin-bottom: 30px;
+      text-align: right;
+    }
+    .payment-terms {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-left: 4px solid #0066cc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>PROFORMA INVOICE</h1>
+    </div>
+    
+    <div class="invoice-info">
+      <div>
+        <h2>Invoice Details</h2>
+        <p><strong>Invoice Number:</strong> {{pi_number}}</p>
+        <p><strong>Date:</strong> {{date}}</p>
+      </div>
+      <div class="company-info">
+        <h2>JEV Technologies Inc.</h2>
+        <p>123 Business Avenue</p>
+        <p>Shanghai, China</p>
+        <p>contact@jevtech.com</p>
+        <p>+86 123 4567 8910</p>
+      </div>
+    </div>
+    
+    <div class="customer-info">
+      <h2>Bill To:</h2>
+      <p><strong>{{customer}}</strong></p>
+    </div>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Product Description</th>
+          <th>Quantity</th>
+          <th>Unit Price (USD)</th>
+          <th>Total Amount (USD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{product}}</td>
+          <td>{{quantity}}</td>
+          <td>{{unit_price}}</td>
+          <td>{{total}}</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="3">GRAND TOTAL</td>
+          <td>{{total}}</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="payment-terms">
+      <h2>Payment Terms:</h2>
+      <ul>
+        <li>Payment in full within 30 days of invoice date</li>
+        <li>Bank details will be provided upon confirmation</li>
+        <li>Goods will be shipped upon receipt of payment</li>
+        <li>Shipping terms: FOB Shanghai</li>
+      </ul>
+    </div>
+    
+    <div class="footer">
+      <p>This is a computer-generated document. No signature required.</p>
+      <p>JEV Technologies Inc. - Your Trusted Technology Partner</p>
+      <p>© 2024 JEV Technologies. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

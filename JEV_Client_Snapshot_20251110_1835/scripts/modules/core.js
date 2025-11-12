@@ -1,0 +1,1 @@
+export default { name: "core", init(){ console.log("core loaded") } };

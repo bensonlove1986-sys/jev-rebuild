@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV L7.1 - Global Sentinel Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e9ecef;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #00cfdd;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 207, 221, 0.5);
+        }
+
+        .header .subtitle {
+            color: #a0aec0;
+            font-size: 16px;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .status-card h2 {
+            color: #00cfdd;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .status-healthy {
+            color: #48bb78;
+        }
+
+        .status-warning {
+            color: #ed8936;
+        }
+
+        .status-critical {
+            color: #f56565;
+        }
+
+        .status-pending {
+            color: #cbd5e0;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-label {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .large-card {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(0, 207, 221, 0.1);
+            color: #00cfdd;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .confidence-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        .confidence-high {
+            background: linear-gradient(90deg, #48bb78, #38a169);
+        }
+
+        .confidence-medium {
+            background: linear-gradient(90deg, #ed8936, #dd6b20);
+        }
+
+        .confidence-low {
+            background: linear-gradient(90deg, #f56565, #e53e3e);
+        }
+
+        .refresh-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .refresh-btn {
+            background: #00cfdd;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #00b4c0;
+        }
+
+        .camera-preview {
+            width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            border: 2px solid rgba(0, 207, 221, 0.3);
+        }
+
+        .camera-placeholder {
+            color: #a0aec0;
+            text-align: center;
+        }
+
+        .lock-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .lock-locked {
+            background: #48bb78;
+            box-shadow: 0 0 10px rgba(72, 187, 120, 0.5);
+        }
+
+        .lock-unlocked {
+            background: #f56565;
+            box-shadow: 0 0 10px rgba(245, 101, 101, 0.5);
+        }
+
+        .lock-pending {
+            background: #ed8936;
+            box-shadow: 0 0 10px rgba(237, 137, 54, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .status-value {
+                font-size: 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>JEV L7.1 - Global Sentinel Dashboard</h1>
+            <div class="subtitle">实时安全监控与FaceID身份验证系统</div>
+        </div>
+
+        <!-- FaceID状态卡片 -->
+        <div class="status-card">
+            <h2>🔐 FaceID验证状态</h2>
+            <div id="faceid-status" class="status-value status-pending">待验证</div>
+            
+            <div class="info-item">
+                <span class="info-label">验证置信度</span>
+                <span id="faceid-confidence" class="info-value">--</span>
+            </div>
+            <div class="confidence-bar">
+                <div id="confidence-fill" class="confidence-fill confidence-low" style="width: 0%"></div>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">最后验证时间</span>
+                <span id="last-verification" class="info-value">未验证</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">会话有效期</span>
+                <span id="session-expiry" class="info-value">未开始</span>
+            </div>
+        </div>
+
+        <!-- 安全等级卡片 -->
+        <div class="status-card">
+            <h2>🛡️ 安全状态</h2>
+            <div id="security-status" class="status-value status-warning">
+                <span id="lock-indicator" class="lock-indicator lock-pending"></span>
+                待确认
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">锁定等级</span>
+                <span id="lock-level" class="info-value">Level 0</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">安全模式</span>
+                <span id="security-mode" class="info-value">标准模式</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">自动锁定时间</span>
+                <span id="auto-lock-time" class="info-value">--</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">未授权尝试</span>
+                <span id="unauthorized-attempts" class="info-value">0</span>
+            </div>
+        </div>
+
+        <!-- 摄像头状态卡片 -->
+        <div class="status-card">
+            <h2>📸 摄像头状态</h2>
+            <div id="camera-status" class="status-value status-pending">检测中</div>
+
+            <div class="camera-preview">
+                <div class="camera-placeholder">
+                    <div>🔴 摄像头预览</div>
+                    <div style="margin-top: 10px; font-size: 14px;">需要用户授权</div>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">设备名称</span>
+                <span id="camera-name" class="info-value">未检测</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">状态</span>
+                <span id="camera-status-detail" class="info-value">未激活</span>
+            </div>
+        </div>
+
+        <!-- 系统模块卡片 -->
+        <div class="status-card">
+            <h2>🧩 系统模块</h2>
+            <div id="module-count" class="status-value status-pending">--</div>
+
+            <div class="info-item">
+                <span class="info-label">已验证模块</span>
+                <span id="verified-modules" class="info-value">0</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">身份绑定</span>
+                <span id="identity-binding" class="info-value">未绑定</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">设备签名</span>
+                <span id="device-signature" class="info-value">--</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Sentinel状态</span>
+                <span id="sentinel-status" class="info-value">离线</span>
+            </div>
+        </div>
+
+        <!-- 安全事件日志 -->
+        <div class="large-card">
+            <div class="refresh-controls">
+                <h2>📝 安全事件日志</h2>
+                <button class="refresh-btn" onclick="refreshDashboard()">🔄 刷新数据</button>
+            </div>
+            <div class="table-container">
+                <table id="events-table">
+                    <thead>
+                        <tr>
+                            <th>时间戳</th>
+                            <th>事件类型</th>
+                            <th>状态</th>
+                            <th>置信度</th>
+                            <th>相关模块</th>
+                        </tr>
+                    </thead>
+                    <tbody id="events-tbody">
+                        <!-- 事件记录将通过JavaScript动态加载 -->
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #a0aec0;">正在加载事件日志...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 安全趋势图表 -->
+        <div class="large-card">
+            <h2>📈 安全趋势分析</h2>
+            <canvas id="security-trend-chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据和实时更新功能
+        const mockSecurityEvents = [
+            {
+                timestamp: "2025-11-08T23:58:00Z",
+                event: "FaceID verified",
+                confidence: 0.972,
+                status: "granted",
+                modules_verified: ["autoRecoveryCluster", "autoOrchestrator", "TRAE Bridge"]
+            },
+            {
+                timestamp: "2025-11-08T23:55:30Z",
+                event: "security_scan",
+                confidence: 0,
+                status: "info",
+                modules_verified: []
+            },
+            {
+                timestamp: "2025-11-08T23:50:00Z",
+                event: "sentinel_startup",
+                confidence: 0,
+                status: "info",
+                modules_verified: []
+            },
+            {
+                timestamp: "2025-11-08T23:45:15Z",
+                event: "identity_profile_loaded",
+                confidence: 0,
+                status: "granted",
+                modules_verified: []
+            }
+        ];
+
+        // 初始化图表
+        let securityChart;
+        function initChart() {
+            const ctx = document.getElementById('security-trend-chart').getContext('2d');
+            securityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '现在'],
+                    datasets: [{
+                        label: '安全评分',
+                        data: [0.95, 0.93, 0.96, 0.94, 0.92, 0.97, 0.97],
+                        borderColor: '#00cfdd',
+                        backgroundColor: 'rgba(0, 207, 221, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 0.8,
+                            max: 1,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: '#a0aec0'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: '#a0aec0'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e2e8f0'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 更新FaceID状态
+        function updateFaceIDStatus() {
+            const faceidStatus = document.getElementById('faceid-status');
+            const faceidConfidence = document.getElementById('faceid-confidence');
+            const confidenceFill = document.getElementById('confidence-fill');
+            const lastVerification = document.getElementById('last-verification');
+            const sessionExpiry = document.getElementById('session-expiry');
+            
+            // 模拟验证成功状态
+            faceidStatus.textContent = '已验证';
+            faceidStatus.className = 'status-value status-healthy';
+            
+            const confidence = 0.97;
+            faceidConfidence.textContent = confidence.toFixed(2);
+            confidenceFill.style.width = `${confidence * 100}%`;
+            
+            // 设置置信度条颜色
+            if (confidence >= 0.9) {
+                confidenceFill.className = 'confidence-fill confidence-high';
+            } else if (confidence >= 0.8) {
+                confidenceFill.className = 'confidence-fill confidence-medium';
+            } else {
+                confidenceFill.className = 'confidence-fill confidence-low';
+            }
+            
+            // 设置时间
+            const now = new Date();
+            lastVerification.textContent = now.toLocaleString();
+            
+            // 设置过期时间（8小时后）
+            const expiry = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+            sessionExpiry.textContent = expiry.toLocaleString();
+        }
+
+        // 更新安全状态
+        function updateSecurityStatus() {
+            const securityStatus = document.getElementById('security-status');
+            const lockIndicator = document.getElementById('lock-indicator');
+            const lockLevel = document.getElementById('lock-level');
+            const securityMode = document.getElementById('security-mode');
+            const autoLockTime = document.getElementById('auto-lock-time');
+            const unauthorizedAttempts = document.getElementById('unauthorized-attempts');
+            
+            securityStatus.innerHTML = '<span id="lock-indicator" class="lock-indicator lock-locked"></span>已锁定';
+            securityStatus.className = 'status-value status-healthy';
+            
+            lockLevel.textContent = 'Level 1 (FaceID)';
+            securityMode.textContent = '严格模式 + 生物识别';
+            autoLockTime.textContent = '15分钟';
+            unauthorizedAttempts.textContent = '0';
+        }
+
+        // 更新摄像头状态
+        function updateCameraStatus() {
+            const cameraStatus = document.getElementById('camera-status');
+            const cameraName = document.getElementById('camera-name');
+            const cameraStatusDetail = document.getElementById('camera-status-detail');
+            
+            cameraStatus.textContent = '已连接';
+            cameraStatus.className = 'status-value status-healthy';
+            
+            cameraName.textContent = '集成摄像头';
+            cameraStatusDetail.textContent = '已激活';
+        }
+
+        // 更新系统模块状态
+        function updateSystemModules() {
+            const moduleCount = document.getElementById('module-count');
+            const verifiedModules = document.getElementById('verified-modules');
+            const identityBinding = document.getElementById('identity-binding');
+            const deviceSignature = document.getElementById('device-signature');
+            const sentinelStatus = document.getElementById('sentinel-status');
+            
+            moduleCount.textContent = '8';
+            moduleCount.className = 'status-value status-healthy';
+            
+            verifiedModules.textContent = '8';
+            identityBinding.textContent = '已绑定 (benson-jev-001)';
+            deviceSignature.textContent = 'HWID-AX439FJH-2025';
+            sentinelStatus.textContent = '在线';
+        }
+
+        // 更新事件日志
+        function updateEventLog() {
+            const tbody = document.getElementById('events-tbody');
+            tbody.innerHTML = '';
+            
+            mockSecurityEvents.forEach(event => {
+                const tr = document.createElement('tr');
+                
+                // 格式化时间
+                const date = new Date(event.timestamp);
+                const formattedTime = date.toLocaleString();
+                
+                // 状态样式
+                let statusClass = '';
+                switch(event.status) {
+                    case 'granted':
+                        statusClass = 'status-healthy';
+                        break;
+                    case 'denied':
+                    case 'critical':
+                        statusClass = 'status-critical';
+                        break;
+                    case 'warning':
+                        statusClass = 'status-warning';
+                        break;
+                    default:
+                        statusClass = 'status-pending';
+                }
+                
+                tr.innerHTML = `
+                    <td>${formattedTime}</td>
+                    <td>${event.event}</td>
+                    <td class="${statusClass}">${event.status}</td>
+                    <td>${event.confidence.toFixed(3)}</td>
+                    <td>${event.modules_verified.join(', ') || '-'}</td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 刷新整个仪表盘
+        function refreshDashboard() {
+            console.log('刷新仪表盘数据...');
+            updateFaceIDStatus();
+            updateSecurityStatus();
+            updateCameraStatus();
+            updateSystemModules();
+            updateEventLog();
+        }
+
+        // 初始化仪表盘
+        window.onload = function() {
+            initChart();
+            refreshDashboard();
+            
+            // 设置自动刷新（每30秒）
+            setInterval(refreshDashboard, 30000);
+        };
+    </script>
+    <script src="./sentinel_dashboard.js"></script>
+</body>
+</html>

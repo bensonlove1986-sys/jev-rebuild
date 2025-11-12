@@ -1,0 +1,35 @@
+{
+  "version": "v9.6",
+  "admin_users": [
+    {
+      "username": "admin",
+      "password_hash": "$2a$10$placeholder_hash_for_demo",
+      "role": "superadmin"
+    }
+  ],
+  "api_tokens": [
+    {
+      "token": "ADMIN_TOKEN",
+      "description": "Control Center Access Token",
+      "permissions": ["read", "write", "admin"]
+    }
+  ],
+  "endpoints": {
+    "worker": "https://jev-worker.workers.dev",
+    "relay": "https://relay.jevshop.workers.dev",
+    "control": "https://control.jevshop.workers.dev"
+  },
+  "system_settings": {
+    "lock_level": "L9-SAFE",
+    "version": "v9.6",
+    "path_lock": true,
+    "audit_log_enabled": true,
+    "system_state": "stable",
+    "lock_status": "active"
+  },
+  "monitoring": {
+    "health_check_interval": 60000,
+    "alert_threshold": 5,
+    "notification_enabled": true
+  }
+}

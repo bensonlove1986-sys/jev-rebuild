@@ -1,0 +1,48 @@
+# 简单测试脚本 - 验证所有端点
+
+Write-Host "开始测试中央控制系统端点..." -ForegroundColor Green
+
+# 直接测试每个端点
+Write-Host "
+测试 /ping 端点..."
+try {
+    $ping = Invoke-WebRequest -Uri http://localhost:1820/ping -Method Get
+    Write-Host "成功! 状态码: $($ping.StatusCode)" -ForegroundColor Green
+    Write-Host "响应: $($ping.Content)"
+} catch {
+    Write-Host "失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+Write-Host "
+测试 /status 端点..."
+try {
+    $status = Invoke-WebRequest -Uri http://localhost:1820/status -Method Get
+    Write-Host "成功! 状态码: $($status.StatusCode)" -ForegroundColor Green
+    Write-Host "响应: $($status.Content)"
+} catch {
+    Write-Host "失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+Write-Host "
+测试 /connect POST 端点..."
+try {
+    $body = '{"agentName":"TestUI"}'
+    $connect = Invoke-WebRequest -Uri http://localhost:1820/connect -Method Post -ContentType application/json -Body $body
+    Write-Host "成功! 状态码: $($connect.StatusCode)" -ForegroundColor Green
+    Write-Host "响应: $($connect.Content)"
+} catch {
+    Write-Host "失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+Write-Host "
+测试 /heartbeat 端点..."
+try {
+    $heartbeat = Invoke-WebRequest -Uri http://localhost:1820/heartbeat -Method Post
+    Write-Host "成功! 状态码: $($heartbeat.StatusCode)" -ForegroundColor Green
+    Write-Host "响应: $($heartbeat.Content)"
+} catch {
+    Write-Host "失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+Write-Host "
+所有测试完成!" -ForegroundColor Green

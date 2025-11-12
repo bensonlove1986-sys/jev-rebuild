@@ -1,0 +1,1 @@
+export default { name: "kv", init(){ console.log("kv loaded") } };

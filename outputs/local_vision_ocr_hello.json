@@ -1,0 +1,76 @@
+{
+    "count":  3,
+    "items":  [
+                  {
+                      "locale":  "en",
+                      "description":  "Hello World",
+                      "boundingPoly":  {
+                                           "vertices":  [
+                                                            {
+                                                                "x":  70,
+                                                                "y":  71
+                                                            },
+                                                            {
+                                                                "x":  496,
+                                                                "y":  71
+                                                            },
+                                                            {
+                                                                "x":  496,
+                                                                "y":  131
+                                                            },
+                                                            {
+                                                                "x":  70,
+                                                                "y":  131
+                                                            }
+                                                        ]
+                                       }
+                  },
+                  {
+                      "description":  "Hello",
+                      "boundingPoly":  {
+                                           "vertices":  [
+                                                            {
+                                                                "x":  70,
+                                                                "y":  71
+                                                            },
+                                                            {
+                                                                "x":  258,
+                                                                "y":  71
+                                                            },
+                                                            {
+                                                                "x":  258,
+                                                                "y":  131
+                                                            },
+                                                            {
+                                                                "x":  70,
+                                                                "y":  131
+                                                            }
+                                                        ]
+                                       }
+                  },
+                  {
+                      "description":  "World",
+                      "boundingPoly":  {
+                                           "vertices":  [
+                                                            {
+                                                                "x":  280,
+                                                                "y":  71
+                                                            },
+                                                            {
+                                                                "x":  496,
+                                                                "y":  71
+                                                            },
+                                                            {
+                                                                "x":  496,
+                                                                "y":  131
+                                                            },
+                                                            {
+                                                                "x":  280,
+                                                                "y":  131
+                                                            }
+                                                        ]
+                                       }
+                  }
+              ],
+    "success":  true
+}

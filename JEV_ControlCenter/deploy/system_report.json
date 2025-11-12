@@ -1,0 +1,19 @@
+{
+    "version":  "v2.0.7",
+    "monitor_status":  "running",
+    "relay_status":  "connected",
+    "cloud_status":  "stable",
+    "outdated":  [
+
+                 ],
+    "plugin_status":  "online",
+    "repair_status":  "standby",
+    "deploy_time":  "2025-11-09T12:18:31.0462598+08:00",
+    "checked_modules":  52,
+    "last_alerts":  0,
+    "system_health":  "secure",
+    "missing":  [
+
+                ],
+    "control_status":  "active"
+}

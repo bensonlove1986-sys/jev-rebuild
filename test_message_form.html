@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV 消息测试表单</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .form-container {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .response-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f7ff;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .response-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        pre {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .success {
+            border-left-color: #27ae60;
+        }
+        .error {
+            border-left-color: #e74c3c;
+        }
+        .info-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <h1>JEV 消息测试表单</h1>
+    
+    <div class="info-box">
+        <strong>注意：</strong>此表单用于测试 <code>/messages/ingest</code> 端点的POST请求功能。浏览器直接访问该URL会返回方法不允许的错误，这是正常行为。
+    </div>
+    
+    <div class="form-container">
+        <form id="messageForm">
+            <div class="form-group">
+                <label for="sender">发送者:</label>
+                <input type="text" id="sender" name="sender" placeholder="请输入发送者名称" value="test_user" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="body">消息内容:</label>
+                <textarea id="body" name="body" placeholder="请输入消息内容" required>这是一条测试消息，通过表单提交</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="authToken">认证令牌:</label>
+                <input type="text" id="authToken" name="authToken" placeholder="请输入认证令牌" value="test_token_123" required>
+            </div>
+            
+            <button type="submit">发送测试消息</button>
+        </form>
+    </div>
+    
+    <div id="responseBox" class="response-container" style="display: none;">
+        <div class="response-title">响应结果:</div>
+        <pre id="responseContent"></pre>
+    </div>
+
+    <script>
+        document.getElementById('messageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const sender = document.getElementById('sender').value;
+            const body = document.getElementById('body').value;
+            const authToken = document.getElementById('authToken').value;
+            
+            const messageData = {
+                sender: sender,
+                body: body,
+                timestamp: new Date().toISOString(),
+                elementClass: 'chat-message',
+                elementId: 'msg-test-' + Date.now()
+            };
+            
+            const responseBox = document.getElementById('responseBox');
+            const responseContent = document.getElementById('responseContent');
+            
+            try {
+                // 显示加载状态
+                responseContent.textContent = '正在发送请求...';
+                responseBox.style.display = 'block';
+                responseBox.className = 'response-container';
+                
+                // 发送POST请求
+                const response = await fetch('https://jevshop.bensonlove1986.workers.dev/messages/ingest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + authToken
+                    },
+                    body: JSON.stringify(messageData)
+                });
+                
+                // 解析响应
+                const data = await response.json();
+                
+                // 格式化并显示响应
+                responseContent.textContent = JSON.stringify(data, null, 2);
+                
+                // 根据响应状态设置样式
+                if (data.success) {
+                    responseBox.className = 'response-container success';
+                } else {
+                    responseBox.className = 'response-container error';
+                }
+                
+            } catch (error) {
+                responseContent.textContent = '请求失败: ' + error.message;
+                responseBox.className = 'response-container error';
+            }
+        });
+    </script>
+</body>
+</html>

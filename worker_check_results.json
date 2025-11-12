@@ -1,0 +1,12 @@
+{
+  "dns": {
+    "latency": 28,
+    "addresses": [
+      "108.160.165.62"
+    ]
+  },
+  "https": null,
+  "status": null,
+  "api": null,
+  "overall": false
+}

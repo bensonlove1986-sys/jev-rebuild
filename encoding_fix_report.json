@@ -1,0 +1,58 @@
+[
+  {
+    "timestamp": "2025-11-09T14:00:00.000Z",
+    "scannedCount": 2000,
+    "fixedCount": 150,
+    "errorCount": 5,
+    "duration": 32000
+  },
+  {
+    "timestamp": "2025-11-09T14:30:00.000Z",
+    "scannedCount": 2000,
+    "fixedCount": 80,
+    "errorCount": 3,
+    "duration": 28000
+  },
+  {
+    "timestamp": "2025-11-09T15:00:00.000Z",
+    "scannedCount": 2000,
+    "fixedCount": 45,
+    "errorCount": 2,
+    "duration": 25000
+  },
+  {
+    "timestamp": "2025-11-09T15:30:00.000Z",
+    "scannedCount": 2000,
+    "fixedCount": 25,
+    "errorCount": 1,
+    "duration": 22000
+  },
+  {
+    "timestamp": "2025-11-09T16:00:00.000Z",
+    "scannedCount": 2000,
+    "fixedCount": 12,
+    "errorCount": 0,
+    "duration": 20000
+  },
+  {
+    "timestamp": "2025-11-09T16:15:00.000Z",
+    "scannedCount": 2000,
+    "fixedCount": 8,
+    "errorCount": 0,
+    "duration": 19500
+  },
+  {
+    "timestamp": "2025-11-09T16:30:00.000Z",
+    "scannedCount": 2000,
+    "fixedCount": 5,
+    "errorCount": 0,
+    "duration": 19000
+  },
+  {
+    "timestamp": "2025-11-09T16:45:00.000Z",
+    "scannedCount": 2000,
+    "fixedCount": 3,
+    "errorCount": 0,
+    "duration": 18800
+  }
+]

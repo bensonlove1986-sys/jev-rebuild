@@ -1,0 +1,14 @@
+{
+  "headers": {
+    "Content-Type": "application/json",
+    "X-Webhook-Secret": "jevindustry2025"
+  },
+  "body": {
+    "contact_id": "{{contact.id}}",
+    "contact_phone": "{{contact.phone}}",
+    "image_b64": "{{message.image_base64}}",
+    "image_name": "{{message.attachment.filename}}"
+  },
+  "method": "POST",
+  "url": "https://<your-worker-subdomain>.workers.dev/receive-image"
+}

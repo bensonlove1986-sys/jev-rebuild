@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOLO地址提取测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-case {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 5px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>BOLO地址提取功能测试</h1>
+    
+    <div class="test-case">
+        <h3>测试控制</h3>
+        <button id="test-extract">测试地址提取</button>
+        <button id="test-event">测试事件通信</button>
+    </div>
+    
+    <div class="test-case">
+        <h3>测试地址</h3>
+        <div id="test-address">北京市朝阳区建国路88号, 邮编100022</div>
+    </div>
+    
+    <div id="results">
+        <h3>结果输出</h3>
+        <pre id="output"></pre>
+    </div>
+    
+    <script src="../modules/integrated_controller.js"></script>
+    <script src="../modules/bolo_extractor.js"></script>
+    
+    <script>
+        // 简单的日志输出函数
+        function log(message) {
+            document.getElementById('output').textContent += message + '\n';
+            console.log(message);
+        }
+        
+        // 清除日志
+        function clearLog() {
+            document.getElementById('output').textContent = '';
+        }
+        
+        // 测试直接提取
+        document.getElementById('test-extract').addEventListener('click', function() {
+            clearLog();
+            log('开始测试直接地址提取...');
+            
+            const addressElement = document.getElementById('test-address');
+            
+            if (window.BOLO && BOLO.AddressExtractor) {
+                log('调用BOLO.AddressExtractor.extractAddress...');
+                const result = BOLO.AddressExtractor.extractAddress(addressElement);
+                log('提取结果: ' + JSON.stringify(result, null, 2));
+            } else {
+                log('错误: BOLO提取器未加载');
+            }
+        });
+        
+        // 测试事件通信
+        document.getElementById('test-event').addEventListener('click', function() {
+            clearLog();
+            log('开始测试事件通信...');
+            
+            // 注册事件监听器
+            if (window.JEV && JEV.Controller) {
+                JEV.Controller.on('addressExtracted', function(result) {
+                    log('收到addressExtracted事件: ' + JSON.stringify(result, null, 2));
+                });
+                
+                const addressElement = document.getElementById('test-address');
+                log('发送extractAddress事件...');
+                JEV.Controller.emit('extractAddress', { domNode: addressElement });
+            } else {
+                log('错误: JEV控制器未加载');
+            }
+        });
+        
+        // 页面加载时检查模块
+        window.addEventListener('load', function() {
+            log('页面加载完成，检查模块状态:');
+            log('- JEV.Controller: ' + (window.JEV && JEV.Controller ? '已加载' : '未加载'));
+            log('- BOLO.AddressExtractor: ' + (window.BOLO && BOLO.AddressExtractor ? '已加载' : '未加载'));
+            
+            // 如果BOLO模块已加载但未注册到控制器，进行注册
+            if (window.JEV && JEV.Controller && window.BOLO && BOLO.AddressExtractor && !JEV.Controller.modules.boloExtractor) {
+                JEV.Controller.registerModule('boloExtractor', {
+                    extractAddress: function(domNode) {
+                        return BOLO.AddressExtractor.extractAddress(domNode);
+                    },
+                    validateAddress: function(address) {
+                        return BOLO.AddressExtractor.validateAddress(address);
+                    }
+                });
+                log('BOLO模块已手动注册到控制器');
+            }
+        });
+    </script>
+</body>
+</html>

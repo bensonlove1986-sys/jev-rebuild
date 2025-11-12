@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "key": "rehost/2025/11/01/rehost_1761991565369_m7g8mw.jpg",
+  "bucket": "jev-images",
+  "content_type": "image/jpeg",
+  "url": "https://pub-2bd0dcc03e004089b2594f3586eec868.r2.dev/jev-images/rehost/2025/11/01/rehost_1761991565369_m7g8mw.jpg",
+  "worker_url": "https://tupianlujing-local.bensonlove1986.workers.dev/images/rehost%2F2025%2F11%2F01%2Frehost_1761991565369_m7g8mw.jpg",
+  "attempts": [
+    {
+      "source": "direct",
+      "status": 200,
+      "ok": true,
+      "ct": "image/jpeg"
+    }
+  ],
+  "used_fallback": false,
+  "used_source": "direct"
+}

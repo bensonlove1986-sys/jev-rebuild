@@ -1,0 +1,39 @@
+{
+  "version": "v2.0.6",
+  "modules": {
+    "ai_responder.js": {
+      "url": "https://jevshop.workers.dev/api/modules/ai_responder.js",
+      "version": "2.0.6",
+      "size": 15240,
+      "sha256": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0"
+    },
+    "ocr_engine.js": {
+      "url": "https://jevshop.workers.dev/api/modules/ocr_engine.js",
+      "version": "2.0.5",
+      "size": 24530,
+      "sha256": "p9o8n7m6l5k4j3i2h1g0f9e8d7c6b5a4"
+    },
+    "relay_connector.js": {
+      "url": "https://jevshop.workers.dev/api/modules/relay_connector.js",
+      "version": "2.0.6",
+      "size": 8760,
+      "sha256": "q1w2e3r4t5y6u7i8o9p0a1s2d3f4g5h6j7"
+    },
+    "storage_manager.js": {
+      "url": "https://jevshop.workers.dev/api/modules/storage_manager.js",
+      "version": "2.0.5",
+      "size": 12340,
+      "sha256": "z9x8c7v6b5n4m3k2j1l0p9o8i7u6y5t4"
+    },
+    "toggle_manager.js": {
+      "url": "https://jevshop.workers.dev/api/modules/toggle_manager.js",
+      "version": "2.0.6",
+      "size": 6540,
+      "sha256": "f1g2h3j4k5l6m7n8o9p0a1s2d3f4g5h6"
+    }
+  },
+  "last_update": "2025-11-09T10:52:00Z",
+  "release_notes": "修复了多个安全漏洞，优化了性能，添加了新功能支持",
+  "update_required": false,
+  "webhook": "https://jevshop.workers.dev/api/notify_update"
+}

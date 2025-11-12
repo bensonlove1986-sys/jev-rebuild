@@ -1,0 +1,6 @@
+{
+    "ok":  true,
+    "status":  200,
+    "body":  "{\n  \"success\": true,\n  \"key\": \"rehost/2025/10/31/rehost_1761904474601_kwyeby.png\",\n  \"bucket\": \"jev-images\",\n  \"content_type\": \"image/png\",\n  \"url\": \"https://pub-156ce03fffc59592e2b3b04dbc22aa6c.r2.dev/jev-images/rehost/2025/10/31/rehost_1761904474601_kwyeby.png\",\n  \"worker_url\": \"http://127.0.0.1:8787/images/rehost%2F2025%2F10%2F31%2Frehost_1761904474601_kwyeby.png\",\n  \"attempts\": [\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://images.weserv.nl/?url=\",\n      \"status\": 0,\n      \"ok\": false,\n      \"error\": \"internal error; reference = q7k5ck5st21iu3bkd77im19d\"\n    },\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://wsrv.nl/?url=\",\n      \"status\": 200,\n      \"ok\": true,\n      \"ct\": \"image/png\"\n    }\n  ]\n}",
+    "name":  "local_rehost_dev_wiki_png.json"
+}

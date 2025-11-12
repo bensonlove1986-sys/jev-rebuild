@@ -1,0 +1,13 @@
+{
+  "env_status": "✅ 全部变量加载成功",
+  "daoije_api": "✅ 可连接",
+  "origin_access": "✅ 前端可跨域",
+  "worker_status": "✅ 在线运行中",
+  "kv_binding_status": "❌ 部分缺失",
+  "missing_bindings": [
+    "JEV_AI_CACHE",
+    "JEV_GLOBAL_CONFIG",
+    "JEV_LOGS"
+  ],
+  "timestamp": "2025-11-06 21:06:00"
+}

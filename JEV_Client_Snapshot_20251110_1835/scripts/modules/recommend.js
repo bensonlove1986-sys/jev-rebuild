@@ -1,0 +1,1 @@
+export default { name: "recommend", init(){ console.log("recommend loaded") } };

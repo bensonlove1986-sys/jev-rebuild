@@ -1,0 +1,106 @@
+name = "jevshop"
+main = "worker.js"
+account_id = "156ce03fffc59592e2b3b04dbc22aa6c"
+compatibility_date = "2025-11-08"
+
+# KV命名空间将在部署后通过Cloudflare Dashboard配置
+
+# 全局环境变量
+[vars]
+ENVIRONMENT = "production"
+LOG_LEVEL = "info"
+STATE_LAYER = "https://jevshop.bensonlove1986.workers.dev"
+# API_KEYS和ALLOWED_IPS在实际生产环境中应该通过wrangler secret设置
+# API_KEYS = "jev-api-key-123,jev-production-key"
+# ALLOWED_IPS = "192.168.1.1,192.168.1.2"
+
+# 启用Analytics和日志记录
+[analytics]
+enabled = true
+
+# 配置错误监控
+[logs]
+enabled = true
+level = "info"
+send_to_console = true
+
+# R2存储桶配置（锁定）
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "jev-r2"
+preview_bucket_name = "jev-r2-preview" # 修改为独立的预览存储桶
+
+# 备份存储桶配置
+[[r2_buckets]]
+binding = "BACKUP_BUCKET"
+bucket_name = "jevshop-backups"
+preview_bucket_name = "jevshop-backups-preview"
+
+# 冗余存储配置
+[[r2_buckets]]
+binding = "REDUNDANCY_BUCKET"
+bucket_name = "jevshop-redundancy"
+preview_bucket_name = "jevshop-redundancy-preview"
+
+# UI资源存储桶配置
+[[r2_buckets]]
+binding = "UI_BUCKET"
+bucket_name = "jev-ui-assets"
+preview_bucket_name = "jev-ui-assets"
+
+# 配置Durable Object的伸缩性和缓存
+[durable_objects]
+preview_id = "jevshop-preview"
+
+# Durable Objects配置
+[[durable_objects.bindings]]
+name = "JEV_STATE"
+class_name = "StateManager"
+
+# 移除migrations配置以避免与现有Durable Objects冲突
+# [[migrations]]
+# tag = "v4"
+# new_sqlite_classes = ["StateManager"]
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
+persist = true
+
+# 环境特定配置
+[[env]]
+name = "JEV_WORKER"
+type = "production"
+[env.vars]
+STATE_LAYER = "https://jevshop.bensonlove1986.workers.dev"
+AUTO_BACKUP_ENABLED = "true"
+BACKUP_INTERVAL = "86400"
+REDUNDANCY_ENABLED = "true"
+DYNAMIC_CACHE_TTL = "true"
+MIN_CACHE_TTL = "60"
+MAX_CACHE_TTL = "3600"
+
+[workers]
+worker_id = "jevshop-production-worker"
+type = "auto-scaling"
+max_concurrent_requests = 10000
+
+# 多区域部署配置
+[workers.geo]
+enabled = true
+regions = ["APAC", "EU", "NAM", "SAM"]  # 覆盖亚洲、欧洲、北美、南美
+
+# 自动扩展设置
+[workers.autoscaling]
+enabled = true
+min_instances = 3
+max_instances = 10
+instance_timeout = 300
+
+# 负载均衡配置
+[[load_balancer]]
+zone = "example.com"
+origin = "jevshop.bensonlove1986.workers.dev"
+enabled = true
+failover_enabled = true

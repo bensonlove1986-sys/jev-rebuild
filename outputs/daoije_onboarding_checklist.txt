@@ -1,0 +1,53 @@
+DAOJIE Webhook 接入配置清单
+
+1) 目标地址
+- URL: https://tupianlujing-local.bensonlove1986.workers.dev/receive-image
+- 方法: POST
+- 头部: Content-Type: application/json, X-Webhook-Secret: jevindustry2025
+
+2) 请求体字段（推荐映射）
+- contact_id: {{contact.id}}
+- contact_phone: {{contact.phone}}
+- image_b64: {{message.image_base64}}  // 纯base64，不含 data:image 前缀，尽量去除换行空白
+- image_name: {{message.attachment.filename}}  // 也可使用 filename
+
+3) 可选字段与兼容
+- 如 DAOJIE 仅能提供 data URL：使用 base64_url: {{message.image_data_url}}
+- 也支持 filename/file_name 字段；优先使用 image_name 生成对象键
+
+4) 返回结果（成功）
+- success: true
+- key: whatsapp/<phone-or-id>/<yyyy>/<mm>/<dd>/<name>_<sha256>.<ext>
+- bucket: jev-images
+- content_type: image/jpeg/png/gif/webp
+- url: R2 公网链接（可外部直接访问）
+- worker_url: Worker 代理链接（同样可访问）
+- size_bytes, hash, saved/existing（去重）
+
+5) 常见错误与处理
+- 403 Forbidden：X-Webhook-Secret 不匹配 → 在环境与 DAOJIE 保持一致
+- 缺少 image_b64/base64_url：字段未传或映射错误
+- base64 解析失败：包含换行/空白，或不是标准base64 → 去除空白后再传
+- 不支持的图片类型：仅允许 jpeg/png/gif/webp
+- 图片过大：超过 RECEIVE_IMAGE_MAX_BYTES（默认约 6MiB）
+
+6) 环境变量（生产建议）
+- WEBHOOK_SECRET=（生产密钥，与 DAOJIE 同步）
+- R2_BUCKET_NAME=jev-images
+- R2_ACCOUNT_ID=<你的 R2 公网哈希，例如 2bd0dcc03e004089b2594f3586eec868>
+- R2_PUBLIC_BASE=https://pub-<你的 R2 哈希>.r2.dev
+- RECEIVE_IMAGE_MAX_BYTES=20971520  // 如客户可能发大图，建议设为 20MiB
+
+7) 备用/补充通道
+- 附件直链拉取并入库：GET /rehost-image 或 POST /rehost-to-r2（传 attachment_url）
+- 两步入库（先拿 base64 再入库）：POST /get-image-by-url → POST /upload-to-r2
+- 别名拉取：POST /attachments/ingest（支持 DAOJIE/LeadConnector）
+
+8) 本地/线上验证步骤
+- 本地脚本推送：.\\scripts\\post_receive_image_any.ps1 -ImagePath ".\\cat.jpg"（已验证成功）
+- 查看产出：D:\\PDF转网页\\outputs\\receive_small.jpg、receive_small_result.json
+- 线上触发后核验：打开返回的 url 或 worker_url 确认可下载
+
+9) 运维建议
+- 上线后替换生产密钥；并在 DAOJIE 同步更新
+- 保留响应 JSON 做审计；必要时增加日志写入

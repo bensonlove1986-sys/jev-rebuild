@@ -1,0 +1,6 @@
+{
+    "ok":  false,
+    "status":  415,
+    "body":  "{\n  \"success\": false,\n  \"error\": \"非图片内容\",\n  \"ct\": \"text/html\",\n  \"attempts\": [\n    {\n      \"source\": \"direct\",\n      \"status\": 200,\n      \"ok\": true,\n      \"ct\": \"text/html\"\n    }\n  ]\n}",
+    "name":  "local_rehost_dev_example_html.json"
+}

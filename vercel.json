@@ -1,0 +1,93 @@
+{
+  "version": 2,
+  "name": "jev-pdf-to-web",
+  "alias": "jev-pdf-to-web",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "buildCommand": "echo 'No build required'",
+  "outputDirectory": ".",
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.json",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.jpg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.svg",
+      "use": "@vercel/static"
+    }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1.js" },
+    { "source": "/ui/(.*)", "destination": "/ui/$1" },
+    { "source": "/modules/(.*)", "destination": "/modules/$1" },
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/jev_ai_service.py", "destination": "/jev_ai_service.py" },
+    { "source": "/config.json", "destination": "/config.json" },
+    { "source": "/theme.css", "destination": "/theme.css" },
+    { "source": "/bolo_extractor.js", "destination": "/bolo_extractor.js" },
+    { "source": "/ocr_integration.js", "destination": "/ocr_integration.js" },
+    { "source": "/translation_engine.js", "destination": "/translation_engine.js" },
+    { "source": "/integrated_ui.html", "destination": "/integrated_ui.html" },
+    { "source": "/system_verification_report.html", "destination": "/system_verification_report.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=60"
+        }
+      ]
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "JEV_ENV": "production",
+    "ENABLE_LOGGING": "true",
+    "DEBUG_MODE": "false",
+    "ENABLE_MOCK_DATA": "true",
+    "JEV_ENVIRONMENT": "vercel"
+  }
+}

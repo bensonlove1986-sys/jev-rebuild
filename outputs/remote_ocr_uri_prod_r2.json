@@ -1,0 +1,16 @@
+{
+    "success":  true,
+    "count":  0,
+    "items":  [
+
+              ],
+    "raw_preview":  [
+
+                    ],
+    "feature":  "DOCUMENT_TEXT_DETECTION",
+    "imageUrl":  "https://pub-156ce03fffc59592e2b3b04dbc22aa6c.r2.dev/jev-images/uploads/2025/10/30/whatsapp_attach.jpg",
+    "mode":  "uri",
+    "fetch_attempts":  [
+
+                       ]
+}

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<!-- UTF-8 FIXED BY JEV @ 2025-11-09T15:11:17.933Z -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<title>JEV Topology Visualizer Demo</title>
+<link rel="stylesheet" href="ui/topology.css">
+
+<style>
+  html, body {
+    font-family: 'Noto Sans SC', 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+</style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div class="topology-container">
+  <header class="topology-header">
+    <h1>冒聼搂漏 JEV L6.5 忙聥聯忙聣聭氓聫炉猫搂聠氓聦聳忙录聰莽陇潞</h1>
+    <div class="header-controls">
+      <button id="export-btn" class="control-btn">氓炉录氓聡潞氓驴芦莽聟搂</button>
+      <button id="refresh-btn" class="control-btn">氓聢路忙聳掳猫搂聠氓聸戮</button>
+      <button id="simulate-msg-btn" class="control-btn">忙篓隆忙聥聼忙露聢忙聛炉忙碌聛</button>
+      <button id="toggle-status-btn" class="control-btn">氓聢聡忙聧垄猫聤聜莽聜鹿莽聤露忙聙聛</button>
+    </div>
+  </header>
+  
+  <div class="canvas-wrapper">
+    <canvas id="jev-topology"></canvas>
+  </div>
+  
+  <div class="system-status">
+    <div class="status-item">
+      <span class="status-label">莽鲁禄莽禄聼莽聤露忙聙聛:</span>
+      <span class="status-value" id="system-status">忙颅拢氓赂赂猫驴聬猫隆聦</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">忙麓禄猫路聝猫聤聜莽聜鹿:</span>
+      <span class="status-value" id="active-nodes">0</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">忙聙禄猫聤聜莽聜鹿忙聲掳:</span>
+      <span class="status-value" id="total-nodes">0</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">氓聛楼氓潞路氓潞娄:</span>
+      <span class="status-value" id="system-health">0%</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 忙篓隆忙聥聼JEV忙篓隆氓聺聴忙鲁篓氓聠聦莽鲁禄莽禄聼
+  window.JEV_MODULE_REGISTRY = window.JEV_MODULE_REGISTRY || {
+    modules: {},
+    registerModule(module) {
+      this.modules[module.id] = module;
+      console.log(`忙篓隆氓聺聴氓路虏忙鲁篓氓聠聦: ${module.id} v${module.version}`);
+      if (typeof module.init === 'function') {
+        setTimeout(module.init, 100);
+      }
+    }
+  };
+  
+  // 氓聢聺氓搂聥氓聦聳盲潞聥盲禄露莽聸聭氓聬卢
+  document.addEventListener('DOMContentLoaded', function() {
+    // 氓炉录氓聡潞氓驴芦莽聟搂忙聦聣茅聮庐
+    document.getElementById('export-btn').addEventListener('click', function() {
+      window.dispatchEvent(new CustomEvent('jev-topology-update-request'));
+    });
+    
+    // 氓聢路忙聳掳猫搂聠氓聸戮忙聦聣茅聮庐
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+      if (window.JEV && window.JEV.topologyVisualizer) {
+        window.JEV.topologyVisualizer.loadInitialData();
+      }
+    });
+    
+    // 忙篓隆忙聥聼忙露聢忙聛炉忙碌聛忙聦聣茅聮庐
+    document.getElementById('simulate-msg-btn').addEventListener('click', function() {
+      const sources = ['multiChannelCollector', 'realtimeTranslate', 'aiAutoReply', 'watchdog'];
+      const source = sources[Math.floor(Math.random() * sources.length)];
+      window.dispatchEvent(new CustomEvent('jev-message-collected', {
+        detail: { source: source, timestamp: Date.now() }
+      }));
+    });
+    
+    // 氓聢聡忙聧垄猫聤聜莽聜鹿莽聤露忙聙聛忙聦聣茅聮庐
+    document.getElementById('toggle-status-btn').addEventListener('click', function() {
+      const modules = ['multiChannelCollector', 'realtimeTranslate', 'autoHeal'];
+      const targetModule = modules[Math.floor(Math.random() * modules.length)];
+      const statuses = ['active', 'error', 'unknown'];
+      const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      
+      window.dispatchEvent(new CustomEvent('jev-watchdog-update', {
+        detail: {
+          modules: {
+            [targetModule]: {
+              status: newStatus,
+              health: newStatus === 'active' ? Math.floor(Math.random() * 50) + 50 : Math.floor(Math.random() * 50),
+              heartRate: Math.floor(Math.random() * 5) + 1
+            }
+          }
+        }
+      }));
+    });
+    
+    // 氓庐職忙聹聼忙篓隆忙聥聼莽鲁禄莽禄聼鏇存柊
+    setInterval(() => {
+      const randomModule = Object.keys(window.JEV?.topologyVisualizer?.nodes || {});
+      if (randomModule.length > 0) {
+        const target = randomModule[Math.floor(Math.random() * randomModule.length)];
+        const health = Math.floor(Math.random() * 40) + 60;
+        
+        window.dispatchEvent(new CustomEvent('jev-watchdog-update', {
+          detail: {
+            modules: {
+              [target]: {
+                status: 'active',
+                health: health,
+                heartRate: Math.floor(Math.random() * 3) + 2
+              }
+            }
+          }
+        }));
+      }
+    }, 8000);
+    
+    // 氓庐職忙聹聼忙篓隆忙聥聼忙露聢忙聛炉忙碌聛氓聤篓
+    setInterval(() => {
+      const sources = ['multiChannelCollector', 'realtimeTranslate'];
+      if (Math.random() > 0.3) { // 70%忙娄聜莽聨聡氓聫聭茅聙聛忙露聢忙聛炉
+        const source = sources[Math.floor(Math.random() * sources.length)];
+        window.dispatchEvent(new CustomEvent('jev-message-collected', {
+          detail: { source: source, timestamp: Date.now() }
+        }));
+      }
+    }, 4000);
+    
+    // 鏇存柊莽鲁禄莽禄聼莽聤露忙聙聛忙聵戮莽陇潞
+    function updateSystemStatus() {
+      if (window.JEV && window.JEV.topologyVisualizer && window.JEV.topologyVisualizer.nodes) {
+        const nodes = Object.values(window.JEV.topologyVisualizer.nodes);
+        const totalNodes = nodes.length;
+        const activeNodes = nodes.filter(n => n.status === 'active').length;
+        const avgHealth = nodes.reduce((sum, n) => sum + n.health, 0) / totalNodes;
+        
+        document.getElementById('total-nodes').textContent = totalNodes;
+        document.getElementById('active-nodes').textContent = activeNodes;
+        document.getElementById('system-health').textContent = Math.round(avgHealth) + '%';
+        
+        let statusText = '忙颅拢氓赂赂猫驴聬猫隆聦';
+        let statusClass = 'status-good';
+        
+        if (avgHealth < 50) {
+          statusText = '莽鲁禄莽禄聼氓录聜氓赂赂';
+          statusClass = 'status-danger';
+        } else if (avgHealth < 80) {
+          statusText = '茅聹聙猫娄聛忙鲁篓忙聞聫';
+          statusClass = 'status-warning';
+        }
+        
+        const statusEl = document.getElementById('system-status');
+        statusEl.textContent = statusText;
+        statusEl.className = 'status-value ' + statusClass;
+      }
+    }
+    
+    // 忙炉聫3莽搂聮鏇存柊盲赂聙忙卢隆莽鲁禄莽禄聼莽聤露忙聙聛忙聵戮莽陇潞
+    setInterval(updateSystemStatus, 3000);
+    
+    // 氓聢聺氓搂聥鏇存柊
+    setTimeout(updateSystemStatus, 1000);
+  });
+</script>
+
+<!-- 氓聤聽猫陆陆忙聥聯忙聣聭氓聫炉猫搂聠氓聦聳忙篓隆氓聺聴 -->
+<script src="modules/topologyVisualizer.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+    "AI":  {
+               "Port":  1822,
+               "Running":  false
+           },
+    "Agent":  {
+                  "Port":  1820,
+                  "Running":  false
+              },
+    "Timestamp":  "2025-11-06 02:41:45",
+    "Worker":  {
+                   "Latency":  1870,
+                   "Error":  null,
+                   "Online":  true
+               }
+}

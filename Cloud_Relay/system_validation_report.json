@@ -1,0 +1,12 @@
+{
+  "relay_status": "online",
+  "connected_modules": ["worker","plugin","optimizer","insight","controlcenter"],
+  "translation_engine": "DeepSeek",
+  "languages_supported": ["en","zh","vi","bn","ur","hi","id","ar","es","pt","fr","th","tr","de","ja","ko","ru"],
+  "features": ["translate","semantic","profit","pi","ocr","ai-reply","task-tracking"],
+  "auto_recover": true,
+  "security": { "rate_limit": true, "ip_whitelist": true },
+  "system_state": "stable",
+  "version": "v11.0",
+  "lock": "active"
+}

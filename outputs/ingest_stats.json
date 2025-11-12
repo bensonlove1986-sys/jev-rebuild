@@ -1,0 +1,23 @@
+{
+    "unique_contacts":  0,
+    "unique_conversations":  0,
+    "rehost_success_count":  4,
+    "sample_contact_ids":  {
+
+                           },
+    "sample_conversation_ids":  {
+
+                                },
+    "rehost_keys_sample":  [
+                               "uploads/2025/10/30/cloud_cat.jpg",
+                               "uploads/2025/10/30/dao_whatsapp.jpg",
+                               "uploads/2025/10/30/dao_whatsapp_picsum.jpg",
+                               "uploads/2025/10/30/dao_whatsapp.jpg"
+                           ],
+    "scanned_files":  [
+                          "outputs\\prod_webhook_messages.txt",
+                          "outputs\\local_webhook_messages.txt",
+                          "outputs\\prod_webhook_last.txt",
+                          "tmp_webhook.json"
+                      ]
+}

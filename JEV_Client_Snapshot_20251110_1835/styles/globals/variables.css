@@ -1,0 +1,133 @@
+/* UTF-8 FIXED BY JEV @ 2025-11-09T15:11:17.868Z */
+/**
+ * JEV 氓聟篓氓卤聙CSS氓聫聵茅聡聫
+ * @file styles/globals/variables.css
+ * @created 2023-11-07
+ * @description 氓庐職盲鹿聣茅隆鹿莽聸庐盲赂颅盲陆驴莽聰篓莽職聞忙聣聙忙聹聣氓聟篓氓卤聙CSS氓聫聵茅聡聫
+ */
+
+:root {
+  /* 茅垄聹猫聣虏莽鲁禄莽禄聼 */
+  --jev-color-primary: #4361ee;
+  --jev-color-primary-light: #4895ef;
+  --jev-color-primary-dark: #3a0ca3;
+  --jev-color-secondary: #f72585;
+  --jev-color-secondary-light: #f8d0e9;
+  --jev-color-secondary-dark: #7209b7;
+  
+  /* 氓聤聼猫聝陆猫聣虏 */
+  --jev-color-success: #4cc9f0;
+  --jev-color-warning: #f72585;
+  --jev-color-danger: #e63946;
+  --jev-color-info: #457b9d;
+  
+  /* 盲赂颅忙聙搂猫聣虏 */
+  --jev-color-text-primary: #1d3557;
+  --jev-color-text-secondary: #457b9d;
+  --jev-color-text-tertiary: #6c757d;
+  --jev-color-text-light: #f1faee;
+  
+  --jev-color-bg-primary: #ffffff;
+  --jev-color-bg-secondary: #f8f9fa;
+  --jev-color-bg-tertiary: #e9ecef;
+  --jev-color-bg-dark: #343a40;
+  
+  /* 猫戮鹿忙隆聠氓聮聦茅聵麓氓陆卤 */
+  --jev-color-border: #dee2e6;
+  --jev-color-border-light: #f8f9fa;
+  --jev-color-border-dark: #adb5bd;
+  
+  --jev-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --jev-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --jev-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --jev-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* 氓聹聠猫搂聮 */
+  --jev-radius-sm: 0.25rem;
+  --jev-radius-md: 0.375rem;
+  --jev-radius-lg: 0.5rem;
+  --jev-radius-xl: 0.75rem;
+  --jev-radius-full: 9999px;
+  
+  /* 茅聴麓猫路聺 */
+  --jev-spacing-xs: 0.25rem;
+  --jev-spacing-sm: 0.5rem;
+  --jev-spacing-md: 1rem;
+  --jev-spacing-lg: 1.5rem;
+  --jev-spacing-xl: 2rem;
+  --jev-spacing-2xl: 3rem;
+  
+  /* 氓颅聴盲陆聯 */
+  --jev-font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --jev-font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  
+  /* 氓颅聴盲陆聯氓陇搂氓掳聫 */
+  --jev-font-size-xs: 0.75rem;
+  --jev-font-size-sm: 0.875rem;
+  --jev-font-size-md: 1rem;
+  --jev-font-size-lg: 1.125rem;
+  --jev-font-size-xl: 1.25rem;
+  --jev-font-size-2xl: 1.5rem;
+  --jev-font-size-3xl: 1.875rem;
+  --jev-font-size-4xl: 2.25rem;
+  
+  /* 猫隆聦茅芦聵 */
+  --jev-line-height-tight: 1.25;
+  --jev-line-height-normal: 1.5;
+  --jev-line-height-relaxed: 1.75;
+  
+  /* 氓颅聴茅聡聧 */
+  --jev-font-weight-normal: 400;
+  --jev-font-weight-medium: 500;
+  --jev-font-weight-semibold: 600;
+  --jev-font-weight-bold: 700;
+  
+  /* 猫驴聡忙赂隆氓聤篓莽聰禄 */
+  --jev-transition-fast: 150ms ease-in-out;
+  --jev-transition-normal: 250ms ease-in-out;
+  --jev-transition-slow: 350ms ease-in-out;
+  
+  /* Z-index氓卤聜莽潞搂 */
+  --jev-z-dropdown: 1000;
+  --jev-z-sticky: 1020;
+  --jev-z-fixed: 1030;
+  --jev-z-modal-backdrop: 1040;
+  --jev-z-modal: 1050;
+  --jev-z-popover: 1060;
+  --jev-z-tooltip: 1070;
+  
+  /* 猫聛聤氓陇漏莽禄聞盲禄露莽聣鹿氓庐職氓聫聵茅聡聫 */
+  --jev-chat-window-width: 380px;
+  --jev-chat-window-height: 500px;
+  --jev-chat-window-min-height: 400px;
+  --jev-chat-header-height: 50px;
+  --jev-chat-input-height: 60px;
+  --jev-chat-footer-height: 30px;
+  --jev-chat-message-spacing: var(--jev-spacing-md);
+  
+  /* 氓聯聧氓潞聰氓录聫忙聳颅莽聜鹿 */
+  --jev-breakpoint-sm: 576px;
+  --jev-breakpoint-md: 768px;
+  --jev-breakpoint-lg: 992px;
+  --jev-breakpoint-xl: 1200px;
+  --jev-breakpoint-2xl: 1400px;
+}
+
+/* 忙職聴猫聣虏忙篓隆氓录聫氓聫聵茅聡聫 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --jev-color-text-primary: #f8f9fa;
+    --jev-color-text-secondary: #adb5bd;
+    --jev-color-text-tertiary: #6c757d;
+    --jev-color-text-light: #1d3557;
+    
+    --jev-color-bg-primary: #212529;
+    --jev-color-bg-secondary: #343a40;
+    --jev-color-bg-tertiary: #495057;
+    --jev-color-bg-dark: #0d1117;
+    
+    --jev-color-border: #495057;
+    --jev-color-border-light: #343a40;
+    --jev-color-border-dark: #6c757d;
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "owner_id": "benson-jev-001",
+  "environment": "local",
+  "auto_start_modules": true,
+  "enable_security_guard": true,
+  "require_invite": true,
+  "version": "7.5.0",
+  "debug": true,
+  "api_endpoints": {
+    "auth": "https://jevshop.bensonlove1986.workers.dev/auth",
+    "invite": "https://jevshop.bensonlove1986.workers.dev/invite",
+    "ping": "https://jevshop.bensonlove1986.workers.dev/ping"
+  },
+  "local_endpoints": {
+    "agent": "http://localhost:1820",
+    "api": "http://localhost:8080/api"
+  },
+  "security": {
+    "token_expiry": 3600000,
+    "enable_encryption": true,
+    "validate_origin": true
+  },
+  "ui": {
+    "theme": "default",
+    "auto_hide_sidebar": false,
+    "show_status_bar": true
+  },
+  "modules": {
+    "auto_load": true,
+    "timeout": 5000,
+    "retry_count": 3
+  }
+}

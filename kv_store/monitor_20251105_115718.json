@@ -1,0 +1,43 @@
+{
+    "checks":  {
+                   "memory_connection":  {
+                                             "url":  "http://localhost:8080/health",
+                                             "latency_ms":  0,
+                                             "error":  "无法连接到远程服务器",
+                                             "success":  false,
+                                             "status":  "error"
+                                         },
+                   "kv_write":  {
+                                    "retries":  0,
+                                    "key":  "test_20251105_115712",
+                                    "success":  true
+                                },
+                   "kv_verify":  {
+                                     "success":  true
+                                 }
+               },
+    "repair_report":  [
+                          {
+                              "retries":  0,
+                              "key":  "repair_report_20251105_115718",
+                              "success":  true
+                          },
+                          {
+                              "steps":  [
+
+                                        ],
+                              "max_retries":  3,
+                              "retries":  0,
+                              "success":  true,
+                              "component":  "MemoryService",
+                              "agent_version":  "1.0.0",
+                              "status":  "completed",
+                              "duration_ms":  6158.4066,
+                              "start_time":  "2025-11-05 11:57:12.555"
+                          }
+                      ],
+    "timestamp":  "2025-11-05 11:57:08.445",
+    "agent_version":  "1.0.0",
+    "status":  "unhealthy",
+    "repair_attempted":  true
+}

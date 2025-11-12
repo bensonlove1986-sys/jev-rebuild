@@ -1,0 +1,6 @@
+{
+    "ok":  false,
+    "status":  404,
+    "body":  "{\n  \"success\": false,\n  \"error\": \"图片下载失败\",\n  \"status\": 404,\n  \"details\": \"not found :(\",\n  \"attempts\": [\n    {\n      \"source\": \"direct\",\n      \"status\": 404,\n      \"ok\": false,\n      \"ct\": \"text/plain; charset=UTF-8\"\n    },\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://images.weserv.nl/?url=\",\n      \"status\": 0,\n      \"ok\": false,\n      \"error\": \"internal error; reference = kgr3fkas57709n0i0eah87r7\"\n    },\n    {\n      \"source\": \"cdn\",\n      \"base\": \"https://wsrv.nl/?url=\",\n      \"status\": 404,\n      \"ok\": false,\n      \"ct\": \"application/json\"\n    }\n  ]\n}",
+    "name":  "local_rehost_dev_cf_png.json"
+}

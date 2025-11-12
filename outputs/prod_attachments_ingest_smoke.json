@@ -1,0 +1,18 @@
+{
+    "success":  true,
+    "used_fallback":  false,
+    "used_source":  "direct",
+    "ingest_source":  "direct",
+    "key":  "uploads/2025/10/31/whatsapp_attach_ok.jpg",
+    "bucket":  "jev-images",
+    "content_type":  "image/jpeg",
+    "url":  "https://pub-2bd0dcc03e004089b2594f3586eec868.r2.dev/jev-images/uploads/2025/10/31/whatsapp_attach_ok.jpg",
+    "worker_url":  "https://tupianlujing-local.bensonlove1986.workers.dev/images/uploads%2F2025%2F10%2F31%2Fwhatsapp_attach_ok.jpg",
+    "attempted":  [
+                      {
+                          "auth":  "Bearer",
+                          "cookie":  "none",
+                          "status":  200
+                      }
+                  ]
+}

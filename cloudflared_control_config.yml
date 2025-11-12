@@ -1,0 +1,8 @@
+# 中控面板隧道配置
+tunnel: 6081861e-6faa-468b-8af5-4e09764d9648
+credentials-file: C:\Users\HUAWEI\.cloudflared\6081861e-6faa-468b-8af5-4e09764d9648.json
+
+ingress:
+  - hostname: control.jevshop.workers.dev
+    service: http://localhost:1819
+  - service: http_status:404

@@ -1,0 +1,14 @@
+{
+    "success":  true,
+    "key":  "rehost/2025/10/31/prod_test.jpg",
+    "bucket":  "jev-images",
+    "content_type":  "image/jpeg",
+    "size_bytes":  76819,
+    "http_metadata":  {
+                          "contentType":  "image/jpeg"
+                      },
+    "custom_metadata":  {
+
+                        },
+    "etag":  "cd482a6570924f7e91b69100e9c4c77e"
+}

@@ -1,0 +1,9 @@
+{
+  "worker": "disconnected",
+  "kv": "unhealthy",
+  "bridge": "disconnected",
+  "sentinel": "active",
+  "durable_objects": "unsynced",
+  "autonomy_score": 0.46,
+  "timestamp": "2025-11-07T23:49:43.009Z"
+}

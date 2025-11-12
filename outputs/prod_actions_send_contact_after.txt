@@ -1,0 +1,10 @@
+{
+    "rest":  {
+                 "error":  "远程服务器返回错误: (502) 错误的网关。",
+                 "success":  false
+             },
+    "service":  {
+                    "error":  "远程服务器返回错误: (502) 错误的网关。",
+                    "success":  false
+                }
+}

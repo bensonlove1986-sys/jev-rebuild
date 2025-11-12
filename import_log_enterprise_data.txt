@@ -1,0 +1,64 @@
+[2025-11-08T02:00:06.818Z] [INFO] ========================================
+[2025-11-08T02:00:06.840Z] [INFO] 企业抬头信息导入工具启动
+[2025-11-08T02:00:06.841Z] [INFO] ========================================
+[2025-11-08T02:00:06.841Z] [INFO] 正在读取数据文件: D:\PDF转网页\enterprise_header_info.json
+[2025-11-08T02:00:06.842Z] [INFO] 数据文件读取成功
+[2025-11-08T02:00:06.843Z] [INFO] 开始数据验证...
+[2025-11-08T02:00:06.845Z] [ERROR] 数据验证成功，共
+[2025-11-08T02:00:06.846Z] [INFO] 开始导入企业抬头信息...
+[2025-11-08T02:00:06.886Z] [ERROR] 导入失败: KV存储状态检查失败: "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n        \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n    <head>\n        <meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">\n        <title>Error response</title>\n    </head>\n    <body>\n        <h1>Error response</h1>\n        <p>Error code: 404</p>\n        <p>Message: File not found.</p>\n        <p>Error code explanation: HTTPStatus.NOT_FOUND - Nothing matches the given URI.</p>\n    </body>\n</html>\n"
+[2025-11-08T02:00:06.887Z] [ERROR] 导入过程中发生错误: KV存储状态检查失败: "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n        \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n    <head>\n        <meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">\n        <title>Error response</title>\n    </head>\n    <body>\n        <h1>Error response</h1>\n        <p>Error code: 404</p>\n        <p>Message: File not found.</p>\n        <p>Error code explanation: HTTPStatus.NOT_FOUND - Nothing matches the given URI.</p>\n    </body>\n</html>\n"
+[2025-11-08T02:00:06.887Z] [ERROR] 导入失败，请检查日志获取详细信息
+[2025-11-08T02:01:49.736Z] [INFO] ========================================
+[2025-11-08T02:01:49.741Z] [INFO] 企业抬头信息导入工具启动
+[2025-11-08T02:01:49.742Z] [INFO] ========================================
+[2025-11-08T02:01:49.742Z] [INFO] 正在读取数据文件: D:\PDF转网页\enterprise_header_info.json
+[2025-11-08T02:01:49.743Z] [INFO] 数据文件读取成功
+[2025-11-08T02:01:49.745Z] [INFO] 开始数据验证...
+[2025-11-08T02:01:49.746Z] [ERROR] 数据验证成功，共
+[2025-11-08T02:01:49.747Z] [INFO] 开始导入企业抬头信息...
+[2025-11-08T02:01:49.748Z] [INFO] 使用本地存储模式处理请求: /status
+[2025-11-08T02:01:49.749Z] [INFO] 本地存储操作: status undefined
+[2025-11-08T02:01:49.749Z] [INFO] KV存储连接正常
+[2025-11-08T02:01:49.750Z] [INFO] 正在导入: enterprise:header:header_v1
+[2025-11-08T02:01:49.750Z] [INFO] 使用本地存储模式处理请求: /kv/set
+[2025-11-08T02:01:49.750Z] [INFO] 本地存储操作: set enterprise:header:header_v1
+[2025-11-08T02:01:49.751Z] [INFO] 成功导入: enterprise:header:header_v1
+[2025-11-08T02:01:49.751Z] [INFO] 正在导入: enterprise:header:header_v2
+[2025-11-08T02:01:49.752Z] [INFO] 使用本地存储模式处理请求: /kv/set
+[2025-11-08T02:01:49.752Z] [INFO] 本地存储操作: set enterprise:header:header_v2
+[2025-11-08T02:01:49.753Z] [INFO] 成功导入: enterprise:header:header_v2
+[2025-11-08T02:01:49.754Z] [INFO] 正在导入配置: enterprise:config
+[2025-11-08T02:01:49.754Z] [INFO] 使用本地存储模式处理请求: /kv/set
+[2025-11-08T02:01:49.755Z] [INFO] 本地存储操作: set enterprise:config
+[2025-11-08T02:01:49.755Z] [INFO] 成功导入配置: enterprise:config
+[2025-11-08T02:01:49.756Z] [INFO] 正在创建索引: enterprise:headers:index
+[2025-11-08T02:01:49.756Z] [INFO] 使用本地存储模式处理请求: /kv/set
+[2025-11-08T02:01:49.756Z] [INFO] 本地存储操作: set enterprise:headers:index
+[2025-11-08T02:01:49.756Z] [INFO] 成功创建索引: enterprise:headers:index
+[2025-11-08T02:01:49.757Z] [INFO] 企业抬头信息导入事务完成
+[2025-11-08T02:01:49.757Z] [INFO] 开始数据校验...
+[2025-11-08T02:01:49.758Z] [INFO] 正在校验: enterprise:header:header_v1
+[2025-11-08T02:01:49.759Z] [INFO] 使用本地存储模式处理请求: /kv/get?key=enterprise%3Aheader%3Aheader_v1&store=ui
+[2025-11-08T02:01:49.761Z] [INFO] 本地存储操作: get enterprise:header:header_v1
+[2025-11-08T02:01:49.761Z] [INFO] 成功校验: enterprise:header:header_v1
+[2025-11-08T02:01:49.762Z] [INFO] 正在校验: enterprise:header:header_v2
+[2025-11-08T02:01:49.762Z] [INFO] 使用本地存储模式处理请求: /kv/get?key=enterprise%3Aheader%3Aheader_v2&store=ui
+[2025-11-08T02:01:49.763Z] [INFO] 本地存储操作: get enterprise:header:header_v2
+[2025-11-08T02:01:49.764Z] [INFO] 成功校验: enterprise:header:header_v2
+[2025-11-08T02:01:49.764Z] [INFO] 正在校验: enterprise:config
+[2025-11-08T02:01:49.764Z] [INFO] 使用本地存储模式处理请求: /kv/get?key=enterprise%3Aconfig&store=ui
+[2025-11-08T02:01:49.765Z] [INFO] 本地存储操作: get enterprise:config
+[2025-11-08T02:01:49.766Z] [INFO] 成功校验: enterprise:config
+[2025-11-08T02:01:49.766Z] [INFO] 正在校验: enterprise:headers:index
+[2025-11-08T02:01:49.767Z] [INFO] 使用本地存储模式处理请求: /kv/get?key=enterprise%3Aheaders%3Aindex&store=ui
+[2025-11-08T02:01:49.768Z] [INFO] 本地存储操作: get enterprise:headers:index
+[2025-11-08T02:01:49.768Z] [INFO] 成功校验: enterprise:headers:index
+[2025-11-08T02:01:49.769Z] [INFO] 数据校验完成，结果: 全部通过
+[2025-11-08T02:01:49.770Z] [INFO] ========================================
+[2025-11-08T02:01:49.771Z] [INFO] 导入完成
+[2025-11-08T02:01:49.772Z] [INFO] 总记录数: 2
+[2025-11-08T02:01:49.774Z] [INFO] 导入成功: 4
+[2025-11-08T02:01:49.779Z] [INFO] 数据校验: 通过
+[2025-11-08T02:01:49.780Z] [INFO] 导入的键: enterprise:header:header_v1, enterprise:header:header_v2, enterprise:config, enterprise:headers:index
+[2025-11-08T02:01:49.780Z] [INFO] ========================================

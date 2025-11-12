@@ -1,0 +1,10 @@
+{
+    "version":  "v9.6",
+    "timestamp":  "2025-11-08T22:53:08.4921375+08:00",
+    "control_sync":  "ok",
+    "clients_connected":  true,
+    "system_state":  "stable",
+    "lock":  "active",
+    "relay_health":  "online",
+    "worker_health":  "online"
+}

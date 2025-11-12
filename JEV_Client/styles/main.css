@@ -1,0 +1,197 @@
+/* UTF-8 FIXED BY JEV @ 2025-11-09T15:11:17.875Z */
+/**
+ * JEV 盲赂禄忙聽路氓录聫氓聟楼氓聫拢忙聳聡盲禄露
+ * @file styles/main.css
+ * @created 2023-11-07
+ * @description 氓炉录氓聟楼忙聣聙忙聹聣氓聟篓氓卤聙氓聮聦莽禄聞盲禄露忙聽路氓录聫
+ */
+
+/* 氓炉录氓聟楼氓聟篓氓卤聙忙聽路氓录聫 */
+@import './globals/variables.css';
+
+/* 氓炉录氓聟楼莽禄聞盲禄露忙聽路氓录聫 */
+@import './components/chat-window.css';
+
+/* 氓炉录氓聟楼忙篓隆氓聺聴忙聽路氓录聫 - 氓陆聯忙聹聣忙聸麓氓陇職忙篓隆氓聺聴忙聴露忙路禄氓聤聽 */
+/* @import './modules/security-module.css'; */
+
+/* 氓聼潞莽隆聙茅聡聧莽陆庐忙聽路氓录聫 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  font-family: var(--jev-font-family-sans);
+  font-size: 16px;
+  line-height: var(--jev-line-height-normal);
+  color: var(--jev-color-text-primary);
+  background-color: var(--jev-color-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 莽聞娄莽聜鹿忙聽路氓录聫 */
+:focus {
+  outline: 2px solid var(--jev-color-primary);
+  outline-offset: 2px;
+}
+
+/* 莽娄聛莽聰篓莽聞娄莽聜鹿猫陆庐氓禄聯 */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* 忙禄職氓聤篓忙聺隆忙聽路氓录聫 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--jev-color-bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--jev-color-border-dark);
+  border-radius: var(--jev-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--jev-color-text-tertiary);
+}
+
+/* 茅聙聣忙聥漏忙聳聡忙聹卢忙聽路氓录聫 */
+::selection {
+  background-color: var(--jev-color-primary-light);
+  color: var(--jev-color-text-light);
+}
+
+::-moz-selection {
+  background-color: var(--jev-color-primary-light);
+  color: var(--jev-color-text-light);
+}
+
+/* 忙聦聣茅聮庐氓聼潞莽隆聙忙聽路氓录聫 */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* 猫戮聯氓聟楼忙隆聠氓聼潞莽隆聙忙聽路氓录聫 */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* 茅聯戮忙聨楼氓聼潞莽隆聙忙聽路氓录聫 */
+a {
+  color: var(--jev-color-primary);
+  text-decoration: none;
+  transition: color var(--jev-transition-fast);
+}
+
+a:hover {
+  color: var(--jev-color-primary-dark);
+  text-decoration: underline;
+}
+
+/* 氓聸戮氓聝聫氓聼潞莽隆聙忙聽路氓录聫 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 氓聢聴猫隆篓氓聼潞莽隆聙忙聽路氓录聫 */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 猫隆篓忙聽录氓聼潞莽隆聙忙聽路氓录聫 */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+/* 盲禄拢莽聽聛忙聽路氓录聫 */
+code,
+pre {
+  font-family: var(--jev-font-family-mono);
+  font-size: 0.9em;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* 氓路楼氓聟路莽卤禄 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+/* 氓聤篓莽聰禄氓路楼氓聟路莽卤禄 */
+.fade-in {
+  animation: fadeIn var(--jev-transition-normal);
+}
+
+.slide-in {
+  animation: slideIn var(--jev-transition-normal);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

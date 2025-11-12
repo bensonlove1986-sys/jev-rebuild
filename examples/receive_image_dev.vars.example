@@ -1,0 +1,6 @@
+WEBHOOK_SECRET=jevindustry2025
+R2_BUCKET_NAME=jev-images
+# Replace with your public R2 account hash (e.g., 156ce03fffc59592e2b3b04dbc22aa6c)
+R2_ACCOUNT_ID=<your_r2_pub_hash>
+# If set, overrides the public URL base; otherwise constructed from R2_ACCOUNT_ID
+R2_PUBLIC_BASE=https://pub-<your_r2_pub_hash>.r2.dev

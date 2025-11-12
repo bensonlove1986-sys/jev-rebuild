@@ -1,0 +1,91 @@
+{
+  "api_keys": {
+    "jev_api_key": {
+      "value": "JEV_2025_AI_SYS_A92jskL0xY",
+      "description": "JEV系统主API密钥",
+      "permissions": ["read:enterprise", "write:enterprise", "read:config", "write:config"],
+      "created_at": "2025-11-25T00:00:00Z",
+      "expires_at": "2026-05-25T00:00:00Z",
+      "last_rotated": "2025-11-25T00:00:00Z",
+      "rotation_interval_days": 90,
+      "status": "active",
+      "usage_limit": 10000,
+      "usage_count": 0
+    },
+    "admin_token": {
+      "value": "admin_secure_token_2025",
+      "description": "管理员访问令牌",
+      "permissions": ["admin:*"],
+      "created_at": "2025-11-25T00:00:00Z",
+      "expires_at": "2026-02-25T00:00:00Z",
+      "last_rotated": "2025-11-25T00:00:00Z",
+      "rotation_interval_days": 30,
+      "status": "active",
+      "usage_limit": 5000,
+      "usage_count": 0
+    },
+    "api_key": {
+      "value": "api-key-456",
+      "description": "通用API访问密钥",
+      "permissions": ["read:enterprise", "read:config"],
+      "created_at": "2025-11-25T00:00:00Z",
+      "expires_at": "2026-05-25T00:00:00Z",
+      "last_rotated": "2025-11-25T00:00:00Z",
+      "rotation_interval_days": 90,
+      "status": "active",
+      "usage_limit": 20000,
+      "usage_count": 0
+    }
+  },
+  "security_policies": {
+    "min_key_length": 16,
+    "require_special_chars": true,
+    "max_age_days": 90,
+    "failed_attempts_limit": 5,
+    "ip_whitelist": [
+      "127.0.0.1",
+      "::1"
+    ],
+    "rate_limiting": {
+      "requests_per_minute": 60,
+      "burst_limit": 10
+    }
+  },
+  "access_control": {
+    "roles": {
+      "admin": {
+        "description": "系统管理员",
+        "permissions": ["*"],
+        "api_keys": ["admin_token"]
+      },
+      "editor": {
+        "description": "内容编辑者",
+        "permissions": ["read:enterprise", "write:enterprise", "read:config"],
+        "api_keys": ["jev_api_key"]
+      },
+      "viewer": {
+        "description": "只读用户",
+        "permissions": ["read:enterprise", "read:config"],
+        "api_keys": ["api_key"]
+      }
+    }
+  },
+  "encryption": {
+    "algorithm": "AES-256-GCM",
+    "key_derivation": "PBKDF2",
+    "salt_rounds": 100000
+  },
+  "logging": {
+    "enabled": true,
+    "log_level": "info",
+    "log_keys_access": true,
+    "log_keys_rotation": true,
+    "log_file": "security_logs.json"
+  },
+  "key_rotation": {
+    "enabled": true,
+    "notification_days_before": 7,
+    "auto_rotate": false,
+    "maintain_backup": true
+  }
+}

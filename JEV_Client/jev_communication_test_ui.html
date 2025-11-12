@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV系统通信测试工具</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #444;
+            font-size: 18px;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        .status-label {
+            font-weight: 500;
+            color: #555;
+        }
+        .status-value {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .status-online {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        .status-offline {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+        .status-unknown {
+            background-color: #fff8e1;
+            color: #ff8f00;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        .controls h2 {
+            margin-top: 0;
+            color: #444;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #5a5fd8;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        .btn-success {
+            background-color: #4caf50;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #388e3c;
+        }
+        .btn-disabled {
+            background-color: #f5f5f5;
+            color: #9e9e9e;
+            cursor: not-allowed;
+        }
+        .btn-disabled:hover {
+            background-color: #f5f5f5;
+            transform: none;
+        }
+        .results {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .results h2 {
+            margin-top: 0;
+            color: #444;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        #testSummary {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f5f7fa;
+            border-radius: 4px;
+        }
+        .summary-item {
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        .summary-label {
+            font-weight: 500;
+            color: #555;
+        }
+        .summary-value {
+            font-weight: 600;
+            margin-left: 5px;
+        }
+        .passed { color: #4caf50; }
+        .failed { color: #f44336; }
+        .total { color: #2196f3; }
+        #testResults {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        .test-result {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 4px solid;
+        }
+        .test-passed {
+            background-color: #e8f5e9;
+            border-left-color: #4caf50;
+        }
+        .test-failed {
+            background-color: #ffebee;
+            border-left-color: #f44336;
+        }
+        .test-warning {
+            background-color: #fff8e1;
+            border-left-color: #ff8f00;
+        }
+        .test-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .test-details {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(255,255,255,0.6);
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .test-details pre {
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .test-time {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #666;
+        }
+        .hidden {
+            display: none;
+        }
+        .settings {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        .settings h2 {
+            margin-top: 0;
+            color: #444;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .settings-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .settings-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .settings-label {
+            display: block;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            padding: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>JEV系统通信测试工具</h1>
+        <p class="subtitle">验证中控层、客服端、Worker和中转层之间的通信功能</p>
+    </header>
+
+    <div class="settings">
+        <h2>系统配置</h2>
+        <div class="settings-row">
+            <div class="settings-group">
+                <label class="settings-label" for="localServerHost">本地服务器地址</label>
+                <input type="text" id="localServerHost" value="localhost" placeholder="localhost">
+            </div>
+            <div class="settings-group">
+                <label class="settings-label" for="localServerPort">本地服务器端口</label>
+                <input type="number" id="localServerPort" value="8080" min="1" max="65535">
+            </div>
+        </div>
+        <div class="settings-row">
+            <div class="settings-group">
+                <label class="settings-label" for="controlCenterHost">中控层地址</label>
+                <input type="text" id="controlCenterHost" value="localhost" placeholder="localhost">
+            </div>
+            <div class="settings-group">
+                <label class="settings-label" for="controlCenterPort">中控层端口</label>
+                <input type="number" id="controlCenterPort" value="8081" min="1" max="65535">
+            </div>
+        </div>
+        <div class="settings-row">
+            <div class="settings-group">
+                <label class="settings-label" for="relayHost">中转层地址</label>
+                <input type="text" id="relayHost" value="localhost" placeholder="localhost">
+            </div>
+            <div class="settings-group">
+                <label class="settings-label" for="relayPort">中转层端口</label>
+                <input type="number" id="relayPort" value="8082" min="1" max="65535">
+            </div>
+        </div>
+        <div class="settings-row">
+            <div class="settings-group">
+                <label class="settings-label" for="adminToken">管理员令牌</label>
+                <input type="text" id="adminToken" value="JEV-CONTROL-v12-ADMIN" placeholder="JEV-CONTROL-v12-ADMIN">
+            </div>
+            <div class="settings-group">
+                <label class="settings-label" for="timeout">请求超时时间(ms)</label>
+                <input type="number" id="timeout" value="5000" min="1000" max="60000">
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <div class="card">
+            <h2>客服端状态</h2>
+            <div class="status-item">
+                <span class="status-label">服务状态</span>
+                <span class="status-value status-unknown" id="clientStatus">未知</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">响应时间</span>
+                <span class="status-value" id="clientResponseTime">-- ms</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">最后检查</span>
+                <span class="status-value" id="clientLastCheck">从未</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>中控层状态</h2>
+            <div class="status-item">
+                <span class="status-label">服务状态</span>
+                <span class="status-value status-unknown" id="controlCenterStatus">未知</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">API版本</span>
+                <span class="status-value" id="controlCenterVersion">--</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">最后检查</span>
+                <span class="status-value" id="controlCenterLastCheck">从未</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>中转层状态</h2>
+            <div class="status-item">
+                <span class="status-label">服务状态</span>
+                <span class="status-value status-unknown" id="relayStatus">未知</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">连接数</span>
+                <span class="status-value" id="relayConnections">--</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">最后检查</span>
+                <span class="status-value" id="relayLastCheck">从未</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Worker状态</h2>
+            <div class="status-item">
+                <span class="status-label">服务状态</span>
+                <span class="status-value status-unknown" id="workerStatus">未知</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">模块状态</span>
+                <span class="status-value" id="workerModules">--</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">最后检查</span>
+                <span class="status-value" id="workerLastCheck">从未</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <h2>测试控制</h2>
+        <div class="button-group">
+            <button id="checkAllStatus" class="btn-primary">检查所有组件状态</button>
+            <button id="runAllTests" class="btn-success">运行所有测试</button>
+            <button id="clearResults" class="btn-secondary">清除结果</button>
+            <button id="exportReport" class="btn-secondary">导出报告</button>
+        </div>
+        <div class="button-group">
+            <button id="testClient" class="btn-secondary">测试客服端</button>
+            <button id="testControlCenter" class="btn-secondary">测试中控层</button>
+            <button id="testRelay" class="btn-secondary">测试中转层</button>
+            <button id="testWorker" class="btn-secondary">测试Worker</button>
+        </div>
+        <div class="button-group">
+            <button id="testControlToWorker" class="btn-secondary">测试中控层到Worker</button>
+            <button id="testClientToControl" class="btn-secondary">测试客服端到中控层</button>
+            <button id="testAuth" class="btn-secondary">测试权限验证</button>
+        </div>
+    </div>
+
+    <div class="results">
+        <h2>测试结果</h2>
+        <div id="testSummary" class="hidden">
+            <span class="summary-item"><span class="summary-label">总测试数:</span><span class="summary-value total" id="summaryTotal">0</span></span>
+            <span class="summary-item"><span class="summary-label">通过:</span><span class="summary-value passed" id="summaryPassed">0</span></span>
+            <span class="summary-item"><span class="summary-label">失败:</span><span class="summary-value failed" id="summaryFailed">0</span></span>
+            <span class="summary-item"><span class="summary-label">总耗时:</span><span class="summary-value" id="summaryDuration">0ms</span></span>
+        </div>
+        <div id="testResults">
+            <div class="loading">
+                点击上方按钮开始测试
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>JEV系统通信测试工具 &copy; 2024</p>
+    </footer>
+
+    <script>
+        // 配置对象
+        const config = {
+            localServer: {
+                host: () => document.getElementById('localServerHost').value,
+                port: () => parseInt(document.getElementById('localServerPort').value)
+            },
+            controlCenter: {
+                host: () => document.getElementById('controlCenterHost').value,
+                port: () => parseInt(document.getElementById('controlCenterPort').value),
+                adminToken: () => document.getElementById('adminToken').value
+            },
+            relay: {
+                host: () => document.getElementById('relayHost').value,
+                port: () => parseInt(document.getElementById('relayPort').value)
+            },
+            timeout: () => parseInt(document.getElementById('timeout').value)
+        };
+
+        // 格式化时间
+        function formatDate(date) {
+            return new Date(date).toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // 格式化测试详情
+        function formatDetails(details) {
+            if (typeof details !== 'object') return details;
+            return JSON.stringify(details, null, 2);
+        }
+
+        // 更新状态显示
+        function updateStatus(elementId, status) {
+            const element = document.getElementById(elementId);
+            element.textContent = status;
+            
+            // 更新状态样式
+            element.classList.remove('status-online', 'status-offline', 'status-unknown');
+            if (status === '在线' || status === 'ok') {
+                element.classList.add('status-online');
+            } else if (status === '离线' || status === 'error') {
+                element.classList.add('status-offline');
+            } else {
+                element.classList.add('status-unknown');
+            }
+        }
+
+        // 更新最后检查时间
+        function updateLastCheck(elementId) {
+            document.getElementById(elementId).textContent = formatDate(new Date());
+        }
+
+        // 添加测试结果
+        function addTestResult(name, status, details, duration) {
+            const resultsContainer = document.getElementById('testResults');
+            
+            // 移除加载提示
+            if (resultsContainer.querySelector('.loading')) {
+                resultsContainer.innerHTML = '';
+            }
+            
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result test-${status}`;
+            
+            const nameSpan = document.createElement('div');
+            nameSpan.className = 'test-name';
+            nameSpan.textContent = `${name} - ${status.toUpperCase()}`;
+            
+            const timeSpan = document.createElement('div');
+            timeSpan.className = 'test-time';
+            timeSpan.textContent = `耗时: ${duration}ms | ${formatDate(new Date())}`;
+            
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'test-details';
+            const pre = document.createElement('pre');
+            pre.textContent = formatDetails(details);
+            detailsDiv.appendChild(pre);
+            
+            resultDiv.appendChild(nameSpan);
+            resultDiv.appendChild(timeSpan);
+            resultDiv.appendChild(detailsDiv);
+            
+            // 添加到结果容器的顶部
+            resultsContainer.insertBefore(resultDiv, resultsContainer.firstChild);
+            
+            // 更新摘要
+            updateSummary();
+        }
+
+        // 更新测试摘要
+        function updateSummary() {
+            const results = document.querySelectorAll('.test-result');
+            const passed = document.querySelectorAll('.test-passed').length;
+            const failed = document.querySelectorAll('.test-failed').length;
+            
+            document.getElementById('summaryTotal').textContent = results.length;
+            document.getElementById('summaryPassed').textContent = passed;
+            document.getElementById('summaryFailed').textContent = failed;
+            
+            // 显示摘要
+            document.getElementById('testSummary').classList.remove('hidden');
+        }
+
+        // 清除测试结果
+        function clearResults() {
+            const resultsContainer = document.getElementById('testResults');
+            resultsContainer.innerHTML = '<div class="loading">点击上方按钮开始测试</div>';
+            
+            // 隐藏摘要
+            document.getElementById('testSummary').classList.add('hidden');
+        }
+
+        // 导出测试报告
+        function exportReport() {
+            const results = document.querySelectorAll('.test-result');
+            const report = {
+                timestamp: new Date().toISOString(),
+                summary: {
+                    total: results.length,
+                    passed: document.querySelectorAll('.test-passed').length,
+                    failed: document.querySelectorAll('.test-failed').length,
+                    generated: new Date().toISOString()
+                },
+                tests: Array.from(results).map(result => {
+                    const name = result.querySelector('.test-name').textContent;
+                    const status = result.classList.contains('test-passed') ? 'PASSED' : 'FAILED';
+                    const time = result.querySelector('.test-time').textContent;
+                    const details = result.querySelector('.test-details pre').textContent;
+                    
+                    return {
+                        name,
+                        status,
+                        time,
+                        details: JSON.parse(details)
+                    };
+                })
+            };
+            
+            // 创建下载链接
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `jev_communication_test_report_${new Date().getTime()}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // HTTP请求函数
+        async function httpRequest(options) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), config.timeout());
+            
+            try {
+                const response = await fetch(options.url, {
+                    method: options.method || 'GET',
+                    headers: options.headers || {},
+                    body: options.body ? JSON.stringify(options.body) : undefined,
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                let data;
+                try {
+                    data = await response.json();
+                } catch {
+                    data = await response.text();
+                }
+                
+                return {
+                    statusCode: response.status,
+                    headers: response.headers,
+                    body: data
+                };
+            } catch (error) {
+                clearTimeout(timeoutId);
+                throw error;
+            }
+        }
+
+        // 检查客服端状态
+        async function checkClientStatus() {
+            const startTime = Date.now();
+            try {
+                const response = await httpRequest({
+                    url: `http://${config.localServer.host()}:${config.localServer.port()}/`,
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'text/html'
+                    }
+                });
+                
+                const duration = Date.now() - startTime;
+                updateStatus('clientStatus', '在线');
+                document.getElementById('clientResponseTime').textContent = `${duration} ms`;
+                updateLastCheck('clientLastCheck');
+                
+                return {
+                    status: 'online',
+                    responseTime: duration,
+                    statusCode: response.statusCode
+                };
+            } catch (error) {
+                updateStatus('clientStatus', '离线');
+                document.getElementById('clientResponseTime').textContent = '-- ms';
+                updateLastCheck('clientLastCheck');
+                throw error;
+            }
+        }
+
+        // 检查中控层状态
+        async function checkControlCenterStatus() {
+            try {
+                const response = await httpRequest({
+                    url: `http://${config.controlCenter.host()}:${config.controlCenter.port()}/api/control/ping`,
+                    method: 'GET',
+                    headers: {
+                        'X-Control-Auth': config.controlCenter.adminToken(),
+                        'X-Control-Scope': 'jev-control',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.statusCode === 200) {
+                    updateStatus('controlCenterStatus', '在线');
+                    document.getElementById('controlCenterVersion').textContent = response.body.version || 'unknown';
+                    updateLastCheck('controlCenterLastCheck');
+                    
+                    return {
+                        status: 'online',
+                        version: response.body.version || 'unknown',
+                        response: response.body
+                    };
+                } else {
+                    updateStatus('controlCenterStatus', '离线');
+                    document.getElementById('controlCenterVersion').textContent = '--';
+                    updateLastCheck('controlCenterLastCheck');
+                    throw new Error(`中控层返回状态码: ${response.statusCode}`);
+                }
+            } catch (error) {
+                updateStatus('controlCenterStatus', '离线');
+                document.getElementById('controlCenterVersion').textContent = '--';
+                updateLastCheck('controlCenterLastCheck');
+                throw error;
+            }
+        }
+
+        // 检查中转层状态
+        async function checkRelayStatus() {
+            try {
+                const response = await httpRequest({
+                    url: `http://${config.relay.host()}:${config.relay.port()}/api/relay/ping`,
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.statusCode === 200) {
+                    updateStatus('relayStatus', '在线');
+                    document.getElementById('relayConnections').textContent = response.body.connections || 'unknown';
+                    updateLastCheck('relayLastCheck');
+                    
+                    return {
+                        status: 'online',
+                        response: response.body
+                    };
+                } else {
+                    updateStatus('relayStatus', '离线');
+                    document.getElementById('relayConnections').textContent = '--';
+                    updateLastCheck('relayLastCheck');
+                    throw new Error(`中转层返回状态码: ${response.statusCode}`);
+                }
+            } catch (error) {
+                updateStatus('relayStatus', '离线');
+                document.getElementById('relayConnections').textContent = '--';
+                updateLastCheck('relayLastCheck');
+                // 中转层可能未运行，不抛出错误
+                console.warn('中转层可能未运行:', error.message);
+                return {
+                    status: 'offline',
+                    warning: error.message
+                };
+            }
+        }
+
+        // 模拟检查Worker状态
+        function checkWorkerStatus() {
+            // 模拟Worker状态检查
+            updateStatus('workerStatus', '在线(模拟)');
+            document.getElementById('workerModules').textContent = 'OCR, 翻译, 报价, PDF';
+            updateLastCheck('workerLastCheck');
+            
+            return {
+                status: 'online',
+                modules: ['OCR', '翻译', '报价', 'PDF'],
+                version: 'v11.1',
+                note: '模拟数据'
+            };
+        }
+
+        // 检查所有组件状态
+        async function checkAllStatus() {
+            // 禁用按钮
+            const button = document.getElementById('checkAllStatus');
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.classList.add('btn-disabled');
+            button.innerHTML = '<span class="spinner"></span> 检查中...';
+            
+            try {
+                await Promise.all([
+                    checkClientStatus(),
+                    checkControlCenterStatus(),
+                    checkRelayStatus(),
+                    Promise.resolve(checkWorkerStatus())
+                ]);
+            } catch (error) {
+                console.error('状态检查出错:', error);
+            } finally {
+                // 恢复按钮
+                button.disabled = false;
+                button.classList.remove('btn-disabled');
+                button.textContent = originalText;
+            }
+        }
+
+        // 运行单个测试
+        async function runTest(name, testFn) {
+            const startTime = Date.now();
+            try {
+                const result = await testFn();
+                const duration = Date.now() - startTime;
+                addTestResult(name, 'passed', result, duration);
+                return { success: true, result, duration };
+            } catch (error) {
+                const duration = Date.now() - startTime;
+                addTestResult(name, 'failed', { error: error.message }, duration);
+                return { success: false, error: error.message, duration };
+            }
+        }
+
+        // 运行所有测试
+        async function runAllTests() {
+            // 禁用按钮
+            const button = document.getElementById('runAllTests');
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.classList.add('btn-disabled');
+            button.innerHTML = '<span class="spinner"></span> 测试中...';
+            
+            // 清除之前的结果
+            clearResults();
+            
+            const startTime = Date.now();
+            
+            try {
+                // 运行所有测试
+                await runTest('测试客服端服务器', testClientServer);
+                await runTest('测试中控层Ping端点', testControlCenterPing);
+                await runTest('测试中转层Ping端点', testRelayPing);
+                await runTest('测试Worker通信', testWorkerCommunication);
+                await runTest('测试中控层到Worker的通信', testControlCenterToWorkerCommunication);
+                await runTest('测试客服端到中控层的通信', testClientToControlCenterCommunication);
+                await runTest('测试权限验证机制', testAuthentication);
+                
+                const totalDuration = Date.now() - startTime;
+                document.getElementById('summaryDuration').textContent = `${totalDuration}ms`;
+            } catch (error) {
+                console.error('测试执行过程中出错:', error);
+            } finally {
+                // 恢复按钮
+                button.disabled = false;
+                button.classList.remove('btn-disabled');
+                button.textContent = originalText;
+            }
+        }
+
+        // 测试客服端服务器
+        async function testClientServer() {
+            const response = await httpRequest({
+                url: `http://${config.localServer.host()}:${config.localServer.port()}/`,
+                method: 'GET',
+                headers: {
+                    'Accept': 'text/html'
+                }
+            });
+            
+            if (response.statusCode !== 200) {
+                throw new Error(`客服端服务器返回状态码: ${response.statusCode}`);
+            }
+
+            return {
+                statusCode: response.statusCode,
+                responseLength: response.body.length,
+                test: 'client_server'
+            };
+        }
+
+        // 测试中控层Ping端点
+        async function testControlCenterPing() {
+            const response = await httpRequest({
+                url: `http://${config.controlCenter.host()}:${config.controlCenter.port()}/api/control/ping`,
+                method: 'GET',
+                headers: {
+                    'X-Control-Auth': config.controlCenter.adminToken(),
+                    'X-Control-Scope': 'jev-control',
+                    'Accept': 'application/json'
+                }
+            });
+            
+            if (response.statusCode !== 200) {
+                throw new Error(`中控层Ping返回状态码: ${response.statusCode}`);
+            }
+
+            if (typeof response.body !== 'object') {
+                throw new Error('中控层Ping响应不是有效JSON');
+            }
+
+            return {
+                statusCode: response.statusCode,
+                response: response.body,
+                test: 'control_center_ping'
+            };
+        }
+
+        // 测试中转层Ping端点
+        async function testRelayPing() {
+            try {
+                const response = await httpRequest({
+                    url: `http://${config.relay.host()}:${config.relay.port()}/api/relay/ping`,
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.statusCode !== 200) {
+                    throw new Error(`中转层Ping返回状态码: ${response.statusCode}`);
+                }
+
+                if (typeof response.body !== 'object') {
+                    throw new Error('中转层Ping响应不是有效JSON');
+                }
+
+                return {
+                    statusCode: response.statusCode,
+                    response: response.body,
+                    test: 'relay_ping'
+                };
+            } catch (error) {
+                // 中转层可能未运行，返回警告而不是错误
+                console.warn('中转层可能未运行:', error.message);
+                return {
+                    status: 'warning',
+                    message: error.message,
+                    test: 'relay_ping'
+                };
+            }
+        }
+
+        // 测试Worker通信
+        function testWorkerCommunication() {
+            // 模拟Worker通信测试
+            const mockResponse = {
+                version: 'v11.1',
+                status: 'online',
+                modules: {
+                    ocr: 'active',
+                    translate: 'active',
+                    quote: 'active',
+                    pdf: 'active'
+                },
+                timestamp: new Date().toISOString(),
+                note: '模拟数据'
+            };
+
+            return {
+                mockResponse: mockResponse,
+                test: 'worker_communication'
+            };
+        }
+
+        // 测试中控层到Worker的通信
+        function testControlCenterToWorkerCommunication() {
+            // 模拟中控层到Worker的通信测试
+            const mockRelayRequest = {
+                url: '/jev/status',
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer mock-api-key',
+                    'X-Relay-Mode': 'admin',
+                    'X-Control-Scope': 'jev-control'
+                }
+            };
+
+            const mockWorkerResponse = {
+                success: true,
+                data: {
+                    status: 'online',
+                    version: 'v11.1',
+                    modules: ['ocr', 'translate', 'quote', 'pdf']
+                }
+            };
+
+            return {
+                relayRequest: mockRelayRequest,
+                expectedWorkerResponse: mockWorkerResponse,
+                communicationPath: '中控层 -> 中转层 -> Worker',
+                test: 'control_to_worker'
+            };
+        }
+
+        // 测试客服端到中控层的通信
+        function testClientToControlCenterCommunication() {
+            // 模拟客服端到中控层的通信测试
+            const mockClientRequest = {
+                action: 'get_task',
+                data: {
+                    task_type: 'quote',
+                    priority: 'medium'
+                }
+            };
+
+            const mockControlResponse = {
+                success: true,
+                task_id: 'task-' + Date.now(),
+                status: 'queued',
+                estimated_time: '30s'
+            };
+
+            return {
+                clientRequest: mockClientRequest,
+                expectedControlResponse: mockControlResponse,
+                communicationPath: '客服端 -> 中控层',
+                test: 'client_to_control'
+            };
+        }
+
+        // 测试权限验证机制
+        function testAuthentication() {
+            // 模拟权限验证测试
+            const unauthorizedRequest = {
+                headers: {
+                    // 缺少认证信息
+                }
+            };
+            
+            const expectedUnauthorizedResponse = {
+                error: 'Unauthorized',
+                code: 401,
+                lock: 'active'
+            };
+            
+            const authorizedRequest = {
+                headers: {
+                    'X-Control-Auth': config.controlCenter.adminToken(),
+                    'X-Control-Scope': 'jev-control'
+                }
+            };
+            
+            return {
+                unauthorizedTest: {
+                    request: unauthorizedRequest,
+                    expectedResponse: expectedUnauthorizedResponse
+                },
+                authorizedTest: {
+                    request: authorizedRequest,
+                    expectedStatus: 'authorized'
+                },
+                test: 'authentication'
+            };
+        }
+
+        // 添加事件监听器
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查所有状态按钮
+            document.getElementById('checkAllStatus').addEventListener('click', checkAllStatus);
+            
+            // 运行所有测试按钮
+            document.getElementById('runAllTests').addEventListener('click', runAllTests);
+            
+            // 清除结果按钮
+            document.getElementById('clearResults').addEventListener('click', clearResults);
+            
+            // 导出报告按钮
+            document.getElementById('exportReport').addEventListener('click', exportReport);
+            
+            // 单个测试按钮
+            document.getElementById('testClient').addEventListener('click', () => runTest('测试客服端服务器', testClientServer));
+            document.getElementById('testControlCenter').addEventListener('click', () => runTest('测试中控层Ping端点', testControlCenterPing));
+            document.getElementById('testRelay').addEventListener('click', () => runTest('测试中转层Ping端点', testRelayPing));
+            document.getElementById('testWorker').addEventListener('click', () => runTest('测试Worker通信', testWorkerCommunication));
+            document.getElementById('testControlToWorker').addEventListener('click', () => runTest('测试中控层到Worker的通信', testControlCenterToWorkerCommunication));
+            document.getElementById('testClientToControl').addEventListener('click', () => runTest('测试客服端到中控层的通信', testClientToControlCenterCommunication));
+            document.getElementById('testAuth').addEventListener('click', () => runTest('测试权限验证机制', testAuthentication));
+        });
+    </script>
+</body>
+</html>

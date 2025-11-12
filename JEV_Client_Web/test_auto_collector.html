@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV系统 - 自动图片采集模块测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(76, 175, 80, 0.1) 0%, transparent 50%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #4CAF50;
+            text-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #8BC34A;
+            opacity: 0.8;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #8BC34A;
+            border-bottom: 2px solid rgba(139, 195, 74, 0.2);
+            padding-bottom: 10px;
+        }
+        
+        .control-panel {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .control-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 160px;
+        }
+        
+        .control-btn:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background-color: #FFC107;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #FFB300;
+        }
+        
+        .btn-danger {
+            background-color: #F44336;
+        }
+        
+        .btn-danger:hover {
+            background-color: #E53935;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .info-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(139, 195, 74, 0.3);
+        }
+        
+        .info-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #8BC34A;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #aaa;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .status-online {
+            color: #4CAF50;
+        }
+        
+        .status-offline {
+            color: #F44336;
+        }
+        
+        .image-test-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .test-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .test-image:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .test-image.collected {
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .log-panel {
+            max-height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .log-entry {
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 3px solid #4CAF50;
+            padding: 8px 12px;
+            border-radius: 0 4px 4px 0;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .log-entry.error {
+            border-left-color: #F44336;
+            background: rgba(244, 67, 54, 0.05);
+        }
+        
+        .log-entry.info {
+            border-left-color: #2196F3;
+            background: rgba(33, 150, 243, 0.05);
+        }
+        
+        .log-entry.success {
+            border-left-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.05);
+        }
+        
+        .log-timestamp {
+            color: #888;
+            margin-right: 10px;
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .small-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .simulation-area {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .simulation-title {
+            color: #FFC107;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        /* 模拟 Worker 响应区域 */
+        .worker-response {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .control-panel {
+                flex-direction: column;
+            }
+            
+            .control-btn {
+                width: 100%;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .image-test-area {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JEV 自动图片采集模块测试</h1>
+            <p class="subtitle">不卡顿版 | 异步批处理 | 实时状态显示</p>
+        </header>
+        
+        <div class="section">
+            <h2>模块控制</h2>
+            <div class="control-panel">
+                <button class="control-btn" id="toggle-module">切换采集状态</button>
+                <button class="control-btn btn-secondary" id="refresh-status">刷新状态</button>
+                <button class="control-btn btn-danger" id="clear-log">清除日志</button>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-title">模块状态</div>
+                    <div class="info-item">
+                        <span class="info-label">运行状态:</span>
+                        <span class="info-value" id="module-status">未初始化</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">采集数量:</span>
+                        <span class="info-value" id="collected-count">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">最后扫描:</span>
+                        <span class="info-value" id="last-scan">-</span>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-title">性能指标</div>
+                    <div class="info-item">
+                        <span class="info-label">当前延迟:</span>
+                        <span class="info-value" id="current-delay">0ms</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">批处理大小:</span>
+                        <span class="info-value">5张/批</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">扫描间隔:</span>
+                        <span class="info-value">8秒</span>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-title">安全信息</div>
+                    <div class="info-item">
+                        <span class="info-label">域名验证:</span>
+                        <span class="info-value" id="domain-status">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Worker URL:</span>
+                        <span class="info-value" style="font-size: 0.8rem; max-width: 180px; overflow: hidden; text-overflow: ellipsis;">jevshop.bensonlove1986.workers.dev</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">API令牌:</span>
+                        <span class="info-value">已配置</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>测试图片区域</h2>
+            <p>以下图片将被自动采集模块识别和处理：</p>
+            
+            <div class="test-controls">
+                <button class="control-btn small-btn" onclick="addTestImages(5)">添加5张测试图</button>
+                <button class="control-btn small-btn btn-secondary" onclick="addTestImages(10)">添加10张测试图</button>
+                <button class="control-btn small-btn btn-danger" onclick="clearTestImages()">清除所有图片</button>
+            </div>
+            
+            <div class="image-test-area" id="test-images-container">
+                <!-- 测试图片将动态添加到这里 -->
+                <img src="https://picsum.photos/id/1/400/300" class="test-image" alt="测试图片1">
+                <img src="https://picsum.photos/id/2/400/300" class="test-image" alt="测试图片2">
+                <img src="https://picsum.photos/id/3/400/300" class="test-image" alt="测试图片3">
+                <img src="https://picsum.photos/id/4/400/300" class="test-image" alt="测试图片4">
+                <img src="https://picsum.photos/id/5/400/300" class="test-image" alt="测试图片5">
+                <img src="https://picsum.photos/id/6/400/300" class="test-image" alt="测试图片6">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>模拟 Worker 环境</h2>
+            
+            <div class="simulation-area">
+                <div class="simulation-title">Worker 响应模拟</div>
+                <p>模拟 <code>https://jevshop.bensonlove1986.workers.dev/analyze-image</code> 接口响应</p>
+                
+                <div class="test-controls">
+                    <button class="control-btn small-btn" onclick="setupFetchInterceptor()">启用模拟</button>
+                    <button class="control-btn small-btn btn-secondary" onclick="simulateErrorResponse()">模拟错误</button>
+                    <button class="control-btn small-btn btn-danger" onclick="removeFetchInterceptor()">禁用模拟</button>
+                </div>
+                
+                <div class="worker-response" id="worker-response">
+                    <!-- Worker 响应日志将显示在这里 -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>操作日志</h2>
+            <div class="log-panel" id="log-panel">
+                <!-- 日志将动态添加到这里 -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 日志记录函数
+        function log(message, type = 'info') {
+            const logPanel = document.getElementById('log-panel');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `<span class="log-timestamp">${timestamp}</span>${message}`;
+            
+            logPanel.appendChild(logEntry);
+            logPanel.scrollTop = logPanel.scrollHeight;
+            
+            console.log(`[JEV测试] ${type.toUpperCase()}: ${message}`);
+        }
+        
+        // 刷新模块状态
+        function refreshModuleStatus() {
+            if (window.JEVCollectorAPI) {
+                const status = window.JEVCollectorAPI.getStatus();
+                
+                if (status) {
+                    document.getElementById('module-status').textContent = status.isRunning ? 
+                        '运行中' : '已停止';
+                    document.getElementById('module-status').className = status.isRunning ? 
+                        'info-value status-online' : 'info-value status-offline';
+                    
+                    document.getElementById('collected-count').textContent = status.collectedCount;
+                    document.getElementById('current-delay').textContent = status.currentDelay + 'ms';
+                    
+                    if (status.lastScanTime) {
+                        document.getElementById('last-scan').textContent = 
+                            new Date(status.lastScanTime).toLocaleTimeString();
+                    }
+                    
+                    log('模块状态已刷新', 'info');
+                }
+            } else {
+                log('模块API未初始化', 'error');
+            }
+        }
+        
+        // 切换模块状态
+        function toggleModule() {
+            if (window.JEVCollectorAPI) {
+                window.JEVCollectorAPI.toggleCollection();
+                setTimeout(refreshModuleStatus, 500);
+            } else {
+                log('无法控制模块：API未初始化', 'error');
+            }
+        }
+        
+        // 添加测试图片
+        function addTestImages(count) {
+            const container = document.getElementById('test-images-container');
+            
+            for (let i = 0; i < count; i++) {
+                const img = document.createElement('img');
+                const randomId = Math.floor(Math.random() * 1000);
+                img.src = `https://picsum.photos/id/${randomId}/400/300?t=${Date.now()}`;
+                img.className = 'test-image';
+                img.alt = `动态测试图片 ${randomId}`;
+                container.appendChild(img);
+            }
+            
+            log(`已添加 ${count} 张测试图片`, 'info');
+        }
+        
+        // 清除测试图片
+        function clearTestImages() {
+            const container = document.getElementById('test-images-container');
+            container.innerHTML = '';
+            log('已清除所有测试图片', 'info');
+        }
+        
+        // 清除日志
+        function clearLog() {
+            document.getElementById('log-panel').innerHTML = '';
+            log('日志已清除', 'info');
+        }
+        
+        // 记录Worker响应
+        function logWorkerResponse(data) {
+            const workerResponse = document.getElementById('worker-response');
+            const responseEntry = document.createElement('div');
+            responseEntry.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            workerResponse.appendChild(responseEntry);
+            workerResponse.scrollTop = workerResponse.scrollHeight;
+        }
+        
+        // 模拟Fetch拦截器
+        let originalFetch = null;
+        let simulateError = false;
+        
+        function setupFetchInterceptor() {
+            if (originalFetch) {
+                log('Fetch拦截器已启用', 'info');
+                return;
+            }
+            
+            originalFetch = window.fetch;
+            
+            window.fetch = function(url, options) {
+                // 拦截Worker图片分析请求
+                if (url === 'https://jevshop.bensonlove1986.workers.dev/analyze-image' && 
+                    options && options.method === 'POST') {
+                    
+                    log('拦截到图片分析请求', 'info');
+                    
+                    try {
+                        const body = JSON.parse(options.body);
+                        log(`分析图片: ${body.imageUrl}`, 'info');
+                        
+                        // 模拟错误响应
+                        if (simulateError) {
+                            simulateError = false; // 只模拟一次错误
+                            logWorkerResponse({
+                                error: '模拟Worker错误',
+                                status: 'error',
+                                timestamp: Date.now()
+                            });
+                            
+                            return Promise.resolve({
+                                ok: false,
+                                status: 500,
+                                json: () => Promise.resolve({ error: 'Internal Server Error' })
+                            });
+                        }
+                        
+                        // 模拟成功响应
+                        const responseData = {
+                            success: true,
+                            imageUrl: body.imageUrl,
+                            analyzed: true,
+                            timestamp: Date.now(),
+                            processingTime: Math.floor(Math.random() * 100) + 20, // 20-120ms
+                            status: 'success'
+                        };
+                        
+                        logWorkerResponse(responseData);
+                        
+                        // 模拟延迟
+                        return new Promise(resolve => {
+                            setTimeout(() => {
+                                resolve({
+                                    ok: true,
+                                    status: 200,
+                                    json: () => Promise.resolve(responseData)
+                                });
+                            }, 100 + Math.random() * 200); // 100-300ms延迟
+                        });
+                    } catch (error) {
+                        log(`请求解析错误: ${error.message}`, 'error');
+                        return Promise.resolve({
+                            ok: false,
+                            status: 400,
+                            json: () => Promise.resolve({ error: 'Invalid request' })
+                        });
+                    }
+                }
+                
+                // 其他请求使用原始fetch
+                return originalFetch.apply(this, arguments);
+            };
+            
+            log('Fetch拦截器已启用，模拟Worker响应', 'info');
+        }
+        
+        // 模拟错误响应
+        function simulateErrorResponse() {
+            simulateError = true;
+            log('下次请求将模拟错误响应', 'info');
+        }
+        
+        // 移除Fetch拦截器
+        function removeFetchInterceptor() {
+            if (originalFetch) {
+                window.fetch = originalFetch;
+                originalFetch = null;
+                log('Fetch拦截器已禁用', 'info');
+            } else {
+                log('Fetch拦截器未启用', 'info');
+            }
+        }
+        
+        // 监听采集器消息
+        function setupCollectorListeners() {
+            // 监听自定义事件
+            window.addEventListener('jev_collector_updated', (event) => {
+                log(`采集器状态更新: ${event.detail.message}`, 'info');
+                refreshModuleStatus();
+            });
+            
+            // 监听图片标记变化
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach(mutation => {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.tagName === 'IMG' && node.dataset.collected === '1') {
+                            node.classList.add('collected');
+                        }
+                    });
+                    
+                    // 检查属性变化
+                    if (mutation.type === 'attributes' && 
+                        mutation.attributeName === 'data-collected' &&
+                        mutation.target.dataset.collected === '1') {
+                        mutation.target.classList.add('collected');
+                        log(`图片已采集: ${mutation.target.src}`, 'success');
+                    }
+                });
+            });
+            
+            // 观察图片区域
+            observer.observe(document.getElementById('test-images-container'), {
+                childList: true,
+                attributes: true,
+                subtree: true
+            });
+            
+            log('采集器监听器已设置', 'info');
+        }
+        
+        // 更新域名状态
+        function updateDomainStatus() {
+            const hostname = window.location.hostname;
+            const allowedDomains = ['jevshop.com', 'app.daojiemarketing.com'];
+            const isAllowed = allowedDomains.some(domain => hostname.includes(domain));
+            
+            document.getElementById('domain-status').textContent = isAllowed ? 
+                '允许' : '测试模式';
+            document.getElementById('domain-status').className = isAllowed ? 
+                'info-value status-online' : 'info-value status-offline';
+            
+            if (!isAllowed) {
+                log(`当前域名 ${hostname} 不在白名单中，以测试模式运行`, 'warning');
+            }
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            log('JEV自动图片采集模块测试页面已加载', 'info');
+            
+            // 设置事件监听器
+            document.getElementById('toggle-module').addEventListener('click', toggleModule);
+            document.getElementById('refresh-status').addEventListener('click', refreshModuleStatus);
+            document.getElementById('clear-log').addEventListener('click', clearLog);
+            
+            // 设置监听器
+            setupCollectorListeners();
+            
+            // 更新域名状态
+            updateDomainStatus();
+            
+            // 加载模块
+            try {
+                // 动态加载采集模块
+                const script = document.createElement('script');
+                script.src = '/modules/jev_auto_collector_smooth.js';
+                script.onload = () => {
+                    log('自动图片采集模块已加载', 'success');
+                    // 延迟刷新状态，等待模块初始化
+                    setTimeout(() => {
+                        refreshModuleStatus();
+                        setupFetchInterceptor(); // 自动启用模拟
+                    }, 1000);
+                };
+                script.onerror = () => {
+                    log('模块加载失败，请检查路径是否正确', 'error');
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                log(`模块加载错误: ${error.message}`, 'error');
+            }
+            
+            // 定期刷新状态
+            setInterval(refreshModuleStatus, 5000);
+        });
+    </script>
+</body>
+</html>

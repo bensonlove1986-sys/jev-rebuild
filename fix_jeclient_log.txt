@@ -1,0 +1,12 @@
+﻿修复JEV_Client目录下HTML文件编码问题
+时间: 11/10/2025 16:50:27
+
+已修复: D:\PDF转网页\JEV_Client\backup\encoding\ui\panel.html
+已修复: D:\PDF转网页\JEV_Client\ui\panel.html
+已修复: D:\PDF转网页\JEV_Client\ui\login_portal.html
+已修复: D:\PDF转网页\JEV_Client\ui\visual_learning_panel.html
+已修复: D:\PDF转网页\JEV_Client\index.html
+已修复: D:\PDF转网页\JEV_Client\backup\encoding\ui\dashboard.html
+已修复: D:\PDF转网页\JEV_Client\ui\dashboard.html
+
+修复完成！请清除浏览器缓存后重新打开应用程序

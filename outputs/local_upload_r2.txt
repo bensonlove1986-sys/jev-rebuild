@@ -1,0 +1,14 @@
+��
+
+success      : True
+key          : uploads/2025/10/30/cat.jpg
+bucket       : jev-images
+content_type : image/jpeg
+url          : https://pub-156ce03fffc59592e2b3b04db
+               c22aa6c.r2.dev/jev-images/uploads/202
+               5/10/30/cat.jpg
+worker_url   : http://127.0.0.1:8787/images/uploads%
+               2F2025%2F10%2F30%2Fcat.jpg
+
+
+

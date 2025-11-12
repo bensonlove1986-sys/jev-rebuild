@@ -1,0 +1,83 @@
+# 中央控制系统端点测试脚本
+
+Write-Host "开始测试中央控制系统端点..." -ForegroundColor Green
+Write-Host "系统地址: http://localhost:1820/"
+Write-Host "------------TEST START------------"
+
+# 测试1: GET /ping
+Write-Host "
+测试1: GET /ping" -ForegroundColor Cyan
+try {
+    $pingResponse = Invoke-WebRequest -Uri http://localhost:1820/ping -Method Get -ContentType application/json
+    Write-Host "状态码: $($pingResponse.StatusCode)" -ForegroundColor Green
+    Write-Host "响应内容:"
+    $pingResponse.Content
+} catch {
+    Write-Host "测试失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+# 测试2: GET /status
+Write-Host "
+测试2: GET /status" -ForegroundColor Cyan
+try {
+    $statusResponse = Invoke-WebRequest -Uri http://localhost:1820/status -Method Get -ContentType application/json
+    Write-Host "状态码: $($statusResponse.StatusCode)" -ForegroundColor Green
+    Write-Host "响应内容:"
+    $statusResponse.Content
+} catch {
+    Write-Host "测试失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+# 测试3: GET /connect (查询连接状态)
+Write-Host "
+测试3: GET /connect" -ForegroundColor Cyan
+try {
+    $connectGetResponse = Invoke-WebRequest -Uri http://localhost:1820/connect -Method Get -ContentType application/json
+    Write-Host "状态码: $($connectGetResponse.StatusCode)" -ForegroundColor Green
+    Write-Host "响应内容:"
+    $connectGetResponse.Content
+} catch {
+    Write-Host "测试失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+# 测试4: POST /connect (连接UI)
+Write-Host "
+测试4: POST /connect (连接UI)" -ForegroundColor Cyan
+try {
+    $body = @{ agentName = "TestUI" } | ConvertTo-Json
+    $connectPostResponse = Invoke-WebRequest -Uri http://localhost:1820/connect -Method Post -ContentType application/json -Body $body
+    Write-Host "状态码: $($connectPostResponse.StatusCode)" -ForegroundColor Green
+    Write-Host "响应内容:"
+    $connectPostResponse.Content
+} catch {
+    Write-Host "测试失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+# 测试5: POST /heartbeat
+Write-Host "
+测试5: POST /heartbeat" -ForegroundColor Cyan
+try {
+    $heartbeatResponse = Invoke-WebRequest -Uri http://localhost:1820/heartbeat -Method Post -ContentType application/json
+    Write-Host "状态码: $($heartbeatResponse.StatusCode)" -ForegroundColor Green
+    Write-Host "响应内容:"
+    $heartbeatResponse.Content
+} catch {
+    Write-Host "测试失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+# 测试6: 再次检查状态 (验证连接是否保持)
+Write-Host "
+测试6: 再次检查状态" -ForegroundColor Cyan
+try {
+    $statusAfterConnect = Invoke-WebRequest -Uri http://localhost:1820/status -Method Get -ContentType application/json
+    Write-Host "状态码: $($statusAfterConnect.StatusCode)" -ForegroundColor Green
+    Write-Host "响应内容:"
+    $statusAfterConnect.Content
+} catch {
+    Write-Host "测试失败: $($_.Exception.Message)" -ForegroundColor Red
+}
+
+Write-Host "
+------------TEST END------------"
+Write-Host "所有测试完成!" -ForegroundColor Green
+Write-Host "请查看中央控制系统日志以获取详细的连接记录。"

@@ -1,0 +1,20 @@
+{
+  "bindings": {
+    "API": {
+      "binding": "API",
+      "worker": "jevshop"
+    }
+  },
+  "routes": {
+    "/api/*": {
+      "dest": "jevshop",
+      "type": "worker",
+      "proxy": true
+    }
+  },
+  "env": {
+    "API_BASE": "/api",
+    "DEPLOY_ENV": "production",
+    "GREETING_MODE": "AI_WELCOME"
+  }
+}
