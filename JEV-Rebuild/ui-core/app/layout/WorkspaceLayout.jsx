@@ -53,6 +53,9 @@ const WorkspaceLayout = () => {
   // 记录当前激活会话的时间戳
   const activeCustomerTsRef = useRef(0);
   
+  // 用户选择锁：标记是否为用户手动选择的客户
+  const userSelectedRef = useRef(false);
+  
   // 修复 customers 派生排序（核心）
   const sortedCustomers = useMemo(() => {
     if (!Array.isArray(customers)) return [];
@@ -64,6 +67,9 @@ const WorkspaceLayout = () => {
   
   // 客户选择函数 - 由CrmPanel直接调用
   const handleSelectCustomer = (customerId) => {
+    // 明确标记这是用户行为
+    userSelectedRef.current = true;
+    
     const normalizedId = canonicalCustomerId(customerId);
     setActiveCustomerId(normalizedId);
     console.log("[ACTIVE_CUSTOMER]", normalizedId);
@@ -354,6 +360,8 @@ const WorkspaceLayout = () => {
   useEffect(() => {
     window.__FORCE_SELECT_CUSTOMER__ = (customerId) => {
       if (!customerId) return;
+      // 明确标记这是用户行为
+      userSelectedRef.current = true;
       const normalizedId = canonicalCustomerId(customerId);
       setActiveCustomerId(normalizedId);
       console.log("[ACTIVE_CUSTOMER]", normalizedId);
@@ -445,6 +453,12 @@ const WorkspaceLayout = () => {
   useEffect(() => {
     // 使用sortedCustomers而不是customers，确保与UI显示顺序一致
     if (!sortedCustomers || sortedCustomers.length === 0) return;
+
+    // 如果是用户已选择的客户，禁止自动覆盖
+    if (userSelectedRef.current) {
+      console.log('[ACTIVE_LOCK] skip auto select');
+      return;
+    }
 
     const latestId = sortedCustomers[0].customer_id;
 
@@ -543,6 +557,12 @@ const WorkspaceLayout = () => {
   // 在 customers 更新时，做 last_ts 对比切换
   useEffect(() => {
     if (!customers || customers.length === 0) return;
+
+    // 如果是用户已选择的客户，禁止自动覆盖
+    if (userSelectedRef.current) {
+      console.log('[ACTIVE_LOCK] skip auto select by ts');
+      return;
+    }
 
     const latest = customers[0];
     const latestTs = latest.last_ts || 0;
