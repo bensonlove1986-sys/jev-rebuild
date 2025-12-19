@@ -1629,6 +1629,106 @@ export default {
         }
       }
       
+      // Standard translate endpoint for chat messages (as per requirements)
+      if (request.method === 'POST' && url.pathname === '/api/translate') {
+        try {
+          const traceId = `trace_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          
+          // Parse request body
+          const body = await request.json();
+          const { text, target = 'zh' } = body;
+          
+          // Validate required fields
+          if (!text) {
+            return new Response(
+              JSON.stringify({ text: text }),
+              {
+                status: 200,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': getAllowedOrigin(),
+                  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                }
+              }
+            );
+          }
+          
+          let translated_text = text;
+          
+          // Only translate if target is zh and source is not already Chinese
+          if (target === 'zh') {
+            // Use DeepSeek API with fixed prompt
+            if (env.DEEPSEEK_API_KEY) {
+              try {
+                const deepseekResp = await fetch(
+                  "https://api.deepseek.com/v1/chat/completions",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": `Bearer ${env.DEEPSEEK_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                      model: "deepseek-chat",
+                      messages: [
+                        {
+                          role: "system",
+                          content: "You are a professional business translator.\n\nTranslate the following message into Simplified Chinese.\n- Keep original meaning\n- Do not add explanation\n- Do not add greetings\n- Output only the translated text"
+                        },
+                        {
+                          role: "user",
+                          content: `Message:\n${text}`
+                        }
+                      ],
+                      temperature: 0.1
+                    })
+                  }
+                );
+                
+                if (deepseekResp.ok) {
+                  const deepseekData = await deepseekResp.json();
+                  translated_text = deepseekData?.choices?.[0]?.message?.content?.trim() || text;
+                }
+              } catch (error) {
+                console.error(`[TRANSLATE] ${traceId} | DeepSeek API error: ${error.message}`);
+                // Fallback to original text on error
+                translated_text = text;
+              }
+            }
+          }
+          
+          // Return response in required format
+          return new Response(
+            JSON.stringify({ text: translated_text }),
+            {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': getAllowedOrigin(),
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'X-Trace-Id': traceId
+              }
+            }
+          );
+        } catch (error) {
+          console.error(`[TRANSLATE] ${traceId} | error=${error.message}`);
+          return new Response(
+            JSON.stringify({ text: text }),
+            {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': getAllowedOrigin(),
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+              }
+            }
+          );
+        }
+      }
+      
       // Business translate endpoint (existing)
       if (request.method === 'POST' && url.pathname === '/api/translate/business') {
         try {

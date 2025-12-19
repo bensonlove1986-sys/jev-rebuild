@@ -1,0 +1,16 @@
+{
+  "freeze_name": "crm_ui_baseline_before_active_fix",
+  "freeze_time": "2025-12-19T00:00:00Z",
+  "scope": [
+    "WorkspaceLayout.jsx",
+    "CrmPanel.jsx",
+    "ChatPanel.jsx",
+    "api/inbox/customers"
+  ],
+  "known_issues": [
+    "activeCustomerId 被 effect 重置",
+    "点击客户始终回到第一条"
+  ],
+  "status": "FROZEN",
+  "rollback_allowed": true
+}
