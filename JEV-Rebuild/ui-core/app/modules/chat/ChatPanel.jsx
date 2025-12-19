@@ -34,6 +34,12 @@ export default function ChatPanel({ customer, onAIDraftChange, aiReplyMode = 'se
 
     try {
       // 调用新的翻译API端点
+      console.log('[TRANSLATE_REQUEST]', {
+        url: `${WORKER_BASE}/api/translate`,
+        text: msg.text,
+        target: 'zh'
+      });
+      
       const response = await fetch(`${WORKER_BASE}/api/translate`, {
         method: 'POST',
         headers: {
@@ -46,6 +52,15 @@ export default function ChatPanel({ customer, onAIDraftChange, aiReplyMode = 'se
       });
 
       const data = await response.json();
+      console.log('[TRANSLATE_RESPONSE]', data);
+      
+      // 添加翻译结果日志
+      console.log('[TRANSLATE_RESULT]', {
+        messageId: msg.id,
+        originalText: msg.text,
+        translatedText: data.text,
+        status: 'success'
+      });
 
       // 更新单条消息的翻译结果
       setMessagesMap(prev => {
@@ -100,10 +115,27 @@ export default function ChatPanel({ customer, onAIDraftChange, aiReplyMode = 'se
   
   // 渲染消息气泡
   const renderMessage = (message) => {
+    // 添加调试日志，查看消息对象的实际结构
+    console.log('[MESSAGE_RENDER]', {
+      id: message.id,
+      text: message.text,
+      direction: message.direction,
+      from: message.from,
+      source: message.source,
+      type: message.type,
+      customer_id: message.customer_id
+    });
+    
     const messageText = message.text;
     
-    // 判定消息类型 - 严格按要求：direction === "inbound" 或 from === "customer"
-    const isCustomerMessage = message.direction === "inbound" || message.from === "customer";
+    // 判定消息类型 - 更宽松的判断条件，确保所有客户消息都能显示翻译按钮
+    const isCustomerMessage = 
+      message.direction === "inbound" || 
+      message.from === "customer" || 
+      message.source === "customer" || 
+      message.type === "inbound" || 
+      message.type === "customer";
+    
     const isSelfMessage = message.source === 'ui' || message.from === 'self' || message.direction === "outbound";
     
     // 计算发送者名称
@@ -166,8 +198,8 @@ export default function ChatPanel({ customer, onAIDraftChange, aiReplyMode = 'se
               </div>
             )}
             
-            {/* 客户消息显示翻译按钮 */}
-            {isCustomerMessage && (
+            {/* 客户消息显示翻译按钮 - 只在需要翻译时显示 */}
+            {isCustomerMessage && !message.translated_zh && (
               <Button 
                 size="small" 
                 loading={message.translating}

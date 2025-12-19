@@ -1686,15 +1686,27 @@ export default {
                   }
                 );
                 
+                console.log(`[TRANSLATE] ${traceId} | DeepSeek API response status: ${deepseekResp.status}`);
+                
                 if (deepseekResp.ok) {
                   const deepseekData = await deepseekResp.json();
+                  console.log(`[TRANSLATE] ${traceId} | DeepSeek API response: ${JSON.stringify(deepseekData)}`);
                   translated_text = deepseekData?.choices?.[0]?.message?.content?.trim() || text;
+                  console.log(`[TRANSLATE] ${traceId} | Original: ${text}, Translated: ${translated_text}`);
+                } else {
+                  console.error(`[TRANSLATE] ${traceId} | DeepSeek API returned non-200 status: ${deepseekResp.status}`);
+                  // Fallback to original text on error
+                  translated_text = text;
                 }
               } catch (error) {
                 console.error(`[TRANSLATE] ${traceId} | DeepSeek API error: ${error.message}`);
+                console.error(`[TRANSLATE] ${traceId} | Error stack: ${error.stack}`);
                 // Fallback to original text on error
                 translated_text = text;
               }
+            } else {
+              console.warn(`[TRANSLATE] ${traceId} | DeepSeek API key not configured, returning original text`);
+              // 返回原文，但添加日志便于调试
             }
           }
           
