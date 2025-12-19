@@ -10,9 +10,67 @@ const { Text } = Typography;
 export default function ChatPanel({ customer, onAIDraftChange, aiReplyMode = 'semi-auto', chatDraftText = '', onNewMessageCustomer, activeCustomerId, messagesMap, setMessagesMap }) {
   // 状态管理
   const [draftText, setDraftText] = useState(chatDraftText);
+  const [autoTranslate, setAutoTranslate] = useState(false);
   
   // ref管理
   const endRef = useRef(null);
+  // 翻译缓存：messageId -> translatedText
+  const translationCache = useRef(new Map());
+  // 正在翻译的消息ID集合
+  const translatingRef = useRef(new Set());
+  
+  // 翻译消息函数
+  const translateMessage = async (messageId, text) => {
+    // 检查缓存
+    if (translationCache.current.has(messageId)) {
+      return;
+    }
+    
+    // 防止重复请求
+    if (translatingRef.current.has(messageId)) {
+      return;
+    }
+    
+    try {
+      translatingRef.current.add(messageId);
+      
+      // 调用翻译API
+      const response = await fetch(`${WORKER_BASE}/api/translate/text`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: text,
+          target_lang: 'zh-CN',
+          source: 'customer'
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.translated_text) {
+          translationCache.current.set(messageId, data.translated_text);
+        }
+      }
+    } catch (error) {
+      console.error('[TRANSLATE_ERROR]', messageId, error.message);
+    } finally {
+      translatingRef.current.delete(messageId);
+    }
+  };
+  
+  // 自动翻译逻辑
+  useEffect(() => {
+    if (!autoTranslate) return;
+    
+    // 自动翻译所有客户消息
+    activeMessages.forEach(message => {
+      if ((message.direction === 'inbound' || message.from === 'customer') && !translationCache.current.has(message.id)) {
+        translateMessage(message.id, message.text);
+      }
+    });
+  }, [activeMessages, autoTranslate]);
   
   // 渲染消息气泡
   const renderMessage = (message) => {
@@ -49,6 +107,11 @@ export default function ChatPanel({ customer, onAIDraftChange, aiReplyMode = 'se
       avatarText = displayName.charAt(0).toUpperCase();
     }
     
+    // 获取翻译结果
+    const translatedText = translationCache.current.get(message.id);
+    // 检查是否正在翻译
+    const isTranslating = translatingRef.current.has(message.id);
+    
     return (
       <div key={message.id} className={styles.message}>
         <Avatar className={styles.avatar}>
@@ -56,8 +119,46 @@ export default function ChatPanel({ customer, onAIDraftChange, aiReplyMode = 'se
         </Avatar>
         <div className={styles.messageContent}>
           <div className={styles.displayName}>{displayName}</div>
-          <div className={styles.messageBubble}>
+          <div className={styles.messageBubble} style={{ position: 'relative' }}>
             <Text>{messageText}</Text>
+            
+            {/* 翻译结果显示 */}
+            {translatedText && (
+              <div style={{ 
+                fontSize: '12px', 
+                color: '#666', 
+                marginTop: '4px',
+                paddingTop: '4px',
+                borderTop: '1px dashed #e0e0e0'
+              }}>
+                中文：{translatedText}
+              </div>
+            )}
+            
+            {/* 正在翻译提示 */}
+            {isTranslating && (
+              <div style={{ fontSize: '12px', color: '#999', marginTop: '4px' }}>
+                翻译中...
+              </div>
+            )}
+            
+            {/* 客户消息显示翻译按钮 */}
+            {isCustomerMessage && (
+              <Button 
+                size="small" 
+                style={{ 
+                  position: 'absolute', 
+                  bottom: '4px', 
+                  right: '4px', 
+                  fontSize: '10px', 
+                  padding: '2px 8px',
+                  opacity: 0.7
+                }}
+                onClick={() => translateMessage(message.id, message.text)}
+              >
+                翻译成中文
+              </Button>
+            )}
           </div>
           <Text type="secondary" className={styles.timestamp}>
             {message.timestamp}
@@ -234,6 +335,27 @@ export default function ChatPanel({ customer, onAIDraftChange, aiReplyMode = 'se
       >
         {/* 主内容区：聊天 */}
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          {/* 自动翻译开关 */}
+          <div style={{ 
+            padding: '8px 16px', 
+            background: '#fff', 
+            borderBottom: '1px solid #f0f0f0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            gap: '8px'
+          }}>
+            <span style={{ fontSize: '12px', color: '#666' }}>
+              ☑ 自动翻译客户消息
+            </span>
+            <input
+              type="checkbox"
+              checked={autoTranslate}
+              onChange={(e) => setAutoTranslate(e.target.checked)}
+              style={{ cursor: 'pointer' }}
+            />
+          </div>
+          
           {/* 聊天列表 */}
           <div style={{ 
             flex: 1, 

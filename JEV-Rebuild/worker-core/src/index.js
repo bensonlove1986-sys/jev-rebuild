@@ -1488,6 +1488,148 @@ export default {
       }
       
       // ===== TRANSLATION API =====
+      // Basic translate endpoint for chat messages
+      if (request.method === 'POST' && url.pathname === '/api/translate/text') {
+        try {
+          const traceId = crypto.randomUUID();
+          const startTime = performance.now();
+          
+          // Parse request body
+          const body = await request.json();
+          const { text, target_lang = 'zh-CN', source = 'customer' } = body;
+          
+          // Validate required fields
+          if (!text) {
+            return new Response(
+              JSON.stringify({ ok: false, error: 'Text is required' }),
+              {
+                status: 400,
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': getAllowedOrigin(),
+                  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                  'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                }
+              }
+            );
+          }
+          
+          // Map target_lang to DeepSeek format
+          const targetLang = target_lang === 'zh-CN' ? 'zh' : target_lang;
+          // Assume source language is auto-detected by DeepSeek
+          const sourceLang = 'auto';
+          
+          let translated_text;
+          let engine = 'deepseek';
+          let success = true;
+          
+          // If source and target languages are the same, return original text
+          if (sourceLang === targetLang) {
+            translated_text = text;
+            engine = 'same-lang';
+          } else {
+            // DeepSeek API call
+            try {
+              // Skip translation if API key is missing
+              if (!env.DEEPSEEK_API_KEY) {
+                throw new Error('DeepSeek API key not configured');
+              }
+              
+              const deepseekResp = await fetch(
+                "https://api.deepseek.com/v1/chat/completions",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${env.DEEPSEEK_API_KEY}`
+                  },
+                  body: JSON.stringify({
+                    model: "deepseek-chat",
+                    messages: [
+                      {
+                        role: "system",
+                        content: "You are a professional translator. Translate the text accurately and concisely."
+                      },
+                      {
+                        role: "user",
+                        content: `Translate the following text to ${targetLang}: ${text}`
+                      }
+                    ],
+                    temperature: 0.1
+                  })
+                }
+              );
+              
+              if (!deepseekResp.ok) {
+                throw new Error(`DeepSeek API returned non-200 status: ${deepseekResp.status}`);
+              }
+              
+              const deepseekData = await deepseekResp.json();
+              translated_text = deepseekData?.choices?.[0]?.message?.content?.trim() || text;
+              
+              if (!translated_text || translated_text === text) {
+                // If translation failed to produce different result, use fallback
+                translated_text = text;
+                engine = 'fallback';
+              }
+            } catch (error) {
+              // Fallback to original text on any error
+              console.error(`[TRANSLATE] ${traceId} | DeepSeek API error: ${error.message}`);
+              translated_text = text;
+              engine = 'fallback';
+              success = false;
+            }
+          }
+          
+          // Prepare response
+          const responseBody = {
+            ok: true,
+            translated_text,
+            source_lang: sourceLang,
+            target_lang,
+            engine
+          };
+          
+          // Log structured translation request
+          const textLength = text.length;
+          const totalTime = performance.now() - startTime;
+          console.log(`[TRANSLATE] ${traceId} | api=translate_text | sourceLang=${sourceLang} | targetLang=${targetLang} | textLength=${textLength} | success=${success} | engine=${engine} | time=${totalTime.toFixed(2)}ms`);
+          
+          return new Response(
+            JSON.stringify(responseBody),
+            {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': getAllowedOrigin(),
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'X-Trace-Id': traceId
+              }
+            }
+          );
+        } catch (error) {
+          const traceId = crypto.randomUUID();
+          console.error(`[TRANSLATE] ${traceId} | api=translate_text | success=false | error=${error.message}`);
+          
+          // Return error response
+          return new Response(
+            JSON.stringify({ ok: false, error: error.message }),
+            {
+              status: 500,
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': getAllowedOrigin(),
+                'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'X-Trace-Id': traceId
+              }
+            }
+          );
+        }
+      }
+      
+      // Business translate endpoint (existing)
       if (request.method === 'POST' && url.pathname === '/api/translate/business') {
         try {
           const traceId = crypto.randomUUID();
