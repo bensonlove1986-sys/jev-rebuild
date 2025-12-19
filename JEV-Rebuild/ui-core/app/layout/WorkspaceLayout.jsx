@@ -1,3 +1,7 @@
+/**
+ * FREEZE_SNAPSHOT: crm_ui_baseline_before_active_fix
+ * DO NOT refactor customer selection logic in this version
+ */
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Layout, Tabs, Badge, Tag, Button, Space, Drawer } from 'antd';
 import Topbar from '../components/Topbar';
@@ -46,6 +50,9 @@ const WorkspaceLayout = () => {
   // 选中客户ID的ref，用于新会话检测
   const selectedCustomerIdRef = useRef(null);
   
+  // 记录当前激活会话的时间戳
+  const activeCustomerTsRef = useRef(0);
+  
   // 修复 customers 派生排序（核心）
   const sortedCustomers = useMemo(() => {
     if (!Array.isArray(customers)) return [];
@@ -60,6 +67,7 @@ const WorkspaceLayout = () => {
     const normalizedId = canonicalCustomerId(customerId);
     setActiveCustomerId(normalizedId);
     console.log("[ACTIVE_CUSTOMER]", normalizedId);
+    console.log("[ACTIVE_CUSTOMER_CHANGED]", normalizedId);
     try {
       localStorage.setItem('jev_selected_customer_id', normalizedId);
     } catch (error) {
@@ -183,8 +191,8 @@ const WorkspaceLayout = () => {
     appendMessage(normalizedCustomerId, message);
     
     if (!activeCustomerId) {
+      console.log('[AUTO_FOCUS_CUSTOMER]', normalizedCustomerId);
       setActiveCustomerId(normalizedCustomerId);
-      console.log("[ACTIVE_CUSTOMER]", normalizedCustomerId, "(auto-selected from Daojie message)");
     }
   };
   
@@ -399,10 +407,15 @@ const WorkspaceLayout = () => {
             });
           }
           
-          // 🔍 严格按照要求实现：直接 map + set，无任何其他逻辑
+          // ✅ 新逻辑（必须）：强制深拷贝，彻底打断引用关系
           const nextCustomers = customersFromWorker.map(c => ({
-            ...c,
-            __ui_version: Date.now(), // UI-only，强制破引用
+            customer_id: c.customer_id,
+            display_name: c.display_name,
+            last_ts: c.last_ts,
+            last_message_at: c.last_message_at,
+            last_message: c.last_message,
+            business_stage: c.business_stage,
+            source: c.source
           }));
           
           // 🔍 严格按照要求：直接调用 setCustomers，不使用 prev callback
@@ -428,19 +441,34 @@ const WorkspaceLayout = () => {
     return () => clearInterval(interval);
   }, [customers]);
   
-  // 自动选择最新客户（如果没有活跃客户）
+  // 自动选择最新客户（如果没有活跃客户或新消息）
   useEffect(() => {
-    if (!activeCustomerId && customers.length > 0) {
-      const latestCustomerId = customers[0].customer_id;
-      setActiveCustomerId(latestCustomerId);
-      console.log("[ACTIVE_CUSTOMER]", latestCustomerId, "(auto-selected from Worker)");
+    // 使用sortedCustomers而不是customers，确保与UI显示顺序一致
+    if (!sortedCustomers || sortedCustomers.length === 0) return;
+
+    const latestId = sortedCustomers[0].customer_id;
+
+    // 保护条件：仅在当前activeCustomerId为空时触发
+    if (latestId && latestId !== activeCustomerId && !activeCustomerId) {
+      console.log('[AUTO_FOCUS_CUSTOMER]', latestId);
+      setActiveCustomerId(latestId);
     }
-  }, [customers, activeCustomerId]);
+  }, [sortedCustomers, activeCustomerId]);
   
   // 更新ref当activeCustomerId变化时
   useEffect(() => {
     selectedCustomerIdRef.current = activeCustomerId;
   }, [activeCustomerId]);
+  
+  // 当activeCustomerId改变时，更新时间戳ref
+  useEffect(() => {
+    const current = customers.find(
+      c => c.customer_id === activeCustomerId
+    );
+    if (current?.last_ts) {
+      activeCustomerTsRef.current = current.last_ts;
+    }
+  }, [activeCustomerId, customers]);
   
   // 新会话提示状态管理 - 初始化
   useEffect(() => {
@@ -511,6 +539,21 @@ const WorkspaceLayout = () => {
       customers.map(c => c.customer_id)
     );
   }, [customers]);
+  
+  // 在 customers 更新时，做 last_ts 对比切换
+  useEffect(() => {
+    if (!customers || customers.length === 0) return;
+
+    const latest = customers[0];
+    const latestTs = latest.last_ts || 0;
+    const activeTs = activeCustomerTsRef.current || 0;
+
+    // 保护条件：只在没有activeCustomerId时触发，尊重用户手动选择
+    if (!activeCustomerId && latest.customer_id !== activeCustomerId && latestTs > activeTs) {
+      console.log('[AUTO_FOCUS_BY_TS]', latest.customer_id);
+      setActiveCustomerId(latest.customer_id);
+    }
+  }, [customers, activeCustomerId]);
   
   const tabItems = [
     {

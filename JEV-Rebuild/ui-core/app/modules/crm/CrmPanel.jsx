@@ -1,3 +1,7 @@
+/**
+ * FREEZE_SNAPSHOT: crm_ui_baseline_before_active_fix
+ * Visual behavior frozen for rollback safety
+ */
 import React, { useState, useEffect } from 'react';
 import { Typography, Tag, Input, Modal, Form, Button, Select, Card } from 'antd';
 import styles from './CrmPanel.module.css';
@@ -136,10 +140,25 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
         />
       </div>
 
-      {/* 主内容区：左右布局 */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* 客户列表 - 使用原始div结构 */}
-        <div className={`${styles.customerList} customer-list`} style={{ overflowY: 'auto', flex: 1, borderRight: '1px solid #f0f0f0' }}>
+      {/* 主内容区：仅客户列表 */}
+      <div style={{ 
+        display: 'flex', 
+        flex: 1, 
+        overflow: 'hidden' 
+      }}>
+        {/* 视觉顺序断言日志 */}
+        {console.log(
+          '[CRM_VISUAL_ORDER]',
+          customers.map(c => c.customer_id)
+        )}
+        
+        {/* 客户列表 - 仅显示用户名和未读 */}
+        <div className={`${styles.customerList} customer-list`} style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          overflowY: 'auto', 
+          flex: 1 
+        }}>
           {customers.length > 0 ? (
           customers.map((customer, index) => {
             // 计算稳定的customerId，与key使用相同来源
@@ -149,11 +168,14 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
             // 强制可视验证日志
             console.log('[RENDER_CUSTOMER_ITEM]', customer.customer_id, customer.display_name);
             
+            // 计算未读数量
+            const unreadCount = unreadCountMap[customer.id] || unreadCountMap[customerId] || 0;
+            
             return (
               <div
-                key={customer.customer_id || customerId}
-                data-customer-id={customerId}
-                className={`${styles.customerItem} ${selectedCustomer?.id === customerId ? styles.selected : ''}`}
+                key={customer.customer_id}
+                data-customer-id={customer.customer_id}
+                className={`${styles.customerItem} ${selectedCustomer?.customer_id === customer.customer_id ? styles.selected : ''}`}
                 style={{
                   padding: '16px',
                   borderBottom: '1px solid #f0f0f0',
@@ -164,67 +186,42 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
                 }}
                 onClick={() => {
                   // 显式防御undefined
-                  if (!customerId) return;
+                  if (!customer.customer_id) return;
                   
-                  console.log('[USER_CLICK]', customerId);
-                  window.__FORCE_SELECT_CUSTOMER__(customerId);
+                  console.log('[USER_CLICK]', customer.customer_id);
+                  onSelectCustomer(customer.customer_id);
                 }}
               >
-                <div style={{ width: '100%' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      {/* 显示客户名，严格按优先级：display_name > customer_name > customer_id */}
-                      <Text strong>{customer.display_name || customer.customer_name || customerId}</Text>
-                      {/* 显示未读计数 */}
-                      {(unreadCountMap[customer.id] || unreadCountMap[customerId]) > 0 && (
-                        <span style={{ 
-                          marginLeft: '8px',
-                          padding: '2px 8px', 
-                          backgroundColor: '#ff4d4f', 
-                          color: 'white', 
-                          borderRadius: '12px', 
-                          fontSize: '12px',
-                          fontWeight: 'bold',
-                          minWidth: '20px',
-                          textAlign: 'center'
-                        }}>
-                          {unreadCountMap[customer.id] || unreadCountMap[customerId]}
-                        </span>
-                      )}
-                    </div>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        {/* 显示商业阶段标签 */}
-                        <div style={{ marginRight: '8px' }}>
-                          {getBusinessStageTag(customer.business_stage || 'new')}
-                        </div>
-                        {/* 显示来源标签 */}
-                        <Tag color={customer.source === 'daojie' ? 'blue' : 'gray'} size="small">
-                          {customer.source || '未知'}
-                        </Tag>
-                        {/* 显示新会话标签 */}
-                        {(newSessionSet.has(customer.id) || newSessionSet.has(customerId)) && (
-                          <span style={{ marginLeft: '8px', padding: '2px 6px', backgroundColor: '#fa8c16', color: 'white', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold' }}>NEW</span>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* 显示最后消息预览（如果有） */}
-                    {customer.last_message_preview && (
-                      <div style={{ marginBottom: '4px', fontSize: '13px', color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {customer.last_message_preview}
-                      </div>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  width: '100%' 
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {/* 显示客户名，严格按优先级：display_name > customer_name > customer_id */}
+                    <Text strong>{customer.display_name || customer.customer_name || customerId}</Text>
+                    {/* 显示未读计数 */}
+                    {unreadCount > 0 && (
+                      <span style={{ 
+                        marginLeft: '8px',
+                        padding: '2px 8px', 
+                        backgroundColor: '#ff4d4f', 
+                        color: 'white', 
+                        borderRadius: '12px', 
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        minWidth: '20px',
+                        textAlign: 'center'
+                      }}>
+                        {unreadCount}
+                      </span>
                     )}
-                    
-                    {/* 显示最后消息时间 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Text type="secondary" style={{ fontSize: '12px' }}>
-                        {customer.last_timestamp ? new Date(customer.last_timestamp).toLocaleString() : '暂无消息'}
-                      </Text>
-                    </div>
                   </div>
                 </div>
-              );
-            })
+              </div>
+            );
+          })
           ) : (
             <div className={styles.emptyList}>
               <h4>暂无客户</h4>
@@ -232,81 +229,7 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
             </div>
           )}
         </div>
-        
-        {/* 客户信息面板 */}
-        <div style={{ width: '300px', padding: '16px', overflowY: 'auto', backgroundColor: '#fafafa' }}>
-          {selectedCustomer ? (
-            <Card title="客户信息" loading={loading} bordered={false}>
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ marginBottom: '8px' }}>
-                  <Text strong>客户名：</Text>
-                  <Text>{selectedCustomer.name || selectedCustomer.display_name || selectedCustomer.customer_name || selectedCustomer.id}</Text>
-                </div>
-                
-                <div style={{ marginBottom: '8px' }}>
-                  <Text strong>渠道：</Text>
-                  <Text>{selectedCustomer.source || '未知'}</Text>
-                </div>
-                
-                <div style={{ marginBottom: '16px' }}>
-                  <Text strong>当前阶段：</Text>
-                  <div style={{ marginTop: '8px' }}>
-                    <Select
-                      value={customerProfile?.business_stage || 'new'}
-                      onChange={(value) => updateCustomerStage(selectedCustomer.id, value)}
-                      style={{ width: '100%' }}
-                    >
-                      <Option value="new">新询盘</Option>
-                      <Option value="following">跟进中</Option>
-                      <Option value="quoting">报价中</Option>
-                      <Option value="ordered">已下单</Option>
-                      <Option value="lost">流失</Option>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div style={{ paddingTop: '16px', borderTop: '1px solid #f0f0f0' }}>
-                  <Text strong>最后消息：</Text>
-                  <div style={{ marginTop: '8px', padding: '8px', backgroundColor: '#f0f2f5', borderRadius: '4px', fontSize: '13px', color: '#666' }}>
-                    {selectedCustomer.last_message || '暂无消息'}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ) : (
-            <div style={{ textAlign: 'center', padding: '40px 20px', color: '#999' }}>
-              <Text>请选择客户查看详情</Text>
-            </div>
-          )}
-        </div>
       </div>
-      
-      {/* 添加客户模态框 */}
-      <Modal
-        title="添加聊天用户"
-        open={isAddModalVisible}
-        onOk={handleAddCustomer}
-        onCancel={handleCancelAdd}
-        destroyOnClose
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{
-            username: '',
-          }}
-        >
-          <Form.Item
-            name="username"
-            label="用户名"
-            rules={[
-              { required: true, message: '请输入用户名' },
-            ]}
-          >
-            <Input placeholder="请输入聊天用户名，例如：gakcvf3msauchq2dter9" />
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>
   );
 };
