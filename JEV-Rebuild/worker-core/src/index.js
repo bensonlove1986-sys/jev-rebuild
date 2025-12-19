@@ -1060,56 +1060,11 @@ export default {
             );
           }
           
-          // Get all customer indexes
+          // Get all customer-specific indexes
+          const customerKeys = await env.MESSAGES_KV.list({ prefix: 'customer:' });
           const customerIndexes = new Map();
           
-          // Get global index if it exists
-          const globalIndexKey = 'INBOX_INDEX';
-          const globalIndexRaw = await env.MESSAGES_KV.get(globalIndexKey);
-          let globalIndex = [];
-          
-          if (globalIndexRaw) {
-            try {
-              globalIndex = JSON.parse(globalIndexRaw);
-            } catch (parseError) {
-              console.error(`[INBOX][GLOBAL_INDEX_PARSE_ERROR] traceId=${traceId} | error=${parseError.message}`);
-            }
-          }
-          
-          // Process global index to get unique customers
-          for (const item of globalIndex) {
-            const customerId = item.customer_id || item.customerId;
-            if (customerId) {
-              if (!customerIndexes.has(customerId)) {
-                // Determine display name following priority rules
-                const displayName = item.display_name || customerId;
-                
-                customerIndexes.set(customerId, {
-                  customer_id: customerId,
-                  display_name: displayName,
-                  name: displayName, // Added for UI compatibility
-                  customer_name: displayName, // Added for UI compatibility
-                  last_message: item.text || '',
-                  last_ts: item.timestamp,
-                  last_message_at: item.timestamp
-                });
-              } else {
-                // Update last_message_at if this is newer
-                const existing = customerIndexes.get(customerId);
-                if (item.timestamp > existing.last_message_at) {
-                  existing.last_message = item.text || '';
-                  existing.last_ts = item.timestamp;
-                  existing.last_message_at = item.timestamp;
-                  customerIndexes.set(customerId, existing);
-                }
-              }
-            }
-          }
-          
-          // Also check customer-specific indexes
-          // First, get all keys that match customer:*:index pattern
-          const customerKeys = await env.MESSAGES_KV.list({ prefix: 'customer:' });
-          
+          // Iterate through all customer indexes to build the customers list
           for (const key of customerKeys.keys) {
             if (key.name.endsWith(':index')) {
               const customerId = key.name.split(':')[1];
@@ -1119,45 +1074,34 @@ export default {
                 try {
                   const index = JSON.parse(indexRaw);
                   if (index.length > 0) {
-                    // Get the latest message timestamp
-                    const latestItem = index[index.length - 1];
+                    // Get the latest message from this customer
+                    const latestIndexItem = index[index.length - 1];
                     
-                    // Get the message to get display_name
-                    const messageRaw = await env.MESSAGES_KV.get(latestItem.key);
+                    // Get the actual message content
+                    const messageRaw = await env.MESSAGES_KV.get(latestIndexItem.key);
                     let displayName = `客户 ${customerId.substring(0, 8)}`;
                     let message = null;
                     let lastMessage = '';
+                    let lastTimestamp = latestIndexItem.timestamp;
                     
                     if (messageRaw) {
                       message = JSON.parse(messageRaw);
                       displayName = message.display_name || message.displayName || displayName;
                       lastMessage = message.text || '';
+                      // Use the actual message timestamp for last_ts
+                      lastTimestamp = message.timestamp || message.ts || latestIndexItem.timestamp || Date.now();
                     }
                     
-                    // Update or add customer
-                    if (!customerIndexes.has(customerId)) {
-                      customerIndexes.set(customerId, {
-                        customer_id: customerId,
-                        display_name: displayName,
-                        name: displayName, // Added for UI compatibility
-                        customer_name: displayName, // Added for UI compatibility
-                        last_message: lastMessage,
-                        last_ts: latestItem.timestamp,
-                        last_message_at: latestItem.timestamp
-                      });
-                    } else {
-                      // Update last_message_at if this is newer
-                      const existing = customerIndexes.get(customerId);
-                      if (latestItem.timestamp > existing.last_message_at) {
-                        existing.last_message = lastMessage;
-                        existing.last_ts = latestItem.timestamp;
-                        existing.last_message_at = latestItem.timestamp;
-                        existing.display_name = displayName; // Update display_name if available
-                        existing.name = displayName; // Update name if available
-                        existing.customer_name = displayName; // Update customer_name if available
-                        customerIndexes.set(customerId, existing);
-                      }
-                    }
+                    // Always update the customer entry with the latest message info
+                    customerIndexes.set(customerId, {
+                      customer_id: customerId,
+                      display_name: displayName,
+                      name: displayName, // Added for UI compatibility
+                      customer_name: displayName, // Added for UI compatibility
+                      last_message: lastMessage,
+                      last_ts: lastTimestamp,
+                      last_message_at: lastTimestamp
+                    });
                   }
                 } catch (parseError) {
                   console.error(`[INBOX][CUSTOMER_INDEX_PARSE_ERROR] traceId=${traceId} | key=${key.name} | error=${parseError.message}`);
@@ -1166,10 +1110,10 @@ export default {
             }
           }
           
-          // Convert Map to array and sort by last_message_at desc
+          // Convert Map to array and get customer profiles
           const customersWithProfiles = await Promise.all(
             Array.from(customerIndexes.values()).map(async (customer) => {
-              // Get customer profile for business stage and display_name
+              // Get customer profile for business stage
               const profile = await getCustomerProfile(env, customer.customer_id);
               
               // Update display_name using priority rules
@@ -1193,8 +1137,8 @@ export default {
             })
           );
           
-          // Sort by last_message_at desc
-          const customers = customersWithProfiles.sort((a, b) => b.last_message_at - a.last_message_at);
+          // Sort customers by last_ts desc (latest message first)
+          const customers = customersWithProfiles.sort((a, b) => b.last_ts - a.last_ts);
           
           // Add required log
           console.log(`[INBOX_CUSTOMERS_OK] count=${customers.length}`);
