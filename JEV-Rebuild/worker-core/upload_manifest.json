@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "path": "ui-core/app/modules/chat/ChatPanel.jsx",
+      "change_type": "modified",
+      "description": "Fixed sender name in message bubbles to display real customer display_name"
+    },
+    {
+      "path": "ui-core/app/layout/WorkspaceLayout.jsx",
+      "change_type": "modified",
+      "description": "Added cache busting, verification logs, and proper array sorting for customers API requests"
+    },
+    {
+      "path": "worker-core/src/index.js",
+      "change_type": "modified",
+      "description": "Updated /api/inbox/customers endpoint to prioritize customer profile display_name"
+    },
+    {
+      "path": "worker-core/release_notes.md",
+      "change_type": "created",
+      "description": "Release notes for the display_name fix deployment"
+    },
+    {
+      "path": "worker-core/rollback_hint.md",
+      "change_type": "created",
+      "description": "Rollback instructions for the deployment"
+    }
+  ],
+  "deployment": {
+    "command": "wrangler deploy",
+    "version": "fdbd03af-8f4c-4a15-be9e-698531e1b2c6",
+    "date": "2025-12-19"
+  }
+}

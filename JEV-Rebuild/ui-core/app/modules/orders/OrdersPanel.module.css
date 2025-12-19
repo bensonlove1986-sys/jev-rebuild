@@ -1,0 +1,41 @@
+.ordersPanel {
+  height: 100%;
+  border-radius: var(--border-radius-md);
+}
+
+.header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.orderTable {
+  flex: 1;
+  overflow: auto;
+  background-color: var(--bg-primary);
+}
+
+.orderTable .ant-table-thead > tr > th {
+  background-color: var(--bg-secondary);
+  font-weight: 600;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.orderTable .ant-table-tbody > tr > td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.orderTable .ant-table-tbody > tr:hover > td {
+  background-color: var(--bg-secondary);
+}
+
+.orderTable .ant-table-pagination {
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--border-color);
+  margin: 0;
+}

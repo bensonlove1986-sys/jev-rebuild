@@ -1,0 +1,363 @@
+import { DAOJIE_CONFIG } from '../config/constants.js';
+
+// 辅助函数：创建统一格式的响应
+function createResponse({ success, data = null, error = null, status = 200 }) {
+  const responseBody = {
+    success,
+  };
+  
+  if (data) {
+    responseBody.data = data;
+  }
+  
+  if (error) {
+    responseBody.error = error;
+  }
+  
+  return new Response(
+    JSON.stringify(responseBody),
+    {
+      status,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }
+  );
+}
+
+// 辅助函数：处理CORS头
+function addCorsHeaders(response, requestOrigin) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': requestOrigin || 'http://localhost:3000',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Max-Age': '86400',
+  };
+  
+  Object.entries(corsHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
+  
+  return response;
+}
+
+// 处理 Daojie 入站消息
+export async function handleDaojieInbound(request, env) {
+  try {
+    // 1. 校验请求合法性
+    // TODO: 可添加签名验证等安全措施
+    
+    // 2. 解析请求体
+    const payload = await request.json();
+    
+    // 3. 解析关键字段
+    const {
+      conversationId,
+      contactId,
+      text,
+      channel,
+      // 其他可能的字段
+      contactName,
+      timestamp
+    } = payload;
+    
+    // 4. 验证必填字段
+    if (!conversationId || !contactId || !text) {
+      return createResponse({
+        success: false,
+        error: 'Missing required fields',
+        status: 400
+      });
+    }
+    
+    // 5. 转发给前端或写入内存缓存（仅用于通知，不用于回复）
+    // 冻结期：直接跳过，不调用 DAOJIE_STREAM
+    // 添加防御性检查，防止 idFromName 错误
+    // if (env.DAOJIE_STREAM && env.DAOJIE_STREAM.idFromName) {
+    //   const id = env.DAOJIE_STREAM.idFromName('global');
+    //   await env.DAOJIE_STREAM.get(id).broadcast({
+    //     type: 'raw_daojie',
+    //     received_at: Date.now(),
+    //     payload: {
+    //       conversationId,
+    //       contactId,
+    //       contactName,
+    //       text,
+    //       channel,
+    //       timestamp
+    //     }
+    //   });
+    // }
+    console.info('[WS] skipped: frozen by config');
+    
+    // 6. 返回成功响应
+    return createResponse({
+      success: true,
+      data: { status: 'received' },
+      status: 200
+    });
+    
+  } catch (error) {
+    console.error('Error handling Daojie inbound message:', error);
+    return createResponse({
+      success: false,
+      error: error.message,
+      status: 500
+    });
+  }
+}
+
+// 获取会话列表
+export async function getConversations(request, env) {
+  try {
+    // 1. 获取API密钥
+    const apiKey = env.DAIJIE_API_KEY;
+    if (!apiKey) {
+      return new Response(
+        JSON.stringify({ error: 'API key not configured' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 2. 调用Daojie官方API
+    const response = await fetch(`${DAOJIE_CONFIG.API_BASE_URL}/conversations/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Version': DAOJIE_CONFIG.API_VERSION,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    // 3. 直接透传响应，不进行自定义格式转换
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({
+        error: 'Failed to fetch conversations'
+      }));
+      return new Response(
+        JSON.stringify(errorData),
+        { status: response.status, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 4. 直接返回官方API的完整响应
+    const data = await response.json();
+    return new Response(
+      JSON.stringify(data),
+      { 
+        status: 200, 
+        headers: { 
+          'Content-Type': 'application/json' 
+        } 
+      }
+    );
+    
+  } catch (error) {
+    console.error('Error getting conversations:', error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to fetch conversations' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+}
+
+// 获取会话消息列表
+export async function getConversationMessages(request, env) {
+  try {
+    // 1. 获取API密钥
+    const apiKey = env.DAIJIE_API_KEY;
+    if (!apiKey) {
+      return new Response(
+        JSON.stringify({ error: 'API key not configured' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 2. 解析conversationId
+    const url = new URL(request.url);
+    const pathSegments = url.pathname.split('/');
+    const conversationId = pathSegments[4];
+    
+    if (!conversationId) {
+      return new Response(
+        JSON.stringify({ error: 'conversationId is required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 3. 调用Daojie官方API
+    const response = await fetch(`${DAOJIE_CONFIG.API_BASE_URL}/conversations/${conversationId}/messages`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Version': DAOJIE_CONFIG.API_VERSION,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    // 4. 直接透传响应
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({
+        error: 'Failed to fetch messages'
+      }));
+      return new Response(
+        JSON.stringify(errorData),
+        { status: response.status, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 5. 直接返回官方API的完整响应
+    const data = await response.json();
+    return new Response(
+      JSON.stringify(data),
+      { 
+        status: 200, 
+        headers: { 
+          'Content-Type': 'application/json' 
+        } 
+      }
+    );
+    
+  } catch (error) {
+    console.error('Error getting conversation messages:', error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to fetch messages' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+}
+
+// 回复客户
+export async function replyToCustomer(request, env) {
+  try {
+    // 1. 获取API密钥
+    const apiKey = env.DAIJIE_API_KEY;
+    if (!apiKey) {
+      return new Response(
+        JSON.stringify({ error: 'API key not configured' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 2. 解析conversationId
+    const url = new URL(request.url);
+    const pathSegments = url.pathname.split('/');
+    const conversationId = pathSegments[4];
+    
+    if (!conversationId) {
+      return new Response(
+        JSON.stringify({ error: 'conversationId is required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 3. 解析请求体
+    const body = await request.json();
+    const { message, type = 'LiveChat' } = body;
+    
+    if (!message) {
+      return new Response(
+        JSON.stringify({ error: 'message is required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 4. 调用Daojie官方API回复客户
+    const response = await fetch(`${DAOJIE_CONFIG.API_BASE_URL}/conversations/${conversationId}/messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'Version': DAOJIE_CONFIG.API_VERSION
+      },
+      body: JSON.stringify({
+        type,
+        message
+      })
+    });
+    
+    // 5. 直接透传响应
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({
+        error: 'Failed to send message'
+      }));
+      return new Response(
+        JSON.stringify(errorData),
+        { status: response.status, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // 6. 直接返回官方API的完整响应
+    const data = await response.json();
+    return new Response(
+      JSON.stringify(data),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+  } catch (error) {
+    console.error('Error replying to customer:', error);
+    return new Response(
+      JSON.stringify({ error: 'Failed to send message' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+}
+
+// AI 生成回复草稿
+export async function generateDraftReply(request, env) {
+  try {
+    // 添加日志
+    console.log('[AI] draft-reply called');
+    
+    // 1. 解析请求体
+    const { text, contactId, language } = await request.json();
+    
+    // 2. 验证必填字段
+    if (!text || !contactId || !language) {
+      return createResponse({
+        success: false,
+        error: 'Missing required fields',
+        status: 400
+      });
+    }
+    
+    // 3. 模拟调用 LLM 生成回复草稿
+    // TODO: 替换为实际的 DeepSeek / LLM 调用
+    let generatedText;
+    let generatedLang;
+    
+    if (language === 'zh') {
+      generatedText = `根据客户消息："${text}"，我建议回复：这是一个中文回复建议。`;
+      generatedLang = 'zh';
+    } else {
+      generatedText = `Based on the customer message: "${text}", I suggest replying: This is an English draft reply.`;
+      generatedLang = 'en';
+    }
+    
+    // 添加日志
+    console.log('[AI] draft generated successfully');
+    
+    // 4. 返回草稿，不触发任何发送
+    return createResponse({
+      success: true,
+      data: {
+        text: generatedText,
+        lang: generatedLang
+      },
+      status: 200
+    });
+    
+  } catch (error) {
+    console.error('[AI] draft generation failed:', error);
+    return createResponse({
+      success: false,
+      error: error.message,
+      status: 500
+    });
+  }
+}

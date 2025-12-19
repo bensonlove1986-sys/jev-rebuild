@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor Advancement Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f2f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+        .success {
+            border-color: #52c41a;
+            background-color: #f6ffed;
+        }
+        .error {
+            border-color: #f5222d;
+            background-color: #fff2f0;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #40a9ff;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Cursor Advancement Test</h1>
+        <p>This test will make 3 consecutive requests to the inbox pull endpoint and verify that the cursor advances correctly.</p>
+        
+        <button onclick="runTest()">Run Test</button>
+        
+        <div id="results"></div>
+        
+        <div id="final-result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://jev-rebuild-worker.bensonlove1986.workers.dev/api/inbox/pull';
+        let pollResults = [];
+
+        async function runTest() {
+            pollResults = [];
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('final-result').innerHTML = '';
+
+            try {
+                // First request with since=0
+                const result1 = await makeRequest(0, 1);
+                pollResults.push(result1);
+                
+                // Second request with since from first response
+                const result2 = await makeRequest(result1.cursor, 2);
+                pollResults.push(result2);
+                
+                // Third request with since from second response
+                const result3 = await makeRequest(result2.cursor, 3);
+                pollResults.push(result3);
+                
+                // Verify cursor advancement
+                verifyCursorAdvancement();
+            } catch (error) {
+                addResult(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function makeRequest(since, pollNumber) {
+            addResult(`Making request ${pollNumber} with since=${since}...`);
+            
+            const response = await fetch(`${API_URL}?since=${since}`);
+            const data = await response.json();
+            
+            addResult(`Response ${pollNumber}: since=${since}, cursor=${data.cursor || 0}, messages=${data.messages?.length || 0}`, 'success');
+            addResult(`Full response: ${JSON.stringify(data, null, 2)}`);
+            
+            return {
+                poll: pollNumber,
+                since: since,
+                cursor: data.cursor || 0,
+                messages: data.messages || []
+            };
+        }
+
+        function verifyCursorAdvancement() {
+            const finalResult = {
+                poll_1_since: pollResults[0]?.since || 0,
+                poll_2_since: pollResults[1]?.since || 0,
+                poll_3_since: pollResults[2]?.since || 0,
+                cursor_advancing: false
+            };
+
+            // Check if cursor is advancing
+            if (pollResults.length >= 2) {
+                finalResult.cursor_advancing = pollResults[0].cursor < pollResults[1].cursor && 
+                                              pollResults[1].cursor <= pollResults[2].cursor;
+            }
+
+            // Display final result
+            const finalResultDiv = document.getElementById('final-result');
+            finalResultDiv.innerHTML = `
+                <h2>Final Result</h2>
+                <pre class="result ${finalResult.cursor_advancing ? 'success' : 'error'}">
+${JSON.stringify(finalResult, null, 2)}
+                </pre>
+            `;
+
+            // Log to console in required format
+            console.log(finalResult);
+        }
+
+        function addResult(text, type = '') {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${text}`;
+            resultsDiv.appendChild(resultDiv);
+        }
+    </script>
+</body>
+</html>

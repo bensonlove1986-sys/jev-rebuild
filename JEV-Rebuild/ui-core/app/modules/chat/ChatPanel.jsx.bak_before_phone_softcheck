@@ -1,0 +1,1237 @@
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Card, List, Input, Button, Avatar, Space, Typography, Tag, Select, Switch, message } from 'antd';
+import { WORKER_BASE } from '../../config/constants.js';
+import styles from './ChatPanel.module.css';
+
+const { TextArea } = Input;
+const { Text } = Typography;
+const { Title } = Typography;
+const { Option } = Select;
+
+const ChatPanel = ({ customer, messagesMap, wsReady, onAIDraftChange, aiReplyMode = 'semi-auto', chatDraftText = '' }) => {
+  // 1️⃣ useState（全部在最前）
+  // 状态管理：翻译结果，使用对象存储每个消息的翻译状态
+  const [translations, setTranslations] = useState({});
+
+  // 状态管理：回复草稿
+  const [draftText, setDraftText] = useState(chatDraftText);
+  
+  // 监听外部传入的chatDraftText变化
+  useEffect(() => {
+    if (chatDraftText) {
+      setDraftText(chatDraftText);
+    }
+  }, [chatDraftText]);
+
+  // 状态管理：翻译结果缓存（仅使用消息ID作为键，因为固定翻译为中文）
+  const [translationCache, setTranslationCache] = useState({});
+
+  // 状态管理：多版本回复草稿
+  const [replyDrafts, setReplyDrafts] = useState({});
+
+  // 状态管理：商务润色
+  const [isPostEditing, setIsPostEditing] = useState(false);
+
+  // 状态管理：当前客户的消息（新增）
+  const [messages, setMessages] = useState([]);
+
+  // 状态管理：我方回复的翻译预览
+  const [outboundTranslation, setOutboundTranslation] = useState(null);
+  const [isTranslatingOutbound, setIsTranslatingOutbound] = useState(false);
+
+  // 状态管理：翻译控制
+  const [enableTranslation, setEnableTranslation] = useState(false); // 发送时自动翻译开关
+  const [targetLanguage, setTargetLanguage] = useState('en'); // 目标语言
+  const [sendCooldown, setSendCooldown] = useState(0); // 发送翻译按钮倒计时
+  
+  // 状态管理：临时客户标志
+  const [tempCustomers, setTempCustomers] = useState(() => {
+    // 从localStorage加载临时客户列表
+    try {
+      const saved = localStorage.getItem('tempCustomers');
+      return saved ? JSON.parse(saved) : {};
+    } catch (error) {
+      console.error('Failed to load temp customers from localStorage:', error);
+      return {};
+    }
+  });
+  
+  // 状态管理：AI 草稿生成
+  const [aiDraftText, setAiDraftText] = useState(''); // AI 草稿文本
+  const [isGeneratingDraft, setIsGeneratingDraft] = useState(false); // AI 草稿生成中状态
+  
+  // 状态管理：客户消息自动翻译
+  const [autoTranslateInbound, setAutoTranslateInbound] = useState(false); // 客户消息自动翻译开关
+  
+  // 将 AI 草稿更新传递给父组件
+  useEffect(() => {
+    console.log('[AI] aiDraftText changed:', aiDraftText);
+    if (onAIDraftChange) {
+      onAIDraftChange(aiDraftText);
+    }
+  }, [aiDraftText, onAIDraftChange]);
+  
+  // 可选语言列表（根据任务要求：English, Arabic, Japanese, Korean, Urdu）
+  const languageOptions = [
+    { label: "English", value: "en" },
+    { label: "العربية", value: "ar" },
+    { label: "日本語", value: "ja" },
+    { label: "한국어", value: "ko" },
+    { label: "اردو", value: "ur" }
+  ];
+
+  // 2️⃣ useRef
+  // 用于自动滚动到底部的 ref
+  const endRef = useRef(null);
+
+  // 3️⃣ useEffect（全部无条件声明）
+  // 强制检查，确保不会崩溃
+  const selectedCustomerId = customer?.id;
+
+  // 读取聊天记录缓存
+  const getChatCache = (customerId) => {
+    try {
+      const cache = JSON.parse(localStorage.getItem('jev_chat_cache_v1') || '{}');
+      return cache[customerId] || [];
+    } catch (error) {
+      console.error('Failed to get chat cache:', error);
+      return [];
+    }
+  };
+
+  // 写入聊天记录缓存
+  const setChatCache = (customerId, messages) => {
+    try {
+      const cache = JSON.parse(localStorage.getItem('jev_chat_cache_v1') || '{}');
+      // 保存所有消息
+      cache[customerId] = messages;
+      localStorage.setItem('jev_chat_cache_v1', JSON.stringify(cache));
+    } catch (error) {
+      console.error('Failed to set chat cache:', error);
+    }
+  };
+
+  // 当选中客户变化时，从缓存加载历史记录
+  useEffect(() => {
+    if (!selectedCustomerId) {
+      setMessages([]);
+      return;
+    }
+
+    // 从缓存加载历史记录
+    const cachedMessages = getChatCache(selectedCustomerId);
+    setMessages(cachedMessages);
+  }, [selectedCustomerId]);
+
+  // 修复 messagesMap → messages 的同步逻辑，改为增量合并，并更新缓存
+  useEffect(() => {
+    if (!selectedCustomerId) return;
+
+    const incoming = messagesMap?.[selectedCustomerId];
+    if (!incoming || incoming.length === 0) return;
+
+    setMessages(prev => {
+      // 合并而不是覆盖
+      const existingIds = new Set(prev.map(m => m.id));
+      const merged = [...prev];
+      const newMessages = [];
+
+      for (const msg of incoming) {
+        if (!existingIds.has(msg.id)) {
+          merged.push(msg);
+          newMessages.push(msg);
+        }
+      }
+      
+      // 更新缓存
+      if (newMessages.length > 0) {
+        setChatCache(selectedCustomerId, merged);
+      }
+      
+      return merged;
+    });
+  }, [messagesMap, selectedCustomerId]);
+
+  // 4️⃣ 语言偏好管理工具函数
+  // 获取语言偏好存储
+  const getLanguagePreferences = () => {
+    try {
+      const stored = localStorage.getItem('jev_lang_pref_v1');
+      return stored ? JSON.parse(stored) : {};
+    } catch (error) {
+      console.error('Failed to parse language preferences:', error);
+      return {};
+    }
+  };
+
+  // 保存语言偏好
+  const saveLanguagePreference = (contactId, lang) => {
+    try {
+      const prefs = getLanguagePreferences();
+      prefs[contactId] = {
+        targetLang: lang,
+        updatedAt: Date.now()
+      };
+      localStorage.setItem('jev_lang_pref_v1', JSON.stringify(prefs));
+    } catch (error) {
+      console.error('Failed to save language preference:', error);
+    }
+  };
+
+  // 启发式语言检测（备用方案）
+  const detectLanguageHeuristic = (text) => {
+    // 阿拉伯语检测
+    if (/[\u0600-\u06FF]/.test(text)) {
+      return 'ar';
+    }
+    // 日文检测（假名）
+    if (/[\u3040-\u30FF]/.test(text)) {
+      return 'ja';
+    }
+    // 韩文检测
+    if (/[\uAC00-\uD7AF]/.test(text)) {
+      return 'ko';
+    }
+    // 乌尔都语检测
+    if (/[\u0600-\u06FF]/.test(text)) {
+      return 'ur';
+    }
+    // 默认英语
+    return 'en';
+  };
+
+  // 语言检测函数
+  const detectMessageLanguage = async (text) => {
+    try {
+      const response = await fetch(`${WORKER_BASE}/api/translate/business`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text,
+          target: 'zh',
+          mode: 'detect_only'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // 检查多种可能的响应格式
+        const detectedLang = data.detected_lang || data.meta?.detected_lang;
+        if (detectedLang) {
+          // 映射到允许的语言列表
+          const allowedLangs = ['en', 'ar', 'ja', 'ko', 'ur'];
+          return allowedLangs.includes(detectedLang) ? detectedLang : 'en';
+        }
+      }
+    } catch (error) {
+      console.error('Language detection API failed, using heuristic:', error);
+    }
+    // 回退到启发式检测
+    return detectLanguageHeuristic(text);
+  };
+
+  // 5️⃣ 目标语言初始化逻辑 - 仅来自手动选择或localStorage
+  useEffect(() => {
+    if (!selectedCustomerId) {
+      setTargetLanguage('en');
+      return;
+    }
+
+    // 唯一来源：localStorage中该contactId的手动选择记录
+    const prefs = getLanguagePreferences();
+    const savedPref = prefs[selectedCustomerId];
+    if (savedPref?.targetLang) {
+      setTargetLanguage(savedPref.targetLang);
+    } else {
+      // 默认值，仅当无localStorage记录时使用
+      setTargetLanguage('en');
+    }
+  }, [selectedCustomerId]);
+
+  // 自动滚动到底部效果
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length]);
+  
+  // 发送翻译按钮倒计时逻辑
+  useEffect(() => {
+    if (sendCooldown > 0) {
+      const timer = setTimeout(() => {
+        setSendCooldown(sendCooldown - 1);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [sendCooldown]);
+  
+  // 保存临时客户列表到localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('tempCustomers', JSON.stringify(tempCustomers));
+    } catch (error) {
+      console.error('Failed to save temp customers to localStorage:', error);
+    }
+  }, [tempCustomers]);
+  
+  // 生成 AI 回复草稿（重点）
+  async function generateAIDraft(text) {
+    console.log('[AI] generateAIDraft CALLED with:', text);
+
+    try {
+      setIsGeneratingDraft(true);
+      
+      const res = await fetch(
+        `${WORKER_BASE}/api/ai/draft-reply`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        }
+      );
+
+      let draftText = "";
+      
+      if (!res.ok) {
+        const err = await res.text();
+        console.error('[AI] draft api error:', err);
+        draftText = "[AI Draft Failed]";
+      } else {
+        const json = await res.json();
+        if (!json?.success || !json?.data?.text) {
+          console.error('[AI] invalid draft response', json);
+          draftText = "[No draft]";
+        } else {
+          draftText = normalizeText(json.data.text);
+        }
+      }
+      
+      // 无条件调用setAiDraftText
+      console.log('[AI] setAiDraftText called with:', draftText);
+      setAiDraftText(draftText);
+      return draftText;
+    } catch (e) {
+      console.error('[AI] generateAIDraft ERROR:', e);
+      const errorText = "[AI Draft Error]";
+      console.log('[AI] setAiDraftText called with error:', errorText);
+      setAiDraftText(errorText);
+      return errorText;
+    } finally {
+      setIsGeneratingDraft(false);
+    }
+  };
+  
+  // 监听新消息，自动生成草稿（触发点）
+  // 根据aiReplyMode状态控制是否生成AI草稿
+  useEffect(() => {
+    if (aiReplyMode === 'off') return;
+    if (!messages || messages.length === 0) return;
+
+    const lastMessage = messages[messages.length - 1];
+    
+    // 明确只在客户消息时触发
+    console.log('[AI][TRIGGER]', {
+      type: lastMessage.type,
+      source: lastMessage.source,
+      content: lastMessage.content || lastMessage.text
+    });
+    
+    // 严格判断消息类型
+    const isCustomerMessage = lastMessage.type === 'customer' || lastMessage.role === 'customer';
+    if (!isCustomerMessage) return;
+
+    console.log('[AI] Mode:', aiReplyMode);
+
+    // 必须使用await并处理返回值
+    (async () => {
+      const draft = await generateAIDraft(lastMessage.content || lastMessage.text);
+      console.log('[AI] draft received and set:', draft);
+    })();
+  }, [messages, aiReplyMode]);
+  
+  // 翻译函数 - 固定翻译为中文，生成商务草稿
+  // 使用函数声明式定义，避免TDZ错误
+  function onTranslate(messageId, text) {
+    // 检查是否有翻译结果缓存（仅使用消息ID作为键，因为固定翻译为中文）
+    const cacheKey = `${messageId}`;
+    if (translationCache[cacheKey]) {
+      // 使用缓存结果
+      const cached = translationCache[cacheKey];
+      setTranslations(prev => ({
+        ...prev,
+        [messageId]: {
+          translation: cached.translation,
+          drafts: cached.drafts,
+          loading: false
+        }
+      }));
+      return;
+    }
+
+    // 更新翻译状态为加载中
+    setTranslations(prev => ({
+      ...prev,
+      [messageId]: {
+        ...prev[messageId],
+        loading: true
+      }
+    }));
+
+    // 方式 A（推荐）：使用 .catch() 软失败处理，不影响主流程
+    (async () => {
+      try {
+        // 调用商务翻译API
+        const response = await fetch(`${WORKER_BASE}/api/translate/business`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            text: text,
+            target: 'zh'
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const { translation, drafts } = data;
+
+          // 检查翻译结果是否为空
+          if (translation && translation.trim() !== '') {
+            // ✅ 更新翻译结果和草稿
+            setTranslations(prev => ({
+              ...prev,
+              [messageId]: {
+                translation: translation,
+                drafts: drafts || {},
+                loading: false
+              }
+            }));
+            
+            // ✅ 缓存翻译结果和草稿
+            setTranslationCache(prev => ({
+              ...prev,
+              [cacheKey]: {
+                translation: translation,
+                drafts: drafts || {}
+              }
+            }));
+          } else {
+            // 翻译结果为空，直接返回原文
+            console.warn('Business translation returned empty result, using original text');
+            setTranslations(prev => ({
+              ...prev,
+              [messageId]: {
+                ...prev[messageId],
+                translation: text,
+                loading: false
+              }
+            }));
+          }
+        } else {
+          // 翻译服务错误，直接返回原文
+          console.warn('Business translation service unavailable, using original text');
+          setTranslations(prev => ({
+            ...prev,
+            [messageId]: {
+              ...prev[messageId],
+              translation: text,
+              loading: false
+            }
+          }));
+        }
+      } catch (error) {
+        // 软失败处理：仅控制台警告，不影响发送状态
+        console.warn('Business translation failed:', error);
+        
+        // 翻译失败，直接返回原文
+        setTranslations(prev => ({
+          ...prev,
+          [messageId]: {
+            ...prev[messageId],
+            translation: text,
+            loading: false
+          }
+        }));
+      }
+    })();
+  }
+
+  // 监听新消息，自动翻译客户消息（触发点）
+  // 使用 useRef 保存上一次处理的消息数量，确保每条新消息都被翻译
+  const lastProcessedMessageCount = useRef(0);
+  
+  useEffect(() => {
+    if (!autoTranslateInbound) return;
+    if (!messages || messages.length === 0) return;
+    
+    // 只处理新添加的消息，避免重复翻译
+    const newMessages = messages.slice(lastProcessedMessageCount.current);
+    lastProcessedMessageCount.current = messages.length;
+    
+    // 遍历处理每条新消息
+    newMessages.forEach(message => {
+      // 只翻译客户消息，不翻译系统、AI或自己发送的消息
+      const isCustomerMessage = message.type === 'customer' || message.role === 'customer';
+      if (!isCustomerMessage) return;
+      
+      console.log('[AUTO-TRANSLATE][TRIGGER]', message);
+      
+      // 调用翻译函数
+      onTranslate(message.id, message.text || message.content);
+    });
+  }, [messages, autoTranslateInbound, onTranslate]);
+  
+
+
+  // 4️⃣ 所有逻辑判断写在 Hooks 之后
+  // 禁止返回 null，确保页面不空
+
+  // 从URL获取conversationId
+  const getConversationIdFromUrl = () => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('conversationId') || null;
+    } catch (error) {
+      console.error('Failed to parse URL params:', error);
+      return null;
+    }
+  };
+  
+  const handleSend = async () => {
+    // 1. 校验：确保有消息内容
+    if (!draftText.trim()) {
+      return;
+    }
+    
+    // 2. 校验：确保有选中的客户
+    if (!customer || !customer.id) {
+      console.error('ChatPanel: Cannot send message - no customer selected');
+      alert('请先选择客户');
+      return;
+    }
+    
+    // 3. 临时客户逻辑：检查是否缺少手机号
+    const contactId = customer.id; // 必须使用真实的客户ID
+    const isTempCustomer = tempCustomers[contactId] || false;
+    
+    if (!customer.phone && !isTempCustomer) {
+      // 首次发送，客户缺少手机号，弹窗确认
+      const confirmContinue = window.confirm(
+        '该客户缺少手机号，是否作为临时客户继续沟通？'
+      );
+      
+      if (confirmContinue) {
+        // 标记为临时客户
+        setTempCustomers(prev => ({
+          ...prev,
+          [contactId]: true
+        }));
+      } else {
+        // 用户取消，不发送消息
+        return;
+      }
+    }
+    
+    // 4. 准备消息内容
+    const displayText = draftText.trim();
+    let finalText = displayText;
+    let isTranslated = false;
+    
+    // 翻译逻辑处理 - 强制翻译，失败则阻止发送
+    if (enableTranslation && isChinese(displayText)) {
+      try {
+        console.log('Calling translation API for target language:', targetLanguage);
+        finalText = await translateBeforeSend(displayText, targetLanguage);
+        isTranslated = true;
+      } catch (err) {
+        console.error('Translation failed:', err);
+        message.error('翻译失败，消息未发送');
+        return;
+      }
+    }
+    
+    console.log('ChatPanel: Sending message to contactId:', contactId);
+    console.log('Original vs Translated:', { original: displayText, translated: finalText, isTranslated });
+    
+    // 4. 生成唯一的消息ID（使用时间戳+随机数，避免快速连续发送时ID重复）
+    const messageId = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    
+    // 5. 构建完整的消息结构（符合UI渲染要求）
+    const newMessage = {
+      id: messageId,
+      conversationId: contactId, // 使用contactId作为本地conversationId
+      type: 'agent',
+      from: 'me',
+      channel: 'whatsapp',
+      content: displayText, // 显示原中文
+      text: displayText, // 兼容渲染逻辑
+      actualSent: finalText, // 实际发送的翻译文本
+      translationFrom: isTranslated ? 'zh' : null,
+      translationTo: isTranslated ? targetLanguage : null,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      rawTimestamp: Date.now(),
+      status: 'sending' // 发送中状态
+    };
+    
+    // 6. 立即添加到消息列表，触发UI渲染
+    setMessages(prev => [...prev, newMessage]);
+    
+    // 7. 发送请求到Worker
+    try {
+      console.log('Daojie PIT API: Sending message', {
+        contactId,
+        messageText: finalText
+      });
+      
+      // 8. 调用正确的API端点 - 发送是否成功只取决于此请求
+      const response = await fetch(`${WORKER_BASE}/api/daojie/conversations/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contactId,
+          message: finalText
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Daojie PIT API: Message sent successfully', data);
+        
+        // 10. 更新本地消息状态为发送成功
+        setMessages(prev => {
+          const updatedMessages = prev.map(msg => {
+            if (msg.id === messageId) {
+              return {
+                ...msg,
+                status: 'sent',
+                messageId: data.messageId,
+                traceId: data.traceId
+              };
+            }
+            return msg;
+          });
+          
+          // 更新缓存
+          setChatCache(contactId, updatedMessages);
+          
+          return updatedMessages;
+        });
+        
+        // 11. 发送成功后清空草稿和翻译预览
+        setDraftText('');
+        setOutboundTranslation(null);
+        
+        // 12. 如果启用了发送翻译，设置 5 秒倒计时
+        if (enableTranslation) {
+          setSendCooldown(5);
+        }
+      } else {
+        // 12. 处理错误响应
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Daojie PIT API: Failed to send message', errorData);
+        
+        // 13. 更新本地消息状态为发送失败
+        setMessages(prev => {
+          const updatedMessages = prev.map(msg => {
+            if (msg.id === messageId) {
+              return {
+                ...msg,
+                status: 'failed'
+              };
+            }
+            return msg;
+          });
+          
+          // 更新缓存
+          setChatCache(contactId, updatedMessages);
+          
+          return updatedMessages;
+        });
+        
+        alert(`发送失败: ${errorData.message || errorData.error || '未知错误'}`);
+      }
+    } catch (error) {
+      console.error('Daojie PIT API: Error sending message', error);
+      
+      // 14. 更新本地消息状态为发送失败
+      setMessages(prev => {
+        const updatedMessages = prev.map(msg => {
+          if (msg.id === messageId) {
+            return {
+              ...msg,
+              status: 'failed'
+            };
+          }
+          return msg;
+        });
+        
+        // 更新缓存
+        setChatCache(contactId, updatedMessages);
+        
+        return updatedMessages;
+      });
+      
+      alert(`发送失败: ${error.message}`);
+    }
+  };
+
+
+
+  // 商务润色函数
+  const handlePostEdit = (tone) => {
+    if (!draftText.trim() || isPostEditing) return;
+    
+    setIsPostEditing(true);
+    
+    // 方式 A：使用非阻塞异步处理，不影响主流程
+    (async () => {
+      try {
+        // 调用商务翻译API获取润色结果
+        const response = await fetch(`${WORKER_BASE}/api/translate/business`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            text: draftText,
+            target: 'zh'
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const { drafts } = data;
+
+          // 根据选择的语气获取相应的润色结果
+          let revisedText = draftText;
+          if (drafts && drafts[tone]) {
+            revisedText = drafts[tone];
+          }
+
+          setDraftText(revisedText);
+        } else {
+          // 润色服务错误，软失败处理
+          console.warn('Business post-edit service unavailable');
+        }
+      } catch (error) {
+        // 软失败处理：仅控制台警告，不影响其他操作
+        console.warn('商务润色失败:', error);
+      } finally {
+        setIsPostEditing(false);
+      }
+    })();
+  };
+
+  // 我方回复翻译函数
+  const translateOutbound = async () => {
+    if (!draftText.trim() || isTranslatingOutbound) return;
+    
+    setIsTranslatingOutbound(true);
+    
+    try {
+      // 调用商务翻译API将中文翻译成目标语言
+      const response = await fetch(`${WORKER_BASE}/api/translate/business`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          text: draftText,
+          target: targetLang
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.translation) {
+          setOutboundTranslation(data.translation);
+        }
+      } else {
+        // 翻译服务错误，软失败处理
+        console.warn('Outbound translation service unavailable');
+      }
+    } catch (error) {
+      // 软失败处理：仅控制台警告，不影响其他操作
+      console.warn('Outbound translation failed:', error);
+    } finally {
+      setIsTranslatingOutbound(false);
+    }
+  };
+
+  // 清除翻译预览
+  const clearOutboundTranslation = () => {
+    setOutboundTranslation(null);
+  };
+
+  // 检测文本是否为中文
+  const isChinese = (text) => {
+    return /[\u4e00-\u9fa5]/.test(text);
+  };
+
+  // 文本规范化处理函数（重点）
+  const normalizeText = (text) => {
+    if (!text) return text;
+    return text
+      .replace(/\\n/g, '\n') // 处理 "\n" 
+      .replace(/\n{3,}/g, '\n\n') // 最多两行换行
+      .trim();
+  };
+
+  // UI级翻译调用函数
+  async function translateBeforeSend(text, targetLang) {
+    const res = await fetch(`${WORKER_BASE}/api/translate/business`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text,
+        target: targetLang
+      })
+    })
+
+    if (!res.ok) {
+      throw new Error('TRANSLATION_FAILED');
+    }
+
+    const data = await res.json();
+
+    if (!data?.translation) {
+      throw new Error('NO_TRANSLATED_TEXT');
+    }
+
+    return data.translation;
+  }
+
+  const renderMessage = (message) => {
+    const isAgent = message.type === 'agent';
+    const isSystem = message.type === 'system' || message.role === 'system';
+    const isCustomer = message.type === 'customer' || message.role === 'customer';
+    
+    // 获取当前消息的翻译状态
+    const translationInfo = translations[message.id] || {};
+    const { translation, loading } = translationInfo;
+    
+    // 生成客户头像内容
+    const getAvatarContent = () => {
+      if (!customer?.name) return 'CU';
+      return customer.name.charAt(0).toUpperCase();
+    };
+
+    // 根据客户ID生成独特的头像颜色
+    const getAvatarColor = () => {
+      // 预设颜色列表
+      const colors = ['#1890ff', '#52c41a', '#faad14', '#f5222d', '#722ed1', '#13c2c2', '#fa8c16', '#eb2f96'];
+      if (!customer?.id) return colors[0];
+      // 根据客户ID生成固定索引
+      const index = customer.id % colors.length;
+      return colors[index];
+    };
+
+    // 渲染翻译结果和商务草稿
+    const renderTranslation = () => {
+      if (!translation) return null;
+      
+      // 获取多版本回复草稿
+      const drafts = translationInfo.drafts || {};
+      
+      return (
+        <div className={styles.translated}>
+          <Text type="secondary" style={{ fontSize: '12px', marginBottom: 4, display: 'block' }}>翻译结果：</Text>
+          <Text>{normalizeText(translation)}</Text>
+          <div style={{ marginTop: 8, display: 'flex', justifyContent: 'flex-start', gap: 8, flexWrap: 'wrap' }}>
+            {drafts.formal && (
+              <Button 
+                key="formal"
+                size="small" 
+                type="link" 
+                onClick={() => setDraftText(normalizeText(drafts.formal))}
+                style={{ padding: '0 8px', fontSize: '12px' }}
+              >
+                【作为回复（正式）】
+              </Button>
+            )}
+            {drafts.short && (
+              <Button 
+                key="short"
+                size="small" 
+                type="link" 
+                onClick={() => setDraftText(normalizeText(drafts.short))}
+                style={{ padding: '0 8px', fontSize: '12px' }}
+              >
+                【作为回复（简短）】
+              </Button>
+            )}
+            {drafts.sales && (
+              <Button 
+                key="sales"
+                size="small" 
+                type="link" 
+                onClick={() => setDraftText(normalizeText(drafts.sales))}
+                style={{ padding: '0 8px', fontSize: '12px' }}
+              >
+                【作为回复（成交）】
+              </Button>
+            )}
+            {Object.keys(drafts).length === 0 && (
+              <Button 
+                size="small" 
+                type="link" 
+                onClick={() => setDraftText(normalizeText(translation))}
+                style={{ padding: '0 8px', fontSize: '12px' }}
+              >
+                【作为回复】
+              </Button>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    // 客户聊天气泡渲染
+    if (isCustomer) {
+      return (
+        <div 
+          key={message.id}
+          className={`${styles.message} ${styles.customerMessage}`}
+        >
+          <Avatar className={styles.avatar} style={{ backgroundColor: getAvatarColor() }}>
+            {getAvatarContent()}
+          </Avatar>
+          <div className={styles.messageContent}>
+            <div className={`${styles.messageBubble} ${styles.customerBubble}`}>
+              {/* 第一行：客户原文 */}
+              <Text className={styles.textRow}>{normalizeText(message.text || message.content)}</Text>
+              
+              {/* 第二行：自动翻译结果（仅当自动翻译开启且有翻译结果时显示） */}
+              {autoTranslateInbound && translation && (
+                <div style={{ marginTop: '4px' }}>
+                  <Text type="secondary" style={{ fontSize: '12px', color: '#999' }}>
+                    <span style={{ marginRight: '4px' }}>自动翻译：</span>{normalizeText(translation)}
+                  </Text>
+                </div>
+              )}
+            </div>
+            <div className={styles.tools} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              {/* 翻译按钮 - 固定翻译为中文 */}
+              <Button 
+                type="link" 
+                size="small" 
+                onClick={() => {
+                  onTranslate(message.id, message.text || message.content);
+                }} 
+                disabled={loading}
+                style={{ padding: '0 4px', fontSize: '12px' }}
+              >
+                {loading ? '翻译中...' : '翻译为中文'}
+              </Button>
+            </div>
+            {/* 保留原有翻译结果显示（用于手动翻译） */}
+            {!autoTranslateInbound && renderTranslation()}
+            <div className={styles.timeRow}>
+              <Text type="secondary" style={{ fontSize: '12px' }}>
+                {message.timestamp}
+              </Text>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // 系统消息渲染
+    if (isSystem) {
+      return (
+        <div 
+          key={message.id}
+          className={`${styles.message} ${styles.systemMessage}`}
+        >
+          <div className={styles.messageContent}>
+            <Text type="secondary" className={styles.systemLabel}>系统消息</Text>
+            <div className={`${styles.messageBubble} ${styles.systemBubble}`}>
+              <Text>{normalizeText(message.text || message.content)}</Text>
+            </div>
+            <Text type="secondary" className={styles.timestamp}>
+              {message.timestamp}
+            </Text>
+          </div>
+        </div>
+      );
+    }
+    
+    // 代理消息渲染
+    if (isAgent) {
+      return (
+        <div 
+          key={message.id}
+          className={`${styles.message} ${styles.agentMessage}`}
+        >
+          <Avatar className={styles.avatar}>
+            JD
+          </Avatar>
+          <div className={styles.messageContent}>
+            <div className={`${styles.messageBubble} ${styles.agentBubble}`}>
+              <Text>{normalizeText(message.text || message.content)}</Text>
+              {/* 显示实际发送的翻译文本（灰色小字） */}
+              {message.actualSent && message.actualSent !== message.text && (
+                <Text type="secondary" style={{ fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                  实际发送：{normalizeText(message.actualSent)}
+                </Text>
+              )}
+            </div>
+            <div className={styles.tools} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              {/* 翻译按钮 - 固定翻译为中文 */}
+              <Button 
+                type="link" 
+                size="small" 
+                onClick={() => {
+                  onTranslate(message.id, message.text || message.content);
+                }} 
+                disabled={loading}
+                style={{ padding: '0 4px', fontSize: '12px' }}
+              >
+                {loading ? '翻译中...' : '翻译为中文'}
+              </Button>
+            </div>
+            {renderTranslation()}
+            <Text type="secondary" className={styles.timestamp}>
+              {message.timestamp}
+            </Text>
+          </div>
+        </div>
+      );
+    }
+    
+    // 默认消息渲染
+    return (
+      <div 
+        key={message.id}
+        className={`${styles.message}`}
+      >
+        <div className={styles.messageContent}>
+            <div className={`${styles.messageBubble}`}>
+              <Text>{normalizeText(message.text || message.content)}</Text>
+            </div>
+          <div className={styles.tools}>
+            <Button 
+              type="link" 
+              size="small" 
+              onClick={() => onTranslate(message.id, message.text || message.content)} 
+              disabled={loading}
+              style={{ padding: '0 4px', fontSize: '12px' }}
+            >
+              {loading ? '翻译中...' : '翻译为中文'}
+            </Button>
+          </div>
+          {renderTranslation()}
+          <Text type="secondary" className={styles.timestamp}>
+            {message.timestamp}
+          </Text>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative' }}>
+      <Card 
+        className={styles.chatPanel} 
+        styles={{ 
+          body: { 
+            padding: 0, 
+            height: '100%', 
+            display: 'flex', 
+            flexDirection: 'column',
+            overflow: 'hidden'
+          } 
+        }} 
+        variant="borderless"
+      >
+        {/* 连接状态提示 */}
+        {!wsReady && (
+          <div style={{ padding: '8px', backgroundColor: '#f0f2f5', textAlign: 'center', fontSize: '12px', color: '#999', flexShrink: 0 }}>
+            连接中...
+          </div>
+        )}
+        
+
+        
+        {/* 客户消息自动翻译开关 */}
+        <div style={{ padding: '8px 16px', backgroundColor: '#fafafa', borderBottom: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '14px', color: '#666' }}>📝 客户消息自动翻译</span>
+          </div>
+          <Switch 
+            checked={autoTranslateInbound} 
+            onChange={setAutoTranslateInbound} 
+            size="small"
+          />
+        </div>
+        
+        {/* 主内容区：聊天 */}
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          {/* 聊天列表 */}
+          <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+            <List
+              dataSource={messages}
+              renderItem={renderMessage}
+              className={styles.messageList}
+              style={{ padding: 'var(--spacing-md)', minHeight: '100%' }}
+              pagination={false}
+              locale={{
+                emptyText: (
+                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#999' }}>
+                    <div style={{ fontSize: '16px', marginBottom: '8px' }}>
+                      {!wsReady ? '正在连接到服务器...' : '暂无聊天记录'}
+                    </div>
+                    <div style={{ fontSize: '12px' }}>
+                      {wsReady && '开始与客户聊天吧'}
+                    </div>
+                  </div>
+                )
+              }}
+            />
+            {/* 用于自动滚动到底部的元素 */}
+            <div ref={endRef} style={{ height: '1px' }} />
+          </div>
+        </div>
+        
+        {/* 确保输入区域始终显示 */}
+        <div style={{ padding: '12px', borderTop: '1px solid #f0f0f0', flexShrink: 0 }}>
+          {/* 翻译控制区 */}
+          <div style={{ marginBottom: '12px', display: 'flex', gap: '24px', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px dashed #f0f0f0' }}>
+            {/* 发送翻译开关 */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Text style={{ fontSize: '14px' }}>启用发送翻译:</Text>
+              <Switch 
+                checked={enableTranslation} 
+                onChange={setEnableTranslation} 
+              />
+            </div>
+            
+            {/* 目标语言选择 */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Text style={{ fontSize: '14px' }}>目标语言:</Text>
+                <Select
+                  value={targetLanguage}
+                  onChange={(newLang) => {
+                    setTargetLanguage(newLang);
+                    if (selectedCustomerId) {
+                      saveLanguagePreference(selectedCustomerId, newLang);
+                    }
+                  }}
+                  style={{ width: 160 }}
+                  size="middle"
+                >
+                  {languageOptions.map(option => (
+                    <Option key={option.value} value={option.value}>
+                      {option.label} ({option.value})
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+          </div>
+          
+          {/* 商务润色按钮组 */}
+          <div style={{ marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <Text type="secondary" style={{ fontSize: '12px', marginRight: '4px' }}>商务润色：</Text>
+            <Button 
+              size="small" 
+              type={isPostEditing ? 'default' : 'link'}
+              onClick={() => handlePostEdit('polite')}
+              disabled={isPostEditing || !draftText.trim()}
+              style={{ fontSize: '12px', padding: '0 8px' }}
+            >
+              {isPostEditing ? '润色中...' : 'Polite'}
+            </Button>
+            <Button 
+              size="small" 
+              type={isPostEditing ? 'default' : 'link'}
+              onClick={() => handlePostEdit('professional')}
+              disabled={isPostEditing || !draftText.trim()}
+              style={{ fontSize: '12px', padding: '0 8px' }}
+            >
+              {isPostEditing ? '润色中...' : 'Professional'}
+            </Button>
+            <Button 
+              size="small" 
+              type={isPostEditing ? 'default' : 'link'}
+              onClick={() => handlePostEdit('sales')}
+              disabled={isPostEditing || !draftText.trim()}
+              style={{ fontSize: '12px', padding: '0 8px' }}
+            >
+              {isPostEditing ? '润色中...' : 'Sales'}
+            </Button>
+          </div>
+          
+          {/* 输入区域 */}
+          <div style={{ marginBottom: '12px' }}>
+            <TextArea
+              placeholder={!wsReady ? '连接中，暂时无法发送消息...' : '输入消息...'}
+              value={draftText}
+              onChange={(e) => {
+                setDraftText(e.target.value);
+                // 输入变化时清除翻译预览
+                if (outboundTranslation) {
+                  setOutboundTranslation(null);
+                }
+              }}
+              onPressEnter={handleSend}
+              autoSize={{ minRows: 3, maxRows: 8 }}
+              style={{ flex: 1, minHeight: '80px', marginBottom: '8px' }}
+              disabled={!wsReady}
+            />
+            
+            {/* 翻译预览气泡（仅显示手动触发的翻译） */}
+            {outboundTranslation && (
+              <div style={{ 
+                backgroundColor: '#f0f2f5', 
+                padding: '12px', 
+                borderRadius: '8px', 
+                marginBottom: '8px',
+                position: 'relative',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word'
+              }}>
+                <Text type="secondary" style={{ fontSize: '12px', marginBottom: '4px', display: 'block' }}>
+                  翻译预览：
+                </Text>
+                <Text style={{ fontSize: '14px' }}>{normalizeText(outboundTranslation)}</Text>
+                {/* 清除按钮 */}
+                <Button 
+                  type="link" 
+                  size="small" 
+                  onClick={clearOutboundTranslation}
+                  style={{ position: 'absolute', top: '8px', right: '8px', padding: '0 4px', fontSize: '12px' }}
+                >
+                  清除
+                </Button>
+              </div>
+            )}
+            
+            {/* 发送按钮区域 */}
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
+              {/* 翻译提示 */}
+              {enableTranslation && (
+                <div style={{ fontSize: '12px', color: '#666' }}>
+                  将以 {targetLanguage.toUpperCase()} 发送给客户
+                </div>
+              )}
+              <Button 
+                type="primary" 
+                onClick={handleSend}
+                disabled={!wsReady || !draftText.trim() || sendCooldown > 0}
+                style={{ height: '32px', padding: '0 16px' }}
+              >
+                {sendCooldown > 0 ? `发送(${sendCooldown}s)` : '发送'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+export default ChatPanel;

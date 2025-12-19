@@ -1,0 +1,40 @@
+{
+  "verified_routes": [
+    {
+      "method": "POST",
+      "path": "/api/daojie/conversations/messages",
+      "status": "verified"
+    },
+    {
+      "method": "GET",
+      "path": "/api/status",
+      "status": "verified"
+    },
+    {
+      "method": "POST",
+      "path": "/api/translate",
+      "status": "verified"
+    },
+    {
+      "method": "POST",
+      "path": "/api/translate/business",
+      "status": "verified"
+    },
+    {
+      "method": "GET",
+      "path": "/ws/daojie",
+      "status": "verified"
+    },
+    {
+      "method": "POST",
+      "path": "/api/inbound/daojie",
+      "status": "verified"
+    },
+    {
+      "method": "GET",
+      "path": "/api/daojie/customers",
+      "status": "verified"
+    }
+  ],
+  "ui_invalid_calls": []
+}

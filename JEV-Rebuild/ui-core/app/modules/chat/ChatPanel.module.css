@@ -1,0 +1,206 @@
+.chatPanel {
+  height: 100%;
+  border-radius: var(--border-radius-md);
+}
+
+.chatHeader {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+}
+
+.messageList {
+  background-color: var(--bg-secondary);
+  min-height: 0; /* 确保在 flex 容器中正确收缩 */
+  display: flex;
+  flex-direction: column;
+  /* 确保消息列表占据最大的可用空间 */
+  height: 100%;
+}
+
+.message {
+  display: flex;
+  margin-bottom: var(--spacing-lg);
+  align-items: flex-start;
+}
+
+.agentMessage {
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+
+.systemMessage {
+  justify-content: center;
+  margin: var(--spacing-md) 0;
+}
+
+.avatar {
+  margin: 0 var(--spacing-xs);
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  font-size: var(--font-size-sm);
+}
+
+.messageContent {
+  max-width: 85%;
+  display: flex;
+  flex-direction: column;
+}
+
+.systemMessage .messageContent {
+  max-width: 100%;
+  align-items: center;
+}
+
+.agentMessage .messageContent {
+  align-items: flex-end;
+}
+
+.systemLabel {
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.messageBubble {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: var(--font-size-md);
+  line-height: 1.8;
+}
+
+.agentBubble {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.agentBubble .ant-typography {
+  color: white;
+}
+
+.systemBubble {
+  background-color: var(--bg-tertiary);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  box-shadow: none;
+}
+
+.timestamp {
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-xs);
+  padding: 0 var(--spacing-xs);
+}
+
+.semanticArea {
+  padding: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.semanticLabel {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.functionArea {
+  padding: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.switchItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.switchItem span {
+  color: var(--text-secondary);
+}
+
+.inputArea {
+  padding: var(--spacing-sm);
+  background-color: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  gap: var(--spacing-sm);
+  /* 允许输入框充分利用空间 */
+  align-items: stretch;
+  /* 增大输入区域的最小高度 */
+  min-height: 120px;
+  /* 确保输入区域不会被压缩 */
+  flex-shrink: 0;
+}
+
+.inputArea .ant-input-affix-wrapper {
+  flex: 1;
+  border-radius: var(--border-radius-md);
+}
+
+.sendButton {
+  border-radius: var(--border-radius-md);
+  height: auto;
+  align-self: flex-end;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Daojie 消息规范化样式 */
+.daojieMessage {
+  align-items: flex-start;
+}
+
+.sourceRow {
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+}
+
+.daojieBubble {
+  background-color: #fafafa;
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+}
+
+.textRow {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.timeRow {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+/* 翻译相关样式 */
+.tools {
+  margin-top: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+}
+
+.translated {
+  margin-top: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: #f5f7fa;
+  border-left: 3px solid #1677ff;
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-xs);
+}

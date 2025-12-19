@@ -1,0 +1,204 @@
+.customerInfoPanel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-left: 1px solid #f0f0f0;
+}
+
+.customerHeaderCard {
+  margin-bottom: 16px;
+  border-radius: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.avatar {
+  background-color: #1890ff;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.customerName {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.tabs {
+  flex: 1;
+  overflow: auto;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #999;
+}
+
+.emptyState h3 {
+  margin: 0 0 8px 0;
+  color: #666;
+}
+
+.emptyState p {
+  margin: 0 0 16px 0;
+}
+
+.emptyCard {
+  margin-top: 16px;
+  border: 1px dashed #d9d9d9;
+  background-color: #fafafa;
+}
+
+.descriptions {
+  margin-top: 16px;
+}
+
+.tabs .ant-tabs-content {
+  padding: 16px;
+}
+
+.tabs .ant-tabs-nav {
+  padding: 0 16px;
+}
+
+/* 聊天记录样式 */
+.historyContent {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.chatItem {
+  padding: 8px 0;
+}
+
+.messageBubble {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.customerMessage {
+  background-color: #e6f7ff;
+  margin-left: auto;
+  border-bottom-right-radius: 2px;
+}
+
+.agentMessage {
+  background-color: #f0f0f0;
+  margin-right: auto;
+  border-bottom-left-radius: 2px;
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.messageTime {
+  color: #999;
+  font-size: 11px;
+}
+
+.messageContent {
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+/* 备注卡片样式 */
+.noteCard {
+  margin-bottom: 16px;
+  transition: all 0.3s;
+}
+
+.noteCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.noteHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.noteTitle {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.noteContent {
+  margin-bottom: 8px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.noteFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #999;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* 模态框样式 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modalContent h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .customerInfoPanel {
+    border-left: none;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .messageBubble {
+    max-width: 85%;
+  }
+  
+  .modalContent {
+    width: 95%;
+    padding: 16px;
+  }
+}

@@ -1,0 +1,567 @@
+import { DaojieStreamDO } from './durable/DaojieStreamDO.js';
+import { ChatHistoryDO } from './durable/ChatHistoryDO.js';
+import { handleDaojie, replyToCustomer, getCustomers } from './routes/daojie.js';
+import { handleStatus } from './routes/status.js';
+
+export { DaojieStreamDO, ChatHistoryDO };
+
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+
+    // ===== 1️⃣ CORS 头（统一）=====
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Max-Age": "86400",
+    };
+
+    // ===== 2️⃣ 最高优先级处理 OPTIONS（关键）=====
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: corsHeaders,
+      });
+    }
+
+    // ===== 3️⃣ AI 草稿生成接口 =====
+    if (request.method === "POST" && url.pathname === "/api/ai/draft-reply") {
+      console.log("[ROUTE HIT] /api/ai/draft-reply");
+      return handleAIDraftReply(request, env);
+    }
+
+    // ===== 4️⃣ 翻译接口 =====
+    if (request.method === "POST" && url.pathname === "/api/translate") {
+      try {
+        const body = await request.json();
+        const { text, target = "zh" } = body || {};
+
+        if (!text) {
+          return new Response(
+            JSON.stringify({ error: "Missing text" }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        // 检查API密钥是否配置
+        if (!env.DEEPSEEK_API_KEY) {
+          return new Response(
+            JSON.stringify({ error: "Translation service not configured" }),
+            { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        // 🔐 DeepSeek API
+        const resp = await fetch("https://api.deepseek.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${env.DEEPSEEK_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [
+              {
+                role: "system",
+                content: `Translate the following text into ${target}. Only return the translated result.`,
+              },
+              {
+                role: "user",
+                content: text,
+              },
+            ],
+            temperature: 0,
+          }),
+        });
+
+        // 处理外部API鉴权失败
+        if (resp.status === 401 || resp.status === 403) {
+          return new Response(
+            JSON.stringify({ error: "Translation service authentication failed" }),
+            { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        // 处理其他外部API错误
+        if (!resp.ok) {
+          return new Response(
+            JSON.stringify({ error: "Translation service unavailable" }),
+            { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        const data = await resp.json();
+        const translated = data?.choices?.[0]?.message?.content || "";
+
+        // 处理成功但空结果的情况
+        if (!translated.trim()) {
+          return new Response(
+            JSON.stringify({ error: "Translation result is empty" }),
+            { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        return new Response(
+          JSON.stringify({ translation: translated }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      } catch (err) {
+        return new Response(
+          JSON.stringify({ error: "Translation service error" }),
+          {
+            status: 502,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+    }
+
+    // ===== 5️⃣ 商务翻译 + 草稿生成接口 =====
+    if (request.method === "POST" && url.pathname === "/api/translate/business") {
+      try {
+        console.log('=== Translate Business: Entering handler ===');
+        
+        // 1. 读取并解析请求体
+        const rawBody = await request.text();
+        console.log('Translate Business: Raw request body:', rawBody);
+        
+        const body = JSON.parse(rawBody);
+        const { text, target = "zh" } = body || {};
+        console.log('Translate Business: Parsed request body:', { text: text ? `${text.substring(0, 50)}...` : text, target });
+
+        if (!text) {
+          console.log('Translate Business: Missing text parameter, returning 400');
+          return new Response(
+            JSON.stringify({ error: "Missing text" }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        // 2. 检查API密钥
+        const apiKey = env.DEEPSEEK_API_KEY;
+        console.log('Translate Business: API Key configured:', !!apiKey);
+        
+        if (!apiKey) {
+          console.error('Translate Business: API Key not configured, returning 502');
+          return new Response(
+            JSON.stringify({ error: "Translation service not configured" }),
+            { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        // 🔐 DeepSeek API - 翻译
+        const translationUrl = "https://api.deepseek.com/v1/chat/completions";
+        console.log('Translate Business: Calling DeepSeek API for translation:', translationUrl);
+        
+        const translationResp = await fetch(translationUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [
+              {
+                role: "system",
+                content: `Translate the following text into ${target}. Only return the translated result.`,
+              },
+              {
+                role: "user",
+                content: text,
+              },
+            ],
+            temperature: 0,
+          }),
+        });
+
+        console.log('Translate Business: Translation API response status:', translationResp.status);
+        
+        // 处理外部API鉴权失败
+        if (translationResp.status === 401 || translationResp.status === 403) {
+          console.error('Translate Business: Translation API authentication failed');
+          return new Response(
+            JSON.stringify({ error: "Translation service authentication failed" }),
+            { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        
+        // 处理其他外部API错误
+        if (!translationResp.ok) {
+          console.error('Translate Business: Translation API error, status:', translationResp.status);
+          return new Response(
+            JSON.stringify({ error: "Translation service unavailable" }),
+            { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        
+        const translationData = await translationResp.json();
+        // 日志降级：不打印完整响应体，仅提取必要信息
+        if (translationData?.traceId) {
+          console.log('Translate Business: Translation API traceId:', translationData.traceId);
+        }
+        
+        const translation = translationData?.choices?.[0]?.message?.content || "";
+        
+        // 处理成功但空结果的情况
+        if (!translation.trim()) {
+          console.error('Translate Business: Empty translation result');
+          return new Response(
+            JSON.stringify({ error: "Translation result is empty" }),
+            { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        
+        console.log('Translate Business: Extracted translation:', translation);
+
+        // 🔐 DeepSeek API - 生成商务回复草稿
+        console.log('Translate Business: Calling DeepSeek API for drafts:', translationUrl);
+        
+        const draftsResp = await fetch(translationUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [
+              {
+                role: "system",
+                content: `You are a professional business assistant. Based on the following customer message translation, generate three different business reply drafts:
+                1. formal: A formal and polite business response
+                2. short: A concise and direct response
+                3. sales: A response that focuses on closing the deal
+                Return only a valid JSON object with these three keys, no other text.`,
+              },
+              {
+                role: "user",
+                content: translation,
+              },
+            ],
+            temperature: 0.7,
+          }),
+        });
+
+        console.log('Translate Business: Drafts API response status:', draftsResp.status);
+        
+        // 处理草稿API错误
+        if (!draftsResp.ok) {
+          console.error('Translate Business: Drafts API error, status:', draftsResp.status);
+          return new Response(
+            JSON.stringify({ error: "Translation service unavailable" }),
+            { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        
+        const draftsData = await draftsResp.json();
+        // 日志降级：不打印完整响应体，仅提取必要信息
+        if (draftsData?.traceId) {
+          console.log('Translate Business: Drafts API traceId:', draftsData.traceId);
+        }
+        
+        const draftsContent = draftsData?.choices?.[0]?.message?.content || "{}";
+        console.log('Translate Business: Drafts content:', draftsContent);
+        
+        const drafts = JSON.parse(draftsContent);
+        console.log('Translate Business: Parsed drafts:', drafts);
+
+        // 返回结果
+        console.log('Translate Business: Returning successful response');
+        return new Response(
+          JSON.stringify({
+            translation: translation,
+            drafts: drafts
+          }),
+          {
+            status: 200,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      } catch (err) {
+        console.error('Translate Business: Error - Line:', err.lineNumber || err.stack.split('\n')[1]);
+        console.error('Translate Business: Error details:', {
+          message: err.message,
+          name: err.name,
+          stack: err.stack
+        });
+        
+        return new Response(
+          JSON.stringify({ error: "Translation service error" }),
+          {
+            status: 502,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+    }
+
+    // ===== 4️⃣ 其他路由 =====
+    // WebSocket处理
+    if (url.pathname === '/ws/daojie') {
+      console.log(`WebSocket connection request`);
+      const id = env.DAOJIE_STREAM.idFromName('global');
+      const stub = env.DAOJIE_STREAM.get(id);
+      return stub.fetch(request);
+    }
+
+    // Daojie webhook
+    if (url.pathname === '/api/inbound/daojie') {
+      console.log(`Daojie webhook received`);
+      return handleDaojie(request, env);
+    }
+
+    // Status check
+    if (url.pathname === '/api/status') {
+      console.log(`Status check requested`);
+      const response = await handleStatus();
+      // 添加CORS头
+      const headers = new Headers(response.headers);
+      Object.entries(corsHeaders).forEach(([key, value]) => {
+        headers.set(key, value);
+      });
+      return new Response(response.body, {
+        status: response.status,
+        headers: headers
+      });
+    }
+
+    // Daojie API: 获取客户列表（仅用于展示）
+    if (url.pathname === '/api/daojie/customers' && request.method === 'GET') {
+      console.log(`Get customers requested`);
+      const response = await getCustomers(request, env);
+      // 添加CORS头
+      const headers = new Headers(response.headers);
+      Object.entries(corsHeaders).forEach(([key, value]) => {
+        headers.set(key, value);
+      });
+      return new Response(response.body, {
+        status: response.status,
+        headers: headers
+      });
+    }
+
+    // Daojie API: 回复客户（唯一正确路径 - 生产级）
+    if (url.pathname === '/api/daojie/conversations/messages' && request.method === 'POST') {
+      console.log(`Reply to customer requested (production path)`);
+      const response = await replyToCustomer(request, env);
+      // 添加CORS头
+      const headers = new Headers(response.headers);
+      Object.entries(corsHeaders).forEach(([key, value]) => {
+        headers.set(key, value);
+      });
+      return new Response(response.body, {
+        status: response.status,
+        headers: headers
+      });
+    }
+
+    // Daojie API: 获取历史消息
+    if (url.pathname === '/api/daojie/history' && request.method === 'GET') {
+      console.log(`Get history messages requested`);
+      
+      try {
+        // 从query读取contactId和limit
+        const contactId = url.searchParams.get('contactId');
+        const limit = parseInt(url.searchParams.get('limit')) || 20;
+        
+        if (!contactId) {
+          return new Response(
+            JSON.stringify({ error: 'missing_contactId' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        
+        // ✅ 从ChatHistoryDO读取历史消息
+        const chatId = env.CHAT_HISTORY.idFromName(contactId);
+        const chatStub = env.CHAT_HISTORY.get(chatId);
+        
+        const historyResponse = await chatStub.fetch(`https://do/list?limit=${limit}`, {
+          method: 'GET'
+        });
+        
+        const messages = await historyResponse.json();
+        
+        // 转换为UI期望的格式
+        const formattedMessages = messages.map(msg => ({
+          id: msg.id,
+          conversationId: msg.contactId,
+          type: msg.role === 'agent' ? 'agent' : 'customer',
+          from: msg.role === 'agent' ? 'me' : 'customer',
+          channel: 'whatsapp',
+          content: msg.text,
+          text: msg.text,
+          timestamp: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          rawTimestamp: msg.timestamp,
+          status: 'sent'
+        }));
+        
+        // 按timestamp升序返回
+        return new Response(
+          JSON.stringify(formattedMessages),
+          {
+            status: 200,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+      } catch (error) {
+        console.error('Error fetching history messages:', error);
+        // 返回空数组而非500错误
+        return new Response(
+          JSON.stringify([]),
+          {
+            status: 200,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+      }
+    }
+
+    // ===== 5️⃣ 兜底 404（也必须带 CORS）=====
+    return new Response("Not Found", {
+      status: 404,
+      headers: corsHeaders,
+    });
+  },
+};
+
+// 语言检测函数实现
+async function detectLanguage(env, text) {
+  // 使用简单的字符集和正则判断进行语言检测
+  const trimmedText = text.trim();
+  if (!trimmedText) return 'unknown';
+
+  // 检测中文
+  if (/[\u4e00-\u9fa5]/.test(trimmedText)) {
+    return 'zh';
+  }
+
+  // 检测日文（平假名、片假名）
+  if (/[\u3040-\u309f\u30a0-\u30ff]/.test(trimmedText)) {
+    return 'jp';
+  }
+
+  // 检测德文（包含变音符号）
+  if (/[äöüÄÖÜß]/.test(trimmedText)) {
+    return 'de';
+  }
+
+  // 检测英文（主要是 ASCII 字母，排除其他语言特征）
+  if (/^[a-zA-Z0-9\s\.,!?'"-]+$/.test(trimmedText)) {
+    return 'en';
+  }
+
+  // 默认返回 unknown
+  return 'unknown';
+}
+
+// 翻译函数实现 - 调用 DeepSeek API
+async function translateText(env, text, target = 'zh') {
+  try {
+    // 检查API密钥
+    const apiKey = env.DEEPSEEK_API_KEY;
+    if (!apiKey) {
+      console.error('Translation API key not configured');
+      return text; // 翻译服务不可用时返回原文
+    }
+
+    // 调用 DeepSeek API
+    const translationUrl = "https://api.deepseek.com/v1/chat/completions";
+    const response = await fetch(translationUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        messages: [
+          {
+            role: "system",
+            content: `Translate the following text into ${target}. Only return the translated result.`,
+          },
+          {
+            role: "user",
+            content: text,
+          },
+        ],
+        temperature: 0,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(`Translation API error: ${response.status}`);
+      return text; // 翻译失败时返回原文
+    }
+
+    const data = await response.json();
+    const translation = data?.choices?.[0]?.message?.content || "";
+    return translation.trim() || text; // 空翻译结果返回原文
+  } catch (error) {
+    console.error(`Translation error: ${error.message}`);
+    return text; // 异常时返回原文
+  }
+}
+
+// AI 草稿生成处理函数
+async function handleAIDraftReply(request, env) {
+  console.log('[AI] draft-reply called');
+
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
+  };
+
+  try {
+    const body = await request.json();
+    const text = body?.text || '';
+
+    if (!text) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'empty text' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+
+    // 先用 stub 返回固定内容，不调用真实的 LLM
+    const draft = `Thanks for your inquiry. We will check the details and get back to you shortly.`;
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        data: {
+          text: draft,
+          lang: 'en'
+        }
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  } catch (error) {
+    console.error('[AI] draft-reply error:', error);
+    return new Response(
+      JSON.stringify({ success: false, error: 'internal error' }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  }
+}

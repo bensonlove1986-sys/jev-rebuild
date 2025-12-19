@@ -1,0 +1,76 @@
+.workspace {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 2px 0;
+  height: auto;
+  min-height: 42px;
+  z-index: 100;
+}
+
+.mainLayout {
+  flex: 1;
+  overflow: hidden;
+}
+
+.leftSider {
+  background-color: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  height: 100%;
+  pointer-events: auto !important;
+  z-index: 9999;
+}
+
+.content {
+  background-color: var(--bg-primary);
+  padding: 0;
+  overflow: auto;
+  height: 100%;
+}
+
+.rightSider {
+  background-color: var(--bg-primary);
+  border-left: 1px solid var(--border-color);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.tabs {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs :deep(.ant-tabs-nav-wrap) {
+  /* 移除ant-tabs-nav-wrap的包装效果，使其不再影响布局 */
+  overflow: visible !important;
+  transform: none !important;
+  width: auto !important;
+  position: static !important;
+}
+
+.tabs :deep(.ant-tabs-nav-list) {
+  /* 调整标签页列表样式，确保正常显示 */
+  transform: none !important;
+}
+
+.tabs :deep(.ant-tabs-ink-bar) {
+  /* 确保墨水条正常显示 */
+  transform: translateX(-50%) !important;
+}
+
+.tabs .ant-tabs-content {
+  flex: 1;
+  overflow: auto;
+}
+
+.tabs .ant-tabs-tabpane {
+  padding: var(--spacing-md);
+  height: 100%;
+  overflow: auto;
+}

@@ -1,0 +1,9 @@
+{
+  "apiKeyValid": true,
+  "apiKeyScope": "Location",
+  "correctApiBase": "https://services.leadconnectorhq.com",
+  "correctEndpoint": "/conversations",
+  "rootCause": "PATH",
+  "fixRequired": true,
+  "canFetchConversations": false
+}

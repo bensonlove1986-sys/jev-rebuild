@@ -1,0 +1,28 @@
+{
+  "allowed_routes": [
+    {
+      "method": "POST",
+      "path": "/api/daojie/conversations/messages"
+    },
+    {
+      "method": "GET",
+      "path": "/api/status"
+    },
+    {
+      "method": "GET",
+      "path": "/ws/daojie"
+    },
+    {
+      "method": "POST",
+      "path": "/api/inbound/daojie"
+    },
+    {
+      "method": "POST",
+      "path": "/api/translate"
+    },
+    {
+      "method": "POST",
+      "path": "/api/translate/business"
+    }
+  ]
+}

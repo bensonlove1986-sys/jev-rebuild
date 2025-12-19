@@ -1,0 +1,127 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-md);
+  height: 100%;
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-xs);
+  font-family: var(--font-family);
+}
+
+.leftSection {
+  flex: 0 0 auto;
+}
+
+.logo {
+  margin: 0;
+  display: block;
+  object-fit: contain;
+}
+
+.middleSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.customerInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.customerName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.customerCountry {
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.encouragementBox {
+  background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+  color: #006064;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  line-height: 1.3;
+  font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+  font-weight: 600;
+  border: 1px solid #4dd0e1;
+  box-shadow: 0 1px 4px rgba(0, 188, 212, 0.2);
+  white-space: nowrap;
+  animation: glow 3s ease-in-out infinite alternate;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 1px 3px rgba(0, 188, 212, 0.15);
+  }
+  to {
+    box-shadow: 0 2px 6px rgba(0, 188, 212, 0.25);
+  }
+}
+
+.encouragementBox:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 2px 6px rgba(0, 188, 212, 0.3);
+  background: linear-gradient(135deg, #80deea 0%, #e0f7fa 100%);
+  border-color: #00bcd4;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.statusInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusInfo .ant-tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  line-height: 1.2;
+}
+
+.rightSection {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rightSection .ant-tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  line-height: 1.2;
+}
+
+.rightSection .ant-btn {
+  font-size: 11px;
+  padding: 2px 8px;
+  line-height: 1.2;
+}
+
+.rightSection .ant-avatar {
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 12px;
+}

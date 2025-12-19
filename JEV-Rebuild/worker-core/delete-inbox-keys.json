@@ -1,0 +1,6 @@
+[
+  {
+    "type": "delete",
+    "prefix": "inbox:"
+  }
+]
