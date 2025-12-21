@@ -3,6 +3,7 @@
  * DO NOT refactor customer selection logic in this version
  */
 import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { fetchJsonSafe } from '../utils/fetchSafe.js';
 import { Layout, Tabs, Badge, Tag, Button, Space, Drawer } from 'antd';
 import Topbar from '../components/Topbar';
 import CrmPanel from '../modules/crm/CrmPanel';
@@ -11,12 +12,11 @@ import ChatPanel from '../modules/chat/ChatPanel';
 import OrdersPanel from '../modules/orders/OrdersPanel';
 import ProductLibrary from '../modules/products/ProductLibrary';
 import BrowserPanel from '../modules/browser/BrowserPanel';
-import { WORKER_BASE } from '../config/constants.js';
 import styles from './WorkspaceLayout.module.css';
 
 const { Header, Sider, Content } = Layout;
 
-// 标准化customer_id的函数
+// 标准化customer_id的函数 - 与后端normalizeUserId保持一致
 const canonicalCustomerId = (id) => {
   return String(id || '')
     .trim()
@@ -72,8 +72,6 @@ const WorkspaceLayout = () => {
     
     const normalizedId = canonicalCustomerId(customerId);
     setActiveCustomerId(normalizedId);
-    console.log("[ACTIVE_CUSTOMER]", normalizedId);
-    console.log("[ACTIVE_CUSTOMER_CHANGED]", normalizedId);
     try {
       localStorage.setItem('jev_selected_customer_id', normalizedId);
     } catch (error) {
@@ -83,17 +81,14 @@ const WorkspaceLayout = () => {
   
   // AI 草稿操作回调函数
   const handleAdoptAiDraft = (draftText) => {
-    console.log('[AI] Adopting draft:', draftText);
     setChatDraftText(draftText);
   };
   
   const handleRegenerateAiDraft = () => {
-    console.log('[AI] Regenerating draft');
     setAiDraftText('');
   };
   
   const handleIgnoreAiDraft = () => {
-    console.log('[AI] Ignoring draft');
     setAiDraftText('');
   };
   
@@ -111,7 +106,7 @@ const WorkspaceLayout = () => {
   // 添加/更新客户方法（upsert）
   const upsertCustomer = (customerData) => {
     if (window.__UI_FREEZE__) {
-      console.log('[UI_BLOCKED]');
+
       return;
     }
     
@@ -158,7 +153,7 @@ const WorkspaceLayout = () => {
         const updated = new Set(prev);
         if (!updated.has(customerData.id)) {
           updated.add(customerData.id);
-          console.log('[UI][NEW_SESSION_DETECTED] customerId=' + customerData.id);
+
         }
         return updated;
       });
@@ -176,11 +171,11 @@ const WorkspaceLayout = () => {
   // 处理 Daojie 消息
   const onDaojieMessage = (message) => {
     if (window.__UI_FREEZE__) {
-      console.log('[UI_BLOCKED]');
+
       return;
     }
     
-    console.log('[Daojie Message] received:', message);
+
     const normalizedCustomerId = canonicalCustomerId(message.customer_id);
     
     upsertCustomer({
@@ -197,7 +192,7 @@ const WorkspaceLayout = () => {
     appendMessage(normalizedCustomerId, message);
     
     if (!activeCustomerId) {
-      console.log('[AUTO_FOCUS_CUSTOMER]', normalizedCustomerId);
+
       setActiveCustomerId(normalizedCustomerId);
     }
   };
@@ -217,7 +212,7 @@ const WorkspaceLayout = () => {
   // 添加新消息到指定客户，并写入缓存
   const appendMessage = (customerId, message) => {
     if (window.__UI_FREEZE__) {
-      console.log('[UI_BLOCKED]');
+
       return;
     }
     
@@ -273,13 +268,13 @@ const WorkspaceLayout = () => {
   // 删除客户功能
   const deleteCustomer = (customerId) => {
     if (window.__UI_FREEZE__) {
-      console.log('[UI_BLOCKED]');
+
       return;
     }
     
     if (!customerId) return;
     
-    console.log('[CUSTOMER][DELETE] deleting customer:', customerId);
+
     
     setCustomers(prev => {
       const nextCustomers = prev.filter(c => c.id !== customerId);
@@ -311,35 +306,24 @@ const WorkspaceLayout = () => {
       if (window.__UI_FREEZE__) return;
       
       try {
-        const response = await fetch(`${WORKER_BASE}/api/status`);
-        const contentType = response.headers.get('content-type') || '';
-        const rawText = await response.text();
-        
-        let data;
-        if (contentType.includes('application/json')) {
-          try {
-            data = JSON.parse(rawText);
-          } catch {
-            data = { status: rawText };
-          }
-        } else {
-          data = { status: rawText };
-        }
+        const url = `/api/health`;
+        const result = await fetchJsonSafe(url);
         
         if (window.__UI_FREEZE__) return;
         
-        if (response.ok && (data.status === 'ok' || data.status === 'OK')) {
+        if (result.ok && result.data.ok === true) {
           setIsOnline(true);
-          console.info('[OK] HTTP channel active');
-          console.info('[OK] WS disabled by design');
-          console.info('[ONLINE] UI state = ONLINE (http-only)');
-          console.info('[STABLE] Message send enabled');
+          // 简化日志输出，避免重复刷屏
+          if (window.__DEV_LOG__ === true) {
+            console.info('[SYSTEM_STATUS] ONLINE (http-only, stable)');
+          }
         } else {
           setIsOnline(false);
         }
       } catch (error) {
         if (!window.__UI_FREEZE__) {
           setIsOnline(false);
+          console.error('[SYSTEM_STATUS_ERROR]', error.message);
         }
       }
     };
@@ -372,6 +356,10 @@ const WorkspaceLayout = () => {
       }
     };
     
+    // 强制设置全局状态
+    window.__WS_DISABLED = true;
+    window.__CHANNEL = 'http-only';
+    
     return () => {
       delete window.__FORCE_SELECT_CUSTOMER__;
     };
@@ -389,56 +377,43 @@ const WorkspaceLayout = () => {
           throw new Error('CUSTOMERS_API must be relative path');
         }
         
-        // 3. 正确构造URL：WORKER_BASE只出现一次，拼接相对路径
-        const url = `${WORKER_BASE}${CUSTOMERS_API}`;
+        const url = `${CUSTOMERS_API}`;
         
-        // 4. 打印验证日志
-        console.log("[CUSTOMERS_FETCH_URL]", url);
-        
-        // 5. 发起请求 - 带 cache bust 与 no-store
-        const cacheBustedUrl = `${url}?_t=${Date.now()}`;
-        const response = await fetch(cacheBustedUrl, {
+        // 5. 发起请求 - 固定cache bust参数（止血用）
+        const cacheBustedUrl = `${url}?_t=1234567890`; // 固定为常量，防止缓存风暴
+        const result = await fetchJsonSafe(cacheBustedUrl, {
           cache: "no-store"
         });
-        if (response.ok) {
-          const data = await response.json();
-          const customersFromWorker = Array.isArray(data.customers) ? data.customers : [];
-          
-          // 打印验证日志
-          console.log("[CUSTOMERS_FETCH_URL]", cacheBustedUrl);
-          if (customersFromWorker.length > 0) {
-            const firstCustomer = customersFromWorker[0];
-            console.log("[CUSTOMERS_FETCH_RESP_FIRST]", {
-              customer_id: firstCustomer.customer_id,
-              display_name: firstCustomer.display_name,
-              last_ts: firstCustomer.last_ts
-            });
+        
+        const customersFromWorker = Array.isArray(result.data.customers) ? result.data.customers : [];
+        
+        // ✅ 新逻辑（必须）：强制深拷贝，彻底打断引用关系
+        const nextCustomers = customersFromWorker.map(c => ({
+          customer_id: c.customer_id,
+          display_name: c.display_name,
+          last_ts: c.last_ts,
+          last_message_at: c.last_message_at,
+          last_message: c.last_message,
+          business_stage: c.business_stage,
+          source: c.source
+        }));
+        
+        // ✅ 相同数据拦截：避免不必要的render
+        setCustomers(prev => {
+          // 检查长度是否相同
+          if (prev.length !== nextCustomers.length) {
+            return nextCustomers;
           }
-          
-          // ✅ 新逻辑（必须）：强制深拷贝，彻底打断引用关系
-          const nextCustomers = customersFromWorker.map(c => ({
-            customer_id: c.customer_id,
-            display_name: c.display_name,
-            last_ts: c.last_ts,
-            last_message_at: c.last_message_at,
-            last_message: c.last_message,
-            business_stage: c.business_stage,
-            source: c.source
-          }));
-          
-          // 🔍 严格按照要求：直接调用 setCustomers，不使用 prev callback
-          console.log(
-            '[CUSTOMERS_SET]',
-            'prev === next ?',
-            customers === nextCustomers
-          );
-          
-          setCustomers(nextCustomers);
-        } else {
-          console.error('[UI][CUSTOMERS_FETCH_ERROR]', response.status);
-        }
+          // 检查每个客户的ID是否相同
+          const isSame = prev.every((p, i) => p.customer_id === nextCustomers[i].customer_id);
+          if (isSame) {
+            return prev; // 相同数据不触发render
+          }
+          return nextCustomers;
+        });
       } catch (error) {
-        console.error('[UI][CUSTOMERS_FETCH_ERROR]', error.message);
+        // 静默处理错误，避免控制台刷屏
+        console.error('[CUSTOMERS_FETCH_ERROR]', error.message);
       }
     };
     
@@ -447,7 +422,7 @@ const WorkspaceLayout = () => {
     const interval = setInterval(fetchCustomers, 30000);
     
     return () => clearInterval(interval);
-  }, [customers]);
+  }, []); // 移除customers依赖，避免effect → fetch → set → effect闭环
   
   // 自动选择最新客户（如果没有活跃客户或新消息）
   useEffect(() => {
@@ -456,7 +431,6 @@ const WorkspaceLayout = () => {
 
     // 如果是用户已选择的客户，禁止自动覆盖
     if (userSelectedRef.current) {
-      console.log('[ACTIVE_LOCK] skip auto select');
       return;
     }
 
@@ -464,7 +438,6 @@ const WorkspaceLayout = () => {
 
     // 保护条件：仅在当前activeCustomerId为空时触发
     if (latestId && latestId !== activeCustomerId && !activeCustomerId) {
-      console.log('[AUTO_FOCUS_CUSTOMER]', latestId);
       setActiveCustomerId(latestId);
     }
   }, [sortedCustomers, activeCustomerId]);
@@ -546,21 +519,12 @@ const WorkspaceLayout = () => {
     }
   }, []);
   
-  // 验证 customers 变化的 useEffect
-  useEffect(() => {
-    console.log(
-      '[CUSTOMERS_EFFECT_TRIGGERED]',
-      customers.map(c => c.customer_id)
-    );
-  }, [customers]);
-  
   // 在 customers 更新时，做 last_ts 对比切换
   useEffect(() => {
     if (!customers || customers.length === 0) return;
 
     // 如果是用户已选择的客户，禁止自动覆盖
     if (userSelectedRef.current) {
-      console.log('[ACTIVE_LOCK] skip auto select by ts');
       return;
     }
 
@@ -570,10 +534,9 @@ const WorkspaceLayout = () => {
 
     // 保护条件：只在没有activeCustomerId时触发，尊重用户手动选择
     if (!activeCustomerId && latest.customer_id !== activeCustomerId && latestTs > activeTs) {
-      console.log('[AUTO_FOCUS_BY_TS]', latest.customer_id);
       setActiveCustomerId(latest.customer_id);
     }
-  }, [customers, activeCustomerId]);
+  }, [customers.length, activeCustomerId, customers.map(c => c.customer_id).join(',')]);
   
   const tabItems = [
     {

@@ -1,1 +1,1 @@
-export const WORKER_BASE = 'https://jev-rebuild-worker.bensonlove1986.workers.dev';
+export const WORKER_BASE = '';

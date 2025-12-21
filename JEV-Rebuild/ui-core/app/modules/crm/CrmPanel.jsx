@@ -4,14 +4,20 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Typography, Tag, Input, Modal, Form, Button, Select, Card } from 'antd';
+import { fetchJsonSafe } from '../../utils/fetchSafe.js';
 import styles from './CrmPanel.module.css';
-import { WORKER_BASE } from '../../config/constants.js';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 
 const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDeleteCustomer = () => {}, newSessionSet = new Set(), unreadCountMap = {} }) => {
+  // 防御性过滤：只显示真实客户，过滤测试客户
+  const filteredCustomers = customers.filter(c => 
+    c.customer_id && 
+    !c.customer_id.startsWith('test-') && 
+    !c.customer_id.includes('mock')
+  );
   // 状态管理：添加客户模态框
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   // 状态管理：表单数据
@@ -42,10 +48,9 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
     
     setLoading(true);
     try {
-      const response = await fetch(`${WORKER_BASE}/api/customer/profile?customer_id=${customerId}`);
-      const data = await response.json();
-      if (data.ok) {
-        setCustomerProfile(data.profile);
+      const result = await fetchJsonSafe(`/api/customer/profile?customer_id=${customerId}`);
+      if (result.ok && result.data) {
+        setCustomerProfile(result.data.profile);
       }
     } catch (error) {
       console.error('[CRM] Failed to fetch customer profile:', error);
@@ -60,7 +65,7 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
     
     setLoading(true);
     try {
-      const response = await fetch(`${WORKER_BASE}/api/customer/stage`, {
+      const result = await fetchJsonSafe(`/api/customer/stage`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -71,8 +76,7 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
         })
       });
       
-      const data = await response.json();
-      if (data.ok) {
+      if (result.ok) {
         // 刷新客户配置文件
         await fetchCustomerProfile(customerId);
         // 触发父组件刷新客户列表
@@ -85,12 +89,12 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
     }
   };
   
-  // 监听选中客户变化
-  useEffect(() => {
-    if (selectedCustomer?.id) {
-      fetchCustomerProfile(selectedCustomer.id);
-    }
-  }, [selectedCustomer?.id]);
+  // 监听选中客户变化 - 暂时注释，避免404错误
+  // useEffect(() => {
+  //   if (selectedCustomer?.id) {
+  //     fetchCustomerProfile(selectedCustomer.id);
+  //   }
+  // }, [selectedCustomer?.id]);
   
   const getStatusTag = (status) => {
     switch (status) {
@@ -146,10 +150,10 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
         flex: 1, 
         overflow: 'hidden' 
       }}>
-        {/* 视觉顺序断言日志 */}
-        {console.log(
+        {/* 视觉顺序断言日志 - 仅开发模式显示 */}
+        {window.__DEV_LOG__ === true && console.log(
           '[CRM_VISUAL_ORDER]',
-          customers.map(c => c.customer_id)
+          filteredCustomers.map(c => c.customer_id)
         )}
         
         {/* 客户列表 - 仅显示用户名和未读 */}
@@ -159,14 +163,14 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
           overflowY: 'auto', 
           flex: 1 
         }}>
-          {customers.length > 0 ? (
-          customers.map((customer, index) => {
+          {filteredCustomers.length > 0 ? (
+          filteredCustomers.map((customer, index) => {
             // 计算稳定的customerId，与key使用相同来源
             // 优先使用customer_id（Worker返回的字段）
             const customerId = customer.customer_id || customer.id || customer._id || `cid-${index}`;
             
             // 强制可视验证日志
-            console.log('[RENDER_CUSTOMER_ITEM]', customer.customer_id, customer.display_name);
+
             
             // 计算未读数量
             const unreadCount = unreadCountMap[customer.id] || unreadCountMap[customerId] || 0;
@@ -200,7 +204,7 @@ const CrmPanel = ({ customers = [], selectedCustomer, onSelectCustomer, onDelete
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     {/* 显示客户名，严格按优先级：display_name > customer_name > customer_id */}
-                    <Text strong>{customer.display_name || customer.customer_name || customerId}</Text>
+                    <div style={{ fontWeight: 'bold' }}>{customer.display_name || customer.customer_name || customerId}</div>
                     {/* 显示未读计数 */}
                     {unreadCount > 0 && (
                       <span style={{ 

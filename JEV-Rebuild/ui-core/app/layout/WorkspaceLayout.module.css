@@ -14,29 +14,35 @@
 
 .mainLayout {
   flex: 1;
+  min-height: 0;
   overflow: hidden;
+  display: flex;
 }
 
 .leftSider {
   background-color: var(--bg-primary);
   border-right: 1px solid var(--border-color);
-  overflow-y: auto;
+  overflow-y: hidden;
   height: 100%;
   pointer-events: auto !important;
   z-index: 9999;
+  min-width: 0;
 }
 
 .content {
   background-color: var(--bg-primary);
   padding: 0;
-  overflow: auto;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
 }
 
 .rightSider {
   background-color: var(--bg-primary);
   border-left: 1px solid var(--border-color);
-  overflow-y: auto;
+  overflow-y: hidden;
   height: 100%;
 }
 
@@ -44,6 +50,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .tabs :deep(.ant-tabs-nav-wrap) {
@@ -66,11 +73,15 @@
 
 .tabs .ant-tabs-content {
   flex: 1;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .tabs .ant-tabs-tabpane {
   padding: var(--spacing-md);
   height: 100%;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }

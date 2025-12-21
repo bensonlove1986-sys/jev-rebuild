@@ -1,0 +1,36 @@
+{
+  "worker_version": "v1.0.0",
+  "worker_build_time": "20251221_1042",
+  "ui_version": "v1.0.0",
+  "ui_build_time": "20251221_1042",
+  "api_routes": [
+    "/api/translate/text",
+    "/api/translate/message",
+    "/api/inbox/customers",
+    "/api/inbox/pull",
+    "/api/inbound/daojie",
+    "/api/reply/daojie",
+    "/api/status",
+    "/api/health"
+  ],
+  "api_mode": "HYBRID",
+  "translate_engine": "deepseek",
+  "env_checks": {
+    "DEEPSEEK_API_KEY": "OK",
+    "ENV_CHECK": "OK"
+  },
+  "checksum": {
+    "worker_core_index_js": "b5a95d63",
+    "ui_core_fetchSafe_js": "8c2b7e41",
+    "ui_core_chatPanel_jsx": "d4e7f2a8"
+  },
+  "configuration": {
+    "deepseek_base_url": "https://api.deepseek.com",
+    "api_mode": "HYBRID",
+    "translate_endpoint": "/api/translate/text",
+    "ui_api_resolution": "resolveApiUrl"
+  },
+  "status": "ACTIVE",
+  "restore_point_type": "TRANSLATE_OK",
+  "notes": "Translation system is working correctly with DeepSeek API. All endpoints are functional."
+}

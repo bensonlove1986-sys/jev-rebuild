@@ -14,7 +14,7 @@
 
 .orderTable {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   background-color: var(--bg-primary);
 }
 

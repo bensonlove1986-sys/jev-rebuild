@@ -20,13 +20,13 @@
 
 .browserTabs .ant-tabs-content {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .browserTabs .ant-tabs-tabpane {
   padding: var(--spacing-md);
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .browserContent {
@@ -68,16 +68,18 @@
   padding: var(--spacing-xl);
 }
 
+/* History Tab */
 .historyContent {
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   padding: var(--spacing-sm) 0;
 }
 
-.historyItem {
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-radius: var(--border-radius-md);
+/* Shortcuts Tab */
+.shortcutsContent {
+  height: 100%;
+  overflow: hidden;
+  padding: var(--spacing-sm) 0;
 }
 
 .historyItem:hover {
@@ -97,7 +99,7 @@
 
 .shortcutsContent {
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   padding: var(--spacing-sm) 0;
 }
 

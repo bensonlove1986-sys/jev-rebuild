@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Space, Avatar, Tag, Image, Button } from 'antd';
-import { WORKER_BASE } from '../config/constants.js';
+import { fetchJsonSafe } from '../utils/fetchSafe.js';
 import styles from './Topbar.module.css';
 
 const { Title, Text } = Typography;
@@ -48,26 +48,15 @@ const Topbar = ({ customer, activeTab, semanticState, onTabChange, onBrowserTogg
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const response = await fetch(`${WORKER_BASE}/api/status`);
-        if (response.ok) {
-          const contentType = response.headers.get('content-type') || '';
-          const rawText = await response.text();
-          
-          let data;
-          if (contentType.includes('application/json')) {
-            try {
-              data = JSON.parse(rawText);
-            } catch {
-              data = { status: rawText };
-            }
-          } else {
-            data = { status: rawText };
-          }
-          setSystemOnline(data.status === 'online' || data.status === 'ok' || data.status === 'OK');
-        }
+        console.log('[STATUS_CHECK_START] Checking system status...');
+        const url = `/api/status`;
+        const result = await fetchJsonSafe(url);
+        setSystemOnline(true);
+        console.log('[STATUS_CHECK_SUCCESS] System is online');
       } catch (error) {
-        console.error('获取系统状态失败:', error);
+        console.error('[STATUS_FETCH_ERROR] Error checking system status:', error.message);
         setSystemOnline(false);
+        console.log('[STATUS_CHECK_FAILED] System is offline');
       }
     };
 
@@ -115,8 +104,7 @@ const Topbar = ({ customer, activeTab, semanticState, onTabChange, onBrowserTogg
           <Space direction="vertical" size="small">
             <div className={styles.customerInfo}>
               <span className={styles.customerName}>—</span>
-              <span className={styles.customerCountry}>· —</span>
-              <span className={styles.encouragementBox}>{encouragement}</span>
+            <span className={styles.encouragementBox}>{encouragement}</span>
             </div>
             <div className={styles.statusInfo}>
               {getStatusLabel(activeTab)}
@@ -175,8 +163,10 @@ const Topbar = ({ customer, activeTab, semanticState, onTabChange, onBrowserTogg
       <div className={styles.middleSection}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
           <div className={styles.customerInfo}>
-            <span className={styles.customerName}>{customer?.name || '—'}</span>
-            <span className={styles.customerCountry}>· {customer?.country || '—'}</span>
+            <span className={styles.customerName}>{customer?.display_name || customer?.customer_name || customer?.name || '—'}</span>
+            {customer?.country && customer.country !== '—' && (
+              <span className={styles.customerCountry}>· {customer.country}</span>
+            )}
             <span className={styles.encouragementBox}>{encouragement}</span>
           </div>
           <div className={styles.statusInfo}>

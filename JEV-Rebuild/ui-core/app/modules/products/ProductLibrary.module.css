@@ -14,7 +14,7 @@
 
 .productList {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: hidden;
   padding: var(--spacing-md);
   background-color: var(--bg-primary);
 }

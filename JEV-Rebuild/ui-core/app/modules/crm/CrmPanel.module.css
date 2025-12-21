@@ -24,7 +24,7 @@
 
 .customerList {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: hidden;
   min-height: 0; /* 确保在 flex 容器中正确收缩 */
   pointer-events: auto !important;
   z-index: 9999;

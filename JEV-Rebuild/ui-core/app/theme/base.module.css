@@ -46,6 +46,14 @@
   padding: 0;
 }
 
+/* 页面级别，绝对禁止 */
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden !important;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: var(--font-size-md);
@@ -54,7 +62,28 @@ body {
   background-color: var(--bg-secondary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
+}
+
+/* 聊天相关容器禁止滚动 */
+.chat-layout,
+.chat-container {
+  overflow: hidden !important;
+}
+
+/* 聊天主容器允许内部滚动 */
+.chat-body {
+  overflow: visible !important;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 右侧信息栏 / AI 面板禁止滚动 */
+.chat-right,
+.side-panel,
+.ai-panel,
+.customer-panel {
+  overflow: hidden !important;
 }
 
 /* App Container */
@@ -198,4 +227,41 @@ aside,
   pointer-events: auto !important;
   position: relative !important;
   z-index: 9999 !important;
+}
+
+/* JEV: force visible scrollbar inside message list (Windows) */
+.jev-scrollbar {
+  overflow-y: scroll !important;
+  overflow-x: hidden !important;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* Firefox */
+.jev-scrollbar {
+  scrollbar-width: auto !important;
+}
+
+/* Chromium/Webkit */
+.jev-scrollbar::-webkit-scrollbar {
+  width: 10px !important;
+}
+.jev-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+}
+.jev-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* MESSAGE LIST SCROLLBAR FORCE VISIBLE */
+.message-list::-webkit-scrollbar {
+  width: 10px !important;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.35) !important;
+  border-radius: 6px !important;
+}
+
+.message-list::-webkit-scrollbar-track {
+  background: transparent !important;
 }

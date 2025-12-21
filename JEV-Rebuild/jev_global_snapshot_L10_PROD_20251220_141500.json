@@ -1,0 +1,86 @@
+{
+  "worker_state": {
+    "name": "jev-rebuild-worker",
+    "workers_dev_domain": "jev-rebuild-worker.bensonlove1986.workers.dev",
+    "deploy_time": "2025-12-20T14:15:00",
+    "mode": "PROD",
+    "kv_bindings": [
+      {
+        "binding_name": "MESSAGES_KV",
+        "namespace_id": "8de063433e924133a4a4f71a5f31a089"
+      },
+      {
+        "binding_name": "CUSTOMER_PROFILE_KV",
+        "namespace_id": "8de063433e924133a4a4f71a5f31a089"
+      }
+    ],
+    "routes": [
+      "/api/inbound/daojie",
+      "/api/inbox/customers",
+      "/api/inbox/pull",
+      "/api/translate/text",
+      "/api/health",
+      "/api/status",
+      "/api/admin/index-backfill"
+    ],
+    "rules": {
+      "customer_id_canonical": "lowercase + trim",
+      "inbox_index_key_format": "inbox:index:{customer_id}",
+      "message_key_format": "inbox:msg:{customer_id}:{timestamp}:{message_id}",
+      "customer_entity_structure": {
+        "customer_id": "string",
+        "display_name": "string",
+        "status": "string",
+        "last_message_at": "number",
+        "phone": "string"
+      },
+      "auto_upsert_customer": true,
+      "auto_update_display_name": true,
+      "auto_update_phone": true
+    },
+    "log_tags": {
+      "inbound_success": "[INBOUND_MSG_WRITE]",
+      "customers_scan": "[CUSTOMERS_ROUTE_ENTER]",
+      "pull_hit": "[INBOX][PULL]"
+    }
+  },
+  "kv_state": {
+    "namespace_id": "8de063433e924133a4a4f71a5f31a089",
+    "index_key_samples": [
+      "inbox:customers:index:gakcvf3msachq2dter9",
+      "inbox:customers:index:gakcvf3msauchq2dter9"
+    ],
+    "customer_entity_samples": [
+      {
+        "customer_id": "gakcvf3msachq2dter9",
+        "display_name": "Test Customer",
+        "status": "active",
+        "last_message_at": 1766236028706
+      },
+      {
+        "customer_id": "gakcvf3msauchq2dter9",
+        "display_name": "Benson Sensor",
+        "status": "active",
+        "last_message_at": 1766236878444
+      }
+    ],
+    "message_key_samples": [
+      "inbox:msg:gakcvf3msauchq2dter9:1766236878444:ec8d3138-10dd-49c2-bdae-156f9f1e7ceb",
+      "inbox:msg:gakcvf3msachq2dter9:1766236028706:d9868e46-30f5-4b2d-91b4-cbcffdb6f0f7"
+    ]
+  },
+  "ui_state": {
+    "api_base": "https://jev-rebuild-worker.bensonlove1986.workers.dev",
+    "running_domain": "http://localhost:3000",
+    "auto_pull_enabled": true,
+    "pull_frequency_ms": 3000,
+    "last_ts_rule": "since=0&limit=50",
+    "display_fields": [
+      "display_name",
+      "phone",
+      "text"
+    ]
+  },
+  "checksum": "f8d7a3c9e8b6d5a2f1e4c7b9d2a5f8e1c4b7d1a2f5e8c1b4d7a0f3e6c9b3d6a9f0e3c6b9d0a6f3e0c9b6d3a0f6e3c9b0d3a6f0e3c9b0d3a6f0e3c9b0d3a6f0",
+  "snapshot_time": "2025-12-20T14:15:00Z"
+}

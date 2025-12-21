@@ -10,12 +10,10 @@
 }
 
 .messageList {
-  background-color: var(--bg-secondary);
-  min-height: 0; /* 确保在 flex 容器中正确收缩 */
-  display: flex;
-  flex-direction: column;
-  /* 确保消息列表占据最大的可用空间 */
-  height: 100%;
+  background-color: transparent;
+  overflow-y: scroll !important;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
 }
 
 .message {
@@ -67,9 +65,13 @@
   border-radius: var(--border-radius-lg);
   background-color: var(--bg-primary);
   box-shadow: var(--shadow-sm);
+  font-size: var(--font-size-md);
+  line-height: 1.8;
+}
+
+.message-text {
   white-space: pre-wrap;
   word-break: break-word;
-  font-size: var(--font-size-md);
   line-height: 1.8;
 }
 

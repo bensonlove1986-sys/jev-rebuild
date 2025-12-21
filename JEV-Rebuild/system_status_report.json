@@ -1,0 +1,55 @@
+{
+  "ui_runtime_request": {
+    "page_url": "http://localhost:3000",
+    "api_request_example": {
+      "method": "GET",
+      "url": "https://jev-rebuild-worker.bensonlove1986.workers.dev/api/health",
+      "same_origin": false
+    }
+  },
+  "ui_api_base_definition": [
+    {
+      "file": "D:\\PDF转网页\\JEV-Rebuild\\ui-core\\app\\utils\\fetchSafe.js",
+      "code": "export const API_BASE_URL = 'https://jev-rebuild-worker.bensonlove1986.workers.dev';",
+      "runtime_value": "https://jev-rebuild-worker.bensonlove1986.workers.dev"
+    },
+    {
+      "file": "D:\\PDF转网页\\JEV-Rebuild\\ui-core\\app\\utils\\fetchSafe.js",
+      "code": "const absoluteUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;",
+      "runtime_value": "https://jev-rebuild-worker.bensonlove1986.workers.dev/api/xxx"
+    },
+    {
+      "file": "D:\\PDF转网页\\JEV-Rebuild\\ui-core\\app\\config\\constants.js",
+      "code": "export const WORKER_BASE = '';",
+      "runtime_value": ""
+    }
+  ],
+  "inbound_worker": {
+    "webhook_url": "https://jev-rebuild-worker.bensonlove1986.workers.dev/api/inbound/daojie",
+    "auth": "None",
+    "worker_name": "jev-rebuild-worker",
+    "cf_service": "jev-rebuild-worker"
+  },
+  "ui_read_worker": {
+    "request_url": "https://jev-rebuild-worker.bensonlove1986.workers.dev/api/inbox/customers",
+    "worker_name": "jev-rebuild-worker",
+    "request_id": "unknown"
+  },
+  "kv_bindings": {
+    "inbound_worker": {
+      "worker": "jev-rebuild-worker",
+      "kv_binding": "MESSAGES_KV",
+      "namespace_id": "8de063433e924133a4a4f71a5f31a089"
+    },
+    "ui_worker": {
+      "worker": "jev-rebuild-worker",
+      "kv_binding": "MESSAGES_KV",
+      "namespace_id": "8de063433e924133a4a4f71a5f31a089"
+    }
+  },
+  "local_ports": {
+    "3000": "UI Dev Server (Vite)",
+    "8787": "wrangler dev Worker",
+    "proxy": false
+  }
+}

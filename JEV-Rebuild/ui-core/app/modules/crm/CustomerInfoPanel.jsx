@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Space, Avatar, Tag, Descriptions, Input, Button, Switch, Typography, Select } from 'antd';
-import { WORKER_BASE } from '../../config/constants.js';
+import { fetchJsonSafe } from '../../utils/fetchSafe.js';
 import styles from './CustomerInfoPanel.module.css';
 // 删除resolveDisplayName和resolveAvatarLetter导入，禁止UI层推断displayName
 
@@ -66,7 +66,7 @@ const CustomerInfoPanel = ({
       console.log('[SEMANTIC] Analyzing messages:', customerMessages);
       
       // 调用现有AI能力（与AI回复共用逻辑）
-      const res = await fetch(`${WORKER_BASE}/api/ai/draft-reply`, {
+      const result = await fetchJsonSafe(`/api/ai/draft-reply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -78,29 +78,8 @@ const CustomerInfoPanel = ({
         })
       });
       
-      if (!res.ok) {
-        const text = await res.text();
-        console.warn('[SEMANTIC] API error:', text);
-        return;
-      }
-      
-      const contentType = res.headers.get('content-type') || '';
-      const rawText = await res.text();
-      
-      let data;
-      if (contentType.includes('application/json')) {
-        try {
-          data = JSON.parse(rawText);
-        } catch {
-          data = { success: true, data: { text: rawText } };
-        }
-      } else {
-        data = { success: true, data: { text: rawText } };
-      }
-      console.log('[SEMANTIC] API response:', data);
-      
-      if (data?.success && data?.data?.text) {
-        setSemanticSummary(data.data.text);
+      if (result.ok && result.data?.text) {
+        setSemanticSummary(result.data.text);
       }
     } catch (e) {
       console.warn('[SEMANTIC] Analysis error:', e);

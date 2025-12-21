@@ -1,0 +1,12 @@
+name = "jev-rebuild-worker"
+main = "src/index.js"
+compatibility_date = "2024-12-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "MESSAGES_KV"
+id = "8de063433e924133a4a4f71a5f31a089"
+
+[[kv_namespaces]]
+binding = "CUSTOMER_PROFILE_KV"
+id = "8de063433e924133a4a4f71a5f31a089"
