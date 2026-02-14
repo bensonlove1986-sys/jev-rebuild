@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清除缓存并刷新页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        button {
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #40a9ff;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>清除缓存并刷新页面</h1>
+    <p>请点击下方按钮执行清除缓存操作，这将清空所有历史客户数据，确保UI只显示真实Daojie客户。</p>
+    
+    <div class="step">
+        <h3>步骤1：清除缓存</h3>
+        <p>这将清除：</p>
+        <ul>
+            <li>localStorage</li>
+            <li>sessionStorage</li>
+            <li>IndexedDB</li>
+        </ul>
+        <button onclick="clearCache()">清除缓存</button>
+    </div>
+    
+    <div class="step">
+        <h3>步骤2：强制刷新页面</h3>
+        <p>清除缓存后，请点击此按钮刷新页面，确保UI加载最新数据。</p>
+        <button onclick="forceRefresh()">强制刷新页面</button>
+    </div>
+    
+    <div class="step">
+        <h3>验证结果</h3>
+        <p>刷新后，请检查UI：</p>
+        <ul>
+            <li>客户列表只显示1个客户</li>
+            <li>客户ID为：GakCvF3msAuChq2DtER9</li>
+            <li>客户来源为：daojie</li>
+            <li>不显示任何test_、demo或纯数字客户</li>
+        </ul>
+    </div>
+    
+    <script>
+        function clearCache() {
+            // 清空 localStorage
+            localStorage.clear();
+            console.log('localStorage 已清空');
+            
+            // 清空 sessionStorage
+            sessionStorage.clear();
+            console.log('sessionStorage 已清空');
+            
+            // 清空 IndexedDB
+            indexedDB.databases().then(dbs => {
+                dbs.forEach(db => {
+                    indexedDB.deleteDatabase(db.name);
+                    console.log(`IndexedDB 数据库 ${db.name} 已删除`);
+                });
+                alert('缓存清除成功！');
+            });
+        }
+        
+        function forceRefresh() {
+            // 强制刷新页面，不使用缓存
+            location.reload(true);
+        }
+    </script>
+</body>
+</html>

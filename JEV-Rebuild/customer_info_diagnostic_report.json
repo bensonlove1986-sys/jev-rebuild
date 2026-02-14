@@ -1,0 +1,7 @@
+{
+  "root_cause": "客户信息字段映射不完整，UI层无法访问完整的客户详细信息",
+  "missing_field": "company, phone, email",
+  "component_path": "src/store/customersStore.ts, src/api/inbox.api.ts",
+  "fix_required": true,
+  "recommendation": "1. 在inbox.api.ts的Customer接口中添加company、phone、email字段；2. 确保fetchCustomers函数正确处理并保留这些字段；3. 检查UI组件是否正确引用这些字段"
+}

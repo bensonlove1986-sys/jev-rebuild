@@ -1,0 +1,28 @@
+=== STORE_AUDIT ===
+EVENTS_FOUND:
+- DRAFT_COMPLETE: ui-core/app/src/core/scheduler/ui_scheduler_core.ts:14, 266, 369
+- dispatchEvent: ui-core/app/src/modules/chat_modular/store/chatStore.ts:1397, ui-core/app/src/core/scheduler/ui_scheduler_core.ts:348
+- addEventListener: Found in multiple files, including DeepSeekPanel.tsx:1890, 1891, 1922, 1923
+- CustomEvent: ui-core/app/src/modules/chat_modular/store/chatStore.ts:1398, ui-core/app/src/core/scheduler/ui_scheduler_core.ts:349
+- AUTO_ENGINE_V4_EVENT: ui-core/app/src/modules/chat_modular/store/chatStore.ts:1397, ui-core/app/src/modules/auto_engine/autoDraftEngineCore.ts:305
+
+DEEPSEEK_PANEL_LOCAL_STATE:
+- useState(unifiedDraft): Not found
+- setUnifiedDraft: Not found
+- Event listeners: Found document.addEventListener for mouse events (mousemove, mouseup)
+
+WRITEDRAFT_PRESENT:
+- Found in ui-core/app/src/services/AutoDraftWorker.ts:159
+- Implementation in ui-core/app/src/modules/chat_modular/store/chatStore.ts:1748-1778
+
+SCHEMA_FIELDS_OK:
+- type: 'draft'
+- kind: 'draft'
+- role: 'assistant'
+- ts: Date.now()
+
+STORE_ONLY_MODE:
+- Partial: AutoDraftWorker uses chatStore.writeDraft, but event system still exists
+- DeepSeekPanel uses useChatStore to read draft
+- Event listeners still exist for mouse events and other non-draft events
+=== END ===

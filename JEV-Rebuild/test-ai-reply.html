@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Reply Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .test-section {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .response {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Reply API Test</h1>
+        
+        <div class="test-section">
+            <h2>Test Case 1: Direct API Call (Local)</h2>
+            <p>Testing direct call to http://localhost:8787/api/ai/reply/suggest</p>
+            <button onclick="testDirectApiCall()">Run Test</button>
+            <div id="directResponse" class="response"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Test Case 2: Vite Proxy Call (Simulate Frontend)</h2>
+            <p>Testing call through Vite proxy (http://localhost:3000/api/ai/reply/suggest)</p>
+            <button onclick="testViteProxyCall()">Run Test</button>
+            <div id="proxyResponse" class="response"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testDirectApiCall() {
+            const responseDiv = document.getElementById('directResponse');
+            responseDiv.innerHTML = 'Testing direct API call...';
+            
+            try {
+                const response = await fetch('http://localhost:8787/api/ai/reply/suggest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customer_id: 'test123',
+                        contextMessages: [{
+                            role: 'customer',
+                            text: 'Hello',
+                            timestamp: 1234567890,
+                            id: 'msg1'
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                responseDiv.innerHTML = `Status: ${response.status} ${response.statusText}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                responseDiv.className = 'response success';
+            } catch (error) {
+                responseDiv.innerHTML = `Error: ${error.message}`;
+                responseDiv.className = 'response error';
+            }
+        }
+        
+        async function testViteProxyCall() {
+            const responseDiv = document.getElementById('proxyResponse');
+            responseDiv.innerHTML = 'Testing Vite proxy call...';
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/ai/reply/suggest', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customer_id: 'test123',
+                        contextMessages: [{
+                            role: 'customer',
+                            text: 'Hello',
+                            timestamp: 1234567890,
+                            id: 'msg1'
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                responseDiv.innerHTML = `Status: ${response.status} ${response.statusText}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                responseDiv.className = 'response success';
+            } catch (error) {
+                responseDiv.innerHTML = `Error: ${error.message}`;
+                responseDiv.className = 'response error';
+            }
+        }
+    </script>
+</body>
+</html>

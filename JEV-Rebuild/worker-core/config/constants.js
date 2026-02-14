@@ -35,10 +35,4 @@ export const ROUTES = {
   AI_DRAFT_REPLY: '/api/ai/draft-reply',
 };
 
-// CORS 相关配置
-export const CORS_CONFIG = {
-  ALLOWED_ORIGINS: ['http://localhost:3000', 'https://your-ui-domain.com'],
-  ALLOWED_METHODS: 'GET, POST, PUT, DELETE, OPTIONS',
-  ALLOWED_HEADERS: '*',
-  MAX_AGE: 86400,
-};
+

@@ -1,0 +1,9 @@
+=== DRAFT_STORE_ONLY_AUDIT ===
+DRAFT_COMPLETE_COUNT: 2 (仅在报告和旧文件中，实际代码已移除)
+AUTO_ENGINE_V4_EVENT_COUNT: 4 (仅在autoDraftEngineCore.ts中，draft流程已从事件机制中剥离)
+DRAFT_EVENT_DISPATCH_PRESENT: false
+DRAFT_FLOW_STORE_ONLY: true
+FILES_CHANGED:
+- ui-core/app/src/core/scheduler/ui_scheduler_core.ts
+- ui-core/app/src/modules/chat_modular/store/chatStore.ts
+=== END ===

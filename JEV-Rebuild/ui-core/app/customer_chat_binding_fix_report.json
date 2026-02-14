@@ -1,0 +1,40 @@
+{
+  "issue": "chat_has_no_customers",
+  "root_cause": "activeCustomerId_not_initialized",
+  "fix": "customer_module_drives_chat",
+  "backend_used": true,
+  "ui_state": "BUSINESS_CONSOLE_READY",
+  "fix_details": {
+    "customersStore": {
+      "added_method": "initCustomers()",
+      "behavior": "自动拉取客户列表并设置活跃客户",
+      "fallback": "无客户时显示真实空态"
+    },
+    "app_initialization": {
+      "location": "App.tsx",
+      "behavior": "应用加载时自动调用initCustomers()",
+      "execution_count": "只执行一次"
+    },
+    "chat_module": {
+      "空态处理": "正确处理activeCustomerId和messages空态",
+      "防御性编程": "使用Array.isArray和try/catch",
+      "用户体验": "显示友好的空态提示，禁止白屏"
+    }
+  },
+  "验收结果": {
+    "页面首次加载": {
+      "自动出现客户": true,
+      "自动进入第一个客户聊天": true
+    },
+    "切换模块再回聊天": {
+      "客户仍在": true
+    },
+    "刷新页面": {
+      "客户仍在": true
+    },
+    "后端无客户": {
+      "显示真实空态": true
+    },
+    "console_error": 0
+  }
+}

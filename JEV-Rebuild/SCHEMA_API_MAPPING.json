@@ -1,0 +1,264 @@
+{
+  "version": "1.0",
+  "title": "JEV 自动成交持久化蓝图 - Schema 定义与 API 映射表",
+  "description": "定义了所有权威存储的结构和对应的 API 端点映射",
+  "authority": {
+    "message": "CHAT_ROOM_DO",
+    "contact": "CONTACT_INDEX",
+    "media": "R2_BUCKET",
+    "translation": "TRANSLATION_STORE",
+    "deal": "DEAL_STATE_DO"
+  },
+  "schemas": {
+    "CHAT_ROOM_DO": {
+      "id_format": "room:{customer_id}",
+      "message_record": {
+        "type": "object",
+        "properties": {
+          "message_id": { "type": "string", "description": "消息唯一标识" },
+          "id": { "type": "string", "description": "消息唯一标识（备用）" },
+          "customer_id": { "type": "string", "description": "客户ID" },
+          "text": { "type": "string", "description": "消息文本" },
+          "direction": { "type": "string", "description": "消息方向：inbound/outbound" },
+          "role": { "type": "string", "description": "消息角色：customer/operator" },
+          "type": { "type": "string", "description": "消息类型：text/image" },
+          "kind": { "type": "string", "description": "消息种类" },
+          "media_path": { "type": "string", "description": "媒体文件路径" },
+          "media_keys": { "type": "array", "items": { "type": "string" }, "description": "R2 媒体文件键" },
+          "timestamp": { "type": "number", "description": "消息时间戳" },
+          "created_at": { "type": "number", "description": "创建时间" },
+          "updated_at": { "type": "number", "description": "更新时间" },
+          "source": { "type": "string", "description": "消息来源" }
+        },
+        "required": ["message_id", "customer_id", "timestamp"]
+      }
+    },
+    "CONTACT_INDEX": {
+      "contact_info": {
+        "type": "object",
+        "properties": {
+          "customer_id": { "type": "string", "description": "客户ID" },
+          "last_message_ts": { "type": "number", "description": "最后消息时间戳" },
+          "last_preview": { "type": "string", "description": "最后消息预览" },
+          "unread_count": { "type": "number", "description": "未读消息数" },
+          "created_at": { "type": "number", "description": "创建时间" },
+          "updated_at": { "type": "number", "description": "更新时间" }
+        },
+        "required": ["customer_id"]
+      }
+    },
+    "R2_BUCKET": {
+      "key_format": "media/twilio/{message_id}/{index}.{ext}",
+      "media_file": {
+        "type": "object",
+        "properties": {
+          "media_key": { "type": "string", "description": "R2 媒体文件键" },
+          "filename": { "type": "string", "description": "文件名" },
+          "size": { "type": "number", "description": "文件大小" },
+          "content_type": { "type": "string", "description": "内容类型" },
+          "uploaded_at": { "type": "number", "description": "上传时间" }
+        },
+        "required": ["media_key"]
+      }
+    },
+    "TRANSLATION_STORE": {
+      "key_format": "tr:{message_id}:{target_lang}",
+      "translation_data": {
+        "type": "object",
+        "properties": {
+          "translated_text": { "type": "string", "description": "翻译后文本" },
+          "original_text": { "type": "string", "description": "原始文本" },
+          "source_lang": { "type": "string", "description": "源语言" },
+          "target_lang": { "type": "string", "description": "目标语言" },
+          "status": { "type": "string", "description": "翻译状态：pending/completed/error" },
+          "error": { "type": "string", "description": "错误信息" },
+          "timestamp": { "type": "number", "description": "翻译时间戳" },
+          "updated_at": { "type": "number", "description": "更新时间" }
+        },
+        "required": ["translated_text", "original_text", "source_lang", "target_lang", "status"]
+      }
+    },
+    "DEAL_STATE_DO": {
+      "id_format": "deal:{customer_id}",
+      "deal_state": {
+        "type": "object",
+        "properties": {
+          "customer_id": { "type": "string", "description": "客户ID" },
+          "stage": { "type": "string", "description": "成交阶段：lead/prospect/quote/negotiation/closed" },
+          "profile": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "description": "客户名称" },
+              "phone": { "type": "string", "description": "客户电话" },
+              "email": { "type": "string", "description": "客户邮箱" },
+              "company": { "type": "string", "description": "客户公司" },
+              "preferences": { "type": "object", "description": "客户偏好" },
+              "created_at": { "type": "number", "description": "创建时间" }
+            }
+          },
+          "intent": {
+            "type": "object",
+            "properties": {
+              "level": { "type": "string", "description": "意向级别：low/medium/high" },
+              "products": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string", "description": "产品名称" },
+                    "mentioned_at": { "type": "number", "description": "提及时间" }
+                  }
+                }
+              },
+              "budget": { "type": "number", "description": "预算" },
+              "timeline": { "type": "number", "description": "时间线" },
+              "notes": { "type": "string", "description": "备注" }
+            }
+          },
+          "quotes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "quote_id": { "type": "string", "description": "报价ID" },
+                "amount": { "type": "number", "description": "报价金额" },
+                "created_at": { "type": "number", "description": "创建时间" },
+                "updated_at": { "type": "number", "description": "更新时间" }
+              }
+            }
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task_id": { "type": "string", "description": "任务ID" },
+                "title": { "type": "string", "description": "任务标题" },
+                "status": { "type": "string", "description": "任务状态：pending/in_progress/completed" },
+                "created_at": { "type": "number", "description": "创建时间" },
+                "updated_at": { "type": "number", "description": "更新时间" }
+              }
+            }
+          },
+          "eventlog": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "event_id": { "type": "string", "description": "事件ID" },
+                "event_type": { "type": "string", "description": "事件类型" },
+                "timestamp": { "type": "number", "description": "事件时间戳" },
+                "data": { "type": "object", "description": "事件数据" }
+              }
+            }
+          },
+          "created_at": { "type": "number", "description": "创建时间" },
+          "updated_at": { "type": "number", "description": "更新时间" }
+        },
+        "required": ["customer_id", "stage"]
+      }
+    }
+  },
+  "api_mapping": {
+    "message": {
+      "append": {
+        "endpoint": "/api/inbox/message",
+        "method": "POST",
+        "authority": "CHAT_ROOM_DO",
+        "description": "添加新消息" 
+      },
+      "fetch": {
+        "endpoint": "/api/inbox/pull",
+        "method": "GET",
+        "authority": "CHAT_ROOM_DO",
+        "description": "获取消息历史" 
+      }
+    },
+    "contact": {
+      "list": {
+        "endpoint": "/api/inbox/customers",
+        "method": "GET",
+        "authority": "CONTACT_INDEX",
+        "description": "获取客户列表" 
+      },
+      "get": {
+        "endpoint": "/api/inbox/contact/{customer_id}",
+        "method": "GET",
+        "authority": "CONTACT_INDEX",
+        "description": "获取单个客户信息" 
+      },
+      "reset_unread": {
+        "endpoint": "/api/inbox/mark_read",
+        "method": "POST",
+        "authority": "CONTACT_INDEX",
+        "description": "重置未读计数" 
+      }
+    },
+    "media": {
+      "upload": {
+        "endpoint": "/api/media/upload",
+        "method": "POST",
+        "authority": "R2_BUCKET",
+        "description": "上传媒体文件" 
+      },
+      "download": {
+        "endpoint": "/api/media/{message_id}",
+        "method": "GET",
+        "authority": "R2_BUCKET",
+        "description": "下载媒体文件" 
+      },
+      "check": {
+        "endpoint": "/api/media/check",
+        "method": "GET",
+        "authority": "R2_BUCKET",
+        "description": "检查媒体文件是否存在" 
+      }
+    },
+    "translation": {
+      "store": {
+        "endpoint": "/api/translation/store",
+        "method": "POST",
+        "authority": "TRANSLATION_STORE",
+        "description": "存储翻译结果" 
+      },
+      "get": {
+        "endpoint": "/api/translation/get",
+        "method": "GET",
+        "authority": "TRANSLATION_STORE",
+        "description": "获取翻译结果" 
+      }
+    },
+    "deal": {
+      "state": {
+        "endpoint": "/api/deal/state/{customer_id}",
+        "method": "GET",
+        "authority": "DEAL_STATE_DO",
+        "description": "获取成交状态" 
+      },
+      "ingest": {
+        "endpoint": "/api/deal/ingest",
+        "method": "POST",
+        "authority": "DEAL_STATE_DO",
+        "description": "摄取消息并分析" 
+      },
+      "update_stage": {
+        "endpoint": "/api/deal/stage/{customer_id}",
+        "method": "PUT",
+        "authority": "DEAL_STATE_DO",
+        "description": "更新成交阶段" 
+      },
+      "add_quote": {
+        "endpoint": "/api/deal/quote/{customer_id}",
+        "method": "POST",
+        "authority": "DEAL_STATE_DO",
+        "description": "添加报价" 
+      },
+      "add_task": {
+        "endpoint": "/api/deal/task/{customer_id}",
+        "method": "POST",
+        "authority": "DEAL_STATE_DO",
+        "description": "添加任务" 
+      }
+    }
+  }
+}

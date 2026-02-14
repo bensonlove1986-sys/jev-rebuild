@@ -1,0 +1,547 @@
+/* Chat v3 样式文件 */
+
+/* CSS变量定义 */
+:root {
+  /* 颜色 */
+  --chat-bg: #f5f6f7;
+  --chat-card-bg: #ffffff;
+  --chat-header-bg: #ffffff;
+  --chat-border-color: #e9ecef;
+  --chat-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --chat-primary-color: #1890ff;
+  --chat-primary-hover: #40a9ff;
+  --chat-primary-bg: #e6f7ff;
+  --chat-customer-bg: #ffffff;
+  --chat-customer-border: #e9ecef;
+  --chat-text-color: #333333;
+  --chat-text-secondary: #666666;
+  --chat-text-light: #999999;
+  --chat-input-bg: #ffffff;
+  --chat-input-border: #d9d9d9;
+  --chat-input-hover: #40a9ff;
+  --chat-divider: #f0f0f0;
+  --chat-plugin-bg: #fafafa;
+  --chat-customers-bg: #ffffff;
+  --chat-customers-border-right: #e9ecef;
+  --chat-customer-item-hover: #f0f0f0;
+  --chat-customer-item-selected: #e6f7ff;
+  --chat-customer-status-active: #52c41a;
+  
+  /* 尺寸 */
+  --chat-border-radius: 12px;
+  --chat-bubble-radius: 18px;
+  --chat-header-height: 56px;
+  --chat-composer-height: 64px;
+  --chat-plugin-height: 40px;
+  --chat-customers-width: 320px;
+  
+  /* 字体 */
+  --chat-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --chat-font-size: 14px;
+  --chat-font-size-sm: 12px;
+  --chat-font-size-lg: 16px;
+  
+  /* 间距 */
+  --chat-spacing-xs: 4px;
+  --chat-spacing-sm: 8px;
+  --chat-spacing-md: 16px;
+  --chat-spacing-lg: 24px;
+  
+  /* 过渡 */
+  --chat-transition: all 0.3s ease;
+}
+
+/* 全局重置 */
+.chat-v3-container * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.chat-v3-container {
+  font-family: var(--chat-font-family);
+  font-size: var(--chat-font-size);
+  color: var(--chat-text-color);
+  background-color: var(--chat-bg);
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+/* 两栏布局容器 */
+.chat-v3-layout {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* 客户列表 */
+.chat-v3-customers-list {
+  width: var(--chat-customers-width);
+  background-color: var(--chat-customers-bg);
+  border-right: 1px solid var(--chat-customers-border-right);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-v3-customers-header {
+  height: var(--chat-header-height);
+  padding: 0 var(--chat-spacing-md);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--chat-border-color);
+  background-color: var(--chat-customers-bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.chat-v3-customers-header h3 {
+  font-size: var(--chat-font-size-lg);
+  font-weight: 500;
+  color: var(--chat-text-color);
+  margin: 0;
+}
+
+.chat-v3-customers-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--chat-spacing-sm);
+}
+
+.chat-v3-customers-empty {
+  padding: var(--chat-spacing-lg);
+  text-align: center;
+  color: var(--chat-text-light);
+}
+
+.chat-v3-customer-item {
+  padding: var(--chat-spacing-md);
+  border-radius: var(--chat-border-radius);
+  cursor: pointer;
+  transition: var(--chat-transition);
+  margin-bottom: var(--chat-spacing-sm);
+  display: flex;
+  align-items: center;
+}
+
+.chat-v3-customer-item:hover {
+  background-color: var(--chat-customer-item-hover);
+}
+
+.chat-v3-customer-item.selected {
+  background-color: var(--chat-customer-item-selected);
+}
+
+.chat-v3-customer-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-v3-customer-name {
+  display: flex;
+  align-items: center;
+  gap: var(--chat-spacing-sm);
+  font-weight: 500;
+  color: var(--chat-text-color);
+  margin-bottom: var(--chat-spacing-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-v3-customer-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.chat-v3-customer-status.active {
+  background-color: var(--chat-customer-status-active);
+}
+
+.chat-v3-customer-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--chat-spacing-md);
+  font-size: var(--chat-font-size-sm);
+  color: var(--chat-text-light);
+}
+
+.chat-v3-customer-source {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-v3-customer-time {
+  white-space: nowrap;
+}
+
+/* 聊天卡片 */
+.chat-v3-card {
+  flex: 1;
+  background-color: var(--chat-card-bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  min-height: 0;
+}
+
+/* 聊天头部 */
+.chat-v3-header {
+  background-color: var(--chat-header-bg);
+  height: var(--chat-header-height);
+  border-bottom: 1px solid var(--chat-border-color);
+  padding: 0 var(--chat-spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.chat-v3-header-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.chat-v3-customer-name {
+  font-size: var(--chat-font-size-lg);
+  font-weight: 500;
+  color: var(--chat-text-color);
+  margin-bottom: var(--chat-spacing-xs);
+}
+
+.chat-v3-customer-meta {
+  font-size: var(--chat-font-size-sm);
+  color: var(--chat-text-light);
+}
+
+.chat-v3-header-actions {
+  display: flex;
+  gap: var(--chat-spacing-sm);
+}
+
+/* 消息时间线 */
+.chat-v3-timeline {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--chat-spacing-md);
+  background-color: var(--chat-bg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--chat-spacing-md);
+}
+
+/* 空状态样式 */
+.chat-v3-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: var(--chat-text-light);
+  padding: var(--chat-spacing-lg);
+}
+
+.chat-v3-empty-state-card {
+  background-color: var(--chat-card-bg);
+  padding: var(--chat-spacing-lg);
+  border-radius: var(--chat-border-radius);
+  box-shadow: var(--chat-shadow);
+  max-width: 400px;
+  width: 100%;
+}
+
+.chat-v3-empty-state-icon {
+  font-size: 48px;
+  margin-bottom: var(--chat-spacing-md);
+  opacity: 0.5;
+}
+
+.chat-v3-empty-state-text {
+  font-size: var(--chat-font-size);
+  line-height: 1.5;
+  color: var(--chat-text-secondary);
+}
+
+/* 消息气泡 */
+.chat-v3-message {
+  display: flex;
+  margin-bottom: var(--chat-spacing-md);
+  animation: fadeIn 0.3s ease;
+}
+
+.chat-v3-message.customer {
+  justify-content: flex-start;
+}
+
+.chat-v3-message.operator {
+  justify-content: flex-end;
+}
+
+.chat-v3-message .bubble {
+  max-width: 70%;
+  padding: var(--chat-spacing-md);
+  border-radius: var(--chat-bubble-radius);
+  position: relative;
+  word-wrap: break-word;
+  line-height: 1.5;
+}
+
+.chat-v3-message.customer .bubble {
+  background-color: var(--chat-customer-bg);
+  border: 1px solid var(--chat-customer-border);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-v3-message.operator .bubble {
+  background-color: var(--chat-primary-bg);
+  border-bottom-right-radius: 4px;
+}
+
+.chat-v3-message-text {
+  color: var(--chat-text-color);
+  margin-bottom: var(--chat-spacing-xs);
+}
+
+.chat-v3-message-time {
+  font-size: var(--chat-font-size-sm);
+  color: var(--chat-text-light);
+  text-align: right;
+  margin-top: var(--chat-spacing-xs);
+}
+
+.chat-v3-message.customer .chat-v3-message-time {
+  text-align: left;
+}
+
+/* 插件栏 */
+.chat-v3-plugins {
+  height: var(--chat-plugin-height);
+  background-color: var(--chat-plugin-bg);
+  border-top: 1px solid var(--chat-divider);
+  border-bottom: 1px solid var(--chat-divider);
+  padding: 0 var(--chat-spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--chat-spacing-sm);
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.chat-v3-plugin {
+  padding: var(--chat-spacing-xs) var(--chat-spacing-md);
+  border: 1px solid var(--chat-input-border);
+  border-radius: 20px;
+  background-color: var(--chat-card-bg);
+  font-size: var(--chat-font-size-sm);
+  cursor: pointer;
+  transition: var(--chat-transition);
+  white-space: nowrap;
+}
+
+.chat-v3-plugin:hover {
+  border-color: var(--chat-input-hover);
+  color: var(--chat-primary-color);
+  box-shadow: 0 2px 4px rgba(24, 144, 255, 0.15);
+}
+
+.chat-v3-plugin:active {
+  transform: translateY(1px);
+}
+
+/* 输入区 */
+.chat-v3-composer {
+  height: var(--chat-composer-height);
+  background-color: var(--chat-header-bg);
+  padding: var(--chat-spacing-sm) var(--chat-spacing-md);
+  display: flex;
+  align-items: center;
+  gap: var(--chat-spacing-md);
+  flex-shrink: 0;
+}
+
+.chat-v3-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.chat-v3-input {
+  width: 100%;
+  height: 48px;
+  padding: var(--chat-spacing-sm) var(--chat-spacing-md);
+  border: 1px solid var(--chat-input-border);
+  border-radius: 24px;
+  font-size: var(--chat-font-size);
+  resize: none;
+  outline: none;
+  transition: var(--chat-transition);
+  background-color: var(--chat-input-bg);
+  font-family: var(--chat-font-family);
+}
+
+.chat-v3-input:focus {
+  border-color: var(--chat-input-hover);
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.chat-v3-send-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--chat-primary-color);
+  color: white;
+  font-size: var(--chat-font-size-lg);
+  cursor: pointer;
+  transition: var(--chat-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chat-v3-send-btn:hover {
+  background-color: var(--chat-primary-hover);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+}
+
+.chat-v3-send-btn:active {
+  transform: scale(0.95);
+}
+
+/* 动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 滚动条样式 */
+.chat-v3-timeline::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-v3-timeline::-webkit-scrollbar-track {
+  background-color: var(--chat-divider);
+  border-radius: 3px;
+}
+
+.chat-v3-timeline::-webkit-scrollbar-thumb {
+  background-color: var(--chat-input-border);
+  border-radius: 3px;
+}
+
+.chat-v3-timeline::-webkit-scrollbar-thumb:hover {
+  background-color: var(--chat-text-light);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  :root {
+    --chat-header-height: 56px;
+    --chat-composer-height: 72px;
+    --chat-plugin-height: 36px;
+  }
+  
+  .chat-v3-message.bubble {
+    max-width: 85%;
+  }
+  
+  .chat-v3-header,
+  .chat-v3-composer {
+    padding: 0 var(--chat-spacing-md);
+  }
+}
+
+/* 占位插件样式 */
+.chat-v3-plugin.placeholder {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-v3-plugin.placeholder:hover {
+  border-color: var(--chat-input-border);
+  color: var(--chat-text-color);
+  box-shadow: none;
+}
+
+/* 系统消息样式（预留） */
+.chat-v3-message.system {
+  justify-content: center;
+}
+
+.chat-v3-message.system .bubble {
+  background-color: var(--chat-plugin-bg);
+  color: var(--chat-text-light);
+  font-size: var(--chat-font-size-sm);
+  padding: var(--chat-spacing-xs) var(--chat-spacing-md);
+  max-width: fit-content;
+  border-radius: 12px;
+}
+
+/* AI消息样式（预留） */
+.chat-v3-message.ai {
+  justify-content: flex-start;
+}
+
+.chat-v3-message.ai .bubble {
+  background-color: #f6ffed;
+  border-left: 4px solid #52c41a;
+}
+
+/* 加载状态（预留） */
+.chat-v3-loading {
+  display: flex;
+  align-items: center;
+  gap: var(--chat-spacing-xs);
+  padding: var(--chat-spacing-sm);
+  color: var(--chat-text-light);
+  font-size: var(--chat-font-size-sm);
+}
+
+.chat-v3-loading-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.chat-v3-loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--chat-text-light);
+  animation: loadingDots 1.4s infinite ease-in-out;
+}
+
+.chat-v3-loading-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-v3-loading-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loadingDots {
+  0%, 80%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "base_chat_preserved": true,
+  "modules_added": ["chat", "customer", "order", "ai", "system"],
+  "single_chat_broken": false,
+  "ui_state": "MULTI_FUNCTION_WORKBENCH_READY"
+}

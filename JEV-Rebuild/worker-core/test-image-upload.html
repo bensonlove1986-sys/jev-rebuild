@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .image-preview {
+            margin-top: 10px;
+            max-width: 100%;
+            max-height: 300px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Upload Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: File Upload</h2>
+        <input type="file" id="fileInput" accept="image/*">
+        <button onclick="testFileUpload()">Upload File</button>
+        <div id="fileUploadResult" class="test-result"></div>
+        <img id="fileImagePreview" class="image-preview" style="display: none;">
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Base64 Upload</h2>
+        <button onclick="testBase64Upload()">Upload Base64 Image</button>
+        <div id="base64UploadResult" class="test-result"></div>
+        <img id="base64ImagePreview" class="image-preview" style="display: none;">
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Image Access</h2>
+        <input type="text" id="imageUrlInput" placeholder="Enter image URL">
+        <button onclick="testImageAccess()">Test Access</button>
+        <div id="imageAccessResult" class="test-result"></div>
+        <img id="accessImagePreview" class="image-preview" style="display: none;">
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 4: Health Check</h2>
+        <button onclick="testHealthCheck()">Check Health</button>
+        <div id="healthCheckResult" class="test-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://jev-rebuild-worker.bensonlove1986.workers.dev';
+        
+        function showResult(elementId, success, message) {
+            const element = document.getElementById(elementId);
+            element.className = `test-result ${success ? 'success' : 'error'}`;
+            element.textContent = message;
+        }
+        
+        function showImage(elementId, url) {
+            const element = document.getElementById(elementId);
+            element.src = url;
+            element.style.display = 'block';
+        }
+        
+        async function testFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showResult('fileUploadResult', false, 'Please select a file');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch(`${API_BASE}/api/upload/image`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.ok) {
+                    showResult('fileUploadResult', true, `Upload successful! Image URL: ${data.image_url}`);
+                    showImage('fileImagePreview', data.image_url);
+                } else {
+                    showResult('fileUploadResult', false, `Upload failed: ${data.error}`);
+                }
+            } catch (error) {
+                showResult('fileUploadResult', false, `Error: ${error.message}`);
+            }
+        }
+        
+        async function testBase64Upload() {
+            // Create a simple test image as base64
+            const testImageBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/upload/image`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        base64: testImageBase64,
+                        customer_id: 'test-customer-123',
+                        mime_type: 'image/png'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.ok) {
+                    showResult('base64UploadResult', true, `Upload successful! Image URL: ${data.image_url}`);
+                    showImage('base64ImagePreview', data.image_url);
+                } else {
+                    showResult('base64UploadResult', false, `Upload failed: ${data.error}`);
+                }
+            } catch (error) {
+                showResult('base64UploadResult', false, `Error: ${error.message}`);
+            }
+        }
+        
+        async function testImageAccess() {
+            const urlInput = document.getElementById('imageUrlInput');
+            const url = urlInput.value;
+            
+            if (!url) {
+                showResult('imageAccessResult', false, 'Please enter an image URL');
+                return;
+            }
+            
+            try {
+                // 直接设置图片预览，不使用fetch请求
+                showResult('imageAccessResult', true, `Image URL: ${url}`);
+                showImage('accessImagePreview', url);
+            } catch (error) {
+                showResult('imageAccessResult', false, `Error: ${error.message}`);
+            }
+        }
+        
+        async function testHealthCheck() {
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                const data = await response.json();
+                
+                if (data.ok) {
+                    showResult('healthCheckResult', true, `Health check successful! Service: ${data.service}`);
+                } else {
+                    showResult('healthCheckResult', false, `Health check failed`);
+                }
+            } catch (error) {
+                showResult('healthCheckResult', false, `Error: ${error.message}`);
+            }
+        }
+        
+        // Run health check on page load
+        window.onload = testHealthCheck;
+    </script>
+</body>
+</html>

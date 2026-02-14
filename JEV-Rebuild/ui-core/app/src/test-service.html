@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Inbox Service Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-online {
+            background-color: #4CAF50;
+        }
+        .status-offline {
+            background-color: #f44336;
+        }
+        .status-unknown {
+            background-color: #ff9800;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .log-container {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>WhatsApp Inbox Service Test</h1>
+    
+    <div class="test-section">
+        <h2>Service Status</h2>
+        <div id="service-status">
+            <p><span class="status-indicator status-unknown"></span> <span id="status-text">Checking...</span></p>
+        </div>
+        <button class="btn-primary" onclick="checkServiceStatus()">Check Status</button>
+        <button class="btn-primary" onclick="initService()">Initialize Service</button>
+        <button class="btn-secondary" onclick="stopService()">Stop Service</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>WebSocket Status</h2>
+        <div id="ws-status">
+            <p><span class="status-indicator status-unknown"></span> <span id="ws-text">Checking...</span></p>
+        </div>
+        <button class="btn-primary" onclick="checkWebSocketStatus()">Check WebSocket</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Leader Status</h2>
+        <div id="leader-status">
+            <p><span class="status-indicator status-unknown"></span> <span id="leader-text">Checking...</span></p>
+        </div>
+        <button class="btn-primary" onclick="checkLeaderStatus()">Check Leader</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Console Logs</h2>
+        <div id="logs" class="log-container">
+            <p>Loading logs...</p>
+        </div>
+    </div>
+
+    <script>
+        // 重定向console.log到页面
+        const originalLog = console.log;
+        const logsContainer = document.getElementById('logs');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const logEntry = document.createElement('div');
+            logEntry.textContent = new Date().toLocaleTimeString() + ': ' + args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ');
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        };
+        
+        console.error = function(...args) {
+            originalLog.apply(console, args);
+            const logEntry = document.createElement('div');
+            logEntry.style.color = 'red';
+            logEntry.textContent = new Date().toLocaleTimeString() + ' [ERROR]: ' + args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ');
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        };
+        
+        async function checkServiceStatus() {
+            console.log('Checking service status...');
+            
+            try {
+                let service;
+                
+                if (window.__WhatsAppInboxServiceInstance) {
+                    service = window.__WhatsAppInboxServiceInstance;
+                    console.log('Found service from window.__WhatsAppInboxServiceInstance');
+                } else if (window.whatsAppInboxService) {
+                    service = window.whatsAppInboxService;
+                    console.log('Found service from window.whatsAppInboxService');
+                } else {
+                    const module = await import('/src/services/WhatsAppInboxService.ts');
+                    service = module.default;
+                    console.log('Found service from module import');
+                }
+                
+                if (service) {
+                    const status = service.getState ? service.getState() : 'unknown';
+                    const isInitialized = service.isInitialized;
+                    const tabId = service.tabId;
+                    
+                    document.getElementById('status-text').textContent = `Status: ${status}, Initialized: ${isInitialized}, Tab ID: ${tabId}`;
+                    document.querySelector('#service-status .status-indicator').className = 'status-indicator status-online';
+                    
+                    console.log('Service status:', {
+                        status,
+                        isInitialized,
+                        tabId
+                    });
+                } else {
+                    document.getElementById('status-text').textContent = 'Service not found';
+                    document.querySelector('#service-status .status-indicator').className = 'status-indicator status-offline';
+                    console.error('Service not found');
+                }
+            } catch (error) {
+                document.getElementById('status-text').textContent = 'Error checking status: ' + error.message;
+                document.querySelector('#service-status .status-indicator').className = 'status-indicator status-offline';
+                console.error('Error checking service status:', error);
+            }
+        }
+        
+        async function initService() {
+            console.log('Initializing service...');
+            
+            try {
+                let service;
+                
+                if (window.__WhatsAppInboxServiceInstance) {
+                    service = window.__WhatsAppInboxServiceInstance;
+                } else if (window.whatsAppInboxService) {
+                    service = window.whatsAppInboxService;
+                } else {
+                    const module = await import('/src/services/WhatsAppInboxService.ts');
+                    service = module.default;
+                }
+                
+                if (service && service.init) {
+                    await service.init();
+                    console.log('Service initialized successfully');
+                    checkServiceStatus();
+                } else {
+                    console.error('Service or init method not found');
+                }
+            } catch (error) {
+                console.error('Error initializing service:', error);
+            }
+        }
+        
+        async function stopService() {
+            console.log('Stopping service...');
+            
+            try {
+                let service;
+                
+                if (window.__WhatsAppInboxServiceInstance) {
+                    service = window.__WhatsAppInboxServiceInstance;
+                } else if (window.whatsAppInboxService) {
+                    service = window.whatsAppInboxService;
+                } else {
+                    const module = await import('/src/services/WhatsAppInboxService.ts');
+                    service = module.default;
+                }
+                
+                if (service && service.stop) {
+                    await service.stop();
+                    console.log('Service stopped successfully');
+                    checkServiceStatus();
+                } else {
+                    console.error('Service or stop method not found');
+                }
+            } catch (error) {
+                console.error('Error stopping service:', error);
+            }
+        }
+        
+        async function checkWebSocketStatus() {
+            console.log('Checking WebSocket status...');
+            
+            try {
+                let service;
+                
+                if (window.__WhatsAppInboxServiceInstance) {
+                    service = window.__WhatsAppInboxServiceInstance;
+                } else if (window.whatsAppInboxService) {
+                    service = window.whatsAppInboxService;
+                } else {
+                    const module = await import('/src/services/WhatsAppInboxService.ts');
+                    service = module.default;
+                }
+                
+                if (service) {
+                    const isConnected = service.isWSConnected ? service.isWSConnected() : false;
+                    const state = service.getState ? service.getState() : 'unknown';
+                    
+                    document.getElementById('ws-text').textContent = `Connected: ${isConnected}, State: ${state}`;
+                    document.querySelector('#ws-status .status-indicator').className = 
+                        isConnected ? 'status-indicator status-online' : 'status-indicator status-offline';
+                    
+                    console.log('WebSocket status:', {
+                        isConnected,
+                        state
+                    });
+                } else {
+                    document.getElementById('ws-text').textContent = 'Service not found';
+                    document.querySelector('#ws-status .status-indicator').className = 'status-indicator status-offline';
+                    console.error('Service not found');
+                }
+            } catch (error) {
+                document.getElementById('ws-text').textContent = 'Error checking status: ' + error.message;
+                document.querySelector('#ws-status .status-indicator').className = 'status-indicator status-offline';
+                console.error('Error checking WebSocket status:', error);
+            }
+        }
+        
+        async function checkLeaderStatus() {
+            console.log('Checking leader status...');
+            
+            try {
+                let service;
+                
+                if (window.__WhatsAppInboxServiceInstance) {
+                    service = window.__WhatsAppInboxServiceInstance;
+                } else if (window.whatsAppInboxService) {
+                    service = window.whatsAppInboxService;
+                } else {
+                    const module = await import('/src/services/WhatsAppInboxService.ts');
+                    service = module.default;
+                }
+                
+                if (service) {
+                    const isLeader = service.isLeader ? service.isLeader() : false;
+                    const wsDisabled = service.wsDisabledBecauseAnotherTab;
+                    const leaderData = localStorage.getItem('jev-ws-leader');
+                    
+                    document.getElementById('leader-text').textContent = `Is Leader: ${isLeader}, WS Disabled: ${wsDisabled}`;
+                    document.querySelector('#leader-status .status-indicator').className = 
+                        isLeader ? 'status-indicator status-online' : 'status-indicator status-offline';
+                    
+                    console.log('Leader status:', {
+                        isLeader,
+                        wsDisabled,
+                        leaderData
+                    });
+                } else {
+                    document.getElementById('leader-text').textContent = 'Service not found';
+                    document.querySelector('#leader-status .status-indicator').className = 'status-indicator status-offline';
+                    console.error('Service not found');
+                }
+            } catch (error) {
+                document.getElementById('leader-text').textContent = 'Error checking status: ' + error.message;
+                document.querySelector('#leader-status .status-indicator').className = 'status-indicator status-offline';
+                console.error('Error checking leader status:', error);
+            }
+        }
+        
+        // 页面加载时检查状态
+        window.onload = function() {
+            setTimeout(() => {
+                checkServiceStatus();
+                checkWebSocketStatus();
+                checkLeaderStatus();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

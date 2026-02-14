@@ -1,0 +1,46 @@
+{
+  "single_world": false,
+  "proxy_ok": false,
+  "test_data_present": true,
+  "customer_id_mutated": true,
+  "prod_api_ready": false,
+  "verdict": "FAIL",
+  "evidence": {
+    "stepA": {
+      "url": "http://127.0.0.1:8787/api/inbox/customers",
+      "customer_ids": ["test_customer_001", "daojie_real_001"],
+      "has_test_data": true,
+      "error": "TEST_DATA_PRESENT"
+    },
+    "stepB": {
+      "url": "http://127.0.0.1:3000/api/inbox/customers",
+      "customer_ids": [],
+      "error": "PROXY_OR_WORLD_MISMATCH",
+      "message": "Failed to connect to 3000 port"
+    },
+    "stepC": {
+      "search_results": [
+        "D:/PDF转网页/JEV-Rebuild/worker-core/routes/inbound_daojie.js:36:      .toLowerCase();",
+        "D:/PDF转网页/JEV-Rebuild/worker-core/src/utils/user.js:14:    .toLowerCase()"
+      ],
+      "has_normalization": true,
+      "error": "CUSTOMER_ID_MUTATED",
+      "normalization_details": {
+        "file": "D:/PDF转网页/JEV-Rebuild/worker-core/routes/inbound_daojie.js",
+        "line": 33,
+        "function": "canonicalCustomerId",
+        "code": "const canonicalCustomerId = (rawId) => { return String(rawId || "").trim().toLowerCase(); };",
+        "usage": "const customerId = canonicalCustomerId(rawCustomerId) || \"unknown\";",
+        "location": "inbound_daojie_route"
+      }
+    },
+    "stepD": {
+      "health_url": "https://jev-rebuild-worker.bensonlove1986.workers.dev/api/health",
+      "status_url": "https://jev-rebuild-worker.bensonlove1986.workers.dev/api/status",
+      "health_response": "HTTP/1.1 404 Not Found\nerror code: 1042",
+      "status_response": "HTTP/1.1 404 Not Found\nerror code: 1042",
+      "is_prod_ready": false,
+      "error": "PROD_API_NOT_READY_OR_CORS"
+    }
+  }
+}

@@ -1,0 +1,129 @@
+/* 联系人列表容器 */
+.contact-list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #fff;
+}
+
+/* 联系人列表头部 */
+.contact-list-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+}
+
+/* 联系人列表内容区域 */
+.contact-list-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+/* 联系人列表项 */
+.contact-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+  margin: 0;
+}
+
+.contact-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* 联系人头像 */
+.contact-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+/* 联系人名称容器 */
+.contact-name-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+/* 联系人名称 */
+.contact-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* 联系人时间 */
+.contact-time {
+  font-size: 11px;
+  color: #999;
+}
+
+/* 联系人消息容器 */
+.contact-message-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+/* 联系人消息发送者 */
+.contact-message-sender {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* 联系人消息 */
+.contact-message {
+  font-size: 13px;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+/* 联系人未读消息标记 */
+.contact-unread-badge {
+  margin-left: auto;
+}
+
+/* 联系人列表加载状态 */
+.contact-list-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #999;
+  font-size: 14px;
+}
+
+/* 联系人列表空状态 */
+.contact-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: #999;
+  text-align: center;
+  gap: 12px;
+}
+
+.contact-list-empty .anticon {
+  font-size: 48px;
+  color: #ccc;
+}
+
+.contact-list-empty p {
+  margin: 0;
+  font-size: 14px;
+}

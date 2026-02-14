@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket消息发送测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .log {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            resize: vertical;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebSocket消息发送测试</h1>
+    
+    <div class="test-section">
+        <h2>1. WebSocket连接</h2>
+        <button onclick="connectWebSocket()">连接WebSocket</button>
+        <button onclick="disconnectWebSocket()">断开WebSocket</button>
+        <div class="log" id="connection-log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 发送测试消息</h2>
+        <h3>文本消息</h3>
+        <button onclick="sendTextMessage()">发送文本消息</button>
+        
+        <h3>图片消息</h3>
+        <button onclick="sendImageMessage()">发送图片消息</button>
+        
+        <h3>自定义消息</h3>
+        <textarea id="custom-message" placeholder="输入自定义消息JSON...">
+{
+  "from": "whatsapp:+1234567890",
+  "to": "whatsapp:+0987654321",
+  "Body": "这是一条自定义测试消息",
+  "direction": "inbound",
+  "timestamp": 1769562360000
+}
+        </textarea>
+        <button onclick="sendCustomMessage()">发送自定义消息</button>
+        <div class="log" id="message-log"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 消息广播测试</h2>
+        <button onclick="testBroadcast()">测试广播消息</button>
+        <div class="log" id="broadcast-log"></div>
+    </div>
+
+    <script>
+        let ws = null;
+        
+        function log(message, type = 'info', logId = 'connection-log') {
+            const logElement = document.getElementById(logId);
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        function connectWebSocket() {
+            const wsUrl = 'wss://jev-rebuild-worker.bensonlove1986.workers.dev/api/ws/chat';
+            log(`尝试连接到: ${wsUrl}`);
+            
+            try {
+                ws = new WebSocket(wsUrl);
+                
+                ws.onopen = () => {
+                    log('WebSocket连接成功!', 'success');
+                };
+                
+                ws.onmessage = (event) => {
+                    log(`收到消息: ${event.data}`, 'success');
+                };
+                
+                ws.onerror = (error) => {
+                    log(`WebSocket错误: ${error}`, 'error');
+                };
+                
+                ws.onclose = (event) => {
+                    log(`WebSocket关闭: 代码=${event.code}, 原因=${event.reason}`, 'error');
+                };
+                
+            } catch (error) {
+                log(`创建WebSocket失败: ${error}`, 'error');
+            }
+        }
+        
+        function disconnectWebSocket() {
+            if (ws) {
+                ws.close();
+                log('WebSocket已断开');
+            } else {
+                log('WebSocket未连接', 'error');
+            }
+        }
+        
+        function sendTextMessage() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('WebSocket未连接', 'error');
+                return;
+            }
+            
+            const message = {
+                type: 'message',
+                data: {
+                    from: 'whatsapp:+1234567890',
+                    to: 'whatsapp:+0987654321',
+                    Body: '这是一条测试文本消息',
+                    direction: 'inbound',
+                    timestamp: Date.now()
+                }
+            };
+            
+            ws.send(JSON.stringify(message));
+            log(`发送文本消息: ${message.data.Body}`, 'success', 'message-log');
+        }
+        
+        function sendImageMessage() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('WebSocket未连接', 'error');
+                return;
+            }
+            
+            const message = {
+                type: 'message',
+                data: {
+                    from: 'whatsapp:+1234567890',
+                    to: 'whatsapp:+0987654321',
+                    Body: '这是一条测试图片消息',
+                    MediaUrl0: 'https://api.twilio.com/2010-04-01/Accounts/ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/Messages/MMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/Media/MEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                    MediaContentType0: 'image/jpeg',
+                    direction: 'inbound',
+                    timestamp: Date.now()
+                }
+            };
+            
+            ws.send(JSON.stringify(message));
+            log('发送图片消息', 'success', 'message-log');
+        }
+        
+        function sendCustomMessage() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('WebSocket未连接', 'error');
+                return;
+            }
+            
+            try {
+                const customMessage = JSON.parse(document.getElementById('custom-message').value);
+                const message = {
+                    type: 'message',
+                    data: customMessage
+                };
+                
+                ws.send(JSON.stringify(message));
+                log(`发送自定义消息: ${JSON.stringify(customMessage)}`, 'success', 'message-log');
+            } catch (error) {
+                log(`JSON解析错误: ${error}`, 'error', 'message-log');
+            }
+        }
+        
+        function testBroadcast() {
+            const broadcastUrl = 'https://jev-rebuild-worker.bensonlove1986.workers.dev/api/ws/chat/broadcast';
+            log(`测试广播消息...`, 'info', 'broadcast-log');
+            
+            const testMessage = {
+                from: 'whatsapp:+1234567890',
+                to: 'whatsapp:+0987654321',
+                Body: '这是一条广播测试消息',
+                direction: 'inbound',
+                timestamp: Date.now()
+            };
+            
+            fetch(broadcastUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(testMessage)
+            })
+            .then(response => {
+                if (response.ok) {
+                    log('广播消息发送成功!', 'success', 'broadcast-log');
+                } else {
+                    log(`广播消息发送失败: ${response.status}`, 'error', 'broadcast-log');
+                }
+            })
+            .catch(error => {
+                log(`广播消息发送错误: ${error}`, 'error', 'broadcast-log');
+            });
+        }
+        
+        // 页面加载时自动连接WebSocket
+        window.onload = function() {
+            connectWebSocket();
+        };
+    </script>
+</body>
+</html>

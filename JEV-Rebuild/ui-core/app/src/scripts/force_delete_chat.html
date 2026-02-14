@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强制删除聊天记录</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        button {
+            background-color: #f44336;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #d32f2f;
+        }
+        .log {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>强制删除聊天记录</h1>
+        <div class="warning">
+            <strong>警告：</strong>此操作将永久删除本地存储中的聊天记录，无法恢复。
+        </div>
+        <p>目标聊天 ID: <strong>whatsapp:+8615757759002</strong></p>
+        <button onclick="forceDeleteChat()">强制删除聊天记录</button>
+        <button onclick="clearLog()">清空日志</button>
+        <button onclick="checkLocalStorage()">检查 LocalStorage</button>
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        const targetChatId = 'whatsapp:+8615757759002';
+        const logElement = document.getElementById('log');
+
+        function log(message) {
+            console.log(message);
+            logElement.innerHTML += message + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function clearLog() {
+            logElement.innerHTML = '';
+        }
+
+        function checkLocalStorage() {
+            log('[CHECK_LOCALSTORAGE] 开始检查 localStorage 数据');
+            
+            if (localStorage) {
+                const keysToCheck = [
+                    'chat_messages_v1',
+                    'chat_chats_v1',
+                    'chat_translations_v1',
+                    'chat_drafts_v1',
+                    'chat_ocr_v1',
+                    'chat_ocr_results_v1'
+                ];
+                
+                keysToCheck.forEach(key => {
+                    try {
+                        const storedData = localStorage.getItem(key);
+                        if (storedData) {
+                            const data = JSON.parse(storedData);
+                            if (data[targetChatId]) {
+                                log(`[CHECK_LOCALSTORAGE] ${key} 中包含目标聊天数据`);
+                                log(`[CHECK_LOCALSTORAGE] 消息数量: ${data[targetChatId].length || 0}`);
+                            } else {
+                                log(`[CHECK_LOCALSTORAGE] ${key} 中不包含目标聊天数据`);
+                            }
+                        } else {
+                            log(`[CHECK_LOCALSTORAGE] ${key} 数据不存在`);
+                        }
+                    } catch (error) {
+                        log(`[CHECK_LOCALSTORAGE] 检查 ${key} 时出错: ${error.message}`);
+                    }
+                });
+            } else {
+                log('[CHECK_LOCALSTORAGE] localStorage 不可用');
+            }
+        }
+
+        function forceDeleteChat() {
+            log(`[FORCE_DELETE_CHAT] 开始强制删除聊天记录: ${targetChatId}`);
+            
+            // 直接操作 localStorage
+            if (localStorage) {
+                log('[FORCE_DELETE_CHAT] localStorage 可用');
+                
+                // 清理所有相关数据
+                const keysToCheck = [
+                    'chat_messages_v1',
+                    'chat_chats_v1',
+                    'chat_translations_v1',
+                    'chat_drafts_v1',
+                    'chat_ocr_v1',
+                    'chat_ocr_results_v1'
+                ];
+                
+                keysToCheck.forEach(key => {
+                    try {
+                        const storedData = localStorage.getItem(key);
+                        if (storedData) {
+                            log(`[FORCE_DELETE_CHAT] 检查 ${key} 数据`);
+                            const data = JSON.parse(storedData);
+                            
+                            // 检查是否包含目标聊天 ID
+                            let dataUpdated = false;
+                            
+                            if (data[targetChatId]) {
+                              log(`[FORCE_DELETE_CHAT] 在 ${key} 中找到目标聊天，删除`);
+                              delete data[targetChatId];
+                              dataUpdated = true;
+                            }
+                            
+                            // 检查所有键，删除包含目标聊天 ID 的项
+                            for (const itemKey in data) {
+                              if (itemKey.includes(targetChatId)) {
+                                log(`[FORCE_DELETE_CHAT] 在 ${key} 中找到包含目标聊天 ID 的项，删除: ${itemKey}`);
+                                delete data[itemKey];
+                                dataUpdated = true;
+                              }
+                            }
+                            
+                            if (dataUpdated) {
+                              localStorage.setItem(key, JSON.stringify(data));
+                              log(`[FORCE_DELETE_CHAT] 已更新 ${key} 数据`);
+                            } else {
+                              log(`[FORCE_DELETE_CHAT] ${key} 中未找到目标聊天数据`);
+                            }
+                        } else {
+                            log(`[FORCE_DELETE_CHAT] ${key} 数据不存在`);
+                        }
+                    } catch (error) {
+                        log(`[FORCE_DELETE_CHAT] 处理 ${key} 数据时出错: ${error.message}`);
+                    }
+                });
+                
+                // 清理 sync 状态，防止重新同步
+                try {
+                    localStorage.removeItem('jev_sync_last_ts_v1');
+                    localStorage.removeItem('jev_sync_status');
+                    localStorage.removeItem('jev_processed_message_ids');
+                    localStorage.removeItem('jev_ws_leader');
+                    localStorage.removeItem('jev_ws_heartbeat');
+                    log('[FORCE_DELETE_CHAT] 已清理同步状态和处理记录');
+                } catch (error) {
+                    log(`[FORCE_DELETE_CHAT] 清理同步状态时出错: ${error.message}`);
+                }
+                
+                log('[FORCE_DELETE_CHAT] 强制删除完成');
+                log('[FORCE_DELETE_CHAT] 请刷新页面查看效果');
+                log('[FORCE_DELETE_CHAT] 如果仍然存在，请检查服务器端数据');
+                log('[FORCE_DELETE_CHAT] 建议：删除后关闭所有浏览器标签页，重新打开应用');
+            } else {
+                log('[FORCE_DELETE_CHAT] localStorage 不可用');
+            }
+        }
+
+        // 页面加载时检查 localStorage
+        window.onload = function() {
+            log('[INFO] 页面加载完成，准备执行强制删除操作');
+            log('[INFO] 点击 "强制删除聊天记录" 按钮开始删除');
+        };
+    </script>
+</body>
+</html>

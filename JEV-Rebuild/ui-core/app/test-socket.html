@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.io Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.3/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Socket.io Connection Test</h1>
+    <div id="status">Connecting...</div>
+    <div id="logs"></div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+
+        function log(message) {
+            const logEntry = document.createElement('div');
+            logEntry.textContent = new Date().toISOString() + ': ' + message;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        // Test Socket.io connection to Engine
+        log('Attempting to connect to http://localhost:3001');
+        
+        try {
+            const socket = io('http://localhost:3001', {
+                path: '/socket.io',
+                transports: ['websocket'],
+            });
+
+            socket.on('connect', () => {
+                statusDiv.textContent = 'Connected! Socket ID: ' + socket.id;
+                statusDiv.style.color = 'green';
+                log('Connected! Socket ID: ' + socket.id);
+                log('URI: ' + socket.io.uri);
+                log('Path: ' + socket.io.opts.path);
+                
+                // Send init_customers event
+                log('Sending whatsapp:init_customers');
+                socket.emit('whatsapp:init_customers', { mode: 'playwright' });
+            });
+
+            socket.on('connect_error', (err) => {
+                statusDiv.textContent = 'Connection Error: ' + err.message;
+                statusDiv.style.color = 'red';
+                log('Connection Error: ' + err.message);
+                log('Error details: ' + JSON.stringify(err, null, 2));
+            });
+
+            socket.on('whatsapp:customers', (data) => {
+                log('Received whatsapp:customers: ' + JSON.stringify(data));
+            });
+
+            socket.on('whatsapp:status', (data) => {
+                log('Received whatsapp:status: ' + JSON.stringify(data));
+            });
+
+            socket.on('disconnect', (reason) => {
+                statusDiv.textContent = 'Disconnected: ' + reason;
+                statusDiv.style.color = 'orange';
+                log('Disconnected: ' + reason);
+            });
+        } catch (err) {
+            statusDiv.textContent = 'Initialization Error: ' + err.message;
+            statusDiv.style.color = 'red';
+            log('Initialization Error: ' + err.message);
+        }
+    </script>
+</body>
+</html>

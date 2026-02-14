@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>完整图片消息流程测试</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .test-result {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 3px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #0069d9;
+    }
+    .log-container {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 3px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>完整图片消息流程测试</h1>
+  
+  <div class="test-section">
+    <h2>1. 系统状态检查</h2>
+    <button onclick="checkSystemStatus()">检查系统状态</button>
+    <div id="system-status-result" class="test-result"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>2. WebSocket 连接测试</h2>
+    <button onclick="testWebSocketConnection()">测试 WebSocket 连接</button>
+    <button onclick="closeWebSocketConnection()">关闭 WebSocket 连接</button>
+    <div id="websocket-result" class="test-result"></div>
+    <div id="websocket-log" class="log-container"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>3. 图片消息流程模拟</h2>
+    <button onclick="simulateImageMessageFlow()">模拟完整图片消息流程</button>
+    <div id="image-flow-result" class="test-result"></div>
+    <div id="image-flow-log" class="log-container"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>4. 前端消息处理测试</h2>
+    <button onclick="testFrontendMessageProcessing()">测试前端消息处理</button>
+    <div id="frontend-processing-result" class="test-result"></div>
+  </div>
+
+  <script>
+    // 全局变量
+    let ws = null;
+    let apiBaseUrl = 'https://jev-rebuild-worker.bensonlove1986.workers.dev';
+    
+    // 日志函数
+    function log(containerId, message) {
+      const container = document.getElementById(containerId);
+      const timestamp = new Date().toLocaleTimeString();
+      container.innerHTML += `[${timestamp}] ${message}\n`;
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    // 显示结果
+    function showResult(containerId, message, type = 'info') {
+      const container = document.getElementById(containerId);
+      container.innerHTML = message;
+      container.className = `test-result ${type}`;
+    }
+    
+    // 1. 检查系统状态
+    async function checkSystemStatus() {
+      showResult('system-status-result', '正在检查系统状态...');
+      
+      try {
+        // 测试 API 健康端点
+        const healthResponse = await fetch(apiBaseUrl + '/api/health');
+        const healthData = await healthResponse.json();
+        
+        // 测试客户列表端点
+        const customersResponse = await fetch(apiBaseUrl + '/api/inbox/customers');
+        const customersData = await customersResponse.json();
+        
+        showResult('system-status-result', `
+          <strong>系统状态检查结果:</strong><br>
+          API 健康状态: ${healthResponse.ok ? '正常' : '异常'}<br>
+          客户列表 API: ${customersResponse.ok ? '正常' : '异常'}<br>
+          客户数量: ${customersData.customers ? customersData.customers.length : 0}<br>
+          API 基础 URL: ${apiBaseUrl}
+        `, 'success');
+      } catch (error) {
+        showResult('system-status-result', `
+          <strong>系统状态检查失败:</strong><br>
+          错误: ${error.message}<br>
+          API 基础 URL: ${apiBaseUrl}
+        `, 'error');
+      }
+    }
+    
+    // 2. 测试 WebSocket 连接
+    function testWebSocketConnection() {
+      showResult('websocket-result', '正在测试 WebSocket 连接...');
+      log('websocket-log', '开始测试 WebSocket 连接');
+      
+      try {
+        const wsUrl = apiBaseUrl.replace('https', 'wss').replace('http', 'ws') + '/api/ws/chat';
+        log('websocket-log', `尝试连接到: ${wsUrl}`);
+        
+        ws = new WebSocket(wsUrl);
+        
+        ws.onopen = () => {
+          log('websocket-log', 'WebSocket 连接已建立');
+          showResult('websocket-result', `<strong>成功</strong>: WebSocket 连接已建立`, 'success');
+          
+          // 发送心跳消息
+          setInterval(() => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'ping' }));
+              log('websocket-log', '发送心跳消息');
+            }
+          }, 30000);
+        };
+        
+        ws.onmessage = (event) => {
+          log('websocket-log', `收到消息: ${event.data}`);
+        };
+        
+        ws.onerror = (error) => {
+          log('websocket-log', `WebSocket 错误: ${error}`);
+          showResult('websocket-result', `<strong>错误</strong>: WebSocket 连接失败`, 'error');
+        };
+        
+        ws.onclose = (event) => {
+          log('websocket-log', `WebSocket 连接已关闭: ${event.code} ${event.reason}`);
+          showResult('websocket-result', `<strong>关闭</strong>: WebSocket 连接已关闭`, 'info');
+        };
+      } catch (error) {
+        log('websocket-log', `WebSocket 连接错误: ${error.message}`);
+        showResult('websocket-result', `<strong>错误</strong>: ${error.message}`, 'error');
+      }
+    }
+    
+    // 关闭 WebSocket 连接
+    function closeWebSocketConnection() {
+      if (ws) {
+        ws.close();
+        ws = null;
+        showResult('websocket-result', `<strong>关闭</strong>: WebSocket 连接已关闭`, 'info');
+        log('websocket-log', 'WebSocket 连接已手动关闭');
+      } else {
+        showResult('websocket-result', `<strong>提示</strong>: 没有活跃的 WebSocket 连接`, 'info');
+      }
+    }
+    
+    // 3. 模拟完整图片消息流程
+    async function simulateImageMessageFlow() {
+      showResult('image-flow-result', '正在模拟完整图片消息流程...');
+      log('image-flow-log', '开始模拟完整图片消息流程');
+      
+      try {
+        // 步骤 1: 模拟 Twilio 入站消息
+        log('image-flow-log', '步骤 1: 模拟 Twilio 入站消息');
+        
+        // 构建模拟的 Twilio 图片消息
+        const twilioMessage = {
+          From: 'whatsapp:+8615757759002',
+          To: 'whatsapp:+8615858577142',
+          Body: '',
+          MessageSid: 'MM' + Math.random().toString(36).substr(2, 24),
+          NumMedia: '1',
+          MediaUrl0: 'https://api.twilio.com/2010-04-01/Accounts/AC123456/Messages/MM123456/Media/ME123456',
+          MediaContentType0: 'image/jpeg',
+          ProfileName: 'Test User',
+          WaId: '8615757759002'
+        };
+        
+        log('image-flow-log', `模拟 Twilio 消息: ${JSON.stringify(twilioMessage)}`);
+        
+        // 步骤 2: 发送到 Twilio webhook 端点
+        log('image-flow-log', '步骤 2: 发送到 Twilio webhook 端点');
+        
+        const formData = new URLSearchParams();
+        for (const [key, value] of Object.entries(twilioMessage)) {
+          formData.append(key, value);
+        }
+        
+        const response = await fetch(apiBaseUrl + '/api/inbound/whatsapp/twilio', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: formData.toString()
+        });
+        
+        log('image-flow-log', `Twilio webhook 响应状态: ${response.status}`);
+        
+        // 步骤 3: 检查消息是否已存储
+        log('image-flow-log', '步骤 3: 检查消息是否已存储');
+        
+        // 给服务器一些时间来处理消息
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // 步骤 4: 检查客户列表
+        const customersResponse = await fetch(apiBaseUrl + '/api/inbox/customers');
+        const customersData = await customersResponse.json();
+        
+        log('image-flow-log', `客户列表: ${JSON.stringify(customersData)}`);
+        
+        showResult('image-flow-result', `
+          <strong>图片消息流程模拟结果:</strong><br>
+          Twilio webhook 响应状态: ${response.status}<br>
+          客户数量: ${customersData.customers ? customersData.customers.length : 0}<br>
+          模拟消息 ID: ${twilioMessage.MessageSid}<br>
+          模拟媒体 URL: ${twilioMessage.MediaUrl0}
+        `, 'success');
+        
+      } catch (error) {
+        log('image-flow-log', `错误: ${error.message}`);
+        showResult('image-flow-result', `<strong>错误</strong>: ${error.message}`, 'error');
+      }
+    }
+    
+    // 4. 测试前端消息处理
+    function testFrontendMessageProcessing() {
+      showResult('frontend-processing-result', '正在测试前端消息处理...');
+      
+      try {
+        // 模拟后端发送的图片消息
+        const mockImageMessage = {
+          id: 'twilio_MM' + Math.random().toString(36).substr(2, 24),
+          text: '',
+          role: 'customer',
+          timestamp: Date.now(),
+          customer_id: 'whatsapp:+8615757759002',
+          direction: 'inbound',
+          channel: 'whatsapp',
+          source: 'twilio',
+          type: 'image',
+          media_path: '/api/media/twilio/MM123456/ME789012',
+          kind: 'image',
+          mime: 'image/jpeg',
+          ocr_status: 'pending'
+        };
+        
+        // 测试前端的 isImageMessage 函数
+        function isImageMessage(msg) {
+          if (typeof msg?.media_path === 'string' && msg.media_path) return true;
+          if (msg?.kind === 'image' || msg?.type === 'image') return true;
+          if (typeof msg?.mime === 'string' && msg.mime.startsWith('image/')) return true;
+          return false;
+        }
+        
+        // 测试前端的 getImageUrl 函数
+        function getImageUrl(msg) {
+          const rawMediaPath = msg.media_path;
+          if (!rawMediaPath) {
+            return '';
+          }
+          
+          let imageSrc = '';
+          if (rawMediaPath.startsWith('http://') || rawMediaPath.startsWith('https://')) {
+            imageSrc = rawMediaPath;
+          } else if (rawMediaPath.startsWith('/api/media/twilio/')) {
+            imageSrc = apiBaseUrl + rawMediaPath;
+          } else {
+            imageSrc = rawMediaPath;
+          }
+          return imageSrc;
+        }
+        
+        // 测试消息处理
+        const isImage = isImageMessage(mockImageMessage);
+        const imageUrl = getImageUrl(mockImageMessage);
+        
+        showResult('frontend-processing-result', `
+          <strong>前端消息处理测试结果:</strong><br>
+          Is image message: ${isImage}<br>
+          Image URL: ${imageUrl}<br>
+          Message ID: ${mockImageMessage.id}<br>
+          Media path: ${mockImageMessage.media_path}<br>
+          Message type: ${mockImageMessage.type}<br>
+          MIME type: ${mockImageMessage.mime}
+        `, 'success');
+        
+      } catch (error) {
+        showResult('frontend-processing-result', `<strong>错误</strong>: ${error.message}`, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

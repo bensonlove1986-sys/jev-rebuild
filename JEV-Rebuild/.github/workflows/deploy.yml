@@ -1,0 +1,41 @@
+name: Deploy Cloudflare Worker
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: |
+        cd worker-core
+        npm install
+    
+    - name: Bundle worker code
+      run: |
+        cd worker-core
+        npx esbuild index.js --bundle --format=cjs --outfile=bundle.js
+    
+    - name: Deploy to Cloudflare Workers
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        workingDirectory: worker-core
+        command: deploy
+    
+    - name: Verify deployment
+      run: |
+        sleep 10
+        curl -s -o /dev/null -w "%{http_code}" https://jev-rebuild-worker.bensonlove1986.workers.dev/api/health

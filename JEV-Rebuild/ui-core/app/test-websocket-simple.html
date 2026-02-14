@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单WebSocket测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .log { margin: 20px 0; padding: 10px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; max-height: 300px; overflow-y: auto; }
+        .log-entry { margin: 5px 0; padding: 5px; border-bottom: 1px solid #eee; }
+        .log-entry.error { color: red; }
+        .log-entry.info { color: blue; }
+        .log-entry.success { color: green; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+        button.test { background-color: #007bff; color: white; }
+    </style>
+</head>
+<body>
+    <h1>简单WebSocket测试</h1>
+    <button class="test" onclick="testWebSocket()">测试WebSocket连接</button>
+    <div class="log" id="log">
+        <div class="log-entry info">点击按钮开始测试</div>
+    </div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function testWebSocket() {
+            log('开始测试WebSocket连接...', 'info');
+            
+            try {
+                const wsUrl = 'wss://jev-rebuild-worker.bensonlove1986.workers.dev/stream';
+                log(`尝试连接到: ${wsUrl}`, 'info');
+                
+                const ws = new WebSocket(wsUrl);
+                
+                ws.onopen = function() {
+                    log('WebSocket连接成功！', 'success');
+                    ws.close();
+                };
+                
+                ws.onmessage = function(event) {
+                    log(`收到消息: ${event.data}`, 'info');
+                };
+                
+                ws.onerror = function(error) {
+                    log(`WebSocket错误: ${error.message}`, 'error');
+                };
+                
+                ws.onclose = function(event) {
+                    log(`WebSocket关闭: 代码=${event.code}, 原因=${event.reason}`, 'info');
+                };
+                
+            } catch (error) {
+                log(`创建WebSocket失败: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

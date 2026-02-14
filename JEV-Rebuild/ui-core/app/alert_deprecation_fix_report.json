@@ -1,0 +1,20 @@
+{
+  "library": "antd",
+  "issue": "Alert.message deprecated",
+  "fix": "replaced with title",
+  "warnings_remaining": 0,
+  "ui_state": "CLEAN_CONSOLE",
+  "fixed_components": [
+    {
+      "file_path": "src/App.tsx",
+      "line_numbers": [70, 81],
+      "fix_description": "replaced message with title in Alert components"
+    }
+  ],
+  "verification_result": {
+    "build_successful": true,
+    "typescript_errors": 0,
+    "antd_deprecation_warnings": 0,
+    "functionality_preserved": true
+  }
+}

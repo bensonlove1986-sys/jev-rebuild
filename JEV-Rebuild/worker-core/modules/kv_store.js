@@ -45,23 +45,11 @@ export async function deleteKV(namespace, key) {
 // 获取 KV 命名空间
 function getKVNamespace(namespace) {
   // 在 Cloudflare Worker 中，KV 命名空间通过环境变量访问
-  // 这里使用全局对象模拟，实际部署时会被替换
+  // 只允许真实的 KV 命名空间，禁止任何模拟或回退
   if (globalThis[namespace]) {
     return globalThis[namespace];
   }
   
-  // 开发环境模拟 KV
-  debug('Using mock KV for namespace', { namespace });
-  return {
-    async put(key, value) {
-      debug('Mock KV put', { namespace, key, value });
-    },
-    async get(key) {
-      debug('Mock KV get', { namespace, key });
-      return null;
-    },
-    async delete(key) {
-      debug('Mock KV delete', { namespace, key });
-    }
-  };
+  // 禁止 KV miss，直接抛出错误
+  throw new Error(`KV namespace ${namespace} not found`);
 }

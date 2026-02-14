@@ -1,0 +1,4 @@
+name = "jev-test-worker"
+workers_dev = true
+main = "test-worker.js"
+compatibility_date = "2026-02-03"

@@ -1,0 +1,411 @@
+/* TranslationPanel.css */
+
+.translation-panel {
+  position: fixed;
+  width: 600px;
+  max-width: 90vw;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  /* 允许下拉菜单溢出，确保语言选择器显示正常 */
+  overflow: visible;
+  /* 移除所有过渡动画，提升扩大缩小速度 */
+  transition: none;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+  /* 硬件加速，提升性能 */
+  transform: translateZ(0);
+  will-change: transform, left, top;
+  /* 设置合理的最小尺寸 */
+  min-width: 400px;
+  min-height: 300px;
+}
+
+.translation-panel.dragging {
+  cursor: grabbing;
+  opacity: 0.9;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  user-select: none;
+  /* 移除过渡效果，提升拖拽流畅度 */
+  transition: none !important;
+  /* 优化硬件加速 */
+  transform: translateZ(0) !important;
+}
+
+.translation-panel.maximized {
+  width: 90vw;
+  height: 90vh;
+  left: 5vw !important;
+  top: 5vh !important;
+  min-height: 600px;
+  border-radius: 12px;
+}
+
+.translation-panel.minimized {
+  height: 40px;
+  width: 200px;
+  min-height: auto;
+  border-radius: 12px;
+}
+
+/* 确保标题栏可以正常拖拽 */
+.translation-panel-header {
+  cursor: move;
+  user-select: none;
+}
+
+/* 修复最大化时的样式 */
+.translation-panel.maximized .translation-panel-header {
+  cursor: default;
+}
+
+/* 修复拖拽时的文本选择问题 */
+.translation-panel.dragging * {
+  user-select: none !important;
+}
+
+/* 添加resize功能支持 */
+.translation-panel {
+  resize: both;
+  min-width: 400px;
+  min-height: 300px;
+}
+
+/* 标题栏 */
+.translation-panel-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  user-select: none;
+  transition: all 0.3s ease;
+  height: 40px;
+}
+
+.translation-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.translation-panel-icon {
+  font-size: 16px;
+}
+
+.translation-panel-customer {
+  font-size: 12px;
+  opacity: 0.9;
+  margin-left: auto;
+  font-weight: 400;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 12px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.translation-panel-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.translation-panel-action-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.translation-panel-action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.translation-panel-action-btn.close:hover {
+  background: #ff4d4f;
+}
+
+/* 内容区域 */
+.translation-panel-content {
+  padding: 16px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* 确保语言选择器下拉菜单不被裁剪 */
+  overflow-x: visible;
+  position: relative;
+}
+
+.translation-panel.minimized .translation-panel-content {
+  display: none;
+}
+
+/* 语言选择器 */
+.translation-panel-language-selector {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  flex-wrap: nowrap;
+  /* 允许语言选择器的下拉菜单溢出 */
+  overflow: visible;
+  /* 确保父容器不会裁剪子元素 */
+  position: relative;
+  z-index: 1000;
+}
+
+.translation-panel-switch-btn {
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  color: #666;
+  margin-top: 24px; /* 调整与语言选择器的垂直对齐 */
+  /* 确保切换按钮始终居中对齐 */
+  align-self: center;
+}
+
+/* 优化语言选择器容器的宽度分配 */
+.language-selector-container {
+  flex: 1;
+  min-width: 180px;
+  /* 确保语言选择器的下拉菜单不会被裁剪 */
+  position: relative;
+  z-index: 1001;
+}
+
+.translation-panel-switch-btn:hover {
+  background: #e0e0e0;
+  transform: rotate(180deg);
+}
+
+/* 翻译区域 */
+.translation-panel-translate-area {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.translation-panel-original,
+.translation-panel-translated {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.translation-panel-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.translation-panel-char-count {
+  font-size: 12px;
+  color: #999;
+  font-weight: 400;
+}
+
+.translation-panel-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+  min-height: 120px;
+}
+
+.translation-panel-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+/* 翻译按钮 */
+.translation-panel-translate-btn-container {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.translation-panel-translate-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.translation-panel-translate-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.translation-panel-translate-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.translation-panel-translate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 底部操作按钮 */
+.translation-panel-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid #f0f0f0;
+  margin-top: auto;
+}
+
+.translation-panel-action-btn.primary {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  width: auto;
+  height: auto;
+  border: none;
+  cursor: pointer;
+}
+
+.translation-panel-action-btn.primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+}
+
+.translation-panel-action-btn.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.translation-panel-action-btn.secondary {
+  background: #f0f0f0;
+  color: #666;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  width: auto;
+  height: auto;
+  border: none;
+  cursor: pointer;
+}
+
+.translation-panel-action-btn.secondary:hover:not(:disabled) {
+  background: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+.translation-panel-action-btn.secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 滚动条样式 */
+.translation-panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.translation-panel-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.translation-panel-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.translation-panel-content::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .translation-panel {
+    width: 95vw;
+    left: 2.5vw !important;
+    top: 2.5vh !important;
+    height: 95vh;
+    max-width: none;
+  }
+  
+  .translation-panel.maximized {
+    width: 95vw;
+    height: 95vh;
+    left: 2.5vw !important;
+    top: 2.5vh !important;
+  }
+  
+  .translation-panel-language-selector {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .translation-panel-footer {
+    flex-direction: column;
+  }
+  
+  .translation-panel-action-btn.primary,
+  .translation-panel-action-btn.secondary {
+    width: 100%;
+  }
+}

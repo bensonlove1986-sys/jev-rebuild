@@ -1,0 +1,6 @@
+2026/01/21-09:43:24.782 7fc0 Reusing MANIFEST D:\PDF转网页\JEV-Rebuild\worker-core\.whatsapp_profile\Default\Local Storage\leveldb/MANIFEST-000001
+2026/01/21-09:43:24.788 7fc0 Recovering log #20
+2026/01/21-09:43:24.789 7fc0 Reusing old log D:\PDF转网页\JEV-Rebuild\worker-core\.whatsapp_profile\Default\Local Storage\leveldb/000020.log 
+2026/01/21-09:45:26.567 7fc0 Level-0 table #24: started
+2026/01/21-09:45:26.575 7fc0 Level-0 table #24: 13201 bytes OK
+2026/01/21-09:45:26.580 7fc0 Delete type=0 #20

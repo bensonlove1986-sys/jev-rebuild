@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-12-23T08:00:00Z",
+  "description": "Current version frozen before upgrade",
+  "technology_stack": {
+    "bundler": "Vite 5.4.0",
+    "framework": "React 19.2.0",
+    "language": "TypeScript 5.9.3",
+    "ui_library": "Ant Design 6.1.1",
+    "state_management": "Zustand 5.0.9",
+    "styling": "TailwindCSS 3.4.0"
+  },
+  "status": "HISTORICAL_VERSION_FROZEN"
+}

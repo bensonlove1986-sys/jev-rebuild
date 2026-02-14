@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI草稿生成流程测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #555;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .log-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .log-entry.error {
+            color: red;
+        }
+        .log-entry.info {
+            color: blue;
+        }
+        .log-entry.success {
+            color: green;
+        }
+        .log-entry.debug {
+            color: purple;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .test-result.pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-result.fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI草稿生成流程测试</h1>
+        
+        <div class="test-section">
+            <h2>测试目标</h2>
+            <p>验证AI草稿生成的完整流程，包括：</p>
+            <ol>
+                <li>消息添加到chatStore</li>
+                <li>AutoDraftWorker被触发</li>
+                <li>AI草稿生成</li>
+                <li>草稿存储到chatStore</li>
+                <li>MessageBubble读取并显示草稿</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h2>测试控制</h2>
+            <button onclick="runFullTest()">运行完整测试</button>
+            <button onclick="clearLocalStorage()">清除localStorage</button>
+            <button onclick="checkLocalStorage()">检查localStorage</button>
+            <button onclick="clearLogs()">清除日志</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>测试结果</h2>
+            <div id="testResults"></div>
+        </div>
+        
+        <div class="log-section" id="logSection">
+            <h2>测试日志</h2>
+            <div id="logs"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 启用开发模式
+        window.__DEV_DEBUG__ = true;
+        
+        // 日志函数
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        // 清除日志
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+            log('日志已清除', 'success');
+        }
+        
+        // 显示测试结果
+        function showTestResult(testName, passed, message) {
+            const testResultsDiv = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${passed ? 'pass' : 'fail'}`;
+            resultDiv.innerHTML = `<strong>${testName}:</strong> ${message}`;
+            testResultsDiv.appendChild(resultDiv);
+        }
+        
+        // 清除localStorage
+        function clearLocalStorage() {
+            try {
+                localStorage.removeItem('chat_messages_v1');
+                localStorage.removeItem('chat_chats_v1');
+                localStorage.removeItem('chat_translations_v1');
+                localStorage.removeItem('chat_ocr_v1');
+                localStorage.removeItem('chat_ocr_results_v1');
+                localStorage.removeItem('chat_drafts_v1');
+                log('localStorage已清除', 'success');
+                showTestResult('清除localStorage', true, 'localStorage已成功清除');
+            } catch (error) {
+                log(`清除localStorage失败: ${error.message}`, 'error');
+                showTestResult('清除localStorage', false, `失败: ${error.message}`);
+            }
+        }
+        
+        // 检查localStorage
+        function checkLocalStorage() {
+            try {
+                const drafts = localStorage.getItem('chat_drafts_v1');
+                const messages = localStorage.getItem('chat_messages_v1');
+                
+                log('检查localStorage数据', 'info');
+                
+                if (drafts) {
+                    const draftsObj = JSON.parse(drafts);
+                    log(`草稿数量: ${Object.keys(draftsObj).length}`, 'success');
+                    for (const [messageId, draft] of Object.entries(draftsObj)) {
+                        log(`草稿内容 (${messageId}): ${JSON.stringify(draft)}`, 'debug');
+                    }
+                } else {
+                    log('没有找到草稿数据', 'error');
+                }
+                
+                if (messages) {
+                    const messagesObj = JSON.parse(messages);
+                    log(`消息数量: ${Object.keys(messagesObj).length}`, 'info');
+                    for (const [chatId, chatMessages] of Object.entries(messagesObj)) {
+                        log(`聊天 ${chatId} 消息数量: ${chatMessages.length}`, 'info');
+                        chatMessages.forEach((msg, index) => {
+                            log(`消息 ${index}: ${msg.id} - ${msg.text}`, 'debug');
+                        });
+                    }
+                } else {
+                    log('没有找到消息数据', 'info');
+                }
+            } catch (error) {
+                log(`检查localStorage失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 运行完整测试
+        async function runFullTest() {
+            log('开始运行完整测试...', 'info');
+            
+            // 清除之前的测试结果
+            document.getElementById('testResults').innerHTML = '';
+            
+            try {
+                // 步骤1: 清除localStorage
+                log('步骤1: 清除localStorage', 'info');
+                clearLocalStorage();
+                
+                // 步骤2: 模拟添加消息到chatStore
+                log('步骤2: 模拟添加消息到chatStore', 'info');
+                const testMessage = {
+                    id: `test_msg_${Date.now()}`,
+                    chatId: 'whatsapp:+1234567890',
+                    from: 'whatsapp:+1234567890',
+                    to: 'operator',
+                    direction: 'inbound',
+                    type: 'text',
+                    text: '你好，我想咨询一下产品信息',
+                    timestamp: Date.now(),
+                    status: 'read',
+                    isGroup: false
+                };
+                
+                log(`测试消息: ${JSON.stringify(testMessage)}`, 'debug');
+                showTestResult('创建测试消息', true, `消息ID: ${testMessage.id}`);
+                
+                // 步骤3: 手动触发AutoDraftWorker
+                log('步骤3: 手动触发AutoDraftWorker', 'info');
+                
+                if (window.AutoDraftWorker) {
+                    log('AutoDraftWorker已加载，调用processNewCustomerMessage', 'info');
+                    const result = await window.AutoDraftWorker.processNewCustomerMessage({
+                        chatId: testMessage.chatId,
+                        messageId: testMessage.id,
+                        text: testMessage.text,
+                        direction: testMessage.direction,
+                        timestamp: testMessage.timestamp
+                    });
+                    log(`AutoDraftWorker处理结果: ${result}`, 'success');
+                    showTestResult('触发AutoDraftWorker', true, `处理结果: ${result}`);
+                } else {
+                    log('AutoDraftWorker未加载，尝试动态导入', 'info');
+                    try {
+                        // 注意：这在浏览器中可能无法工作，因为模块导入路径可能不正确
+                        // 我们只是尝试一下，不行就跳过
+                        const module = await import('/src/services/AutoDraftWorker.ts');
+                        window.AutoDraftWorker = module.AutoDraftWorker;
+                        log('AutoDraftWorker已动态加载', 'success');
+                        const result = await window.AutoDraftWorker.processNewCustomerMessage({
+                            chatId: testMessage.chatId,
+                            messageId: testMessage.id,
+                            text: testMessage.text,
+                            direction: testMessage.direction,
+                            timestamp: testMessage.timestamp
+                        });
+                        log(`AutoDraftWorker处理结果: ${result}`, 'success');
+                        showTestResult('触发AutoDraftWorker', true, `处理结果: ${result}`);
+                    } catch (error) {
+                        log(`动态导入AutoDraftWorker失败: ${error.message}`, 'error');
+                        showTestResult('触发AutoDraftWorker', false, `失败: ${error.message}`);
+                        log('跳过AutoDraftWorker测试，直接检查localStorage', 'info');
+                    }
+                }
+                
+                // 步骤4: 检查localStorage中的草稿
+                log('步骤4: 检查localStorage中的草稿', 'info');
+                setTimeout(() => {
+                    checkLocalStorage();
+                    
+                    // 步骤5: 模拟MessageBubble读取草稿
+                    log('步骤5: 模拟MessageBubble读取草稿', 'info');
+                    try {
+                        const drafts = localStorage.getItem('chat_drafts_v1');
+                        if (drafts) {
+                            const draftsObj = JSON.parse(drafts);
+                            const draftData = draftsObj[testMessage.id];
+                            if (draftData) {
+                                const englishDraft = typeof draftData === 'object' && draftData !== null ? draftData.en : typeof draftData === 'string' ? draftData : "";
+                                const chineseDraft = typeof draftData === 'object' && draftData !== null ? draftData.zh : "";
+                                const hasDraftText = typeof englishDraft === 'string' && englishDraft.trim() !== '';
+                                
+                                log(`MessageBubble读取草稿:`, 'debug');
+                                log(`  englishDraft: ${englishDraft}`, 'debug');
+                                log(`  chineseDraft: ${chineseDraft}`, 'debug');
+                                log(`  hasDraftText: ${hasDraftText}`, 'debug');
+                                
+                                if (hasDraftText) {
+                                    showTestResult('MessageBubble读取草稿', true, `成功读取到草稿`);
+                                    log('AI草稿生成流程测试通过！', 'success');
+                                } else {
+                                    showTestResult('MessageBubble读取草稿', false, `未读取到草稿`);
+                                    log('AI草稿生成流程测试失败！', 'error');
+                                }
+                            } else {
+                                showTestResult('MessageBubble读取草稿', false, `未找到对应消息的草稿`);
+                                log('AI草稿生成流程测试失败！', 'error');
+                            }
+                        } else {
+                            showTestResult('MessageBubble读取草稿', false, `localStorage中没有草稿数据`);
+                            log('AI草稿生成流程测试失败！', 'error');
+                        }
+                    } catch (error) {
+                        log(`模拟MessageBubble读取草稿失败: ${error.message}`, 'error');
+                        showTestResult('MessageBubble读取草稿', false, `失败: ${error.message}`);
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                log(`测试执行失败: ${error.message}`, 'error');
+                showTestResult('测试执行', false, `失败: ${error.message}`);
+            }
+        }
+        
+        // 页面加载时检查环境
+        window.onload = function() {
+            log('页面已加载，开始测试环境检查', 'info');
+            log(`当前URL: ${window.location.href}`, 'info');
+            log(`localStorage可用: ${typeof Storage !== 'undefined'}`, 'info');
+            log(`开发模式: ${window.__DEV_DEBUG__}`, 'info');
+            
+            // 检查是否可以访问chatStore
+            try {
+                if (window.useChatStore) {
+                    const chatStore = window.useChatStore.getState();
+                    log('chatStore可用', 'success');
+                    log(`初始drafts数量: ${Object.keys(chatStore.drafts || {}).length}`, 'info');
+                } else {
+                    log('chatStore不可用', 'error');
+                }
+            } catch (error) {
+                log(`检查chatStore失败: ${error.message}`, 'error');
+            }
+        };
+    </script>
+</body>
+</html>

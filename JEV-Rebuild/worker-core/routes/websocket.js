@@ -4,20 +4,14 @@ import { addConnection, removeConnection } from '../modules/ws_manager.js';
 import { generateTraceId, info, debug } from '../modules/trace.js';
 import { putKV } from '../modules/kv_store.js';
 import { KV_CONFIG } from '../config/constants.js';
+import { websocketError, websocketUpgrade } from '../utils/response.js';
 
 export const websocketHandler = async (request) => {
-  // 强制冻结 WebSocket 连接
-  return new Response('WS disabled by freeze', { status: 410 });
+  // 启用 WebSocket 连接
   
-  // 以下代码已被冻结，不会执行
   // 检查是否为 WebSocket 请求
   if (request.headers.get('Upgrade') !== 'websocket') {
-    return new Response('Expected Upgrade: websocket', {
-      status: 426,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
+    return websocketError(request, 'Expected Upgrade: websocket', 426);
   }
 
   // 接受 WebSocket 连接
@@ -103,8 +97,5 @@ export const websocketHandler = async (request) => {
   });
   
   // 返回 WebSocket 响应
-  return new Response(null, {
-    status: 101,
-    webSocket: client
-  });
+  return websocketUpgrade(request, client);
 };

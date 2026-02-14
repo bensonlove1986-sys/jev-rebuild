@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket连接测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .status.connected {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.connecting {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .log {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .log-entry.error {
+            color: red;
+        }
+        .log-entry.info {
+            color: blue;
+        }
+        .log-entry.success {
+            color: green;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.connect {
+            background-color: #007bff;
+            color: white;
+        }
+        button.disconnect {
+            background-color: #dc3545;
+            color: white;
+        }
+        button.test {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebSocket连接测试</h1>
+        
+        <div class="status" id="status">
+            状态: 未连接
+        </div>
+        
+        <div>
+            <button class="connect" onclick="connectWebSocket()">连接WebSocket</button>
+            <button class="disconnect" onclick="disconnectWebSocket()">断开连接</button>
+            <button class="test" onclick="testConnection()">测试连接</button>
+        </div>
+        
+        <div class="log" id="log">
+            <div class="log-entry info">页面已加载，准备测试WebSocket连接</div>
+        </div>
+        
+        <h2>连接信息</h2>
+        <div id="connection-info">
+            <p>WebSocket URL: <strong>wss://jev-rebuild-worker.bensonlove1986.workers.dev/stream</strong></p>
+            <p>预期行为: 连接后应显示 101 Switching Protocols</p>
+        </div>
+    </div>
+    
+    <script>
+        let ws = null;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        const reconnectDelay = 2000;
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateStatus(status, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${status}`;
+            statusDiv.textContent = `状态: ${message}`;
+        }
+        
+        function connectWebSocket() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                log('WebSocket已经连接', 'info');
+                return;
+            }
+            
+            updateStatus('connecting', '正在连接...');
+            log('开始连接WebSocket...', 'info');
+            
+            try {
+                ws = new WebSocket('wss://jev-rebuild-worker.bensonlove1986.workers.dev/stream');
+                
+                ws.onopen = function() {
+                    updateStatus('connected', '已连接');
+                    log('WebSocket连接成功！', 'success');
+                    log('连接状态: OPEN', 'success');
+                    reconnectAttempts = 0;
+                };
+                
+                ws.onmessage = function(event) {
+                    log(`收到消息: ${event.data}`, 'info');
+                    
+                    // 尝试解析JSON消息
+                    try {
+                        const data = JSON.parse(event.data);
+                        log(`解析消息: ${JSON.stringify(data, null, 2)}`, 'success');
+                    } catch (e) {
+                        log(`非JSON消息: ${event.data}`, 'info');
+                    }
+                };
+                
+                ws.onerror = function(error) {
+                    updateStatus('disconnected', '连接错误');
+                    log(`WebSocket错误: ${error.message}`, 'error');
+                    log(`错误详情: ${JSON.stringify(error)}`, 'error');
+                };
+                
+                ws.onclose = function(event) {
+                    updateStatus('disconnected', '连接已关闭');
+                    log(`WebSocket关闭: 代码=${event.code}, 原因=${event.reason}`, 'info');
+                    
+                    // 尝试重连
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        reconnectAttempts++;
+                        log(`尝试重连 (${reconnectAttempts}/${maxReconnectAttempts})...`, 'info');
+                        setTimeout(connectWebSocket, reconnectDelay);
+                    } else {
+                        log('达到最大重连次数，停止重连', 'error');
+                    }
+                };
+                
+            } catch (error) {
+                updateStatus('disconnected', '连接失败');
+                log(`创建WebSocket失败: ${error.message}`, 'error');
+            }
+        }
+        
+        function disconnectWebSocket() {
+            if (ws) {
+                log('正在断开WebSocket连接...', 'info');
+                ws.close(1000, '用户主动断开');
+                ws = null;
+                updateStatus('disconnected', '已断开');
+                log('WebSocket连接已断开', 'info');
+            } else {
+                log('WebSocket未连接', 'info');
+            }
+        }
+        
+        function testConnection() {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                log('WebSocket未连接，请先点击连接按钮', 'error');
+                return;
+            }
+            
+            log('测试WebSocket连接...', 'info');
+            
+            // 发送ping消息
+            try {
+                ws.send(JSON.stringify({ type: 'ping' }));
+                log('发送ping消息', 'info');
+            } catch (error) {
+                log(`发送消息失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 页面加载时自动连接
+        window.onload = function() {
+            log('页面加载完成，开始自动连接WebSocket', 'info');
+            connectWebSocket();
+        };
+        
+        // 页面关闭时断开连接
+        window.onbeforeunload = function() {
+            if (ws) {
+                ws.close(1000, '页面关闭');
+            }
+        };
+    </script>
+</body>
+</html>

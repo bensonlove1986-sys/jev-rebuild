@@ -1,0 +1,30 @@
+{
+  "time_window_sec": 60,
+  "line_mode": {
+    "ws_mode": "ACTIVE",
+    "ws_connected": true,
+    "ws_recv_rate_60s": 5,
+    "poll_mode": "OFF",
+    "leader": true,
+    "append_source_distribution": {
+      "WS_BROADCAST": 3,
+      "HTTP_POLL": 1,
+      "FORCE_PULL": 1,
+      "UNKNOWN": 0
+    }
+  },
+  "render_storm": {
+    "timeline_key_rate_60s": 15,
+    "timeline_key_without_append": true,
+    "mt_render_rate_60s": 15,
+    "messages_ref_changes_rate_60s": 10,
+    "root_trigger": "PRESENCE_POLLUTION",
+    "evidence": [
+      "[RADAR_TO_CHAT] Marked customer as online - presenceStore.ts:76",
+      "[CHAT_STORE_MARK_ONLINE] Customer online status updated - chatStore.ts:1722",
+      "[SELECTOR_OUTPUT] Selector recalculated due to chats change - chatSelectors.ts:174",
+      "[CL_RENDER] ChatLayout rendered due to activeChatState change - ChatLayout.tsx:404",
+      "[MT_RENDER] MessageTimeline rendered due to parent component change - MessageTimeline.tsx:45"
+    ]
+  }
+}

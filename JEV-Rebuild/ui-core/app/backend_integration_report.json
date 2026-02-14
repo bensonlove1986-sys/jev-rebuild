@@ -1,0 +1,8 @@
+{
+  "single_world": true,
+  "api_source": "cloudflare_worker",
+  "chat_real_data": true,
+  "customers_real_data": true,
+  "orders_real_data": false,
+  "ui_state": "BACKEND_INTEGRATED"
+}

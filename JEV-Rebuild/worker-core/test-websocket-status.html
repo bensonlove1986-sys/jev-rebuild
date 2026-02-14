@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket 状态码测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .log {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebSocket 状态码测试</h1>
+        <p>测试 WebSocket 连接是否返回 101 Switching Protocols 状态码</p>
+        <button onclick="testWebSocket()">开始测试</button>
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function testWebSocket() {
+            log('开始测试 WebSocket 连接...');
+            
+            // 注意：这里使用的是 wss:// 协议，因为 Worker 部署在 HTTPS 上
+            const wsUrl = 'wss://jev-rebuild-worker.bensonlove1986.workers.dev/stream';
+            
+            log(`尝试连接到: ${wsUrl}`);
+            
+            try {
+                const ws = new WebSocket(wsUrl);
+                
+                ws.onopen = function() {
+                    log('✅ WebSocket 连接已打开');
+                    log('连接状态: ' + ws.readyState);
+                    log('注意：浏览器 WebSocket API 不会直接暴露 HTTP 状态码，但如果连接成功，说明服务器返回了正确的 101 状态码');
+                    ws.close();
+                };
+                
+                ws.onmessage = function(event) {
+                    log('收到消息: ' + event.data);
+                };
+                
+                ws.onerror = function(error) {
+                    log('❌ WebSocket 错误: ' + error);
+                };
+                
+                ws.onclose = function(event) {
+                    log('🔒 WebSocket 连接已关闭');
+                    log('关闭代码: ' + event.code);
+                    log('关闭原因: ' + event.reason);
+                    log('是否正常关闭: ' + event.wasClean);
+                };
+            } catch (error) {
+                log('❌ 连接失败: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

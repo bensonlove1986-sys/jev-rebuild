@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Media Proxy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        img {
+            max-width: 100%;
+            margin: 10px 0;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Media Proxy</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Direct Proxy URL</h2>
+        <p>Enter a Twilio Media URL to test the proxy:</p>
+        <input type="text" id="mediaUrl" placeholder="https://api.twilio.com/2010-04-01/Accounts/ACee45c048bea1ac15047eab84b39f8147/Media/ME123456" value="https://api.twilio.com/2010-04-01/Accounts/ACee45c048bea1ac15047eab84b39f8147/Media/ME123456">
+        <button onclick="testProxy()">Test Proxy</button>
+        <div id="test1Result" class="test-result"></div>
+        <div id="test1Image"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Sample Proxy URL</h2>
+        <p>Click the link below to test the proxy with a sample Twilio Media URL:</p>
+        <a href="https://jev-rebuild-worker.bensonlove1986.workers.dev/api/proxy/twilio/media/https%3A%2F%2Fapi.twilio.com%2F2010-04-01%2FAccounts%2FACee45c048bea1ac15047eab84b39f8147%2FMedia%2FME123456" target="_blank">Test Sample Proxy URL</a>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Network Test</h2>
+        <p>Test network connectivity to Twilio API:</p>
+        <button onclick="testNetwork()">Test Network</button>
+        <div id="test3Result" class="test-result"></div>
+    </div>
+    
+    <script>
+        function testProxy() {
+            const mediaUrl = document.getElementById('mediaUrl').value;
+            const encodedMediaUrl = encodeURIComponent(mediaUrl);
+            const proxyUrl = `https://jev-rebuild-worker.bensonlove1986.workers.dev/api/proxy/twilio/media/${encodedMediaUrl}`;
+            const resultDiv = document.getElementById('test1Result');
+            const imageDiv = document.getElementById('test1Image');
+            
+            resultDiv.innerHTML = '<p>Testing proxy URL...</p>';
+            imageDiv.innerHTML = '';
+            
+            // Test the proxy URL
+            fetch(proxyUrl)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                })
+                .then(blob => {
+                    console.log('Received blob:', blob);
+                    
+                    if (blob.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(blob);
+                        img.alt = 'Test image';
+                        imageDiv.appendChild(img);
+                        
+                        resultDiv.innerHTML = `
+                            <div class="success">
+                                <p>✅ Success: Received image data</p>
+                                <p>Content-Type: ${blob.type}</p>
+                                <p>Size: ${blob.size} bytes</p>
+                                <p>Proxy URL: <a href="${proxyUrl}" target="_blank">${proxyUrl}</a></p>
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="error">
+                                <p>❌ Error: No image data received</p>
+                                <p>Content-Type: ${blob.type}</p>
+                                <p>Size: ${blob.size} bytes</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <p>❌ Error: ${error.message}</p>
+                            <p>Proxy URL: <a href="${proxyUrl}" target="_blank">${proxyUrl}</a></p>
+                        </div>
+                    `;
+                });
+        }
+        
+        function testNetwork() {
+            const resultDiv = document.getElementById('test3Result');
+            const twilioUrl = 'https://api.twilio.com';
+            
+            resultDiv.innerHTML = '<p>Testing network connectivity...</p>';
+            
+            fetch(twilioUrl, {
+                method: 'HEAD'
+            })
+                .then(response => {
+                    console.log('Network test response status:', response.status);
+                    
+                    if (response.ok || response.status === 401) {
+                        // 401 is expected for HEAD request to Twilio API
+                        resultDiv.innerHTML = `
+                            <div class="success">
+                                <p>✅ Success: Network connectivity to Twilio API is working</p>
+                                <p>Status: ${response.status}</p>
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="error">
+                                <p>❌ Error: Network connectivity issue</p>
+                                <p>Status: ${response.status}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Network test error:', error);
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <p>❌ Error: ${error.message}</p>
+                            <p>Could not connect to Twilio API</p>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Auto-run network test on page load
+        window.onload = function() {
+            testNetwork();
+        };
+    </script>
+</body>
+</html>

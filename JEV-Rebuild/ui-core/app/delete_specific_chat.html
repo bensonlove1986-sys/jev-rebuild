@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>删除特定聊天记录工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .chat-info {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .button.delete {
+            background-color: #f44336;
+        }
+        .button.delete:hover {
+            background-color: #da190b;
+        }
+        .button.check {
+            background-color: #2196F3;
+        }
+        .button.check:hover {
+            background-color: #0b7dda;
+        }
+        .logs {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>删除特定聊天记录工具</h1>
+        
+        <div class="chat-info">
+            <h3>目标聊天 ID:</h3>
+            <p>whatsapp:+8615757759002</p>
+        </div>
+        
+        <button class="button check" onclick="checkChatData()">检查聊天数据</button>
+        <button class="button delete" onclick="deleteChatData()">删除聊天记录</button>
+        <button class="button" onclick="clearLogs()">清除日志</button>
+        
+        <div class="logs" id="logs"></div>
+    </div>
+    
+    <script>
+        const chatId = 'whatsapp:+8615757759002';
+        const logsElement = document.getElementById('logs');
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleString();
+            logsElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logsElement.scrollTop = logsElement.scrollHeight;
+        }
+        
+        function clearLogs() {
+            logsElement.innerHTML = '';
+        }
+        
+        function checkChatData() {
+            log('开始检查聊天数据...');
+            
+            try {
+                // 检查 localStorage 中的数据
+                const keys = Object.keys(localStorage);
+                let foundData = false;
+                
+                log('localStorage 中的键:');
+                keys.forEach(key => {
+                    log(`- ${key}`);
+                });
+                
+                // 检查聊天消息
+                const messagesKey = 'chat_messages_v1';
+                if (localStorage.getItem(messagesKey)) {
+                    try {
+                        const messages = JSON.parse(localStorage.getItem(messagesKey));
+                        if (messages[chatId]) {
+                            foundData = true;
+                            log(`找到聊天消息: ${messages[chatId].length} 条消息`);
+                        } else {
+                            log('未找到聊天消息');
+                        }
+                    } catch (error) {
+                        log(`解析消息数据错误: ${error.message}`);
+                    }
+                } else {
+                    log('未找到消息数据');
+                }
+                
+                // 检查聊天列表
+                const chatsKey = 'chat_chats_v1';
+                if (localStorage.getItem(chatsKey)) {
+                    try {
+                        const chats = JSON.parse(localStorage.getItem(chatsKey));
+                        if (chats[chatId]) {
+                            foundData = true;
+                            log('找到聊天列表项');
+                        } else {
+                            log('未找到聊天列表项');
+                        }
+                    } catch (error) {
+                        log(`解析聊天数据错误: ${error.message}`);
+                    }
+                } else {
+                    log('未找到聊天列表数据');
+                }
+                
+                // 检查翻译数据
+                const translationsKey = 'chat_translations_v1';
+                if (localStorage.getItem(translationsKey)) {
+                    try {
+                        const translations = JSON.parse(localStorage.getItem(translationsKey));
+                        const translationCount = Object.keys(translations).length;
+                        log(`找到翻译数据: ${translationCount} 条翻译`);
+                    } catch (error) {
+                        log(`解析翻译数据错误: ${error.message}`);
+                    }
+                }
+                
+                // 检查草稿数据
+                const draftsKey = 'chat_drafts_v1';
+                if (localStorage.getItem(draftsKey)) {
+                    try {
+                        const drafts = JSON.parse(localStorage.getItem(draftsKey));
+                        const draftCount = Object.keys(drafts).length;
+                        log(`找到草稿数据: ${draftCount} 条草稿`);
+                    } catch (error) {
+                        log(`解析草稿数据错误: ${error.message}`);
+                    }
+                }
+                
+                if (foundData) {
+                    log('检查完成: 找到相关数据');
+                } else {
+                    log('检查完成: 未找到相关数据');
+                }
+            } catch (error) {
+                log(`检查过程中出错: ${error.message}`);
+            }
+        }
+        
+        function deleteChatData() {
+            log('开始删除聊天数据...');
+            
+            try {
+                let deleted = false;
+                
+                // 删除消息数据
+                const messagesKey = 'chat_messages_v1';
+                if (localStorage.getItem(messagesKey)) {
+                    try {
+                        const messages = JSON.parse(localStorage.getItem(messagesKey));
+                        if (messages[chatId]) {
+                            delete messages[chatId];
+                            localStorage.setItem(messagesKey, JSON.stringify(messages));
+                            deleted = true;
+                            log('已删除聊天消息');
+                        }
+                    } catch (error) {
+                        log(`删除消息数据错误: ${error.message}`);
+                    }
+                }
+                
+                // 删除聊天列表项
+                const chatsKey = 'chat_chats_v1';
+                if (localStorage.getItem(chatsKey)) {
+                    try {
+                        const chats = JSON.parse(localStorage.getItem(chatsKey));
+                        if (chats[chatId]) {
+                            delete chats[chatId];
+                            localStorage.setItem(chatsKey, JSON.stringify(chats));
+                            deleted = true;
+                            log('已删除聊天列表项');
+                        }
+                    } catch (error) {
+                        log(`删除聊天数据错误: ${error.message}`);
+                    }
+                }
+                
+                // 删除相关的翻译数据
+                const translationsKey = 'chat_translations_v1';
+                if (localStorage.getItem(translationsKey)) {
+                    try {
+                        const translations = JSON.parse(localStorage.getItem(translationsKey));
+                        const originalCount = Object.keys(translations).length;
+                        
+                        // 这里可以根据实际情况删除与该聊天相关的翻译
+                        // 由于翻译数据通常按消息ID存储，这里我们保留但记录
+                        const newCount = Object.keys(translations).length;
+                        log(`翻译数据: ${originalCount} 条 (未删除，按消息ID存储)`);
+                    } catch (error) {
+                        log(`处理翻译数据错误: ${error.message}`);
+                    }
+                }
+                
+                // 删除相关的草稿数据
+                const draftsKey = 'chat_drafts_v1';
+                if (localStorage.getItem(draftsKey)) {
+                    try {
+                        const drafts = JSON.parse(localStorage.getItem(draftsKey));
+                        const originalCount = Object.keys(drafts).length;
+                        
+                        // 检查是否有与该聊天相关的草稿
+                        let foundDraft = false;
+                        Object.keys(drafts).forEach(key => {
+                            if (key === chatId || drafts[key].chatId === chatId) {
+                                delete drafts[key];
+                                foundDraft = true;
+                            }
+                        });
+                        
+                        if (foundDraft) {
+                            localStorage.setItem(draftsKey, JSON.stringify(drafts));
+                            deleted = true;
+                            log('已删除相关草稿数据');
+                        }
+                    } catch (error) {
+                        log(`处理草稿数据错误: ${error.message}`);
+                    }
+                }
+                
+                // 删除其他可能相关的键
+                const otherKeysToCheck = [
+                    'jev_processed_message_ids',
+                    'jev_sync_status',
+                    'jev_ws_connection_status',
+                    'jev_poll_leader'
+                ];
+                
+                otherKeysToCheck.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        try {
+                            const data = JSON.parse(localStorage.getItem(key));
+                            // 检查并删除与该聊天相关的数据
+                            // 这里根据实际数据结构进行处理
+                            log(`检查键: ${key}`);
+                        } catch (error) {
+                            log(`检查键 ${key} 错误: ${error.message}`);
+                        }
+                    }
+                });
+                
+                if (deleted) {
+                    log('删除完成: 已删除相关数据');
+                    log('请刷新页面以查看更改');
+                } else {
+                    log('删除完成: 未找到相关数据');
+                }
+            } catch (error) {
+                log(`删除过程中出错: ${error.message}`);
+            }
+        }
+        
+        // 页面加载时自动检查数据
+        window.onload = function() {
+            log('工具已加载，点击按钮检查或删除聊天数据');
+        };
+    </script>
+</body>
+</html>

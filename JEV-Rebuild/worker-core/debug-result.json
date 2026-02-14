@@ -1,0 +1,6 @@
+{
+  "post_reaches_worker": false,
+  "root_cause": "cors_preflight",
+  "fix_action": "Update CORS_CONFIG.ALLOWED_ORIGINS in worker-core/config/constants.js to include the actual UI origin",
+  "confidence": "HIGH"
+}

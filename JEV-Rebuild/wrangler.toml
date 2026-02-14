@@ -1,0 +1,19 @@
+# Cloudflare Worker Configuration
+name = "jev-ui"
+main = "worker-core/index.js"
+compatibility_date = "2023-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# KV Namespaces
+[[kv_namespaces]]
+binding = "MESSAGES_KV"
+
+# R2 Buckets
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "jev-media"
+
+# Environment Variables
+[vars]
+API_URL = "https://jev-rebuild-worker.bensonlove1986.workers.dev"
+NODE_ENV = "production"

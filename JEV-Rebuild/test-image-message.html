@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片消息测试</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .test-result {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 3px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0069d9;
+    }
+  </style>
+</head>
+<body>
+  <h1>图片消息测试</h1>
+  
+  <div class="test-section">
+    <h2>1. WebSocket 连接测试</h2>
+    <button onclick="testWebSocketConnection()">测试 WebSocket 连接</button>
+    <div id="websocket-result" class="test-result"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>2. 图片消息模拟测试</h2>
+    <button onclick="testImageMessageSimulation()">测试图片消息模拟</button>
+    <div id="image-message-result" class="test-result"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>3. API 端点测试</h2>
+    <button onclick="testApiEndpoints()">测试 API 端点</button>
+    <div id="api-result" class="test-result"></div>
+  </div>
+
+  <script>
+    // API 基础 URL
+    const API_BASE_URL = 'https://jev-rebuild-worker.bensonlove1986.workers.dev';
+    
+    // 测试 WebSocket 连接
+    function testWebSocketConnection() {
+      const resultDiv = document.getElementById('websocket-result');
+      resultDiv.innerHTML = '正在测试 WebSocket 连接...';
+      
+      try {
+        const wsUrl = API_BASE_URL.replace('https', 'wss').replace('http', 'ws') + '/api/ws/chat';
+        const ws = new WebSocket(wsUrl);
+        
+        ws.onopen = () => {
+          resultDiv.innerHTML = '<strong>成功</strong>: WebSocket 连接已建立';
+          resultDiv.className = 'test-result success';
+          ws.close();
+        };
+        
+        ws.onerror = (error) => {
+          resultDiv.innerHTML = '<strong>错误</strong>: WebSocket 连接失败';
+          resultDiv.className = 'test-result error';
+        };
+        
+        ws.onclose = () => {
+          console.log('WebSocket 连接已关闭');
+        };
+      } catch (error) {
+        resultDiv.innerHTML = '<strong>错误</strong>: ' + error.message;
+        resultDiv.className = 'test-result error';
+      }
+    }
+    
+    // 测试图片消息模拟
+    function testImageMessageSimulation() {
+      const resultDiv = document.getElementById('image-message-result');
+      resultDiv.innerHTML = '正在测试图片消息模拟...';
+      
+      // 模拟一个图片消息
+      const mockImageMessage = {
+        id: 'test_image_message_' + Date.now(),
+        customer_id: 'whatsapp:+8615757759002',
+        from: 'whatsapp:+8615757759002',
+        to: 'whatsapp:+8615858577142',
+        text: '',
+        kind: 'image',
+        type: 'image',
+        media_path: '/api/media/twilio/MM1234567890/ME0987654321',
+        mime: 'image/jpeg',
+        direction: 'inbound',
+        role: 'customer',
+        timestamp: Date.now(),
+        status: 'delivered',
+        isGroup: false
+      };
+      
+      // 测试 isImageMessage 函数
+      function isImageMessage(msg) {
+        if (typeof msg?.media_path === 'string' && msg.media_path) return true;
+        if (msg?.kind === 'image' || msg?.type === 'image') return true;
+        if (typeof msg?.mime === 'string' && msg.mime.startsWith('image/')) return true;
+        return false;
+      }
+      
+      // 测试 getImageUrl 函数
+      function getImageUrl(msg) {
+        const rawMediaPath = msg.media_path;
+        if (!rawMediaPath) {
+          return '';
+        }
+        
+        let imageSrc = '';
+        if (rawMediaPath.startsWith('http://') || rawMediaPath.startsWith('https://')) {
+          imageSrc = rawMediaPath;
+        } else if (rawMediaPath.startsWith('/api/media/twilio/')) {
+          imageSrc = API_BASE_URL + rawMediaPath;
+        } else {
+          imageSrc = rawMediaPath;
+        }
+        return imageSrc;
+      }
+      
+      const isImage = isImageMessage(mockImageMessage);
+      const imageUrl = getImageUrl(mockImageMessage);
+      
+      resultDiv.innerHTML = `
+        <strong>测试结果:</strong><br>
+        Is image message: ${isImage}<br>
+        Image URL: ${imageUrl}<br>
+        Message ID: ${mockImageMessage.id}<br>
+        Media path: ${mockImageMessage.media_path}
+      `;
+      resultDiv.className = 'test-result success';
+    }
+    
+    // 测试 API 端点
+    function testApiEndpoints() {
+      const resultDiv = document.getElementById('api-result');
+      resultDiv.innerHTML = '正在测试 API 端点...';
+      
+      // 测试 /api/inbox/customers 端点
+      fetch(API_BASE_URL + '/api/inbox/customers')
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('API 请求失败: ' + response.status);
+          }
+        })
+        .then(data => {
+          resultDiv.innerHTML = `
+            <strong>API 端点测试结果:</strong><br>
+            状态: 成功<br>
+            客户数量: ${data.customers ? data.customers.length : 0}<br>
+            API 基础 URL: ${API_BASE_URL}
+          `;
+          resultDiv.className = 'test-result success';
+        })
+        .catch(error => {
+          resultDiv.innerHTML = `<strong>错误</strong>: ${error.message}`;
+          resultDiv.className = 'test-result error';
+        });
+    }
+  </script>
+</body>
+</html>

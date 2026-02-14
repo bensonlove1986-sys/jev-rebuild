@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单AI草稿测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .log {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .log-entry.error {
+            color: red;
+        }
+        .log-entry.success {
+            color: green;
+        }
+        .log-entry.info {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>简单AI草稿测试</h1>
+        <button onclick="runTest()">运行测试</button>
+        <button onclick="clearLogs()">清除日志</button>
+        <div class="log" id="log"></div>
+    </div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function clearLogs() {
+            document.getElementById('log').innerHTML = '';
+        }
+        
+        async function runTest() {
+            log('开始测试AI草稿生成...', 'info');
+            
+            // 清除localStorage
+            localStorage.removeItem('chat_drafts_v1');
+            log('已清除localStorage中的草稿数据', 'info');
+            
+            // 创建测试消息
+            const testMessage = {
+                id: `test_msg_${Date.now()}`,
+                chatId: 'whatsapp:+1234567890',
+                from: 'whatsapp:+1234567890',
+                to: 'operator',
+                direction: 'inbound',
+                type: 'text',
+                text: '你好，我想咨询一下产品信息',
+                timestamp: Date.now(),
+                status: 'read',
+                isGroup: false
+            };
+            
+            log(`创建测试消息: ${testMessage.id}`, 'info');
+            
+            try {
+                // 动态导入AutoDraftWorker
+                log('导入AutoDraftWorker...', 'info');
+                const module = await import('/src/services/AutoDraftWorker.js');
+                const AutoDraftWorker = module.AutoDraftWorker;
+                
+                log('调用AutoDraftWorker.processNewCustomerMessage...', 'info');
+                const result = await AutoDraftWorker.processNewCustomerMessage({
+                    chatId: testMessage.chatId,
+                    messageId: testMessage.id,
+                    text: testMessage.text,
+                    direction: testMessage.direction,
+                    timestamp: testMessage.timestamp
+                });
+                
+                log(`AutoDraftWorker处理结果: ${result}`, 'info');
+                
+                // 检查localStorage中的草稿
+                setTimeout(async () => {
+                    log('检查localStorage中的草稿...', 'info');
+                    const drafts = localStorage.getItem('chat_drafts_v1');
+                    
+                    if (drafts) {
+                        const draftsObj = JSON.parse(drafts);
+                        log(`草稿数量: ${Object.keys(draftsObj).length}`, 'success');
+                        
+                        for (const [messageId, draft] of Object.entries(draftsObj)) {
+                            log(`消息 ${messageId} 的草稿:`, 'success');
+                            log(`  English: ${draft.en}`, 'success');
+                            log(`  Chinese: ${draft.zh}`, 'success');
+                        }
+                        
+                        // 检查测试消息的草稿
+                        if (draftsObj[testMessage.id]) {
+                            log(`测试消息 ${testMessage.id} 成功生成草稿！`, 'success');
+                        } else {
+                            log(`测试消息 ${testMessage.id} 未生成草稿！`, 'error');
+                        }
+                    } else {
+                        log('localStorage中没有草稿数据', 'error');
+                    }
+                    
+                    // 动态导入chatStore并检查
+                    try {
+                        log('导入chatStore...', 'info');
+                        const chatStoreModule = await import('/src/modules/chat_modular/store/chatStore.js');
+                        const useChatStore = chatStoreModule.useChatStore;
+                        
+                        const chatStore = useChatStore.getState();
+                        log(`chatStore.drafts数量: ${Object.keys(chatStore.drafts || {}).length}`, 'info');
+                        
+                        if (chatStore.drafts[testMessage.id]) {
+                            log(`chatStore中找到测试消息的草稿！`, 'success');
+                        } else {
+                            log(`chatStore中未找到测试消息的草稿！`, 'error');
+                        }
+                    } catch (error) {
+                        log(`导入chatStore失败: ${error.message}`, 'error');
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                log(`测试失败: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "readonly_verify": true,
+  "time": "2025-12-23T16:30:00Z",
+  "api_8787": {
+    "health_status": 200,
+    "status_status": 200,
+    "customers_status": 200,
+    "customers_count": 1,
+    "customers_contains_test_customer_001": true
+  },
+  "api_3000_proxy": {
+    "health_status": 200,
+    "status_status": 200,
+    "customers_status": 200,
+    "customers_count": 1,
+    "customers_equals_8787": true,
+    "diff_empty": true
+  },
+  "single_world": {
+    "rule_3000_ui_only": true,
+    "rule_8787_api_only": true,
+    "no_online_api_base_in_ui": true
+  },
+  "final": "PASS"
+}

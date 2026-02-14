@@ -1,0 +1,1 @@
+const n="jev_hidden_customers";function r(){try{return new Set(JSON.parse(localStorage.getItem(n)||"[]"))}catch{return new Set}}function o(e){const t=r();t.add(e),localStorage.setItem(n,JSON.stringify([...t]))}function s(e){return r().has(e)}export{r as getHiddenCustomerIds,o as hideCustomer,s as isCustomerHidden};

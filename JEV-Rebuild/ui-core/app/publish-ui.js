@@ -7,7 +7,7 @@ import { execSync } from 'child_process';
 const currentDir = process.cwd();
 const projectRoot = path.resolve(currentDir, '../../');
 const webRuntimeDir = path.join(projectRoot, 'web-runtime');
-const distDir = path.join(currentDir, 'dist');
+const distDir = path.join(currentDir, '../build');
 
 console.log('=== JEV UI Runtime Publish Script ===');
 

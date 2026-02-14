@@ -1,0 +1,169 @@
+.excel-summary-bubble {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 8px 0;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.excel-summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.excel-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.excel-icon {
+  font-size: 24px;
+}
+
+.excel-summary-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.excel-summary-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.excel-summary-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
+  background: #f8d7da;
+  border-radius: 8px;
+  color: #721c24;
+}
+
+.error-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.excel-summary-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #6c757d;
+}
+
+.excel-summary-details {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 14px;
+  color: #28a745;
+  font-weight: 600;
+}
+
+.excel-download-btn {
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  align-self: flex-start;
+}
+
+.excel-download-btn:hover {
+  background: #0056b3;
+}
+
+.excel-summary-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.message-time {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.message-status {
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.message-status-sending {
+  color: #ffc107;
+}
+
+.message-status-sent {
+  color: #28a745;
+}
+
+.message-status-delivered {
+  color: #28a745;
+}
+
+.message-status-read {
+  color: #17a2b8;
+}
+
+.message-status-failed {
+  color: #dc3545;
+}

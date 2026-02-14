@@ -1,12 +1,65 @@
 name = "jev-rebuild-worker"
-main = "src/index.js"
-compatibility_date = "2024-12-01"
 workers_dev = true
+main = "index.js"
+compatibility_date = "2026-02-03"
+
+# Durable Objects
+[durable_objects]
+bindings = [
+  { name = "WHATSAPP_CHAT_DO", class_name = "WhatsAppChatDO" },
+  { name = "CHAT_MEMORY_DO", class_name = "ChatMemoryDO" },
+  { name = "JEV_STATE", class_name = "JEV_STATE" },
+  { name = "DAOJIE_STREAM_DO", class_name = "DaojieStreamDO" },
+  { name = "CHAT_ROOM_DO", class_name = "ChatRoomDO" },
+  { name = "DEAL_STATE_DO", class_name = "DEAL_STATE_DO" }
+]
+
+# Migrations for Durable Objects
+[[migrations]]
+tag = "v1"
+new_classes = ["WhatsAppChatDO", "ChatMemoryDO", "JEV_STATE", "DaojieStreamDO"]
+
+[[migrations]]
+tag = "v2"
+new_classes = ["ContactIndexDO"]
+
+[[migrations]]
+tag = "v3"
+new_classes = ["CHAT_ROOM_DO", "DEAL_STATE_DO"]
+
+[[migrations]]
+tag = "v4"
+renamed_classes = [{ from = "CHAT_ROOM_DO", to = "ChatRoomDO" }]
+
+# R2 Storage
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "jev-media"
+
+[[r2_buckets]]
+binding = "JEV_R2"
+bucket_name = "jev-r2"
+
+# KV Namespace (will be automatically created or configured in dashboard)
+[[kv_namespaces]]
+binding = "KV"
 
 [[kv_namespaces]]
-binding = "MESSAGES_KV"
-id = "8de063433e924133a4a4f71a5f31a089"
+binding = "CONTACT_INDEX"
+id = "34b95f231c6e4f77a9d7b5e908e8889b"
 
 [[kv_namespaces]]
-binding = "CUSTOMER_PROFILE_KV"
-id = "8de063433e924133a4a4f71a5f31a089"
+binding = "TRANSLATION_STORE"
+id = "157a12f7a837490b9c6c3d58f0aec9da"
+
+# Environment Variables
+[vars]
+DEEPSEEK_API_KEY = "sk-77dbd0cc5f30451daa863d5213e6607f"
+TWILIO_ACCOUNT_SID = "ACee45c048bea1ac15047eab84b39f8147"
+TWILIO_AUTH_TOKEN = "55f1dfc50eb7063806400b5a9acfb1c3"
+TWILIO_MESSAGING_SERVICE_SID = "MG8d901e3947635deacc8fab383cb55ad2"
+GOOGLE_VISION_API_KEY = "AIzaSyCFa7sTIMnKS7HqIuYEhhZLwyWI6ueKgpM"
+
+# Optional Environment Variables
+# GOOGLE_APPLICATION_CREDENTIALS = "YOUR_GOOGLE_CREDENTIALS"
+# ADMIN_TOKEN = "YOUR_ADMIN_TOKEN"

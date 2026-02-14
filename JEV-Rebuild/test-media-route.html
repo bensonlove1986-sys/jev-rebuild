@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试 Media 路由</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        img {
+            max-width: 100%;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>测试 Media 路由</h1>
+    
+    <div class="test-section">
+        <h2>测试 1: 直接上传图片到 R2</h2>
+        <input type="file" id="fileInput" accept="image/*">
+        <button onclick="uploadImage()">上传图片</button>
+        <div id="uploadResult" class="test-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>测试 2: 通过 Media 路由访问图片</h2>
+        <input type="text" id="imageUrlInput" placeholder="输入 Media 路由 URL">
+        <button onclick="testMediaRoute()">测试访问</button>
+        <div id="accessResult" class="test-result"></div>
+        <div id="imagePreview"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>测试 3: 测试 Twilio Media Proxy</h2>
+        <input type="text" id="twilioUrlInput" placeholder="输入 Twilio 媒体 URL">
+        <button onclick="testTwilioProxy()">测试代理</button>
+        <div id="twilioResult" class="test-result"></div>
+        <div id="twilioImagePreview"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://jev-rebuild-worker.bensonlove1986.workers.dev';
+        
+        async function uploadImage() {
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('uploadResult');
+            
+            if (!fileInput.files || !fileInput.files[0]) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = '请选择一个图片文件';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                resultDiv.className = 'test-result info';
+                resultDiv.textContent = '上传中...';
+                
+                const response = await fetch(`${API_BASE_URL}/api/upload/image`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.ok) {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.innerHTML = `上传成功!<br>文件 ID: ${data.file_id}<br>文件路径: ${data.file_path}<br>访问 URL: ${data.image_url}`;
+                    
+                    // 自动填充到测试 2 的输入框
+                    document.getElementById('imageUrlInput').value = data.image_url;
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.textContent = `上传失败: ${data.error}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = `上传失败: ${error.message}`;
+            }
+        }
+        
+        async function testMediaRoute() {
+            const urlInput = document.getElementById('imageUrlInput');
+            const resultDiv = document.getElementById('accessResult');
+            const previewDiv = document.getElementById('imagePreview');
+            
+            const imageUrl = urlInput.value.trim();
+            
+            if (!imageUrl) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = '请输入图片 URL';
+                return;
+            }
+            
+            try {
+                resultDiv.className = 'test-result info';
+                resultDiv.textContent = '测试访问中...';
+                previewDiv.innerHTML = '';
+                
+                // 测试直接访问
+                const response = await fetch(imageUrl, {
+                    method: 'GET'
+                });
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.innerHTML = `访问成功!<br>状态码: ${response.status}<br>Content-Type: ${response.headers.get('content-type')}`;
+                    
+                    // 显示图片预览
+                    const blob = await response.blob();
+                    const imgUrl = URL.createObjectURL(blob);
+                    previewDiv.innerHTML = `<img src="${imgUrl}" alt="预览图片">`;
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.textContent = `访问失败: 状态码 ${response.status}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = `访问失败: ${error.message}`;
+            }
+        }
+        
+        async function testTwilioProxy() {
+            const urlInput = document.getElementById('twilioUrlInput');
+            const resultDiv = document.getElementById('twilioResult');
+            const previewDiv = document.getElementById('twilioImagePreview');
+            
+            const twilioUrl = urlInput.value.trim();
+            
+            if (!twilioUrl) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = '请输入 Twilio 媒体 URL';
+                return;
+            }
+            
+            try {
+                resultDiv.className = 'test-result info';
+                resultDiv.textContent = '测试代理中...';
+                previewDiv.innerHTML = '';
+                
+                // 构建代理 URL
+                const proxyUrl = `${API_BASE_URL}/api/proxy/twilio/media/${encodeURIComponent(twilioUrl)}`;
+                
+                // 测试代理访问
+                const response = await fetch(proxyUrl, {
+                    method: 'GET'
+                });
+                
+                if (response.ok) {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.innerHTML = `代理成功!<br>状态码: ${response.status}<br>Content-Type: ${response.headers.get('content-type')}<br>代理 URL: ${proxyUrl}`;
+                    
+                    // 显示图片预览
+                    const blob = await response.blob();
+                    const imgUrl = URL.createObjectURL(blob);
+                    previewDiv.innerHTML = `<img src="${imgUrl}" alt="预览图片">`;
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.textContent = `代理失败: 状态码 ${response.status}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = `代理失败: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

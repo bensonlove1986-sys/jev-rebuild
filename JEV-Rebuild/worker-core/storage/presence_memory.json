@@ -1,0 +1,98 @@
+{
+  "presence:test_msg_1": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "test_msg_1",
+    "customer_id": "whatsapp:+8613800138000",
+    "ts": 1770631251454,
+    "layer": "WORKER",
+    "stored_at": 1770631251455
+  },
+  "presence:test_msg_2": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "test_msg_2",
+    "customer_id": "whatsapp:+8613800138000",
+    "ts": 1770631269311,
+    "layer": "WORKER",
+    "stored_at": 1770631269312
+  },
+  "presence:test_msg_3": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "test_msg_3",
+    "customer_id": "whatsapp:+8613800138000",
+    "ts": 1770631281657,
+    "layer": "WORKER",
+    "stored_at": 1770631281666
+  },
+  "presence:MM1234567890": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "MM1234567890",
+    "customer_id": "whatsapp: 8613800138000",
+    "ts": 1770685515573,
+    "layer": "WORKER",
+    "stored_at": 1770685515573
+  },
+  "presence:mock-123": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "mock-123",
+    "customer_id": "whatsapp:+1234567890",
+    "ts": 1770681730570,
+    "layer": "WORKER",
+    "stored_at": 1770681730571
+  },
+  "presence:msg_123456": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "msg_123456",
+    "customer_id": "whatsapp:+8613800138000",
+    "ts": 1770683515591,
+    "layer": "WORKER",
+    "stored_at": 1770683515591
+  },
+  "presence:msg_789012": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "msg_789012",
+    "customer_id": "whatsapp:+8613800138000",
+    "ts": 1770683816909,
+    "layer": "WORKER",
+    "stored_at": 1770683816910
+  },
+  "presence:msg_987654": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "msg_987654",
+    "customer_id": "whatsapp:+8613800138000",
+    "ts": 1770683903764,
+    "layer": "WORKER",
+    "stored_at": 1770683903765
+  },
+  "presence:msg_twilio_1": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "msg_twilio_1",
+    "customer_id": "whatsapp:+8613800138000",
+    "ts": 1770684208921,
+    "layer": "WORKER",
+    "stored_at": 1770684208921
+  },
+  "presence:msg_twilio_2": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "msg_twilio_2",
+    "customer_id": "whatsapp:+8613800138000",
+    "ts": 1770684249571,
+    "layer": "WORKER",
+    "stored_at": 1770684249603
+  },
+  "presence:msg_twilio_3": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "msg_twilio_3",
+    "customer_id": "whatsapp:+8613800138000",
+    "ts": 1770684272129,
+    "layer": "WORKER",
+    "stored_at": 1770684272130
+  },
+  "presence:SM1234567890": {
+    "type": "PRESENCE_RADAR",
+    "message_id": "SM1234567890",
+    "customer_id": "whatsapp: 8613800138000",
+    "ts": 1770685548542,
+    "layer": "WORKER",
+    "stored_at": 1770685548542
+  }
+}

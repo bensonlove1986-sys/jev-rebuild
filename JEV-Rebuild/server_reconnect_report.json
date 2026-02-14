@@ -1,0 +1,7 @@
+{
+  "worker_state": "DEPLOYED",
+  "world_id": "PROD_WORKER_V1",
+  "single_world": true,
+  "inbox_has_messages": true,
+  "customers_real_data": true
+}

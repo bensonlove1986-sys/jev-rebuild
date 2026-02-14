@@ -1,0 +1,321 @@
+/* LanguageSelector.css */
+
+.language-selector-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+  max-width: calc(50% - 20px);
+}
+
+.language-selector-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.language-selector {
+  position: relative;
+  width: 100%;
+  /* 确保下拉菜单相对于选择器定位 */
+  z-index: 1002;
+}
+
+/* 输入框样式 */
+.language-selector-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+  min-height: 36px;
+  user-select: none;
+  /* 确保输入框宽度固定，下拉菜单可以继承 */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 优化下拉菜单的动画 */
+@keyframes dropdownOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 300px;
+  }
+}
+
+.language-selector-input:hover:not(.disabled) {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.language-selector-input.open {
+  border-color: #667eea;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  background: white;
+}
+
+.language-selector-input.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.language-selector-selected {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.language-selector-flag {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+}
+
+.language-selector-text {
+  font-size: 14px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.language-selector-placeholder {
+  color: #999;
+  font-size: 14px;
+}
+
+.language-selector-arrow {
+  font-size: 12px;
+  color: #999;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.language-selector-input.open .language-selector-arrow {
+  color: #667eea;
+  transform: rotate(180deg);
+}
+
+/* 下拉菜单样式 */
+.language-selector-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000; /* 显著提高z-index，确保显示在所有元素上方 */
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: dropdownOpen 0.2s ease-out;
+  /* 确保下拉菜单不会被其他元素遮挡 */
+  pointer-events: auto;
+  transform: translateY(0);
+  min-width: 220px;
+  /* 确保菜单紧贴输入框 */
+  margin-top: -1px;
+  /* 添加边框阴影，增强视觉层次感 */
+  border: 1px solid #667eea;
+  border-top: none;
+}
+
+@keyframes dropdownOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 搜索框样式 */
+.language-selector-search {
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.language-selector-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.language-selector-search-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+/* 语言列表样式 */
+.language-selector-list {
+  overflow-y: auto;
+  max-height: 250px;
+}
+
+/* 语言选项样式 */
+.language-selector-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.language-selector-option:last-child {
+  border-bottom: none;
+}
+
+.language-selector-option:hover {
+  background: #f0f7ff;
+  color: #667eea;
+}
+
+.language-selector-option.selected {
+  background: #667eea;
+  color: white;
+}
+
+.language-selector-option.selected:hover {
+  background: #5a6fd8;
+}
+
+.language-selector-option-flag {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+}
+
+.language-selector-option-name {
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.language-selector-option-native {
+  font-size: 12px;
+  opacity: 0.8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
+.language-selector-option.selected .language-selector-option-native {
+  opacity: 0.9;
+}
+
+/* 自动检测选项 */
+.language-selector-option:first-child {
+  font-weight: 600;
+}
+
+/* 分隔线样式 */
+.language-selector-divider {
+  height: 1px;
+  background: #f0f0f0;
+  margin: 4px 0;
+}
+
+/* 无结果样式 */
+.language-selector-no-results {
+  padding: 16px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+/* 滚动条样式 */
+.language-selector-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.language-selector-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.language-selector-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.language-selector-list::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .language-selector-container {
+    min-width: 120px;
+  }
+  
+  .language-selector-option {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  
+  .language-selector-option-native {
+    display: none;
+  }
+  
+  .language-selector-dropdown {
+    max-height: 250px;
+  }
+}
+
+/* 移动端优化 */
+@media (max-width: 480px) {
+  .language-selector-container {
+    min-width: 100%;
+  }
+  
+  .language-selector-input {
+    min-height: 40px;
+  }
+  
+  .language-selector-text,
+  .language-selector-placeholder {
+    font-size: 15px;
+  }
+}

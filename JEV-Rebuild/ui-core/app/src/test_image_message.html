@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试图片消息</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        .image-message {
+            border-left: 4px solid #28a745;
+        }
+        .text-message {
+            border-left: 4px solid #007bff;
+        }
+        .log {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>测试图片消息</h1>
+        
+        <div class="test-section">
+            <h2>1. 测试图片消息检测</h2>
+            <button onclick="testImageDetection()">测试图片消息检测</button>
+            <button onclick="testTextDetection()">测试文本消息检测</button>
+            <div id="detection-log" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>2. 测试图片URL获取</h2>
+            <button onclick="testImageUrl()">测试图片URL获取</button>
+            <div id="url-log" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>3. 模拟WebSocket消息</h2>
+            <button onclick="simulateImageMessage()">模拟图片消息</button>
+            <button onclick="simulateTextMessage()">模拟文本消息</button>
+            <div id="ws-log" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>4. 查看WebSocket状态</h2>
+            <button onclick="checkWebSocketStatus()">检查WebSocket状态</button>
+            <div id="status-log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟前端的消息检测逻辑
+        function isImageMessage(msg) {
+            console.log('[TEST] Checking message:', msg);
+            
+            // 首先检查消息类型字段
+            if (msg?.kind === 'image' || msg?.type === 'image') {
+                return true;
+            }
+            
+            // 检查 MIME 类型
+            if (typeof msg?.mime === 'string' && msg.mime.startsWith('image/')) {
+                return true;
+            }
+            
+            // 检查图片相关字段
+            if (typeof msg?.media_path === 'string' && msg.media_path) {
+                return true;
+            }
+            if (msg?.image_url) {
+                return true;
+            }
+            if (msg?.url) {
+                return true;
+            }
+            if (msg?.mediaUrl) {
+                return true;
+            }
+            if (msg?.MediaUrl0) {
+                return true;
+            }
+            
+            // 默认：非图片
+            return false;
+        }
+
+        // 模拟获取图片URL
+        function getImageUrl(msg) {
+            // 优先从多个可能的字段中获取图片 URL
+            const rawImageUrl = msg.media_path || msg.image_url || msg.url || 
+                                msg.mediaUrl || msg.MediaUrl0;
+            
+            if (!rawImageUrl) {
+                return '';
+            }
+            
+            // 处理图片 URL
+            let imageSrc = '';
+            
+            // 如果是完整的 URL
+            if (rawImageUrl.startsWith('http://') || rawImageUrl.startsWith('https://')) {
+                imageSrc = rawImageUrl;
+            }
+            // 其他情况
+            else {
+                imageSrc = rawImageUrl;
+            }
+            
+            return imageSrc;
+        }
+
+        // 测试图片消息检测
+        function testImageDetection() {
+            const testImageMessage = {
+                id: 'test_image_1',
+                kind: 'image',
+                type: 'image',
+                image_url: 'https://example.com/test.jpg',
+                media_path: '/api/media/test.jpg',
+                mime: 'image/jpeg',
+                text: '',
+                direction: 'inbound',
+                status: 'delivered',
+                timestamp: Date.now(),
+                isGroup: false
+            };
+            
+            const isImage = isImageMessage(testImageMessage);
+            const imageUrl = getImageUrl(testImageMessage);
+            
+            document.getElementById('detection-log').textContent = 
+                `测试图片消息:\n${JSON.stringify(testImageMessage, null, 2)}\n\n` +
+                `是否为图片消息: ${isImage}\n` +
+                `获取的图片URL: ${imageUrl}`;
+        }
+
+        // 测试文本消息检测
+        function testTextDetection() {
+            const testTextMessage = {
+                id: 'test_text_1',
+                kind: 'text',
+                type: 'text',
+                text: '这是一条文本消息',
+                direction: 'inbound',
+                status: 'delivered',
+                timestamp: Date.now(),
+                isGroup: false
+            };
+            
+            const isImage = isImageMessage(testTextMessage);
+            const imageUrl = getImageUrl(testTextMessage);
+            
+            document.getElementById('detection-log').textContent = 
+                `测试文本消息:\n${JSON.stringify(testTextMessage, null, 2)}\n\n` +
+                `是否为图片消息: ${isImage}\n` +
+                `获取的图片URL: ${imageUrl}`;
+        }
+
+        // 测试图片URL获取
+        function testImageUrl() {
+            const testMessages = [
+                {
+                    name: '有image_url的消息',
+                    message: {
+                        image_url: 'https://example.com/image1.jpg'
+                    }
+                },
+                {
+                    name: '有media_path的消息',
+                    message: {
+                        media_path: '/api/media/image2.jpg'
+                    }
+                },
+                {
+                    name: '有MediaUrl0的消息',
+                    message: {
+                        MediaUrl0: 'https://api.twilio.com/2010-04-01/Accounts/AC123/Messages/MM123/Media/ME123'
+                    }
+                },
+                {
+                    name: '有多张图片字段的消息',
+                    message: {
+                        image_url: 'https://example.com/main.jpg',
+                        media_path: '/api/media/image.jpg',
+                        MediaUrl0: 'https://api.twilio.com/2010-04-01/Accounts/AC123/Messages/MM123/Media/ME123'
+                    }
+                }
+            ];
+            
+            let log = '';
+            testMessages.forEach(test => {
+                const url = getImageUrl(test.message);
+                log += `${test.name}:\n`;
+                log += `消息: ${JSON.stringify(test.message)}\n`;
+                log += `获取的URL: ${url}\n\n`;
+            });
+            
+            document.getElementById('url-log').textContent = log;
+        }
+
+        // 模拟WebSocket消息
+        function simulateImageMessage() {
+            const imageMessage = {
+                id: 'simulated_image_' + Date.now(),
+                text: '',
+                role: 'customer',
+                timestamp: Date.now(),
+                customer_id: 'whatsapp:+8615757759002',
+                direction: 'inbound',
+                channel: 'whatsapp',
+                source: 'twilio',
+                type: 'image',
+                kind: 'image',
+                media_path: '/api/media/twilio/MM123/ME456',
+                image_url: 'https://api.twilio.com/2010-04-01/Accounts/AC123/Messages/MM123/Media/ME456',
+                url: 'https://api.twilio.com/2010-04-01/Accounts/AC123/Messages/MM123/Media/ME456',
+                MediaUrl0: 'https://api.twilio.com/2010-04-01/Accounts/AC123/Messages/MM123/Media/ME456',
+                mediaUrl: 'https://api.twilio.com/2010-04-01/Accounts/AC123/Messages/MM123/Media/ME456',
+                mime: 'image/jpeg',
+                ocr_status: 'pending'
+            };
+            
+            document.getElementById('ws-log').textContent = 
+                `模拟图片消息:\n${JSON.stringify(imageMessage, null, 2)}\n\n` +
+                `是否为图片消息: ${isImageMessage(imageMessage)}\n` +
+                `获取的图片URL: ${getImageUrl(imageMessage)}`;
+            
+            // 尝试发送到WebSocket（如果存在）
+            if (window.ws) {
+                try {
+                    window.ws.send(JSON.stringify(imageMessage));
+                    document.getElementById('ws-log').textContent += '\nWebSocket消息已发送';
+                } catch (error) {
+                    document.getElementById('ws-log').textContent += '\nWebSocket发送失败: ' + error.message;
+                }
+            } else {
+                document.getElementById('ws-log').textContent += '\nWebSocket未连接';
+            }
+        }
+
+        // 模拟文本消息
+        function simulateTextMessage() {
+            const textMessage = {
+                id: 'simulated_text_' + Date.now(),
+                text: '这是一条测试文本消息',
+                role: 'customer',
+                timestamp: Date.now(),
+                customer_id: 'whatsapp:+8615757759002',
+                direction: 'inbound',
+                channel: 'whatsapp',
+                source: 'twilio',
+                type: 'text',
+                kind: 'text',
+                direction: 'inbound',
+                status: 'delivered',
+                timestamp: Date.now(),
+                isGroup: false
+            };
+            
+            document.getElementById('ws-log').textContent = 
+                `模拟文本消息:\n${JSON.stringify(textMessage, null, 2)}\n\n` +
+                `是否为图片消息: ${isImageMessage(textMessage)}\n` +
+                `获取的图片URL: ${getImageUrl(textMessage)}`;
+        }
+
+        // 检查WebSocket状态
+        function checkWebSocketStatus() {
+            let status = 'WebSocket未连接';
+            
+            // 尝试创建WebSocket连接
+            try {
+                const wsUrl = 'ws://localhost:8787/api/ws/chat';
+                const ws = new WebSocket(wsUrl);
+                window.ws = ws;
+                
+                ws.onopen = function() {
+                    status = 'WebSocket已连接';
+                    document.getElementById('status-log').textContent = 
+                        `WebSocket状态: ${status}\n` +
+                        `连接URL: ${wsUrl}`;
+                };
+                
+                ws.onerror = function(error) {
+                    status = 'WebSocket连接错误: ' + error.message;
+                    document.getElementById('status-log').textContent = 
+                        `WebSocket状态: ${status}\n` +
+                        `连接URL: ${wsUrl}`;
+                };
+                
+                ws.onclose = function(event) {
+                    status = 'WebSocket已关闭: ' + event.code + ' ' + event.reason;
+                    document.getElementById('status-log').textContent = 
+                        `WebSocket状态: ${status}\n` +
+                        `连接URL: ${wsUrl}`;
+                };
+                
+                ws.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        document.getElementById('status-log').textContent += 
+                            '\n收到消息: ' + JSON.stringify(data, null, 2);
+                    } catch (error) {
+                        document.getElementById('status-log').textContent += 
+                            '\n收到消息: ' + event.data;
+                    }
+                };
+                
+                document.getElementById('status-log').textContent = '正在连接WebSocket...';
+            } catch (error) {
+                status = 'WebSocket连接失败: ' + error.message;
+                document.getElementById('status-log').textContent = 
+                    `WebSocket状态: ${status}`;
+            }
+        }
+    </script>
+</body>
+</html>

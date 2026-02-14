@@ -1,0 +1,197 @@
+/* 聊天模块主样式 */
+.chat-module {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f0f2f5;
+  min-height: 0;
+}
+
+/* 确保 ChatLayout 能够正确地显示 */
+.chat-module .chat-layout-container {
+  height: 100%;
+  width: 100%;
+}
+
+/* 聊天容器 */
+.chat-shell {
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+/* 欢迎消息 */
+.welcome-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: #f0f2f5;
+  color: #666;
+  text-align: center;
+}
+
+.welcome-message h1 {
+  font-size: 28px;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.welcome-message p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* 联系人列表侧边栏 */
+.contact-list-sider {
+  background-color: #fff !important;
+  border-right: 1px solid #e0e0e0;
+}
+
+/* 聊天界面 */
+.chat-interface {
+  height: 100vh;
+  background-color: #f0f2f5;
+}
+
+/* 聊天头部 */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 60px;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.chat-back-button:hover {
+  background-color: #e0e0e0;
+}
+
+.chat-header-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chat-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chat-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.chat-status {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.chat-action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  padding: 0;
+  color: #666;
+}
+
+.chat-action-button:hover {
+  background-color: #f0f0f0;
+  color: #25D366;
+}
+
+/* 聊天内容区域 */
+.chat-content {
+  flex: 1;
+  overflow: auto;
+  background-color: #f0f2f5;
+}
+
+/* 聊天底部 */
+.chat-footer {
+  padding: 0;
+  background-color: #f0f2f5;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* 聊天未找到 */
+.chat-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: #f0f2f5;
+  color: #666;
+  text-align: center;
+}
+
+.chat-not-found h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}

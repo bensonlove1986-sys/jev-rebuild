@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV WebSocket 单实例强制重置工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .log {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .log-entry.error {
+            color: red;
+        }
+        .log-entry.success {
+            color: green;
+        }
+        .log-entry.info {
+            color: blue;
+        }
+        .status-section {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        .status-item {
+            margin: 5px 0;
+        }
+        .status-label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JEV WebSocket 单实例强制重置工具</h1>
+        <button onclick="resetWebSocketSingleton()">执行重置</button>
+        <button onclick="checkStatus()">检查状态</button>
+        <button onclick="clearLogs()">清除日志</button>
+        
+        <div class="status-section">
+            <h3>当前状态</h3>
+            <div id="status-container"></div>
+        </div>
+        
+        <div class="log" id="log"></div>
+    </div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function clearLogs() {
+            document.getElementById('log').innerHTML = '';
+        }
+        
+        function checkStatus() {
+            log('开始检查当前状态...', 'info');
+            
+            const statusContainer = document.getElementById('status-container');
+            let statusHTML = '';
+            
+            // 检查localStorage
+            const wsConnectionStatus = localStorage.getItem('jev_ws_connection_status_3000');
+            const pollLeader = localStorage.getItem('jev_poll_leader_3000');
+            
+            statusHTML += `<div class="status-item"><span class="status-label">WebSocket Connection Status:</span> ${wsConnectionStatus || '不存在'}</div>`;
+            statusHTML += `<div class="status-item"><span class="status-label">Poll Leader:</span> ${pollLeader || '不存在'}</div>`;
+            
+            // 检查WhatsAppInboxService
+            if (window.whatsAppInboxService) {
+                statusHTML += `<div class="status-item"><span class="status-label">WhatsAppInboxService:</span> 已加载</div>`;
+            } else {
+                statusHTML += `<div class="status-item"><span class="status-label">WhatsAppInboxService:</span> 未加载</div>`;
+            }
+            
+            statusContainer.innerHTML = statusHTML;
+            log('状态检查完成', 'success');
+        }
+        
+        async function resetWebSocketSingleton() {
+            log('开始执行WebSocket单实例强制重置...', 'info');
+            
+            try {
+                // 1. 清除WebSocket Leader锁
+                log('清除WebSocket Leader锁...', 'info');
+                localStorage.removeItem('jev_ws_connection_status_3000');
+                localStorage.removeItem('jev_poll_leader_3000');
+                // 同时清除通用键
+                localStorage.removeItem('jev_ws_connection_status');
+                localStorage.removeItem('jev_poll_leader');
+                localStorage.removeItem('jev_ws_leader');
+                localStorage.removeItem('jev_ws_heartbeat');
+                log('WebSocket Leader锁已清除', 'success');
+                
+                // 2. 关闭BroadcastChannel
+                log('关闭BroadcastChannel...', 'info');
+                // 尝试关闭jev-wa-inbox-service通道
+                try {
+                    const broadcastChannel = new BroadcastChannel('jev-wa-inbox-service');
+                    broadcastChannel.close();
+                    log('BroadcastChannel已关闭', 'success');
+                } catch (error) {
+                    log(`关闭BroadcastChannel时出错: ${error.message}`, 'error');
+                    // 继续执行，不中断流程
+                }
+                
+                // 3. 强制WhatsAppInboxService.resetSingleton()
+                log('重置WhatsAppInboxService单例...', 'info');
+                if (window.whatsAppInboxService) {
+                    if (window.whatsAppInboxService.resetSingleton) {
+                        window.whatsAppInboxService.resetSingleton();
+                        log('WhatsAppInboxService单例已重置', 'success');
+                    } else {
+                        log('WhatsAppInboxService没有resetSingleton方法', 'error');
+                    }
+                } else {
+                    log('WhatsAppInboxService未加载，尝试动态导入...', 'info');
+                    try {
+                        // 动态导入WhatsAppInboxService
+                        const module = await import('/ui-core/app/src/services/WhatsAppInboxService.ts');
+                        const WhatsAppInboxService = module.whatsAppInboxService;
+                        if (WhatsAppInboxService.resetSingleton) {
+                            WhatsAppInboxService.resetSingleton();
+                            log('WhatsAppInboxService单例已重置', 'success');
+                        } else {
+                            log('WhatsAppInboxService没有resetSingleton方法', 'error');
+                        }
+                    } catch (importError) {
+                        log(`动态导入失败: ${importError.message}`, 'error');
+                        // 尝试使用备用路径
+                        try {
+                            const module = await import('/src/services/WhatsAppInboxService.ts');
+                            const WhatsAppInboxService = module.whatsAppInboxService;
+                            if (WhatsAppInboxService.resetSingleton) {
+                                WhatsAppInboxService.resetSingleton();
+                                log('WhatsAppInboxService单例已重置', 'success');
+                            } else {
+                                log('WhatsAppInboxService没有resetSingleton方法', 'error');
+                            }
+                        } catch (error) {
+                            log(`备用路径导入失败: ${error.message}`, 'error');
+                        }
+                    }
+                }
+                
+                // 4. 重新调用start()
+                log('重新调用start()...', 'info');
+                if (window.whatsAppInboxService) {
+                    if (window.whatsAppInboxService.start) {
+                        window.whatsAppInboxService.start();
+                        log('start()已调用', 'success');
+                    } else {
+                        log('WhatsAppInboxService没有start方法', 'error');
+                    }
+                } else {
+                    log('WhatsAppInboxService未加载，尝试重新获取...', 'info');
+                    try {
+                        // 尝试重新获取WhatsAppInboxService
+                        const module = await import('/ui-core/app/src/services/WhatsAppInboxService.ts');
+                        const WhatsAppInboxService = module.whatsAppInboxService;
+                        if (WhatsAppInboxService.start) {
+                            WhatsAppInboxService.start();
+                            log('start()已调用', 'success');
+                        } else {
+                            log('WhatsAppInboxService没有start方法', 'error');
+                        }
+                    } catch (error) {
+                        log(`重新获取失败: ${error.message}`, 'error');
+                    }
+                }
+                
+                log('WebSocket单实例强制重置完成！', 'success');
+                log('请检查控制台日志，确认出现以下信息:', 'info');
+                log('WA_WS_CONNECTING', 'info');
+                log('DECISION: leader', 'info');
+                log('WA_WS_CONNECTED', 'info');
+                log('禁止出现:', 'info');
+                log('WS_DISABLED_ANOTHER_TAB', 'info');
+                log('DECISION: follower', 'info');
+                
+            } catch (error) {
+                log(`执行过程中出错: ${error.message}`, 'error');
+            }
+        }
+        
+        // 页面加载时检查状态
+        window.onload = function() {
+            log('页面加载完成，正在检查初始状态...', 'info');
+            checkStatus();
+        };
+    </script>
+</body>
+</html>

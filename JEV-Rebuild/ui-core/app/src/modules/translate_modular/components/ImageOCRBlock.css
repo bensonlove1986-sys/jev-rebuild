@@ -1,0 +1,159 @@
+.image-ocr-block {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.image-ocr-block.idle {
+  background-color: #f8f9fa;
+}
+
+.image-ocr-block.processing {
+  background-color: #e3f2fd;
+  border-color: #bbdefb;
+}
+
+.image-ocr-block.error {
+  background-color: #ffebee;
+  border-color: #ffcdd2;
+}
+
+.ocr-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ocr-label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ocr-provider {
+  font-size: 12px;
+  color: #6c757d;
+  background-color: #e9ecef;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #6c757d;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.expand-button:hover {
+  background-color: #e9ecef;
+}
+
+.ocr-content {
+  margin-top: 8px;
+}
+
+.ocr-text {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ocr-confidence {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.ocr-placeholder {
+  font-size: 13px;
+  color: #6c757d;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.ocr-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.processing-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #2196f3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.processing-text {
+  font-size: 13px;
+  color: #6c757d;
+}
+
+.ocr-error {
+  font-size: 13px;
+  color: #dc3545;
+  margin-bottom: 8px;
+}
+
+.retry-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.retry-button:hover {
+  background-color: #c82333;
+}
+
+.retry-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.ocr-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 8px;
+  align-self: flex-start;
+}
+
+.ocr-button:hover {
+  background-color: #218838;
+}
+
+.ocr-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.image-ocr-block.idle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}

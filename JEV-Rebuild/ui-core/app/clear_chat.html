@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清空聊天历史</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0069d9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border: 1px solid #b3d7ff;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>清空聊天历史</h1>
+        <p>点击下方按钮清空 <strong>whatsapp:+8615757759002</strong> 的所有历史消息。</p>
+        <button onclick="clearChatHistory()">清空聊天历史</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function clearChatHistory() {
+            const chatId = 'whatsapp:+8615757759002';
+            const resultDiv = document.getElementById('result');
+            let result = '';
+
+            // 从 localStorage 中获取消息数据
+            const storedMessages = localStorage.getItem('chat_messages_v1');
+
+            if (storedMessages) {
+                try {
+                    const messages = JSON.parse(storedMessages);
+                    
+                    // 检查聊天是否存在
+                    if (messages[chatId]) {
+                        result += `找到聊天: ${chatId}<br>`;
+                        result += `当前消息数量: ${messages[chatId].length}<br>`;
+                        
+                        // 清空该聊天的消息
+                        delete messages[chatId];
+                        
+                        // 保存回 localStorage
+                        localStorage.setItem('chat_messages_v1', JSON.stringify(messages));
+                        result += '聊天历史已清空<br>';
+                        
+                        // 同时清空聊天列表中的该聊天
+                        const storedChats = localStorage.getItem('chat_chats_v1');
+                        if (storedChats) {
+                            const chats = JSON.parse(storedChats);
+                            if (chats[chatId]) {
+                                delete chats[chatId];
+                                localStorage.setItem('chat_chats_v1', JSON.stringify(chats));
+                                result += '聊天列表中的该聊天也已移除<br>';
+                            } else {
+                                result += '聊天列表中不存在该聊天<br>';
+                            }
+                        } else {
+                            result += '没有找到聊天列表数据<br>';
+                        }
+                    } else {
+                        result += `聊天不存在: ${chatId}<br>`;
+                    }
+                } catch (error) {
+                    result += `解析数据失败: ${error.message}<br>`;
+                }
+            } else {
+                result += '没有找到消息数据<br>';
+            }
+
+            result += '操作完成';
+            resultDiv.innerHTML = result;
+        }
+    </script>
+</body>
+</html>

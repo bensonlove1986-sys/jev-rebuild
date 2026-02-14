@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px; font-family: monospace; white-space: pre-wrap; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        .info { background: #e3f2fd; color: #1565c0; }
+    </style>
+</head>
+<body>
+    <h1>WebSocket Connection Test</h1>
+    <div id="status"><strong>Status:</strong> <span id="status-text">Connecting...</span></div>
+    <div id="logs"></div>
+    
+    <h2>Test Commands</h2>
+    <button onclick="testWebSocket()">Test WebSocket Connection</button>
+    <button onclick="testApiHealth()">Test API Health</button>
+    <button onclick="testMessagePull()">Test Message Pull</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+
+    <script>
+        const API_BASE = 'https://jev-rebuild-worker.bensonlove1986.workers.dev';
+        const WS_URL = API_BASE.replace('https', 'wss') + '/api/ws/chat';
+        let ws = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log ${type}`;
+            logDiv.textContent = new Date().toISOString() + ': ' + message;
+            logs.appendChild(logDiv);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        function updateStatus(status, type = 'info') {
+            const statusText = document.getElementById('status-text');
+            statusText.textContent = status;
+            statusText.className = type;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+
+        function testWebSocket() {
+            log('Testing WebSocket connection to: ' + WS_URL);
+            updateStatus('Connecting...', 'info');
+
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+
+            try {
+                ws = new WebSocket(WS_URL);
+                
+                ws.onopen = function() {
+                    log('WebSocket connected successfully!', 'success');
+                    updateStatus('Connected', 'success');
+                    reconnectAttempts = 0;
+                    
+                    // Send ping
+                    setTimeout(() => {
+                        if (ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({ type: 'ping' }));
+                            log('Sent ping to server');
+                        }
+                    }, 1000);
+                };
+                
+                ws.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        log('Received message: ' + JSON.stringify(data, null, 2), 'success');
+                    } catch (e) {
+                        log('Error parsing message: ' + e.message + '\nData: ' + event.data, 'error');
+                    }
+                };
+                
+                ws.onerror = function(error) {
+                    log('WebSocket error: ' + error.message, 'error');
+                    updateStatus('Error', 'error');
+                };
+                
+                ws.onclose = function(event) {
+                    log('WebSocket closed: ' + event.code + ' - ' + event.reason, 'error');
+                    updateStatus('Disconnected', 'error');
+                    
+                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                        reconnectAttempts++;
+                        log('Attempting to reconnect (' + reconnectAttempts + '/' + MAX_RECONNECT_ATTEMPTS + ')...', 'info');
+                        setTimeout(testWebSocket, 3000);
+                    } else {
+                        log('Max reconnect attempts reached. Please check the connection manually.', 'error');
+                    }
+                };
+            } catch (e) {
+                log('Error creating WebSocket: ' + e.message, 'error');
+                updateStatus('Failed to connect', 'error');
+            }
+        }
+
+        function testApiHealth() {
+            log('Testing API health...');
+            
+            fetch(API_BASE + '/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    log('API Health Response: ' + JSON.stringify(data, null, 2), 'success');
+                })
+                .catch(error => {
+                    log('API Health Error: ' + error.message, 'error');
+                });
+        }
+
+        function testMessagePull() {
+            log('Testing message pull...');
+            
+            fetch(API_BASE + '/api/inbox/pull?customer_id=whatsapp:8615757759002')
+                .then(response => response.json())
+                .then(data => {
+                    log('Message Pull Response: ' + JSON.stringify(data, null, 2), 'success');
+                    if (data.messages && data.messages.length > 0) {
+                        log('Found ' + data.messages.length + ' messages', 'success');
+                    } else {
+                        log('No messages found', 'info');
+                    }
+                })
+                .catch(error => {
+                    log('Message Pull Error: ' + error.message, 'error');
+                });
+        }
+
+        // Auto-test on load
+        window.onload = function() {
+            log('Page loaded. Starting WebSocket test...');
+            testWebSocket();
+            testApiHealth();
+            testMessagePull();
+        };
+    </script>
+</body>
+</html>

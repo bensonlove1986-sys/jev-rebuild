@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEV UI 数据清空工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .log {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .log-entry.error {
+            color: red;
+        }
+        .log-entry.success {
+            color: green;
+        }
+        .log-entry.info {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JEV UI 数据清空工具</h1>
+        <button onclick="clearAllData()">清空所有JEV数据</button>
+        <button onclick="clearLocalStorage()">只清空localStorage</button>
+        <button onclick="clearSessionStorage()">只清空sessionStorage</button>
+        <button onclick="deleteIndexedDB()">只删除IndexedDB</button>
+        <button onclick="clearLogs()">清除日志</button>
+        <div class="log" id="log"></div>
+    </div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function clearLogs() {
+            document.getElementById('log').innerHTML = '';
+        }
+        
+        function clearLocalStorage() {
+            log('开始清空localStorage中的JEV相关数据...', 'info');
+            
+            const keysToDelete = [
+                'jev_chat_history',
+                'jev_draft_state',
+                'jev_autodraft_cache',
+                'jev_message_cache',
+                'jev_translation_cache',
+                'chat_drafts_v1',
+                'chat_messages_v1',
+                'chat_translations_v1'
+            ];
+            
+            let deletedCount = 0;
+            
+            // 删除指定的键
+            keysToDelete.forEach(key => {
+                if (localStorage.getItem(key) !== null) {
+                    localStorage.removeItem(key);
+                    log(`删除localStorage键: ${key}`, 'success');
+                    deletedCount++;
+                }
+            });
+            
+            // 删除所有以jev_开头的键
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('jev_') || key.startsWith('chat_'))) {
+                    localStorage.removeItem(key);
+                    log(`删除localStorage键: ${key}`, 'success');
+                    deletedCount++;
+                    i--; // 因为删除后长度会变化
+                }
+            }
+            
+            log(`共删除 ${deletedCount} 个localStorage键`, 'success');
+        }
+        
+        function clearSessionStorage() {
+            log('开始清空sessionStorage...', 'info');
+            const count = sessionStorage.length;
+            sessionStorage.clear();
+            log(`已清空sessionStorage中的 ${count} 个项`, 'success');
+        }
+        
+        function deleteIndexedDB() {
+            log('开始删除IndexedDB中的JEV相关数据库...', 'info');
+            
+            const databasesToDelete = [
+                'jev-chat-db',
+                'jev-cache-db',
+                'jev-draft-db'
+            ];
+            
+            databasesToDelete.forEach(dbName => {
+                indexedDB.deleteDatabase(dbName);
+                log(`删除IndexedDB数据库: ${dbName}`, 'success');
+            });
+        }
+        
+        function clearAllData() {
+            log('开始执行完整数据清空...', 'info');
+            clearLocalStorage();
+            clearSessionStorage();
+            deleteIndexedDB();
+            log('数据清空完成！', 'success');
+        }
+        
+        // 页面加载时显示当前数据状态
+        window.onload = function() {
+            log('页面加载完成，显示当前数据状态...', 'info');
+            
+            // 检查localStorage
+            const jevKeys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('jev_') || key.startsWith('chat_'))) {
+                    jevKeys.push(key);
+                }
+            }
+            
+            if (jevKeys.length > 0) {
+                log(`发现 ${jevKeys.length} 个JEV相关的localStorage键: ${jevKeys.join(', ')}`, 'info');
+            } else {
+                log('未发现JEV相关的localStorage键', 'info');
+            }
+            
+            // 检查sessionStorage
+            if (sessionStorage.length > 0) {
+                log(`sessionStorage中有 ${sessionStorage.length} 个项`, 'info');
+            } else {
+                log('sessionStorage为空', 'info');
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "pit_reply_route": "OK",
+  "env_status": "READY",
+  "jwt_status": "ACTIVE",
+  "json_parse": "STABLE",
+  "error_handling": "EXPECTED_400_ONLY",
+  "deployment_state": "PROD_READY",
+  "next_step": "WAIT_REAL_CONTACT_ID"
+}

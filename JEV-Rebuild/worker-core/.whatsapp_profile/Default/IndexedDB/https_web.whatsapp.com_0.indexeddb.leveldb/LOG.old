@@ -1,0 +1,46 @@
+2026/01/21-09:43:25.471 55a4 Reusing MANIFEST D:\PDF转网页\JEV-Rebuild\worker-core\.whatsapp_profile\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/01/21-09:43:25.472 55a4 Recovering log #1500
+2026/01/21-09:43:25.490 55a4 Reusing old log D:\PDF转网页\JEV-Rebuild\worker-core\.whatsapp_profile\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/001500.log 
+2026/01/21-09:43:25.490 55a4 Delete type=2 #1481
+2026/01/21-09:43:25.490 55a4 Delete type=2 #1482
+2026/01/21-09:43:25.490 55a4 Delete type=2 #1483
+2026/01/21-09:43:25.490 55a4 Delete type=2 #1484
+2026/01/21-09:43:25.490 55a4 Delete type=2 #1503
+2026/01/21-09:43:27.953 55a4 Level-0 table #1515: started
+2026/01/21-09:43:27.965 55a4 Level-0 table #1515: 662918 bytes OK
+2026/01/21-09:43:27.970 55a4 Delete type=0 #1500
+2026/01/21-09:43:27.971 55a4 Manual compaction at level-0 from '\x00`\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00a\x00\x00\x00' @ 0 : 0; will stop at '\x00`\x00\x00\x05' @ 4186788 : 1
+2026/01/21-09:43:27.971 55a4 Compacting 1@0 + 0@1 files
+2026/01/21-09:43:27.984 55a4 Generated table #1516@0: 17443 keys, 321389 bytes
+2026/01/21-09:43:27.990 55a4 Generated table #1517@0: 64 keys, 5156 bytes
+2026/01/21-09:43:27.990 55a4 Compacted 1@0 + 0@1 files => 326545 bytes
+2026/01/21-09:43:27.995 55a4 compacted to: files[ 0 2 25 0 0 0 0 ]
+2026/01/21-09:43:27.995 55a4 Delete type=2 #1515
+2026/01/21-09:43:27.996 55a4 Manual compaction at level-0 from '\x00`\x00\x00\x05' @ 4186788 : 1 .. '\x00a\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/01/21-09:43:28.021 2c2c Compacting 1@1 + 6@2 files
+2026/01/21-09:43:28.069 2c2c Generated table #1518@1: 89269 keys, 2242364 bytes
+2026/01/21-09:43:28.112 2c2c Generated table #1519@1: 97821 keys, 2250138 bytes
+2026/01/21-09:43:28.153 2c2c Generated table #1520@1: 88085 keys, 2301544 bytes
+2026/01/21-09:43:28.187 2c2c Generated table #1521@1: 42743 keys, 2203693 bytes
+2026/01/21-09:43:28.196 2c2c Generated table #1522@1: 2813 keys, 251946 bytes
+2026/01/21-09:43:28.196 2c2c Compacted 1@1 + 6@2 files => 9249685 bytes
+2026/01/21-09:43:28.201 2c2c compacted to: files[ 0 1 24 0 0 0 0 ]
+2026/01/21-09:43:28.201 2c2c Delete type=2 #1498
+2026/01/21-09:43:28.201 2c2c Delete type=2 #1504
+2026/01/21-09:43:28.201 2c2c Delete type=2 #1505
+2026/01/21-09:43:28.201 2c2c Delete type=2 #1506
+2026/01/21-09:43:28.201 2c2c Delete type=2 #1507
+2026/01/21-09:43:28.201 2c2c Delete type=2 #1508
+2026/01/21-09:43:28.201 2c2c Delete type=2 #1516
+2026/01/21-09:43:31.825 55a4 Compacting 1@1 + 4@2 files
+2026/01/21-09:43:31.855 55a4 Generated table #1523@1: 20357 keys, 2168594 bytes
+2026/01/21-09:43:31.894 55a4 Generated table #1524@1: 74748 keys, 2218184 bytes
+2026/01/21-09:43:31.938 55a4 Generated table #1525@1: 107195 keys, 2258711 bytes
+2026/01/21-09:43:31.980 55a4 Generated table #1526@1: 99765 keys, 2130904 bytes
+2026/01/21-09:43:31.980 55a4 Compacted 1@1 + 4@2 files => 8776393 bytes
+2026/01/21-09:43:31.984 55a4 compacted to: files[ 0 0 24 0 0 0 0 ]
+2026/01/21-09:43:31.985 55a4 Delete type=2 #1509
+2026/01/21-09:43:31.985 55a4 Delete type=2 #1510
+2026/01/21-09:43:31.985 55a4 Delete type=2 #1511
+2026/01/21-09:43:31.985 55a4 Delete type=2 #1512
+2026/01/21-09:43:31.985 55a4 Delete type=2 #1517

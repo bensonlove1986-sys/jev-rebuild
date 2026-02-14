@@ -1,45 +1,33 @@
 import { DAOJIE_CONFIG } from '../config/constants.js';
+import { ok, fail, text } from '../utils/response.js';
+import { upsertInboxIndexEntry } from '../index.js';
 
-// 辅助函数：创建统一格式的响应
-function createResponse({ success, data = null, error = null, status = 200 }) {
-  const responseBody = {
-    success,
-  };
-  
-  if (data) {
-    responseBody.data = data;
-  }
-  
-  if (error) {
-    responseBody.error = error;
-  }
-  
-  return new Response(
-    JSON.stringify(responseBody),
-    {
-      status,
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    }
-  );
-}
+// 辅助函数：创建统一格式的响应 - 已替换为使用统一响应工具
+// function createResponse({ success, data = null, error = null, status = 200 }) {
+//   const responseBody = {
+//     success,
+//   };
+//   
+//   if (data) {
+//     responseBody.data = data;
+//   }
+//   
+//   if (error) {
+//     responseBody.error = error;
+//   }
+//   
+//   return new Response(
+//     JSON.stringify(responseBody),
+//     {
+//       status,
+//       headers: {
+//         'Content-Type': 'application/json',
+//       }
+//     }
+//   );
+// }
 
-// 辅助函数：处理CORS头
-function addCorsHeaders(response, requestOrigin) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': requestOrigin || 'http://localhost:3000',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control-Max-Age': '86400',
-  };
-  
-  Object.entries(corsHeaders).forEach(([key, value]) => {
-    response.headers.set(key, value);
-  });
-  
-  return response;
-}
+
 
 // 处理 Daojie 入站消息
 export async function handleDaojieInbound(request, env) {
@@ -58,16 +46,17 @@ export async function handleDaojieInbound(request, env) {
       channel,
       // 其他可能的字段
       contactName,
-      timestamp
+      timestamp,
+      // Additional name fields for display_name extraction
+      username,
+      display_name,
+      from_name,
+      nickname
     } = payload;
     
     // 4. 验证必填字段
     if (!conversationId || !contactId || !text) {
-      return createResponse({
-        success: false,
-        error: 'Missing required fields',
-        status: 400
-      });
+      return fail(request, 'Missing required fields', 400);
     }
     
     // 5. 转发给前端或写入内存缓存（仅用于通知，不用于回复）
@@ -90,20 +79,87 @@ export async function handleDaojieInbound(request, env) {
     // }
     console.info('[WS] skipped: frozen by config');
     
-    // 6. 返回成功响应
-    return createResponse({
-      success: true,
-      data: { status: 'received' },
-      status: 200
-    });
+    // 6. Handle Customer Profile upsert
+    const customerId = contactId; // Use contactId as customer_id
+    if (env.INBOX_KV && customerId) {
+      try {
+        // Extract display_name from various fields with fallback
+        let displayName = contactName || username || display_name || from_name || nickname || customerId || "Unknown";
+        
+        // Only process if we have a customerId
+        if (customerId) {
+          const customerKey = `customer:${customerId}`;
+          
+          // Read existing customer data
+          const existingCustomerRaw = await env.INBOX_KV.get(customerKey);
+          let customerData = {
+            customer_id: customerId,
+            display_name: displayName,
+            real_name: displayName,
+            customer_name: displayName,
+            source: "daojie_inbound",
+            last_message_at: Date.now(),
+            created_at: Date.now(),
+            updated_at: Date.now()
+          };
+          
+          // If customer data exists, update it
+          if (existingCustomerRaw) {
+            const existingCustomer = JSON.parse(existingCustomerRaw);
+            // Don't overwrite existing display_name unless new value is non-empty
+            if (!displayName || displayName === "Unknown") {
+              customerData.display_name = existingCustomer.display_name || customerId || "Unknown";
+              customerData.real_name = existingCustomer.real_name || existingCustomer.display_name || customerId || "Unknown";
+              customerData.customer_name = existingCustomer.customer_name || existingCustomer.display_name || customerId || "Unknown";
+            }
+            customerData.source = existingCustomer.source || "daojie_inbound";
+            customerData.created_at = existingCustomer.created_at || Date.now();
+          }
+          
+          // Update last_message_at and updated_at
+          customerData.last_message_at = Date.now();
+          customerData.updated_at = Date.now();
+          
+          // Write customer data to INBOX_KV (using same KV as read side)
+          try {
+            if (env.INBOX_KV?.put) {
+              await env.INBOX_KV.put(customerKey, JSON.stringify(customerData));
+              console.log("[CUSTOMER_UPSERT_SUCCESS] customer_id=" + customerId + " display_name=" + customerData.display_name);
+              console.log("[CUSTOMER_UPSERT_KEY] Key: " + customerKey);
+            } else {
+              console.warn("[CUSTOMER_UPSERT_SKIP] INBOX_KV not bound or missing put method");
+            }
+          } catch (e) {
+            console.error("[CUSTOMER_UPSERT_FAIL] customer_id=" + customerId + " error:" + e.message);
+          }
+        }
+      } catch (profileError) {
+      console.error("[PROFILE_UPSERT_ERROR]", profileError.message);
+      // Continue execution, return success response
+    }
+  }
+  
+  // 8. Upsert inbox index entry
+  try {
+    const inboxEntry = {
+      customer_id: customerId,
+      chat_id: conversationId,
+      last_message_ts: Date.now(),
+      last_message_preview: text.substring(0, 50),
+      source: 'daojie'
+    };
+    await upsertInboxIndexEntry(env, inboxEntry);
+  } catch (upsertError) {
+    console.error('[INBOX_INDEX_UPSERT_ERROR]', upsertError.message);
+    // Upsert error doesn't block message processing
+  }
+  
+  // 9. 返回成功响应
+  return ok(request, { status: 'received' });
     
   } catch (error) {
     console.error('Error handling Daojie inbound message:', error);
-    return createResponse({
-      success: false,
-      error: error.message,
-      status: 500
-    });
+    return fail(request, error.message, 500);
   }
 }
 
@@ -113,10 +169,7 @@ export async function getConversations(request, env) {
     // 1. 获取API密钥
     const apiKey = env.DAIJIE_API_KEY;
     if (!apiKey) {
-      return new Response(
-        JSON.stringify({ error: 'API key not configured' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
+      return fail(request, 'API key not configured', 500);
     }
     
     // 2. 调用Daojie官方API
@@ -134,30 +187,16 @@ export async function getConversations(request, env) {
       const errorData = await response.json().catch(() => ({
         error: 'Failed to fetch conversations'
       }));
-      return new Response(
-        JSON.stringify(errorData),
-        { status: response.status, headers: { 'Content-Type': 'application/json' } }
-      );
+      return fail(request, errorData.error || 'Failed to fetch conversations', response.status, errorData);
     }
     
     // 4. 直接返回官方API的完整响应
     const data = await response.json();
-    return new Response(
-      JSON.stringify(data),
-      { 
-        status: 200, 
-        headers: { 
-          'Content-Type': 'application/json' 
-        } 
-      }
-    );
+    return ok(request, data);
     
   } catch (error) {
     console.error('Error getting conversations:', error);
-    return new Response(
-      JSON.stringify({ error: 'Failed to fetch conversations' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return fail(request, 'Failed to fetch conversations', 500);
   }
 }
 
@@ -167,10 +206,7 @@ export async function getConversationMessages(request, env) {
     // 1. 获取API密钥
     const apiKey = env.DAIJIE_API_KEY;
     if (!apiKey) {
-      return new Response(
-        JSON.stringify({ error: 'API key not configured' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
+      return fail(request, 'API key not configured', 500);
     }
     
     // 2. 解析conversationId
@@ -179,10 +215,7 @@ export async function getConversationMessages(request, env) {
     const conversationId = pathSegments[4];
     
     if (!conversationId) {
-      return new Response(
-        JSON.stringify({ error: 'conversationId is required' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      );
+      return fail(request, 'conversationId is required', 400);
     }
     
     // 3. 调用Daojie官方API
@@ -200,30 +233,16 @@ export async function getConversationMessages(request, env) {
       const errorData = await response.json().catch(() => ({
         error: 'Failed to fetch messages'
       }));
-      return new Response(
-        JSON.stringify(errorData),
-        { status: response.status, headers: { 'Content-Type': 'application/json' } }
-      );
+      return fail(request, errorData.error || 'Failed to fetch messages', response.status, errorData);
     }
     
     // 5. 直接返回官方API的完整响应
     const data = await response.json();
-    return new Response(
-      JSON.stringify(data),
-      { 
-        status: 200, 
-        headers: { 
-          'Content-Type': 'application/json' 
-        } 
-      }
-    );
+    return ok(request, data);
     
   } catch (error) {
     console.error('Error getting conversation messages:', error);
-    return new Response(
-      JSON.stringify({ error: 'Failed to fetch messages' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return fail(request, 'Failed to fetch messages', 500);
   }
 }
 
@@ -281,30 +300,16 @@ export async function replyToCustomer(request, env) {
       const errorData = await response.json().catch(() => ({
         error: 'Failed to send message'
       }));
-      return new Response(
-        JSON.stringify(errorData),
-        { status: response.status, headers: { 'Content-Type': 'application/json' } }
-      );
+      return fail(request, errorData.error || 'Failed to send message', response.status, errorData);
     }
     
     // 6. 直接返回官方API的完整响应
     const data = await response.json();
-    return new Response(
-      JSON.stringify(data),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+    return ok(request, data);
     
   } catch (error) {
     console.error('Error replying to customer:', error);
-    return new Response(
-      JSON.stringify({ error: 'Failed to send message' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return fail(request, 'Failed to send message', 500);
   }
 }
 
@@ -319,11 +324,7 @@ export async function generateDraftReply(request, env) {
     
     // 2. 验证必填字段
     if (!text || !contactId || !language) {
-      return createResponse({
-        success: false,
-        error: 'Missing required fields',
-        status: 400
-      });
+      return fail(request, 'Missing required fields', 400);
     }
     
     // 3. 模拟调用 LLM 生成回复草稿
@@ -343,21 +344,13 @@ export async function generateDraftReply(request, env) {
     console.log('[AI] draft generated successfully');
     
     // 4. 返回草稿，不触发任何发送
-    return createResponse({
-      success: true,
-      data: {
-        text: generatedText,
-        lang: generatedLang
-      },
-      status: 200
+    return ok(request, {
+      text: generatedText,
+      lang: generatedLang
     });
     
   } catch (error) {
     console.error('[AI] draft generation failed:', error);
-    return createResponse({
-      success: false,
-      error: error.message,
-      status: 500
-    });
+    return fail(request, error.message, 500);
   }
 }

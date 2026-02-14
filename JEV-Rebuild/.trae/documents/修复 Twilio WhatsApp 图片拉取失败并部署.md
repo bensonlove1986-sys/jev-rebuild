@@ -1,0 +1,51 @@
+## 问题分析
+
+**主要问题**：Cloudflare Worker 无法拉取 Twilio WhatsApp 图片，返回 "PROXY_UPSTREAM_ERROR"。
+
+**根本原因**：
+1. 运行时无法获取 Twilio Secret（env.TWILIO_ACCOUNT_SID / env.TWILIO_AUTH_TOKEN 缺失）
+2. 缺乏详细的错误日志，难以诊断具体失败原因
+3. 部署流程存在问题，无法通过 CLI 部署
+
+## 修复计划
+
+### 步骤 1：增强代码错误处理和日志记录
+- **文件**：`worker-core/index.js`
+- **修改**：
+  - 硬编码 Twilio 凭证（临时解决方案）
+  - 添加详细的诊断日志，包括：
+    - 解码后的 Media URL
+    - 凭证状态和预览
+    - 请求开始和响应状态
+    - 详细的错误信息和堆栈
+  - 优化错误处理逻辑
+
+### 步骤 2：手动部署到 Cloudflare
+- **原因**：`wrangler deploy` 命令失败，出现 "Invalid URL protocol" 错误
+- **方法**：
+  1. 登录 Cloudflare Dashboard
+  2. 导航到 Workers → jev-rebuild-worker → Quick Edit
+  3. 复制修改后的代码到编辑器
+  4. 点击 "Save and Deploy"
+
+### 步骤 3：验证部署结果
+- **测试**：
+  1. 访问测试页面：http://127.0.0.1:8080/test-media-proxy.html
+  2. 点击 "Test Proxy" 按钮
+  3. 检查浏览器控制台和 Cloudflare Worker 日志
+- **验证标准**：
+  - Worker 日志显示 `[TWILIO_SECRET_CHECK] { hasSid: true, hasToken: true }`
+  - 直接访问代理 URL 返回 200，Content-Type 为 image/jpeg
+  - WhatsApp 图片消息可显示，进入 OCR 流程
+
+## 预期结果
+
+- **修复成功**：Twilio WhatsApp 图片可正常拉取和显示
+- **部署完成**：代码成功部署到生产环境
+- **日志完整**：包含详细的诊断信息，便于后续问题排查
+
+## 风险和缓解措施
+
+- **凭证安全**：硬编码凭证仅作为临时解决方案，后续可通过 Cloudflare Secret 管理改进
+- **部署失败**：若手动部署失败，可尝试创建新的 Worker 并部署
+- **网络问题**：若 Worker 无法访问 Twilio API，需检查网络连接和防火墙设置

@@ -1,0 +1,39 @@
+{
+  "scan_date": "2025-12-30",
+  "scan_targets": [
+    "src/modules/chat_modular/plugins/**",
+    "src/modules/chat_modular/ipc/**",
+    "src/modules/chat_modular/store/**",
+    "src/modules/chat_modular/ChatModule.tsx"
+  ],
+  "findings": [
+    {
+      "file": "d:\\PDF转网页\\JEV-Rebuild\\ui-core\\app\\src\\modules\\chat_modular\\plugins\\AutoReplyPlugin\\AutoReplyModal.tsx",
+      "problem_type": "plugin_direct_import_global_object",
+      "severity": "high",
+      "reason": "插件直接导入了全局 SmartAssistContext 对象",
+      "suggested_fix": "移除直接导入，改为通过注入的 ctx 参数访问"
+    },
+    {
+      "file": "d:\\PDF转网页\\JEV-Rebuild\\ui-core\\app\\src\\modules\\chat_modular\\plugins\\TranslatePlugin\\index.ts",
+      "problem_type": "plugin_event_bus_direct_import",
+      "severity": "medium",
+      "reason": "插件直接导入了全局 eventBus 对象",
+      "suggested_fix": "移除直接导入，改为通过注入的 ctx 参数访问"
+    },
+    {
+      "file": "d:\\PDF转网页\\JEV-Rebuild\\ui-core\\app\\src\\modules\\chat_modular\\plugins\\AutoReplyPlugin\\index.ts",
+      "problem_type": "plugin_event_bus_direct_import",
+      "severity": "medium",
+      "reason": "插件直接导入了全局 eventBus 对象",
+      "suggested_fix": "移除直接导入，改为通过注入的 ctx 参数访问"
+    },
+    {
+      "file": "d:\\PDF转网页\\JEV-Rebuild\\ui-core\\app\\src\\modules\\chat_modular\\plugins\\SmartReplyPlugin.tsx",
+      "problem_type": "plugin_direct_import_store",
+      "severity": "high",
+      "reason": "插件直接导入了全局 useCustomersStore 和 useMessagesStore",
+      "suggested_fix": "移除直接导入，改为通过注入的 ctx 参数访问"
+    }
+  ]
+}

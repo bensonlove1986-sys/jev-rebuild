@@ -1,0 +1,1140 @@
+/* ChatLayout.css */
+
+/* WhatsApp 绿色主题变量 */
+:root {
+  --whatsapp-green: #25d366;
+  --whatsapp-light-green: #dcf8c6;
+  --whatsapp-dark-green: #128c7e;
+  --whatsapp-bg: #f0f2f5;
+  --whatsapp-gray: #f1f1f1;
+  --whatsapp-text: #333;
+  --whatsapp-secondary-text: #666;
+  --whatsapp-border: #e0e0e0;
+}
+
+.chat-layout {
+  height: 100%;
+}
+
+/* 主布局容器 */
+.chat-layout-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  background-color: var(--whatsapp-bg);
+  overflow: hidden;
+  position: relative;
+}
+
+/* 左侧会话列表区域 */
+.conversation-list-container {
+  width: 320px;
+  min-width: 280px;
+  max-width: 400px;
+  background-color: white;
+  border-right: 1px solid var(--whatsapp-border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+/* 右侧聊天主区域 */
+.chat-main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--whatsapp-bg);
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* 聊天占位符样式 */
+.chat-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+.chat-placeholder-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.chat-placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.chat-placeholder h2 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--whatsapp-text);
+}
+
+.chat-placeholder p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--whatsapp-secondary-text);
+  line-height: 1.5;
+}
+
+/* WhatsApp 整体布局 */
+.whatsapp-layout {
+  background-color: var(--whatsapp-bg);
+}
+
+/* 左侧 WhatsApp 会话列表样式 */
+.whatsapp-session-list {
+  background: white;
+  border-right: 1px solid var(--whatsapp-border);
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.session-list-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--whatsapp-border);
+  background: white;
+}
+
+.whatsapp-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.whatsapp-logo .whatsapp-icon {
+  font-size: 24px;
+  color: var(--whatsapp-green);
+}
+
+.session-list-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--whatsapp-text);
+}
+
+.session-list {
+  padding: 8px 0;
+}
+
+.contact-list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--whatsapp-gray);
+}
+
+.contact-list-item:hover {
+  background-color: var(--whatsapp-gray);
+}
+
+.contact-list-item.selected {
+  background-color: #e8f0fe;
+}
+
+.contact-avatar {
+  position: relative;
+  margin-right: 12px;
+}
+
+.whatsapp-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--whatsapp-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+}
+
+.whatsapp-avatar .whatsapp-icon {
+  font-size: 24px;
+}
+
+.contact-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-name-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.contact-name {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--whatsapp-text);
+}
+
+.last-message-time {
+  font-size: 12px;
+  color: var(--whatsapp-secondary-text);
+}
+
+.last-message-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.last-message {
+  font-size: 13px;
+  color: var(--whatsapp-secondary-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.unread-count {
+  background-color: var(--whatsapp-green);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.no-sessions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--whatsapp-secondary-text);
+  font-size: 16px;
+  gap: 8px;
+}
+
+/* 右侧聊天区域样式 */
+.chat-content {
+  background-color: var(--whatsapp-bg);
+  overflow: hidden;
+}
+
+.waiting-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--whatsapp-secondary-text);
+  gap: 16px;
+}
+
+.waiting-icon {
+  font-size: 48px;
+  color: var(--whatsapp-green);
+}
+
+.waiting-message h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--whatsapp-text);
+}
+
+.chat-interface {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+}
+
+.chat-header {
+  background: white;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--whatsapp-border);
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  height: 72px;
+}
+
+.chat-contact-info {
+  display: flex;
+  align-items: center;
+}
+
+.chat-contact-avatar {
+  position: relative;
+  margin-right: 12px;
+}
+
+.chat-contact-avatar .whatsapp-avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+}
+
+.chat-contact-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-contact-name {
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--whatsapp-text);
+}
+
+.chat-contact-status {
+  font-size: 13px;
+  color: var(--whatsapp-secondary-text);
+}
+
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 20px;
+  background-color: #e5ddd5;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 600px;
+}
+
+/* Message bubble styles moved to MessageBubble.css */
+
+/* 消息输入区域样式 */
+.message-input-area {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: white;
+  border-top: 1px solid var(--whatsapp-border);
+  gap: 12px;
+}
+
+.message-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid var(--whatsapp-border);
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: var(--whatsapp-gray);
+}
+
+.message-input:focus {
+  border-color: var(--whatsapp-green);
+  background-color: white;
+  box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.2);
+}
+
+.send-button {
+  padding: 10px 20px;
+  background-color: var(--whatsapp-green);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.send-button:hover {
+  background-color: #1ebe57;
+}
+
+.send-button:active {
+  background-color: #1a9e4a;
+}
+
+.send-button:disabled {
+  background-color: #b3e5fc;
+  cursor: not-allowed;
+}
+
+/* 右侧客户信息面板样式 */
+.customer-info-sider {
+  background: white;
+  border-left: 1px solid var(--whatsapp-border);
+  overflow-y: auto;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
+}
+
+.customer-info-panel {
+  padding: 16px;
+}
+
+.panel-header {
+  padding: 0 0 12px 0;
+  border-bottom: 1px solid var(--whatsapp-border);
+  margin-bottom: 16px;
+}
+
+.panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--whatsapp-text);
+}
+
+.panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--whatsapp-gray);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item label {
+  font-size: 14px;
+  color: var(--whatsapp-secondary-text);
+  font-weight: 500;
+}
+
+.info-item span {
+  font-size: 14px;
+  color: var(--whatsapp-text);
+}
+
+.no-messages {
+  text-align: center;
+  color: var(--whatsapp-secondary-text);
+  padding: 20px;
+  font-size: 14px;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--whatsapp-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 正在输入指示器样式 */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: white;
+  border-radius: 18px;
+  max-width: fit-content;
+  margin: 8px 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.typing-dots {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.typing-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #999;
+  margin: 0 2px;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots .dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-dots .dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes typing {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1.0);
+  }
+}
+
+.typing-text {
+  font-size: 13px;
+  color: var(--whatsapp-secondary-text);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .customer-info-sider {
+    display: none;
+  }
+  
+  .message-bubble {
+    max-width: 75%;
+  }
+}
+
+@media (max-width: 768px) {
+  .whatsapp-session-list {
+    width: 100% !important;
+  }
+  
+  .message-bubble {
+    max-width: 85%;
+  }
+}
+
+/* DeepSeek AI 助手面板布局 */
+.chat-with-panel-container {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* 有AI面板时的布局 */
+.chat-with-panel-container.with-ai-panel {
+  flex-direction: row;
+}
+
+/* 无AI面板时的布局 */
+.chat-with-panel-container.without-ai-panel {
+  flex-direction: row;
+}
+
+.chat-content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  transition: all 0.3s ease;
+  /* 强制样式清零，防止影响子元素 */
+  transform: none !important;
+  writing-mode: horizontal-tb !important;
+}
+
+/* 聊天列容器 - 统一包含Header和Body */
+.chat-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  /* 强制样式清零，防止影响ChatHeader */
+  transform: none !important;
+  writing-mode: horizontal-tb !important;
+  flex-direction: column !important;
+  white-space: normal;
+  text-orientation: mixed;
+}
+
+/* 聊天主体区域 */
+.chat-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* 有AI面板时的聊天内容区 */
+.chat-with-panel-container.with-ai-panel .chat-content-area {
+  flex: 1;
+  min-width: 300px;
+}
+
+/* 无AI面板时的聊天内容区 */
+.chat-with-panel-container.without-ai-panel .chat-content-area {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+.chat-panel-area {
+  width: 400px;
+  min-width: 360px;
+  max-width: 420px;
+  height: 100%;
+  border-left: 1px solid var(--whatsapp-border);
+  background-color: #ffffff;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* 响应式设计 - 面板布局 */
+@media (max-width: 1200px) {
+  .chat-panel-area {
+    width: 350px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .chat-panel-area {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-with-panel-container {
+    flex-direction: column;
+  }
+  
+  .chat-panel-area {
+    width: 100%;
+    height: 50vh;
+    border-left: none;
+    border-top: 1px solid var(--whatsapp-border);
+  }
+}
+
+/* CRM 面板相关样式 */
+
+/* CRM 切换按钮样式 */
+.crm-toggle-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crm-toggle-btn:hover {
+  background-color: var(--whatsapp-gray);
+}
+
+.crm-toggle-btn:active {
+  background-color: var(--whatsapp-border);
+}
+
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* CRM 面板包装器 */
+.crm-panel-wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 360px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* CRM 面板容器 */
+.crm-panel-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+/* CRM 面板头部 */
+.crm-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--whatsapp-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.crm-panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--whatsapp-text);
+}
+
+.crm-panel-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.crm-panel-close:hover {
+  background-color: var(--whatsapp-gray);
+}
+
+/* CRM 面板主体 */
+.crm-panel-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* CRM 加载状态 */
+.crm-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--whatsapp-secondary-text);
+  font-size: 14px;
+}
+
+/* CRM 无客户信息状态 */
+.crm-no-customer {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--whatsapp-secondary-text);
+}
+
+.crm-no-customer p {
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* CRM 客户信息样式 */
+.crm-customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.crm-customer-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.crm-customer-item label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--whatsapp-secondary-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.crm-customer-item span {
+  font-size: 14px;
+  color: var(--whatsapp-text);
+  font-weight: 400;
+}
+
+/* CRM 标签样式 */
+.crm-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.crm-tag {
+  padding: 4px 12px;
+  background-color: #e8f0fe;
+  color: #1976d2;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* CRM 备注样式 */
+.crm-notes {
+  font-size: 14px;
+  color: var(--whatsapp-text);
+  line-height: 1.4;
+  margin: 0;
+  padding: 12px;
+  background-color: var(--whatsapp-gray);
+  border-radius: 8px;
+}
+
+/* CRM 操作按钮区域 */
+.crm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--whatsapp-border);
+}
+
+.crm-action-btn {
+  padding: 10px 16px;
+  background-color: var(--whatsapp-green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.crm-action-btn:hover {
+  background-color: #1ebe57;
+}
+
+.crm-action-btn:active {
+  background-color: #1a9e4a;
+}
+
+/* CRM 添加备注表单 */
+.crm-add-note {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: var(--whatsapp-gray);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.crm-note-input {
+  padding: 10px;
+  border: 1px solid var(--whatsapp-border);
+  border-radius: 4px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.crm-note-input:focus {
+  border-color: var(--whatsapp-green);
+}
+
+/* CRM 添加任务表单 */
+.crm-add-task {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: var(--whatsapp-gray);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.crm-task-title {
+  padding: 10px;
+  border: 1px solid var(--whatsapp-border);
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.crm-task-title:focus {
+  border-color: var(--whatsapp-green);
+}
+
+.crm-task-description {
+  padding: 10px;
+  border: 1px solid var(--whatsapp-border);
+  border-radius: 4px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 60px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.crm-task-description:focus {
+  border-color: var(--whatsapp-green);
+}
+
+/* CRM 提交按钮 */
+.crm-submit-btn {
+  padding: 8px 16px;
+  background-color: var(--whatsapp-green);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+
+.crm-submit-btn:hover {
+  background-color: #1ebe57;
+}
+
+.crm-submit-btn:active {
+  background-color: #1a9e4a;
+}
+
+/* 有CRM面板时的布局调整 */
+.chat-with-panel-container.with-crm-panel {
+  position: relative;
+}
+
+/* 响应式设计 - CRM面板 */
+@media (max-width: 768px) {
+  .crm-panel-wrapper {
+    width: 100%;
+  }
+  
+  .chat-header-actions {
+    gap: 4px;
+  }
+  
+  .crm-toggle-btn {
+    font-size: 18px;
+    padding: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .crm-panel-body {
+    padding: 16px;
+  }
+  
+  .crm-customer-info {
+    gap: 12px;
+  }
+}
+
+/* CRM 编辑功能样式 */
+
+/* CRM 面板头部操作按钮 */
+.crm-panel-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crm-header-btn {
+  padding: 6px 12px;
+  background-color: var(--whatsapp-green);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.crm-header-btn:hover {
+  background-color: #1ebe57;
+}
+
+.crm-header-btn:active {
+  background-color: #1a9e4a;
+}
+
+/* 编辑模式下的输入框样式 */
+.crm-editable-input {
+  padding: 8px 12px;
+  border: 1px solid var(--whatsapp-border);
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--whatsapp-text);
+  outline: none;
+  transition: border-color 0.2s ease;
+  background-color: white;
+}
+
+.crm-editable-input:focus {
+  border-color: var(--whatsapp-green);
+  box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.1);
+}
+
+.crm-editable-input:disabled {
+  background-color: var(--whatsapp-gray);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* 编辑模式下的文本域样式 */
+.crm-editable-textarea {
+  padding: 8px 12px;
+  border: 1px solid var(--whatsapp-border);
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--whatsapp-text);
+  outline: none;
+  transition: border-color 0.2s ease;
+  background-color: white;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.crm-editable-textarea:focus {
+  border-color: var(--whatsapp-green);
+  box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.1);
+}
+
+/* 编辑模式下的选择框样式 */
+.crm-editable-select {
+  padding: 8px 12px;
+  border: 1px solid var(--whatsapp-border);
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--whatsapp-text);
+  outline: none;
+  transition: border-color 0.2s ease;
+  background-color: white;
+  cursor: pointer;
+}
+
+.crm-editable-select:focus {
+  border-color: var(--whatsapp-green);
+  box-shadow: 0 0 0 2px rgba(37, 211, 102, 0.1);
+}
+
+/* 编辑模式下的表单布局 */
+.crm-customer-item {
+  transition: all 0.2s ease;
+}
+
+/* 编辑模式的视觉反馈 */
+.crm-customer-info {
+  transition: all 0.2s ease;
+}
+
+/* 编辑模式下的操作按钮样式 */
+.crm-header-btn.cancel {
+  background-color: var(--whatsapp-secondary-text);
+}
+
+.crm-header-btn.cancel:hover {
+  background-color: #555;
+}
+
+/* 编辑模式下的输入框容器 */
+.crm-input-container {
+  position: relative;
+}
+
+/* 编辑模式下的必填字段标记 */
+.crm-required {
+  color: #ff4d4f;
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+/* 编辑模式下的错误提示 */
+.crm-error {
+  font-size: 12px;
+  color: #ff4d4f;
+  margin-top: 4px;
+}
+
+/* 编辑模式下的成功提示 */
+.crm-success {
+  font-size: 12px;
+  color: var(--whatsapp-green);
+  margin-top: 4px;
+}
+
+/* 编辑模式下的加载状态 */
+.crm-saving {
+  font-size: 12px;
+  color: var(--whatsapp-secondary-text);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 编辑模式下的加载动画 */
+.crm-saving::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--whatsapp-secondary-text);
+  border-top: 2px solid var(--whatsapp-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 响应式设计 - 编辑功能 */
+@media (max-width: 480px) {
+  .crm-panel-header-actions {
+    gap: 4px;
+  }
+  
+  .crm-header-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  
+  .crm-editable-input {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  
+  .crm-editable-textarea {
+    padding: 6px 10px;
+    font-size: 13px;
+    min-height: 60px;
+  }
+  
+  .crm-editable-select {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+}

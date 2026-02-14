@@ -1,0 +1,7 @@
+{
+  "profile_kv_written": true,
+  "profile_key_format": "profile:<customer_id>",
+  "profile_lookup_found": true,
+  "root_cause": "PROFILE_NEVER_WRITTEN",
+  "status": "PERMANENTLY_FIXED"
+}

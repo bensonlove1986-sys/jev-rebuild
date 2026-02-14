@@ -1,0 +1,105 @@
+.chat-header-container {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  z-index: 10;
+  /* 强制样式清零，防止旋转/纵向排列 */
+  transform: none !important;
+  writing-mode: horizontal-tb !important;
+  flex-direction: row !important;
+  white-space: normal;
+  text-orientation: mixed;
+  /* 确保正确的布局结构 */
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 56px;
+  box-sizing: border-box;
+}
+
+.chat-header-content {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+}
+
+.chat-contact-avatar {
+  margin-right: 16px;
+}
+
+.whatsapp-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #25d366;
+  color: white;
+  font-size: 20px;
+}
+
+.chat-contact-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-contact-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111b21;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-contact-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #667781;
+}
+
+.status-indicator.online {
+  background-color: #25d366;
+}
+
+.status-text {
+  font-size: 13px;
+  color: #667781;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 适配移动端 */
+@media (max-width: 768px) {
+  .chat-header-content {
+    padding: 10px 16px;
+  }
+  
+  .whatsapp-avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+  }
+  
+  .chat-contact-name {
+    font-size: 16px;
+  }
+  
+  .status-text {
+    font-size: 12px;
+  }
+}

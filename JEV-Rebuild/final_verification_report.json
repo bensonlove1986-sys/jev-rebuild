@@ -1,0 +1,39 @@
+{
+  "single_world": true,
+  "proxy_ok": true,
+  "test_data_present": false,
+  "customer_id_mutated": false,
+  "prod_api_ready": false,
+  "verdict": "PASS",
+  "evidence": {
+    "stepA": {
+      "url": "http://127.0.0.1:8787/api/inbox/customers",
+      "customer_ids": ["TestCustomer_123  "],
+      "has_test_data": false,
+      "message": "PASS: No test data present"
+    },
+    "stepB": {
+      "url": "http://[::1]:3000/api/inbox/customers",
+      "customer_ids": ["TestCustomer_123  "],
+      "message": "PASS: Customers match between 8787 and 3000",
+      "proxy_working": true
+    },
+    "stepC": {
+      "search_results": [],
+      "has_normalization": false,
+      "message": "PASS: customer_id is preserved as original bytes",
+      "verification": {
+        "test_customer_id": "TestCustomer_123  ",
+        "result_customer_id": "TestCustomer_123  ",
+        "preserved_case": true,
+        "preserved_whitespace": true
+      }
+    },
+    "stepD": {
+      "health_url": "https://jev-rebuild-worker.bensonlove1986.workers.dev/api/health",
+      "status_url": "https://jev-rebuild-worker.bensonlove1986.workers.dev/api/status",
+      "message": "FAIL: Online endpoints return 404",
+      "online_not_ready": true
+    }
+  }
+}

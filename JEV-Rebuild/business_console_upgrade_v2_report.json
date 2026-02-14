@@ -1,0 +1,7 @@
+{
+  "ui_state": "BUSINESS_CONSOLE_V2_READY",
+  "modules": ["chat","customer","order","ai","system"],
+  "backend_integrated": true,
+  "single_world": true,
+  "console_clean": true
+}

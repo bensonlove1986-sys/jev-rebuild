@@ -1,0 +1,385 @@
+/* 基础样式重置 - 现代化设计 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fafafa;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  color: #333333;
+  line-height: 1.5;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 确保Ant Design Layout正常工作 */
+.ant-layout {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+  width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background-color: #fafafa !important;
+}
+
+.ant-layout > .ant-layout {
+  display: flex !important;
+  flex-direction: row !important;
+  height: calc(100vh - 64px) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.ant-layout-header {
+  flex: 0 0 auto !important;
+  height: 64px !important;
+  padding: 0 24px !important;
+  line-height: 64px !important;
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.ant-layout-sider {
+  flex: 0 0 auto !important;
+  background-color: #ffffff !important;
+  border-right: 1px solid #e5e7eb !important;
+  overflow: hidden !important;
+  box-shadow: 1px 0 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.ant-layout-content {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  background-color: #ffffff !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 允许聊天模块内容溢出滚动 */
+.ant-layout-content .chat-module {
+  overflow: hidden !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* 确保聊天布局容器能够正常工作 */
+.ant-layout-content .chat-layout-container {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* 确保联系人列表能够正常滚动 */
+.ant-layout-content .conversation-list-container {
+  overflow: hidden !important;
+}
+
+/* 确保联系人列表内容能够正常滚动 */
+.ant-layout-content .conversation-list {
+  overflow-y: auto !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+}
+
+/* 修复聊天模块布局 */
+.chat-mod-root {
+  display: flex !important;
+  flex-direction: row !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 确保所有子容器都能正确嵌套 */
+.ant-layout *,
+.chat-mod-root * {
+  box-sizing: border-box !important;
+}
+
+/* 确保滚动区域正常工作 */
+.ant-layout-content .ant-layout-content {
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+/* 菜单样式优化 */
+.ant-menu {
+  background-color: transparent !important;
+  border-right: none !important;
+  font-size: 14px;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.ant-menu-item {
+  margin: 0 !important;
+  padding: 0 16px !important;
+  height: 44px !important;
+  line-height: 44px !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
+}
+
+.ant-menu-item:hover {
+  background-color: #f0f9ff !important;
+  color: #1890ff !important;
+}
+
+.ant-menu-item-selected {
+  background-color: #e0f2fe !important;
+  color: #1890ff !important;
+  font-weight: 500 !important;
+}
+
+.ant-menu-item-selected::after {
+  border-right: 3px solid #1890ff !important;
+  border-radius: 0 3px 3px 0 !important;
+}
+
+.ant-menu-submenu {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  width: 100% !important;
+}
+
+.ant-menu-submenu-title {
+  height: 44px !important;
+  line-height: 44px !important;
+  border-radius: 0 !important;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
+}
+
+.ant-menu-submenu-title:hover {
+  background-color: #f0f9ff !important;
+  color: #1890ff !important;
+}
+
+/* Ant Design customization */
+.ant-list-item {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.ant-list-item:hover {
+  background-color: #f9fafb;
+}
+
+.ant-list-item-meta {
+  margin: 0;
+}
+
+.ant-list-item-meta-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.ant-list-item-meta-description {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.ant-input-affix-wrapper {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s ease;
+}
+
+.ant-input-affix-wrapper:focus-within {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+}
+
+.ant-btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.ant-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ant-btn-primary {
+  color: white !important;
+  background-color: #1890ff !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: #40a9ff !important;
+}
+
+.ant-btn-color-primary {
+  color: white !important;
+}
+
+.ant-btn-variant-solid {
+  color: white !important;
+}
+
+/* Ensure text is always visible */
+.css-var-_r_0_ {
+  color: inherit !important;
+}
+
+.css-dev-only-do-not-override-1iph5z3 {
+  color: inherit !important;
+}
+
+/* Customize Ant Design Sider Trigger */
+.ant-layout-sider-trigger {
+  background-color: white !important;
+  color: #1890ff !important;
+  border-top: 1px solid #e5e7eb !important;
+  border-right: 1px solid #e5e7eb !important;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.ant-layout-sider-trigger:hover {
+  background-color: #f8fafc !important;
+  color: #40a9ff !important;
+}
+
+.ant-layout-sider-trigger:focus {
+  background-color: white !important;
+  color: #1890ff !important;
+}
+
+/* 确保触发器与侧边栏完全对齐 - 覆盖内联样式 */
+.ant-layout-sider-trigger[style] {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+}
+
+/* 修复侧边栏样式 */
+.ant-layout-sider {
+  overflow: hidden !important;
+  transition: all 0.2s ease !important;
+}
+
+/* 修复侧边栏内容区域 */
+.ant-layout-sider > div {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* 修复客户列表样式 */
+.chat-mod-customers-list {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+/* 现代化滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 客户列表样式优化 */
+.chat-mod-customer-item {
+  border-radius: 8px !important;
+  margin: 4px 8px !important;
+  padding: 12px 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+.chat-mod-customer-item:hover {
+  background-color: #f0f9ff !important;
+}
+
+.chat-mod-customer-item.active {
+  background-color: #e0f2fe !important;
+  border-left: 3px solid #1890ff !important;
+}
+
+/* 搜索框样式优化 */
+.chat-mod-search-input {
+  border-radius: 8px !important;
+  border: 1px solid #d1d5db !important;
+  transition: all 0.2s ease !important;
+}
+
+.chat-mod-search-input:focus {
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1) !important;
+}
+
+/* 插件按钮样式优化 */
+.chat-mod-plugin {
+  border-radius: 20px !important;
+  padding: 6px 16px !important;
+  font-size: 13px !important;
+  transition: all 0.2s ease !important;
+}
+
+.chat-mod-plugin:hover {
+  transform: none !important;
+}
+
+.chat-mod-plugin.active {
+  background-color: #1890ff !important;
+  color: white !important;
+  border-color: #1890ff !important;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
