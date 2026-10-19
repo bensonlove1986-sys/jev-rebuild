@@ -112,6 +112,16 @@ moduleRegistry.registerModule({
   enabled: true
 });
 
+// 确认价价库：与产品中心成本字段分离，只放可报未税价
+moduleRegistry.registerModule({
+  key: 'confirmed-prices',
+  name: '确认价价库',
+  icon: 'FileTextOutlined',
+  description: '未税确认价与挂牌待确认',
+  component: () => import('./confirmed-prices/ConfirmedPriceLibrary').then(m => m.default),
+  enabled: true
+});
+
 // 新增SHOPIFY集成模块
 moduleRegistry.registerModule({
   key: 'shopify',
