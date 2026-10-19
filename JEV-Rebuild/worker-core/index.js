@@ -14,6 +14,7 @@ import { DATA_VERSION, withV } from './utils/version.js';
 // Import Durable Objects
 import { ChatRoomDO, CHAT_ROOM_DO } from './durable/chat_room_do.js';
 import { DEAL_STATE_DO } from './deals/DEAL_STATE_DO.js';
+import { handleConfirmedPricesRequest } from './confirmed_prices/handler.js';
 
 // CORS headers definition
 const CORS_HEADERS = {
@@ -2807,6 +2808,10 @@ async function handleRequest(request, env, ctx) {
     console.log(`[LIVELOG_HIT] ${method} ${pathname}`);
     console.log(`[ROUTE_MATCH] Checking routes for ${method} ${pathname}`);
     console.log("[WORKER_ROUTE_MATCH]", url.pathname);
+
+    if (pathname === '/api/confirmed-prices' || pathname.startsWith('/api/confirmed-prices/')) {
+      return handleConfirmedPricesRequest(request, env);
+    }
 
     if (method === "OPTIONS") {
       console.log("[OPTIONS_ROUTE_HIT]", pathname);

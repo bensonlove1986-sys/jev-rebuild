@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 // 定义模块类型
-export type ModuleType = 'chat' | 'chat_v3' | 'chat_modular' | 'customers' | 'orders' | 'ai' | 'system' | 'products' | 'browser' | 'pi' | 'shopify' | 'facebook' | 'youtube' | 'contact';
+export type ModuleType = 'chat' | 'chat_v3' | 'chat_modular' | 'customers' | 'orders' | 'ai' | 'system' | 'products' | 'confirmed-prices' | 'browser' | 'pi' | 'shopify' | 'facebook' | 'youtube' | 'contact';
 
 interface ModuleState {
   currentModule: ModuleType;

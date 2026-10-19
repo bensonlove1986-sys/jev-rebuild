@@ -60,7 +60,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     // 验证模块类型有效性
     const validModules: ModuleType[] = [
       'chat', 'chat_v3', 'chat_modular', 'customers', 'orders', 'ai', 'system',
-      'products', 'pi', 'shopify', 'facebook', 'youtube', 'contact',
+      'products', 'confirmed-prices', 'pi', 'shopify', 'facebook', 'youtube', 'contact',
       'about', 'fqa', 'forum'
     ];
     if (validModules.includes(e.key as ModuleType)) {
@@ -138,6 +138,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   ];
   // 获取当前选中的客户
   const selectedCustomer = customers.find(c => c.customer_id === selectedCustomerId);
+
+  if (currentModule === 'confirmed-prices') {
+    return <div className="cpl-shell">{children}</div>;
+  }
 
   return (
     <div ref={containerRef} className="relative">
