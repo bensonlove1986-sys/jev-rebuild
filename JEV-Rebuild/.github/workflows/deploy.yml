@@ -4,9 +4,21 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      confirm_live_overwrite:
+        description: 'Type OVERWRITE to replace live jev-rebuild-worker with this repo bundle'
+        required: false
+        default: ''
 
 jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Do not overwrite the live worker
+        run: echo "Push does not deploy worker-core. Live jev-rebuild-worker is patched in place for /api/confirmed-prices."
+
   deploy:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirm_live_overwrite == 'OVERWRITE'
     runs-on: ubuntu-latest
     
     steps:

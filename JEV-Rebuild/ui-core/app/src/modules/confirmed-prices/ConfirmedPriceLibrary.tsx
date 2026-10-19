@@ -105,10 +105,11 @@ const ConfirmedPriceLibrary: React.FC = () => {
     };
   }, []);
 
-  const usingSample = liveRows.length === 0;
+  const sampleEnabled = new URLSearchParams(window.location.search).get('sample') === '1';
+  const usingSample = sampleEnabled && liveRows.length === 0;
   const source = usingSample ? SAMPLE_ROWS : liveRows;
   const rows = useMemo(() => source.filter((row) => matches(row, query)), [source, query]);
-  const showEmpty = query.trim().length > 0 && rows.length === 0;
+  const showEmpty = rows.length === 0;
 
   const go = (item: NavItem) => {
     if (item.module && item.module !== 'confirmed-prices') setModule(item.module);
@@ -374,19 +375,10 @@ const ConfirmedPriceLibrary: React.FC = () => {
               </div>
             )}
 
-            {(showEmpty || (usingSample && !query.trim())) && (
+            {showEmpty && (
               <div className="cpl-empty">
-                {showEmpty ? (
-                  <>
-                    <p>{EMPTY_CN}</p>
-                    <p className="en">{EMPTY_EN}</p>
-                  </>
-                ) : (
-                  <>
-                    <strong>空状态示意 · 无结果时</strong>
-                    <p>{EMPTY_CN}</p>
-                  </>
-                )}
+                <p>{EMPTY_CN}</p>
+                <p className="en">{EMPTY_EN}</p>
               </div>
             )}
             {notice && <div className="cpl-notice">{notice}</div>}
